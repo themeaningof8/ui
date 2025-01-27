@@ -9,22 +9,39 @@ const config: StorybookConfig = {
   addons: [
     '@storybook/addon-essentials',
     '@storybook/addon-interactions',
+    '@storybook/addon-a11y',
+    '@storybook/addon-coverage',
+    '@storybook/addon-docs',
+    '@storybook/addon-viewport',
+    '@storybook/addon-measure'
   ],
   framework: {
     name: '@storybook/react-vite',
     options: {}
   },
   docs: {
-    autodocs: 'tag'
+    autodocs: true,
+    defaultName: 'ドキュメント'
   },
   typescript: {
-    check: false
+    check: true,
+    reactDocgen: 'react-docgen-typescript',
+    reactDocgenTypescriptOptions: {
+      shouldExtractLiteralValuesFromEnum: true,
+      propFilter: (prop) => (prop.parent ? !/node_modules/.test(prop.parent.fileName) : true),
+    },
   },
   async viteFinal(config) {
     return {
       ...config,
       optimizeDeps: {
-        exclude: ['node_modules/.cache/storybook']
+        ...config.optimizeDeps,
+        exclude: [
+          '@storybook/addon-docs',
+          'storybook-dark-mode',
+          '@storybook/blocks',
+          'node_modules/.cache/storybook'
+        ]
       }
     };
   }
