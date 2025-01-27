@@ -8,13 +8,36 @@ import tsconfigPaths from 'vite-tsconfig-paths'
 import { visualizer } from 'rollup-plugin-visualizer'
 import { fileURLToPath } from 'node:url'
 import { dirname, resolve } from 'node:path'
+import react from '@vitejs/plugin-react'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
 export default defineConfig(({ mode }) => ({
+  test: {
+    environment: 'happy-dom',
+    globals: true,
+    setupFiles: ['./src/test/setup.ts'],
+    include: ['src/**/*.{test,spec}.{js,jsx,ts,tsx}'],
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'json', 'html'],
+      exclude: [
+        'node_modules/',
+        'src/test/',
+        '**/*.d.ts',
+        '**/*.test.{js,jsx,ts,tsx}',
+        '**/*.spec.{js,jsx,ts,tsx}',
+        '**/*.stories.{js,jsx,ts,tsx}'
+      ]
+    },
+    deps: {
+      inline: [/@radix-ui/]
+    }
+  },
   plugins: [
     tsconfigPaths(),
     tailwindcss(),
+    react(),
     mode === 'analyze' && visualizer({
       filename: 'dist/stats.html',
       template: 'network',
