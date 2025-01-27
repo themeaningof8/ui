@@ -32,6 +32,12 @@ export default defineConfig(({ mode }) => ({
   },
   build: {
     outDir: 'dist',
+    target: 'esnext',
+    minify: 'esbuild',
+    cssMinify: true,
+    sourcemap: mode === 'development',
+    reportCompressedSize: true,
+    chunkSizeWarningLimit: 500,
     rollupOptions: {
       input: {
         main: resolve(__dirname, 'index.html')
@@ -48,9 +54,15 @@ export default defineConfig(({ mode }) => ({
             return 'react-jsx';
           }
 
-          // React DOM
+          // React DOM - 機能別に分割
           if (id.includes('node_modules/react-dom/')) {
-            return 'react-dom';
+            if (id.includes('/client/')) {
+              return 'react-dom-client';
+            }
+            if (id.includes('/server/')) {
+              return 'react-dom-server';
+            }
+            return 'react-dom-core';
           }
 
           // UIコンポーネントライブラリのチャンク
@@ -67,9 +79,19 @@ export default defineConfig(({ mode }) => ({
             return 'radix-other';
           }
 
-          // アイコンライブラリ
+          // アイコンライブラリ（動的インポート用）
           if (id.includes('node_modules/lucide-react/')) {
-            return 'icons';
+            // 頻繁に使用されるアイコンをコアバンドルに
+            const commonIcons = ['menu', 'search', 'user', 'settings', 'home'];
+            const match = id.match(/lucide-react\/dist\/esm\/icons\/([^.]+)\.js$/);
+            if (match) {
+              const iconName = match[1];
+              if (commonIcons.includes(iconName)) {
+                return 'icons-common';
+              }
+              return `icon-${iconName}`;
+            }
+            return 'icons-core';
           }
 
           // Tailwind関連
@@ -83,12 +105,25 @@ export default defineConfig(({ mode }) => ({
             return 'animations';
           }
 
+          // ページ単位でのコード分割
+          if (id.includes('/src/pages/')) {
+            const match = id.match(/\/src\/pages\/([^/]+)\//);
+            if (match) {
+              return `page-${match[1].toLowerCase()}`;
+            }
+            return 'pages-other';
+          }
+
           // 共通コンポーネント（よく使用されるもの）
           if (id.includes('/src/components/ui/') && 
               !id.includes('.test.') && 
               !id.includes('.spec.') && 
               !id.includes('/tests/') &&
               !id.includes('/stories/')) {
+            const match = id.match(/\/components\/ui\/([^/]+)\//);
+            if (match) {
+              return `ui-${match[1]}`;
+            }
             return 'ui-components';
           }
 
@@ -99,7 +134,6 @@ export default defineConfig(({ mode }) => ({
               !id.includes('.spec.') && 
               !id.includes('/tests/') &&
               !id.includes('/stories/')) {
-            // コンポーネントのパスから適切なチャンク名を生成
             const match = id.match(/\/src\/components\/([^/]+)\//);
             if (match) {
               return `component-${match[1]}`;
@@ -117,8 +151,12 @@ export default defineConfig(({ mode }) => ({
         }
       }
     },
-    chunkSizeWarningLimit: 500, // 500kb
-    minify: 'esbuild',
-    sourcemap: true
+    modulePreload: {
+      polyfill: false
+    }
+  },
+  optimizeDeps: {
+    include: ['react', 'react-dom'],
+    exclude: ['@radix-ui/react-accordion']
   }
 }))
