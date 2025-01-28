@@ -4,7 +4,7 @@
  */
 
 import React from 'react'
-import { render, screen, act, waitFor } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, it, expect, vi } from 'vitest'
 
@@ -50,31 +50,13 @@ describe('Toast', () => {
   })
 
   it('handles close action', async () => {
-    const { unmount } = render(<ToastExample />)
-    
-    const closeButton = screen.getByRole('button', { name: /close/i })
-    await userEvent.click(closeButton)
-
-    await waitFor(() => {
-      expect(screen.queryByText('Toast Title')).not.toBeInTheDocument()
-    })
-    
-    unmount() // クリーンアップを明示的に実行
-  })
-
-  it('handles close action', async () => {
     const user = userEvent.setup()
-    const { unmount } = render(<ToastExample />)
+    render(<ToastExample />)
     
-    await act(async () => {
-      await user.click(screen.getByRole('button', { name: /close/i }))
-    });
-
+    await user.click(screen.getByRole('button', { name: /close/i }))
     await waitFor(() => {
       expect(screen.queryByText('Toast Title')).not.toBeInTheDocument()
-    }, { timeout: 2000 });
-    
-    unmount()
+    }, { timeout: 2000 })
   })
 
   it('applies custom className to toast components', () => {
@@ -152,14 +134,13 @@ describe('Toast', () => {
       </ToastProvider>
     )
 
-    // アニメーション完了を待つ
     await waitFor(() => {
       expect(screen.queryByText('Toast Title')).not.toBeInTheDocument()
     }, { timeout: 3000 })
   })
 
-  test('トーストが正常に表示される', async () => {
-    const { unmount } = render(
+  it('トーストが正常に表示される', async () => {
+    render(
       <ToastProvider>
         <Toast open={true}>
           <ToastTitle>Test Toast</ToastTitle>
@@ -170,10 +151,6 @@ describe('Toast', () => {
 
     await waitFor(() => {
       expect(screen.getByText('Test Toast')).toBeVisible()
-    })
-
-    await act(async () => {
-      unmount()
     })
   })
 }) 

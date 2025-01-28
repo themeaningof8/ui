@@ -4,7 +4,7 @@
  */
 
 import React from 'react'
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, it, expect, vi } from 'vitest'
 import { Button } from './button'
@@ -52,12 +52,15 @@ describe('Button', () => {
   })
 
   it('handles click events', async () => {
+    const user = userEvent.setup()
     const handleClick = vi.fn()
     render(<Button onClick={handleClick}>Click me</Button>)
     const button = screen.getByRole('button', { name: /click me/i })
     
-    await userEvent.click(button)
-    expect(handleClick).toHaveBeenCalledTimes(1)
+    await user.click(button)
+    await waitFor(() => {
+      expect(handleClick).toHaveBeenCalledTimes(1)
+    })
   })
 
   it('renders as child component when asChild is true', () => {
@@ -76,10 +79,18 @@ describe('Button', () => {
     expect(button).toHaveClass('custom-class', 'bg-primary')
   })
 
-  it('is disabled when disabled prop is true', () => {
-    render(<Button disabled>Disabled Button</Button>)
+  it('is disabled when disabled prop is true', async () => {
+    const user = userEvent.setup()
+    const handleClick = vi.fn()
+    render(<Button disabled onClick={handleClick}>Disabled Button</Button>)
     const button = screen.getByRole('button', { name: /disabled button/i })
+    
     expect(button).toBeDisabled()
     expect(button).toHaveClass('disabled:opacity-50')
+    
+    await user.click(button)
+    await waitFor(() => {
+      expect(handleClick).not.toHaveBeenCalled()
+    })
   })
 }) 

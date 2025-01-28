@@ -14,9 +14,9 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 
 export default defineConfig(({ mode }) => ({
   test: {
-    environment: 'happy-dom',
+    environment: 'jsdom',
     globals: true,
-    setupFiles: ['./src/test/setup.ts'],
+    setupFiles: ['./vitest.setup.ts'],
     include: ['src/**/*.{test,spec}.{js,jsx,ts,tsx}'],
     coverage: {
       provider: 'v8',
@@ -26,12 +26,14 @@ export default defineConfig(({ mode }) => ({
         'src/test/',
         '**/*.d.ts',
         '**/*.test.{js,jsx,ts,tsx}',
-        '**/*.spec.{js,jsx,ts,tsx}',
-        '**/*.stories.{js,jsx,ts,tsx}'
+        '**/*.stories.{js,jsx,ts,tsx}',
+        'dist/**'
       ]
     },
+    server: {
     deps: {
-      inline: [/@radix-ui/]
+        inline: [/@radix-ui/]
+      }
     }
   },
   plugins: [

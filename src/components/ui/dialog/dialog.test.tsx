@@ -146,11 +146,17 @@ describe('Dialog', () => {
       <Dialog>
         <DialogTrigger>Open First Dialog</DialogTrigger>
         <DialogContent>
-          <DialogTitle>First Dialog</DialogTitle>
+          <DialogHeader>
+            <DialogTitle>First Dialog</DialogTitle>
+            <DialogDescription>First Dialog Description</DialogDescription>
+          </DialogHeader>
           <Dialog>
             <DialogTrigger>Open Second Dialog</DialogTrigger>
             <DialogContent>
-              <DialogTitle>Second Dialog</DialogTitle>
+              <DialogHeader>
+                <DialogTitle>Second Dialog</DialogTitle>
+                <DialogDescription>Second Dialog Description</DialogDescription>
+              </DialogHeader>
             </DialogContent>
           </Dialog>
         </DialogContent>
@@ -182,12 +188,16 @@ describe('Dialog', () => {
       render(
         <Dialog open>
           <DialogContent>
-            <DialogOverlay className="custom-overlay" />
+            <DialogHeader>
+              <DialogTitle>Test Title</DialogTitle>
+              <DialogDescription>Test Description</DialogDescription>
+            </DialogHeader>
+            <DialogOverlay className="custom-overlay" data-testid="custom-overlay" />
             <div>Content</div>
           </DialogContent>
         </Dialog>
       )
-      expect(screen.getByTestId('overlay')).toHaveClass('custom-overlay')
+      expect(screen.getByTestId('custom-overlay')).toHaveClass('custom-overlay')
     })
   })
 
@@ -217,8 +227,8 @@ describe('Dialog', () => {
       expect(footer).toHaveClass('custom-footer')
 
       if (header && footer) {
-        await userEvent.click(header)
-        await userEvent.click(footer)
+        await user.click(header)
+        await user.click(footer)
       }
 
       expect(handleHeaderClick).toHaveBeenCalled()
@@ -274,7 +284,9 @@ describe('Dialog', () => {
 
       // Open dialog
       await user.click(screen.getByText('Open Dialog'))
-      expect(onOpenChange).toHaveBeenCalledWith(true)
+      await waitFor(() => {
+        expect(onOpenChange).toHaveBeenCalledWith(true)
+      })
 
       // Verify content
       expect(screen.getByText('Interactive Dialog')).toBeVisible()
@@ -283,7 +295,9 @@ describe('Dialog', () => {
 
       // Close with overlay click
       await user.click(screen.getByTestId('overlay'))
-      expect(onOpenChange).toHaveBeenCalledWith(false)
+      await waitFor(() => {
+        expect(onOpenChange).toHaveBeenCalledWith(false)
+      })
     })
   })
 }) 

@@ -4,7 +4,7 @@
  */
 
 import React from 'react'
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, it, expect } from 'vitest'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from './tabs'
@@ -104,22 +104,32 @@ describe('Tabs', () => {
   })
 
   it('handles keyboard navigation', async () => {
+    const user = userEvent.setup()
     render(defaultTabs)
 
     // 最初のタブにフォーカス
     const firstTab = screen.getByRole('tab', { name: /tab 1/i })
-    firstTab.focus()
+    await user.click(firstTab) // クリックでフォーカスを設定（より安定した方法）
+    await waitFor(() => {
+      expect(firstTab).toHaveFocus()
+    })
 
     // 右矢印キーで次のタブに移動
-    await userEvent.keyboard('{ArrowRight}')
-    expect(screen.getByRole('tab', { name: /tab 2/i })).toHaveFocus()
+    await user.keyboard('{ArrowRight}')
+    await waitFor(() => {
+      expect(screen.getByRole('tab', { name: /tab 2/i })).toHaveFocus()
+    })
 
     // 右矢印キーで無効化されたタブをスキップ
-    await userEvent.keyboard('{ArrowRight}')
-    expect(screen.getByRole('tab', { name: /tab 1/i })).toHaveFocus()
+    await user.keyboard('{ArrowRight}')
+    await waitFor(() => {
+      expect(screen.getByRole('tab', { name: /tab 1/i })).toHaveFocus()
+    })
 
     // 左矢印キーで前のタブに移動
-    await userEvent.keyboard('{ArrowLeft}')
-    expect(screen.getByRole('tab', { name: /tab 2/i })).toHaveFocus()
+    await user.keyboard('{ArrowLeft}')
+    await waitFor(() => {
+      expect(screen.getByRole('tab', { name: /tab 2/i })).toHaveFocus()
+    })
   })
 }) 
