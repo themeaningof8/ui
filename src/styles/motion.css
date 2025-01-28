@@ -1,0 +1,32 @@
+/**
+ * @file motion.css
+ * @description アニメーションとモーションに関する定義
+ * アプリケーション全体で使用される一貫したアニメーションを提供
+ */
+
+/* アコーディオンアニメーション */
+animate-accordion-down {
+	animation: accordion-down 0.2s ease-out forwards;
+}
+.animate-accordion-up {
+	animation: accordion-up 0.2s ease-out forwards;
+}
+
+/* アニメーションキーフレーム */
+@keyframes accordion-down {
+	from {
+		height: 0;
+	}
+	to {
+		height: var(--radix-accordion-content-height);
+	}
+}
+
+@keyframes accordion-up {
+	from {
+		height: var(--radix-accordion-content-height);
+	}
+	to {
+		height: 0;
+	}
+}

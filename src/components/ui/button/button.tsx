@@ -15,15 +15,43 @@ import { tv, type VariantProps } from 'tailwind-variants'
  * 各バリアントは用途に応じた適切なカラーユーティリティを使用
  */
 const buttonVariants = tv({
-  base: 'inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
+  base: [
+    'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium',
+    'ring-offset-background transition-colors',
+    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
+    'disabled:pointer-events-none disabled:opacity-50',
+  ],
   variants: {
     variant: {
-      default: 'bg-solid-accent hover:bg-solid-accent-hover',
-      destructive: 'bg-solid-destructive hover:bg-solid-destructive-hover',
-      outline: 'border border-input bg-background hover:bg-accent hover:text-accent-foreground',
-      secondary: 'bg-solid-base hover:bg-solid-base-hover',
-      ghost: 'hover:bg-accent hover:text-accent-foreground',
-      link: 'text-primary underline-offset-4 hover:underline',
+      default: [
+        'bg-accent-solid text-accent-on-solid',
+        'hover:bg-accent-solid-hover hover:text-accent-on-solid-hover',
+        'focus-visible:ring-accent-ui',
+      ],
+      destructive: [
+        'bg-destructive-solid text-destructive-on-solid',
+        'hover:bg-destructive-solid-hover hover:text-destructive-on-solid-hover',
+        'focus-visible:ring-destructive-ui',
+      ],
+      outline: [
+        'border border-base-subtle bg-base-app text-base-high',
+        'hover:bg-base-ui hover:text-base-high',
+        'focus-visible:ring-base-ui',
+      ],
+      secondary: [
+        'bg-base-solid text-base-on-solid',
+        'hover:bg-base-solid-hover hover:text-base-on-solid-hover',
+        'focus-visible:ring-base-ui',
+      ],
+      ghost: [
+        'text-base-high',
+        'hover:bg-base-ui hover:text-base-high',
+        'focus-visible:ring-base-ui',
+      ],
+      link: [
+        'text-accent-low underline-offset-4',
+        'hover:text-accent-high hover:underline',
+      ],
     },
     size: {
       default: 'h-9 px-4 py-2',
