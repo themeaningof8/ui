@@ -7,6 +7,7 @@ import React from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
+import '@testing-library/jest-dom'
 import {
   Dialog,
   DialogTrigger,
@@ -134,7 +135,7 @@ describe('Dialog', () => {
     )
 
     await openDialog()
-    
+
     // refs が正しく設定されていることを確認
     expect(contentRef.current).toBeInstanceOf(HTMLDivElement)
     expect(titleRef.current).toBeInstanceOf(HTMLHeadingElement)
@@ -184,7 +185,7 @@ describe('Dialog', () => {
   })
 
   describe('DialogOverlay', () => {
-    it('renders with custom className', () => {
+    it('renders with custom className', async () => {
       render(
         <Dialog open>
           <DialogContent>
@@ -197,7 +198,11 @@ describe('Dialog', () => {
           </DialogContent>
         </Dialog>
       )
-      expect(screen.getByTestId('custom-overlay')).toHaveClass('custom-overlay')
+
+      await waitFor(() => {
+        const overlay = screen.getByTestId('custom-overlay')
+        expect(overlay).toHaveClass('custom-overlay')
+      })
     })
   })
 
@@ -264,7 +269,6 @@ describe('Dialog', () => {
   describe('Dialog Interactions', () => {
     it('handles complex dialog interactions', async () => {
       const onOpenChange = vi.fn()
-      const user = userEvent.setup()
 
       render(
         <Dialog onOpenChange={onOpenChange}>
@@ -282,19 +286,20 @@ describe('Dialog', () => {
         </Dialog>
       )
 
-      // Open dialog
+      // ダイアログを開く
       await user.click(screen.getByText('Open Dialog'))
       await waitFor(() => {
         expect(onOpenChange).toHaveBeenCalledWith(true)
       })
 
-      // Verify content
+      // コンテンツの表示を確認
       expect(screen.getByText('Interactive Dialog')).toBeVisible()
       expect(screen.getByText('Test all interactions')).toBeVisible()
       expect(screen.getByText('Action')).toBeVisible()
 
-      // Close with overlay click
-      await user.click(screen.getByTestId('overlay'))
+      // オーバーレイをクリックして閉じる
+      const overlay = screen.getByTestId('overlay')
+      await user.click(overlay)
       await waitFor(() => {
         expect(onOpenChange).toHaveBeenCalledWith(false)
       })

@@ -23,15 +23,18 @@ export default defineConfig(({ mode }) => ({
       reporter: ['text', 'json', 'html'],
       exclude: [
         'node_modules/',
-        'src/test/',
         '**/*.d.ts',
         '**/*.test.{js,jsx,ts,tsx}',
         '**/*.stories.{js,jsx,ts,tsx}',
-        'dist/**'
+        'dist/**',
+        '.storybook/**',
+        'vite.config.ts',
+        'tailwind.config.ts',
+        'scripts/**'
       ]
     },
     server: {
-    deps: {
+      deps: {
         inline: [/@radix-ui/]
       }
     }
@@ -52,7 +55,10 @@ export default defineConfig(({ mode }) => ({
   ].filter(Boolean),
   resolve: {
     alias: {
-      '@': resolve(__dirname, './src')
+      '@': resolve(__dirname, './src'),
+      '@components': resolve(__dirname, './src/components'),
+      '@lib': resolve(__dirname, './src/lib'),
+      '@tests': resolve(__dirname, './src/tests')
     }
   },
   build: {
@@ -120,8 +126,8 @@ export default defineConfig(({ mode }) => ({
           }
 
           // Tailwind関連
-          if (id.includes('node_modules/tailwind-variants/') || 
-              id.includes('node_modules/tailwind-merge/')) {
+          if (id.includes('node_modules/tailwind-variants/') ||
+            id.includes('node_modules/tailwind-merge/')) {
             return 'tailwind-utils';
           }
 
@@ -140,11 +146,11 @@ export default defineConfig(({ mode }) => ({
           }
 
           // 共通コンポーネント（よく使用されるもの）
-          if (id.includes('/src/components/ui/') && 
-              !id.includes('.test.') && 
-              !id.includes('.spec.') && 
-              !id.includes('/tests/') &&
-              !id.includes('/stories/')) {
+          if (id.includes('/src/components/ui/') &&
+            !id.includes('.test.') &&
+            !id.includes('.spec.') &&
+            !id.includes('/tests/') &&
+            !id.includes('/stories/')) {
             const match = id.match(/\/components\/ui\/([^/]+)\//);
             if (match) {
               return `ui-${match[1]}`;
@@ -153,12 +159,12 @@ export default defineConfig(({ mode }) => ({
           }
 
           // 機能別コンポーネント
-          if (id.includes('/src/components/') && 
-              !id.includes('/src/components/ui/') &&
-              !id.includes('.test.') && 
-              !id.includes('.spec.') && 
-              !id.includes('/tests/') &&
-              !id.includes('/stories/')) {
+          if (id.includes('/src/components/') &&
+            !id.includes('/src/components/ui/') &&
+            !id.includes('.test.') &&
+            !id.includes('.spec.') &&
+            !id.includes('/tests/') &&
+            !id.includes('/stories/')) {
             const match = id.match(/\/src\/components\/([^/]+)\//);
             if (match) {
               return `component-${match[1]}`;
@@ -167,10 +173,10 @@ export default defineConfig(({ mode }) => ({
           }
 
           // フックのチャンク
-          if (id.includes('/src/hooks/') && 
-              !id.includes('.test.') && 
-              !id.includes('.spec.') && 
-              !id.includes('/tests/')) {
+          if (id.includes('/src/hooks/') &&
+            !id.includes('.test.') &&
+            !id.includes('.spec.') &&
+            !id.includes('/tests/')) {
             return 'hooks';
           }
         }
