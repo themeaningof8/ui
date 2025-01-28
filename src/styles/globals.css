@@ -1,26 +1,7 @@
 @import "tailwindcss";
+@import "./color-scales.css";
+
 @plugin "tailwindcss-animate";
-
-:root {
-	--primary: 210 100% 50%;
-	--background: 0 0% 100%;
-	--foreground: 222 84% 5%;
-}
-
-.dark {
-	--primary: 210 100% 60%;
-	--background: 222 84% 5%;
-	--foreground: 210 40% 98%;
-}
-
-@keyframes accordion-up {
-	from {
-		height: var(--radix-accordion-content-height);
-	}
-	to {
-		height: 0;
-	}
-}
 
 @keyframes accordion-down {
 	from {
@@ -31,10 +12,11 @@
 	}
 }
 
-.animate-accordion-up {
-	animation: accordion-up 0.2s ease-out;
-}
-
-.animate-accordion-down {
-	animation: accordion-down 0.2s ease-out;
+@keyframes accordion-up {
+	from {
+		height: var(--radix-accordion-content-height);
+	}
+	to {
+		height: 0;
+	}
 }

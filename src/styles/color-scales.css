@@ -1,0 +1,363 @@
+/**
+ * @file color-scales.css
+ * @description Tailwind CSS v4向けのカラースケール定義
+ * カラーパレットはRadix Colorsの命名規則に基づき、アプリケーション全体で統一的に使用
+ *
+ * 各ステップの使用用途:
+ * 1: アプリケーションの背景
+ * 2: サブ背景（カード、サイドバー等）
+ * 3: UIコンポーネントの背景
+ * 4: UIコンポーネントのホバー時背景
+ * 5: UIコンポーネントの選択/アクティブ時背景
+ * 6: 非インタラクティブな境界線、区切り線
+ * 7: インタラクティブな要素の境界線、フォーカスリング
+ * 8: インタラクティブな要素のホバー時境界線
+ * 9: ソリッドな背景色（最も彩度が高い）
+ * 10: ソリッドな背景色のホバー時
+ * 11: 低コントラストのテキスト
+ * 12: 高コントラストのテキスト
+ *
+ * 用途別クラス:
+ * bg-{scale}-{step}: 背景色 (app-bg, subtle-bg, ui-bg, ui-hover, ui-active, solid, solid-hover)
+ * text-{scale}-{step}: テキスト色 (low-contrast-text, high-contrast-text)
+ * border-{scale}-{step}: ボーダー色 (subtle-border, ui-border, ui-border-hover)
+ * ring-{scale}-{step}: フォーカスリング (ui-border)
+ */
+
+@theme {
+	/* ベースカラー - ライトモード */
+	--color-base-app-bg: oklch(99.2% 0.0025 278);
+	--color-base-subtle-bg: oklch(98.1% 0.0047 278);
+	--color-base-ui-bg: oklch(95.9% 0.011 278);
+	--color-base-ui-hover: oklch(93.4% 0.0162 278);
+	--color-base-ui-active: oklch(90.6% 0.0212 278);
+	--color-base-subtle-border: oklch(87.2% 0.0262 278);
+	--color-base-ui-border: oklch(82.5% 0.0327 278);
+	--color-base-ui-border-hover: oklch(75.5% 0.0439 278);
+	--color-base-solid: oklch(41.8% 0.0486 278);
+	--color-base-solid-hover: oklch(36% 0.0272 278);
+	--color-base-low-contrast-text: oklch(51.6% 0.0486 278);
+	--color-base-high-contrast-text: oklch(30.7% 0.0272 278);
+
+	/* アクセントカラー - ライトモード */
+	--color-accent-app-bg: oklch(99.2% 0.0025 266.8);
+	--color-accent-subtle-bg: oklch(98.1% 0.0047 266.8);
+	--color-accent-ui-bg: oklch(95.9% 0.011 266.8);
+	--color-accent-ui-hover: oklch(93.4% 0.0162 266.8);
+	--color-accent-ui-active: oklch(90.6% 0.0212 266.8);
+	--color-accent-subtle-border: oklch(87.2% 0.0262 266.8);
+	--color-accent-ui-border: oklch(82.5% 0.0327 266.8);
+	--color-accent-ui-border-hover: oklch(75.5% 0.0439 266.8);
+	--color-accent-solid: oklch(54.3% 0.1913 266.8);
+	--color-accent-solid-hover: oklch(49.7% 0.1373 266.8);
+	--color-accent-low-contrast-text: oklch(77.7% 0.1234 266.8);
+	--color-accent-high-contrast-text: oklch(91.1% 0.0428 266.8);
+
+	/* システムカラー */
+	--color-surface: oklch(98.1% 0.0047 278 / 0.8);
+	--color-overlay: oklch(98.1% 0.0047 278 / 0.9);
+	--color-panel: oklch(99.2% 0.0025 278);
+	--color-card: oklch(99.2% 0.0025 278);
+}
+
+[data-theme="dark"] {
+	/* ベースカラー - ダークモード */
+	--color-base-app-bg: oklch(17.8% 0.0247 266.8);
+	--color-base-subtle-bg: oklch(20.7% 0.0302 266.8);
+	--color-base-ui-bg: oklch(27.1% 0.0694 266.8);
+	--color-base-ui-hover: oklch(31.8% 0.0933 266.8);
+	--color-base-ui-active: oklch(36.1% 0.1046 266.8);
+	--color-base-subtle-border: oklch(40.4% 0.1106 266.8);
+	--color-base-ui-border: oklch(45% 0.1203 266.8);
+	--color-base-ui-border-hover: oklch(50.3% 0.1373 266.8);
+	--color-base-solid: oklch(54.3% 0.1913 266.8);
+	--color-base-solid-hover: oklch(49.7% 0.1373 266.8);
+	--color-base-low-contrast-text: oklch(77.7% 0.1234 266.8);
+	--color-base-high-contrast-text: oklch(91.1% 0.0428 266.8);
+
+	/* アクセントカラー - ダークモード */
+	--color-accent-app-bg: oklch(17.8% 0.0247 266.8);
+	--color-accent-subtle-bg: oklch(20.7% 0.0302 266.8);
+	--color-accent-ui-bg: oklch(27.1% 0.0694 266.8);
+	--color-accent-ui-hover: oklch(31.8% 0.0933 266.8);
+	--color-accent-ui-active: oklch(36.1% 0.1046 266.8);
+	--color-accent-subtle-border: oklch(40.4% 0.1106 266.8);
+	--color-accent-ui-border: oklch(45% 0.1203 266.8);
+	--color-accent-ui-border-hover: oklch(50.3% 0.1373 266.8);
+	--color-accent-solid: oklch(54.3% 0.1913 266.8);
+	--color-accent-solid-hover: oklch(49.7% 0.1373 266.8);
+	--color-accent-low-contrast-text: oklch(77.7% 0.1234 266.8);
+	--color-accent-high-contrast-text: oklch(91.1% 0.0428 266.8);
+
+	/* システムカラー */
+	--color-surface: oklch(17.8% 0.0247 266.8 / 0.8);
+	--color-overlay: oklch(17.8% 0.0247 266.8 / 0.9);
+	--color-panel: oklch(20.7% 0.0302 266.8);
+	--color-card: oklch(20.7% 0.0302 266.8);
+}
+
+@layer base {
+	:root {
+		/* ベースカラー - ライトモード */
+		--color-base-app-bg: oklch(99.2% 0.0025 278);
+		--color-base-subtle-bg: oklch(98.1% 0.0047 278);
+		--color-base-ui-bg: oklch(95.9% 0.011 278);
+		--color-base-ui-hover: oklch(93.4% 0.0162 278);
+		--color-base-ui-active: oklch(90.6% 0.0212 278);
+		--color-base-subtle-border: oklch(87.2% 0.0262 278);
+		--color-base-ui-border: oklch(82.5% 0.0327 278);
+		--color-base-ui-border-hover: oklch(75.5% 0.0439 278);
+		--color-base-solid: oklch(41.8% 0.0486 278);
+		--color-base-solid-hover: oklch(36% 0.0272 278);
+		--color-base-low-contrast-text: oklch(51.6% 0.0486 278);
+		--color-base-high-contrast-text: oklch(30.7% 0.0272 278);
+
+		/* アクセントカラー - ライトモード */
+		--color-accent-app-bg: oklch(99.2% 0.0025 266.8);
+		--color-accent-subtle-bg: oklch(98.1% 0.0047 266.8);
+		--color-accent-ui-bg: oklch(95.9% 0.011 266.8);
+		--color-accent-ui-hover: oklch(93.4% 0.0162 266.8);
+		--color-accent-ui-active: oklch(90.6% 0.0212 266.8);
+		--color-accent-subtle-border: oklch(87.2% 0.0262 266.8);
+		--color-accent-ui-border: oklch(82.5% 0.0327 266.8);
+		--color-accent-ui-border-hover: oklch(75.5% 0.0439 266.8);
+		--color-accent-solid: oklch(54.3% 0.1913 266.8);
+		--color-accent-solid-hover: oklch(49.7% 0.1373 266.8);
+		--color-accent-low-contrast-text: oklch(77.7% 0.1234 266.8);
+		--color-accent-high-contrast-text: oklch(91.1% 0.0428 266.8);
+
+		/* デストラクティブカラー - ライトモード */
+		--color-destructive-app-bg: oklch(99% 0.001 25);
+		--color-destructive-subtle-bg: oklch(98% 0.005 25);
+		--color-destructive-ui-bg: oklch(96% 0.012 25);
+		--color-destructive-ui-hover: oklch(93% 0.025 25);
+		--color-destructive-ui-active: oklch(90% 0.035 25);
+		--color-destructive-subtle-border: oklch(85% 0.045 25);
+		--color-destructive-ui-border: oklch(80% 0.055 25);
+		--color-destructive-ui-border-hover: oklch(75% 0.065 25);
+		--color-destructive-solid: oklch(55% 0.18 25);
+		--color-destructive-solid-hover: oklch(50% 0.16 25);
+		--color-destructive-low-contrast-text: oklch(45% 0.14 25);
+		--color-destructive-high-contrast-text: oklch(35% 0.12 25);
+
+		/* システムカラー */
+		--color-surface: oklch(98.1% 0.0047 278 / 0.8);
+		--color-overlay: oklch(98.1% 0.0047 278 / 0.9);
+		--color-panel: oklch(99.2% 0.0025 278);
+		--color-card: oklch(99.2% 0.0025 278);
+
+		/* ソリッドカラー上のテキストカラー */
+		--color-on-solid-text: oklch(99.2% 0.0025 278);
+		--color-on-solid-text-hover: oklch(99.2% 0.0025 278);
+	}
+
+	[data-theme="dark"] {
+		/* ベースカラー - ダークモード */
+		--color-base-app-bg: oklch(17.8% 0.0247 266.8);
+		--color-base-subtle-bg: oklch(20.7% 0.0302 266.8);
+		--color-base-ui-bg: oklch(27.1% 0.0694 266.8);
+		--color-base-ui-hover: oklch(31.8% 0.0933 266.8);
+		--color-base-ui-active: oklch(36.1% 0.1046 266.8);
+		--color-base-subtle-border: oklch(40.4% 0.1106 266.8);
+		--color-base-ui-border: oklch(45% 0.1203 266.8);
+		--color-base-ui-border-hover: oklch(50.3% 0.1373 266.8);
+		--color-base-solid: oklch(54.3% 0.1913 266.8);
+		--color-base-solid-hover: oklch(49.7% 0.1373 266.8);
+		--color-base-low-contrast-text: oklch(77.7% 0.1234 266.8);
+		--color-base-high-contrast-text: oklch(91.1% 0.0428 266.8);
+
+		/* アクセントカラー - ダークモード */
+		--color-accent-app-bg: oklch(17.8% 0.0247 266.8);
+		--color-accent-subtle-bg: oklch(20.7% 0.0302 266.8);
+		--color-accent-ui-bg: oklch(27.1% 0.0694 266.8);
+		--color-accent-ui-hover: oklch(31.8% 0.0933 266.8);
+		--color-accent-ui-active: oklch(36.1% 0.1046 266.8);
+		--color-accent-subtle-border: oklch(40.4% 0.1106 266.8);
+		--color-accent-ui-border: oklch(45% 0.1203 266.8);
+		--color-accent-ui-border-hover: oklch(50.3% 0.1373 266.8);
+		--color-accent-solid: oklch(54.3% 0.1913 266.8);
+		--color-accent-solid-hover: oklch(49.7% 0.1373 266.8);
+		--color-accent-low-contrast-text: oklch(77.7% 0.1234 266.8);
+		--color-accent-high-contrast-text: oklch(91.1% 0.0428 266.8);
+
+		/* デストラクティブカラー - ダークモード */
+		--color-destructive-app-bg: oklch(18% 0.02 25);
+		--color-destructive-subtle-bg: oklch(22% 0.03 25);
+		--color-destructive-ui-bg: oklch(26% 0.06 25);
+		--color-destructive-ui-hover: oklch(30% 0.08 25);
+		--color-destructive-ui-active: oklch(35% 0.1 25);
+		--color-destructive-subtle-border: oklch(40% 0.12 25);
+		--color-destructive-ui-border: oklch(45% 0.14 25);
+		--color-destructive-ui-border-hover: oklch(50% 0.16 25);
+		--color-destructive-solid: oklch(55% 0.18 25);
+		--color-destructive-solid-hover: oklch(50% 0.16 25);
+		--color-destructive-low-contrast-text: oklch(75% 0.08 25);
+		--color-destructive-high-contrast-text: oklch(90% 0.04 25);
+
+		/* システムカラー */
+		--color-surface: oklch(17.8% 0.0247 266.8 / 0.8);
+		--color-overlay: oklch(17.8% 0.0247 266.8 / 0.9);
+		--color-panel: oklch(20.7% 0.0302 266.8);
+		--color-card: oklch(20.7% 0.0302 266.8);
+
+		/* ソリッドカラー上のテキストカラー */
+		--color-on-solid-text: oklch(99.2% 0.0025 278);
+		--color-on-solid-text-hover: oklch(99.2% 0.0025 278);
+	}
+}
+
+@layer utilities {
+	/* 背景色ユーティリティ */
+	.bg-base-app {
+		@apply bg-[--color-base-app-bg];
+	}
+	.bg-base-subtle {
+		@apply bg-[--color-base-subtle-bg];
+	}
+	.bg-base-ui {
+		@apply bg-[--color-base-ui-bg];
+	}
+	.bg-base-hover {
+		@apply bg-[--color-base-ui-hover];
+	}
+	.bg-base-active {
+		@apply bg-[--color-base-ui-active];
+	}
+	.bg-base-solid {
+		@apply bg-[--color-base-solid];
+	}
+	.bg-base-solid-hover {
+		@apply bg-[--color-base-solid-hover];
+	}
+
+	.bg-accent-app {
+		@apply bg-[--color-accent-app-bg];
+	}
+	.bg-accent-subtle {
+		@apply bg-[--color-accent-subtle-bg];
+	}
+	.bg-accent-ui {
+		@apply bg-[--color-accent-ui-bg];
+	}
+	.bg-accent-hover {
+		@apply bg-[--color-accent-ui-hover];
+	}
+	.bg-accent-active {
+		@apply bg-[--color-accent-ui-active];
+	}
+	.bg-accent-solid {
+		@apply bg-[--color-accent-solid];
+	}
+	.bg-accent-solid-hover {
+		@apply bg-[--color-accent-solid-hover];
+	}
+
+	.bg-destructive-app {
+		@apply bg-[--color-destructive-app-bg];
+	}
+	.bg-destructive-subtle {
+		@apply bg-[--color-destructive-subtle-bg];
+	}
+	.bg-destructive-ui {
+		@apply bg-[--color-destructive-ui-bg];
+	}
+	.bg-destructive-hover {
+		@apply bg-[--color-destructive-ui-hover];
+	}
+	.bg-destructive-active {
+		@apply bg-[--color-destructive-ui-active];
+	}
+	.bg-destructive-solid {
+		@apply bg-[--color-destructive-solid];
+	}
+	.bg-destructive-solid-hover {
+		@apply bg-[--color-destructive-solid-hover];
+	}
+
+	/* テキスト色ユーティリティ */
+	.text-base-low {
+		@apply text-[--color-base-low-contrast-text];
+	}
+	.text-base-high {
+		@apply text-[--color-base-high-contrast-text];
+	}
+	.text-accent-low {
+		@apply text-[--color-accent-low-contrast-text];
+	}
+	.text-accent-high {
+		@apply text-[--color-accent-high-contrast-text];
+	}
+	.text-destructive-low {
+		@apply text-[--color-destructive-low-contrast-text];
+	}
+	.text-destructive-high {
+		@apply text-[--color-destructive-high-contrast-text];
+	}
+	/* ソリッドカラー用テキストカラー */
+	.text-on-solid {
+		@apply text-[--color-on-solid-text];
+	}
+	.text-on-solid-hover {
+		@apply text-[--color-on-solid-text-hover];
+	}
+
+	/* ボーダー色ユーティリティ */
+	.border-base-subtle {
+		@apply border-[--color-base-subtle-border];
+	}
+	.border-base-ui {
+		@apply border-[--color-base-ui-border];
+	}
+	.border-base-hover {
+		@apply border-[--color-base-ui-border-hover];
+	}
+	.border-accent-subtle {
+		@apply border-[--color-accent-subtle-border];
+	}
+	.border-accent-ui {
+		@apply border-[--color-accent-ui-border];
+	}
+	.border-accent-hover {
+		@apply border-[--color-accent-ui-border-hover];
+	}
+	.border-destructive-subtle {
+		@apply border-[--color-destructive-subtle-border];
+	}
+	.border-destructive-ui {
+		@apply border-[--color-destructive-ui-border];
+	}
+	.border-destructive-hover {
+		@apply border-[--color-destructive-ui-border-hover];
+	}
+
+	/* フォーカスリングユーティリティ */
+	.ring-base-ui {
+		@apply ring-[--color-base-ui-border];
+	}
+	.ring-accent-ui {
+		@apply ring-[--color-accent-ui-border];
+	}
+	.ring-destructive-ui {
+		@apply ring-[--color-destructive-ui-border];
+	}
+
+	/* ソリッドカラーユーティリティ */
+	.bg-solid-base {
+		@apply bg-base-solid text-on-solid hover:text-on-solid-hover;
+	}
+	.bg-solid-base-hover {
+		@apply bg-base-solid-hover text-on-solid hover:text-on-solid-hover;
+	}
+	.bg-solid-accent {
+		@apply bg-accent-solid text-on-solid hover:text-on-solid-hover;
+	}
+	.bg-solid-accent-hover {
+		@apply bg-accent-solid-hover text-on-solid hover:text-on-solid-hover;
+	}
+	.bg-solid-destructive {
+		@apply bg-destructive-solid text-on-solid hover:text-on-solid-hover;
+	}
+	.bg-solid-destructive-hover {
+		@apply bg-destructive-solid-hover text-on-solid hover:text-on-solid-hover;
+	}
+}
