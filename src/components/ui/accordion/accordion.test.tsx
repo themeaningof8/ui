@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import { expect } from 'vitest'
-import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from './accordion'
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '.'
 import userEvent from '@testing-library/user-event'
 
 test('アコーディオンが正常に開閉する', async () => {

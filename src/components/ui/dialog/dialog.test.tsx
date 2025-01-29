@@ -17,7 +17,7 @@ import {
   DialogTitle,
   DialogDescription,
   DialogOverlay,
-} from './dialog'
+} from '.'
 
 type DialogProps = React.ComponentProps<typeof Dialog>
 

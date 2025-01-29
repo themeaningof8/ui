@@ -4,7 +4,7 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react'
-import { Button } from '../button/button'
+import { Button } from '../button'
 import {
   Dialog,
   DialogContent,
@@ -15,7 +15,7 @@ import {
   DialogTrigger,
   DialogOverlay,
   DialogPortal,
-} from './dialog'
+} from '.'
 
 const meta = {
   title: 'UI/Dialog',
@@ -60,11 +60,11 @@ export const WithCustomStyles: Story = {
         <Button>Styled Dialog</Button>
       </DialogTrigger>
       <DialogPortal>
-        <DialogOverlay className="bg-black/80 backdrop-blur-sm" />
-        <DialogContent className="border-2 border-primary">
+        <DialogOverlay />
+        <DialogContent>
           <DialogHeader className="border-b pb-4">
             <DialogTitle className="text-2xl">Custom Styled Dialog</DialogTitle>
-            <DialogDescription className="text-gray-600">
+            <DialogDescription>
               This dialog uses custom styles for each component.
             </DialogDescription>
           </DialogHeader>

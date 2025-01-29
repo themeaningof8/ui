@@ -4,11 +4,11 @@
  */
 
 // コンポーネントのエクスポート
-export { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@components/ui/accordion/accordion'
-export { Button } from '@components/ui/button/button'
-export { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogFooter, DialogTitle, DialogDescription } from '@components/ui/dialog/dialog'
-export { Tabs, TabsList, TabsTrigger, TabsContent } from '@components/ui/tabs/tabs'
-export { Toast, ToastProvider, ToastViewport } from '@components/ui/toast/toast'
+export { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@components/ui/accordion'
+export { Button } from '@components/ui/button'
+export { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogFooter, DialogTitle, DialogDescription } from '@components/ui/dialog'
+export { Tabs, TabsList, TabsTrigger, TabsContent } from '@components/ui/tabs'
+export { Toaster } from '@components/ui/sonner'
 
 // ユーティリティのエクスポート
 export { cn } from '@lib/cn'
