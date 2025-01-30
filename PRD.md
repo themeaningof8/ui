@@ -61,6 +61,8 @@
 - **カバレッジ基準**:
   - ユニットテスト: 80%以上
   - E2Eテスト: 主要ユーザーフロー100%
+  - [ ] アクセシビリティ自動テスト（axe-core統合）
+  - [ ] APCAコントラスト比検証（storybook-addon-apca活用）
 
 ### 7.2 手動検証
 - **アクセシビリティテスト**:
@@ -73,6 +75,9 @@
   - [ ] メモリ使用量10MB以下/コンポーネント
 - **バンドル監視**:
   - [ ] 週次2%以内のサイズ増加率
+- **監視体制**:
+  - [ ] コミット毎のLighthouse CI実行
+  - [ ] APCA値の閾値監視（CIパイプライン統合）
 
 ## 9. リリース戦略
 - **バージョニング**:
@@ -100,6 +105,10 @@
 - **主要依存パッケージ**:
   - [ ] @radix-ui/react
   - [ ] storybook-addon-apca
+  - [ ] @axe-core/react
+  - [ ] storybook-addon-a11y
+  - [ ] apca-w3
+  - [ ] luminance-contrast
 - **shadcn/ui関連**:
   - [ ] @base-ui/react-core
   - [ ] @base-ui/react-hooks

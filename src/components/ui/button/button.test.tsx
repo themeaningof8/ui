@@ -14,21 +14,21 @@ describe('Button', () => {
     render(<Button>Click me</Button>)
     const button = screen.getByRole('button', { name: /click me/i })
     expect(button).toBeInTheDocument()
-    expect(button).toHaveClass('bg-primary')
+    expect(button).toHaveClass('bg-accent-solid')
   })
 
   it('renders button with different variants', () => {
     const { rerender } = render(<Button variant="destructive">Destructive</Button>)
     let button = screen.getByRole('button', { name: /destructive/i })
-    expect(button).toHaveClass('bg-destructive')
+    expect(button).toHaveClass('bg-destructive-solid')
 
     rerender(<Button variant="outline">Outline</Button>)
     button = screen.getByRole('button', { name: /outline/i })
-    expect(button).toHaveClass('border-input')
+    expect(button).toHaveClass('border-base-subtle')
 
     rerender(<Button variant="ghost">Ghost</Button>)
     button = screen.getByRole('button', { name: /ghost/i })
-    expect(button).toHaveClass('hover:bg-accent')
+    expect(button).toHaveClass('hover:bg-base-ui')
   })
 
   it('renders button with different sizes', () => {
@@ -70,13 +70,13 @@ describe('Button', () => {
       </Button>
     )
     const link = screen.getByRole('link', { name: /link button/i })
-    expect(link).toHaveClass('bg-primary')
+    expect(link).toHaveClass('bg-accent-solid')
   })
 
   it('applies additional className correctly', () => {
     render(<Button className="custom-class">Custom Button</Button>)
     const button = screen.getByRole('button', { name: /custom button/i })
-    expect(button).toHaveClass('custom-class', 'bg-primary')
+    expect(button).toHaveClass('custom-class', 'bg-accent-solid')
   })
 
   it('is disabled when disabled prop is true', async () => {
