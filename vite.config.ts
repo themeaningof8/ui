@@ -13,32 +13,6 @@ import react from '@vitejs/plugin-react'
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
 export default defineConfig(({ mode }) => ({
-  test: {
-    environment: 'jsdom',
-    globals: true,
-    setupFiles: ['./vitest.setup.ts'],
-    include: ['src/**/*.{test,spec}.{js,jsx,ts,tsx}'],
-    coverage: {
-      provider: 'v8',
-      reporter: ['text', 'json', 'html'],
-      exclude: [
-        'node_modules/',
-        '**/*.d.ts',
-        '**/*.test.{js,jsx,ts,tsx}',
-        '**/*.stories.{js,jsx,ts,tsx}',
-        'dist/**',
-        '.storybook/**',
-        'vite.config.ts',
-        'tailwind.config.ts',
-        'scripts/**'
-      ]
-    },
-    server: {
-      deps: {
-        inline: [/@radix-ui/]
-      }
-    }
-  },
   plugins: [
     tsconfigPaths(),
     tailwindcss(),

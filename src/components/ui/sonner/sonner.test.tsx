@@ -11,10 +11,8 @@ import { toast } from 'sonner'
 import { Toaster } from '.'
 
 describe('Toaster Component', () => {
-  let user: ReturnType<typeof userEvent.setup>
-
   beforeEach(() => {
-    user = userEvent.setup()
+    userEvent.setup()
   })
 
   afterEach(() => {
