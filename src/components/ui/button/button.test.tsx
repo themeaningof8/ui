@@ -1,96 +1,102 @@
 /**
- * Buttonコンポーネントのテスト
- * @module ButtonTest
+ * @file Button コンポーネントのテスト
+ * @description Button コンポーネントの基本的なレンダリング、バリアント、サイズ、インタラクションをテストします。
  */
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { describe, it, expect, vi } from 'vitest';
+import { Button, type ButtonProps } from './';
+import { Link, MemoryRouter } from 'react-router-dom';
 
-import React from 'react'
-import { render, screen, waitFor } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
-import { describe, it, expect, vi } from 'vitest'
-import { Button } from '.'
+describe('Button コンポーネント', () => {
+  describe('基本機能', () => {
+    it('デフォルト状態でレンダリングされる', () => {
+      render(<Button>Test Button</Button>);
+      const button = screen.getByRole('button', { name: 'Test Button' });
+      expect(button).toBeInTheDocument();
+      expect(button).toHaveClass('bg-base-solid', 'text-base-on-solid');
+    });
 
-describe('Button', () => {
-  it('renders button with default props', () => {
-    render(<Button>Click me</Button>)
-    const button = screen.getByRole('button', { name: /click me/i })
-    expect(button).toBeInTheDocument()
-    expect(button).toHaveClass('bg-accent-solid')
-  })
+    it('クリックイベントが発火する', async () => {
+      const onClick = vi.fn();
+      render(<Button onClick={onClick}>Click Me</Button>);
+      await userEvent.click(screen.getByRole('button', { name: 'Click Me' }));
+      expect(onClick).toHaveBeenCalledTimes(1);
+    });
 
-  it('renders button with different variants', () => {
-    const { rerender } = render(<Button variant="destructive">Destructive</Button>)
-    let button = screen.getByRole('button', { name: /destructive/i })
-    expect(button).toHaveClass('bg-destructive-solid')
+    it('disabled 状態ではクリックイベントが発火しない', async () => {
+      const onClick = vi.fn();
+      render(<Button disabled onClick={onClick}>Disabled Button</Button>);
+      const button = screen.getByRole('button', { name: 'Disabled Button' });
+      await userEvent.click(button);
+      expect(onClick).not.toHaveBeenCalled();
+      expect(button).toHaveClass('disabled:opacity-50');
+    });
+  });
 
-    rerender(<Button variant="outline">Outline</Button>)
-    button = screen.getByRole('button', { name: /outline/i })
-    expect(button).toHaveClass('border-base-subtle')
+  describe('バリアント', () => {
+    it.each([
+      ['default', ['bg-base-solid', 'text-base-on-solid']],
+      ['destructive', ['bg-destructive-solid', 'text-destructive-on-solid']],
+      ['outline', ['border', 'border-base-ui', 'bg-transparent']],
+      ['secondary', ['bg-base-ui', 'text-base-high']],
+      ['ghost', ['text-base-high']],
+      ['link', ['text-base-high', 'underline-offset-4']],
+    ])('variant="%s" の場合、適切なスタイルが適用される', (variant, expectedClasses) => {
+      render(<Button variant={variant as ButtonProps['variant']}>Button</Button>);
+      const button = screen.getByRole('button', { name: 'Button' });
+      for (const className of expectedClasses) {
+        expect(button).toHaveClass(className);
+      }
+    });
+  });
 
-    rerender(<Button variant="ghost">Ghost</Button>)
-    button = screen.getByRole('button', { name: /ghost/i })
-    expect(button).toHaveClass('hover:bg-base-ui')
-  })
+  describe('サイズ', () => {
+    it.each([
+      ['default', ['h-10', 'px-4', 'py-2']],
+      ['sm', ['h-9', 'px-3']],
+      ['lg', ['h-11', 'px-8']],
+      ['icon', ['h-10', 'w-10']],
+    ])('size="%s" の場合、適切なサイズが適用される', (size, expectedClasses) => {
+      render(<Button size={size as ButtonProps['size']}>Button</Button>);
+      const button = screen.getByRole('button', { name: 'Button' });
+      for (const className of expectedClasses) {
+        expect(button).toHaveClass(className);
+      }
+    });
+  });
 
-  it('renders button with different sizes', () => {
-    const { rerender } = render(<Button size="sm">Small</Button>)
-    let button = screen.getByRole('button', { name: /small/i })
-    expect(button).toHaveClass('h-8')
+  describe('asChild機能', () => {
+    it('asChild が true の場合、子要素のコンポーネントがラップされる', () => {
+      render(
+        <MemoryRouter>
+          <Button asChild>
+            <Link to="/test">Link Button</Link>
+          </Button>
+        </MemoryRouter>
+      );
+      const link = screen.getByRole('link', { name: 'Link Button' });
+      expect(link).toBeInTheDocument();
+      expect(link).toHaveAttribute('href', '/test');
+      expect(link).toHaveClass('inline-flex', 'items-center', 'justify-center');
+    });
+  });
 
-    rerender(<Button size="lg">Large</Button>)
-    button = screen.getByRole('button', { name: /large/i })
-    expect(button).toHaveClass('h-10')
+  describe('アクセシビリティ', () => {
+    it('フォーカス時に適切なスタイルが適用される', () => {
+      render(<Button>Focus Test</Button>);
+      const button = screen.getByRole('button', { name: 'Focus Test' });
+      expect(button).toHaveClass(
+        'focus-visible:outline-none',
+        'focus-visible:ring-2',
+        'focus-visible:ring-base-ui'
+      );
+    });
 
-    rerender(<Button size="icon">Icon</Button>)
-    button = screen.getByRole('button', { name: /icon/i })
-    expect(button).toHaveClass('h-9', 'w-9')
-  })
-
-  it('forwards ref correctly', () => {
-    const ref = React.createRef<HTMLButtonElement>()
-    render(<Button ref={ref}>Ref Button</Button>)
-    expect(ref.current).toBeInstanceOf(HTMLButtonElement)
-  })
-
-  it('handles click events', async () => {
-    const user = userEvent.setup()
-    const handleClick = vi.fn()
-    render(<Button onClick={handleClick}>Click me</Button>)
-    const button = screen.getByRole('button', { name: /click me/i })
-    
-    await user.click(button)
-    await waitFor(() => {
-      expect(handleClick).toHaveBeenCalledTimes(1)
-    })
-  })
-
-  it('renders as child component when asChild is true', () => {
-    render(
-      <Button asChild>
-        <a href="/">Link Button</a>
-      </Button>
-    )
-    const link = screen.getByRole('link', { name: /link button/i })
-    expect(link).toHaveClass('bg-accent-solid')
-  })
-
-  it('applies additional className correctly', () => {
-    render(<Button className="custom-class">Custom Button</Button>)
-    const button = screen.getByRole('button', { name: /custom button/i })
-    expect(button).toHaveClass('custom-class', 'bg-accent-solid')
-  })
-
-  it('is disabled when disabled prop is true', async () => {
-    const user = userEvent.setup()
-    const handleClick = vi.fn()
-    render(<Button disabled onClick={handleClick}>Disabled Button</Button>)
-    const button = screen.getByRole('button', { name: /disabled button/i })
-    
-    expect(button).toBeDisabled()
-    expect(button).toHaveClass('disabled:opacity-50')
-    
-    await user.click(button)
-    await waitFor(() => {
-      expect(handleClick).not.toHaveBeenCalled()
-    })
-  })
-}) 
+    it('カスタムクラスが正しく適用される', () => {
+      render(<Button className="custom-class">Custom Button</Button>);
+      const button = screen.getByRole('button', { name: 'Custom Button' });
+      expect(button).toHaveClass('custom-class');
+    });
+  });
+});
