@@ -1,68 +1,53 @@
 /**
- * ダイアログコンポーネント
- * @module Dialog
- * @description RadixのDialogをベースにしたダイアログコンポーネント
+ * @file Dialog コンポーネント
+ * @description アクセシブルなダイアログ（モーダル）コンポーネント
+ * 
+ * @example
+ * ```tsx
+ * <Dialog>
+ *   <DialogTrigger>開く</DialogTrigger>
+ *   <DialogContent>
+ *     <DialogHeader>
+ *       <DialogTitle>タイトル</DialogTitle>
+ *       <DialogDescription>説明文</DialogDescription>
+ *     </DialogHeader>
+ *     <div>コンテンツ</div>
+ *     <DialogFooter>
+ *       <DialogClose>閉じる</DialogClose>
+ *     </DialogFooter>
+ *   </DialogContent>
+ * </Dialog>
+ * ```
  */
 
 import * as React from 'react'
 import * as DialogPrimitive from '@radix-ui/react-dialog'
 import { X } from 'lucide-react'
 import { cn } from '@/lib/cn'
-import { tv } from 'tailwind-variants'
 
-const dialogOverlayVariants = tv({
-  base: [
-    'fixed inset-0 z-50',
-    'bg-overlay',
-    'backdrop-blur-sm',
-    'data-[state=open]:animate-in data-[state=closed]:animate-out',
-    'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
-  ],
-})
-
-const dialogContentVariants = tv({
-  base: [
-    'fixed left-[50%] top-[50%] z-50',
-    'grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%]',
-    'gap-4 border bg-base-app p-6 shadow-lg',
-    'duration-200',
-    'data-[state=open]:animate-in data-[state=closed]:animate-out',
-    'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
-    'data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
-    'data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%]',
-    'data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]',
-    'sm:rounded-lg',
-    'border-base-subtle',
-  ],
-})
 
 /**
- * ダイアログのルートコンポーネント
- * @type {React.FC<DialogPrimitive.DialogProps>}
+ * Dialog のルートコンポーネント
  */
 const Dialog = DialogPrimitive.Root
 
 /**
- * ダイアログのトリガーコンポーネント
- * @type {React.FC<DialogPrimitive.DialogTriggerProps>}
+ * Dialog を開くトリガーコンポーネント
  */
 const DialogTrigger = DialogPrimitive.Trigger
 
 /**
- * ダイアログのポータルコンポーネント
- * @type {React.FC<DialogPrimitive.DialogPortalProps>}
- */
-const DialogPortal = DialogPrimitive.Portal
-
-/**
- * ダイアログのクローズコンポーネント
- * @type {React.FC<DialogPrimitive.DialogCloseProps>}
+ * Dialog を閉じるコンポーネント
  */
 const DialogClose = DialogPrimitive.Close
 
 /**
- * ダイアログのオーバーレイコンポーネント
- * @type {React.ForwardRefExoticComponent<DialogPrimitive.DialogOverlayProps>}
+ * Dialog のポータルコンポーネント
+ */
+const DialogPortal = DialogPrimitive.Portal
+
+/**
+ * Dialog のオーバーレイコンポーネント
  */
 const DialogOverlay = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Overlay>,
@@ -70,15 +55,19 @@ const DialogOverlay = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Overlay
     ref={ref}
-    className={cn(dialogOverlayVariants(), className)}
+    className={cn(
+      "fixed inset-0 z-50 bg-black/80",
+      "data-[state=open]:animate-in data-[state=closed]:animate-out",
+      "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+      className
+    )}
     {...props}
   />
 ))
 DialogOverlay.displayName = DialogPrimitive.Overlay.displayName
 
 /**
- * ダイアログのコンテンツコンポーネント
- * @type {React.ForwardRefExoticComponent<DialogPrimitive.DialogContentProps>}
+ * Dialog のコンテンツコンポーネント
  */
 const DialogContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
@@ -88,13 +77,30 @@ const DialogContent = React.forwardRef<
     <DialogOverlay />
     <DialogPrimitive.Content
       ref={ref}
-      className={cn(dialogContentVariants(), className)}
+      className={cn(
+        "fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-base-app p-6 shadow-lg duration-200",
+        "data-[state=open]:animate-in data-[state=closed]:animate-out",
+        "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+        "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
+        "data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%]",
+        "data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]",
+        "sm:rounded-lg",
+        className
+      )}
       {...props}
     >
       {children}
-      <DialogPrimitive.Close className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-base-ui focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-base-ui data-[state=open]:text-base-high">
+      <DialogPrimitive.Close
+        className={cn(
+          "absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity",
+          "hover:opacity-100",
+          "focus:outline-none focus:ring-2 focus:ring-base-ui focus:ring-offset-2",
+          "disabled:pointer-events-none",
+          "data-[state=open]:bg-base-app data-[state=open]:text-base-high"
+        )}
+      >
         <X className="h-4 w-4" />
-        <span className="sr-only">Close</span>
+        <span className="sr-only">閉じる</span>
       </DialogPrimitive.Close>
     </DialogPrimitive.Content>
   </DialogPortal>
@@ -102,8 +108,7 @@ const DialogContent = React.forwardRef<
 DialogContent.displayName = DialogPrimitive.Content.displayName
 
 /**
- * ダイアログのヘッダーコンポーネント
- * @type {React.FC<React.HTMLAttributes<HTMLDivElement>>}
+ * Dialog のヘッダーコンポーネント
  */
 const DialogHeader = ({
   className,
@@ -111,17 +116,16 @@ const DialogHeader = ({
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn(
-      'flex flex-col space-y-1.5 text-center sm:text-left',
+      "flex flex-col space-y-1.5 text-center sm:text-left",
       className
     )}
     {...props}
   />
 )
-DialogHeader.displayName = 'DialogHeader'
+DialogHeader.displayName = "DialogHeader"
 
 /**
- * ダイアログのフッターコンポーネント
- * @type {React.FC<React.HTMLAttributes<HTMLDivElement>>}
+ * Dialog のフッターコンポーネント
  */
 const DialogFooter = ({
   className,
@@ -129,17 +133,16 @@ const DialogFooter = ({
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn(
-      'flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2',
+      "flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2",
       className
     )}
     {...props}
   />
 )
-DialogFooter.displayName = 'DialogFooter'
+DialogFooter.displayName = "DialogFooter"
 
 /**
- * ダイアログのタイトルコンポーネント
- * @type {React.ForwardRefExoticComponent<DialogPrimitive.DialogTitleProps>}
+ * Dialog のタイトルコンポーネント
  */
 const DialogTitle = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Title>,
@@ -147,15 +150,14 @@ const DialogTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Title
     ref={ref}
-    className={cn('text-lg font-semibold text-base-high', className)}
+    className={cn("text-lg font-semibold leading-none tracking-tight", className)}
     {...props}
   />
 ))
 DialogTitle.displayName = DialogPrimitive.Title.displayName
 
 /**
- * ダイアログの説明コンポーネント
- * @type {React.ForwardRefExoticComponent<DialogPrimitive.DialogDescriptionProps>}
+ * Dialog の説明コンポーネント
  */
 const DialogDescription = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Description>,
@@ -163,7 +165,7 @@ const DialogDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Description
     ref={ref}
-    className={cn('text-sm text-base-low', className)}
+    className={cn("text-sm text-base-low", className)}
     {...props}
   />
 ))

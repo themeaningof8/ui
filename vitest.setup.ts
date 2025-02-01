@@ -1,8 +1,10 @@
 /**
- * Vitestのセットアップファイル
- * テスト環境のグローバル設定を行います
+ * @file Vitestのセットアップファイル
+ * @description テスト環境のグローバル設定を行います
  */
-import "@testing-library/jest-dom/vitest";
+import '@testing-library/jest-dom/vitest';
+import { cleanup } from '@testing-library/react';
+import { afterEach } from 'vitest';
 
 // JSDOMにないPointer APIのメソッドをモック実装
 beforeAll(() => {
@@ -24,4 +26,9 @@ beforeAll(() => {
 			// 空の実装
 		};
 	}
+});
+
+// 各テスト後にクリーンアップを実行
+afterEach(() => {
+	cleanup();
 });

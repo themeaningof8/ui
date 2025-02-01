@@ -1,8 +1,7 @@
 /**
- * Dialogコンポーネントのストーリー
- * @module DialogStories
+ * @file Dialog コンポーネントの Storybook ストーリー
+ * @description Dialog コンポーネントの様々な状態とバリエーションを表示します。
  */
-
 import type { Meta, StoryObj } from '@storybook/react'
 import { Button } from '../button'
 import {
@@ -15,6 +14,7 @@ import {
   DialogTrigger,
   DialogOverlay,
   DialogPortal,
+  DialogClose,
 } from '.'
 
 const meta = {
@@ -27,26 +27,115 @@ const meta = {
 } satisfies Meta<typeof Dialog>
 
 export default meta
-type Story = StoryObj<typeof Dialog>
+type Story = StoryObj<typeof meta>
 
+/**
+ * デフォルトの Dialog の表示例です。
+ */
 export const Default: Story = {
   render: () => (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline">Open Dialog</Button>
+        <Button>ダイアログを開く</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Dialog Title</DialogTitle>
+          <DialogTitle>ダイアログのタイトル</DialogTitle>
           <DialogDescription>
-            This is a dialog description. You can put any content here.
+            ダイアログの説明文をここに記述します。ユーザーに対して重要な情報を提供します。
           </DialogDescription>
         </DialogHeader>
         <div className="py-4">
-          Your main content goes here. This can be forms, messages, or any other content.
+          ダイアログのメインコンテンツをここに配置します。
         </div>
         <DialogFooter>
-          <Button type="submit">Save changes</Button>
+          <DialogClose asChild>
+            <Button variant="outline">キャンセル</Button>
+          </DialogClose>
+          <Button type="submit">保存</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  ),
+}
+
+/**
+ * 確認ダイアログの表示例です。
+ */
+export const Confirmation: Story = {
+  render: () => (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="destructive">削除</Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>本当に削除しますか？</DialogTitle>
+          <DialogDescription>
+            この操作は取り消すことができません。削除後、このデータは完全に失われます。
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter>
+          <DialogClose asChild>
+            <Button variant="outline">キャンセル</Button>
+          </DialogClose>
+          <Button variant="destructive">削除する</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  ),
+}
+
+/**
+ * フォーム付きダイアログの表示例です。
+ */
+export const WithForm: Story = {
+  render: () => (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button>新規作成</Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>新規アイテムの作成</DialogTitle>
+          <DialogDescription>
+            新しいアイテムの詳細を入力してください。
+          </DialogDescription>
+        </DialogHeader>
+        <form className="space-y-4 py-4">
+          <div className="space-y-2">
+            <label
+              htmlFor="name"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              名前
+            </label>
+            <input
+              id="name"
+              type="text"
+              className="flex h-10 w-full rounded-md border border-base-ui bg-base-app px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-base-low focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-base-ui focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              placeholder="アイテム名を入力"
+            />
+          </div>
+          <div className="space-y-2">
+            <label
+              htmlFor="description"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              説明
+            </label>
+            <textarea
+              id="description"
+              className="flex min-h-[80px] w-full rounded-md border border-base-ui bg-base-app px-3 py-2 text-sm ring-offset-background placeholder:text-base-low focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-base-ui focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              placeholder="アイテムの説明を入力"
+            />
+          </div>
+        </form>
+        <DialogFooter>
+          <DialogClose asChild>
+            <Button variant="outline">キャンセル</Button>
+          </DialogClose>
+          <Button type="submit">作成</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
@@ -77,49 +166,6 @@ export const WithCustomStyles: Story = {
           </DialogFooter>
         </DialogContent>
       </DialogPortal>
-    </Dialog>
-  ),
-}
-
-export const WithForm: Story = {
-  render: () => (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button>Edit Profile</Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>Edit profile</DialogTitle>
-          <DialogDescription>
-            Make changes to your profile here. Click save when you're done.
-          </DialogDescription>
-        </DialogHeader>
-        <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
-            <label htmlFor="name" className="text-right">
-              Name
-            </label>
-            <input
-              id="name"
-              className="col-span-3 rounded-md border p-2"
-              placeholder="Enter your name"
-            />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <label htmlFor="username" className="text-right">
-              Username
-            </label>
-            <input
-              id="username"
-              className="col-span-3 rounded-md border p-2"
-              placeholder="Enter your username"
-            />
-          </div>
-        </div>
-        <DialogFooter>
-          <Button type="submit">Save changes</Button>
-        </DialogFooter>
-      </DialogContent>
     </Dialog>
   ),
 }

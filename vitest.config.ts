@@ -1,44 +1,20 @@
 /**
- * @file Vitestのメイン設定ファイル
- * @description Vite設定と統合されたテスト設定
+ * @file Vitestの設定ファイル
+ * @description テスト環境の設定を定義します
  */
 import { defineConfig } from 'vitest/config'
 import react from '@vitejs/plugin-react'
-import { resolve } from 'node:path'
+import tsconfigPaths from 'vite-tsconfig-paths'
 
 export default defineConfig({
-  plugins: [react()],
-  resolve: {
-    alias: {
-      '@': resolve(__dirname, './src'),
-      '@components': resolve(__dirname, './src/components'),
-      '@lib': resolve(__dirname, './src/lib'),
-    }
-  },
+  plugins: [react(), tsconfigPaths()],
   test: {
-    globals: true,
     environment: 'jsdom',
+    globals: true,
     setupFiles: ['./vitest.setup.ts'],
-    include: ['src/**/*.test.{js,jsx,ts,tsx}'],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
-      exclude: [
-        'node_modules/',
-        '**/*.d.ts',
-        '**/*.test.{js,jsx,ts,tsx}',
-        '**/*.stories.{js,jsx,ts,tsx}',
-        'dist/**',
-        '.storybook/**',
-        'vite.config.ts',
-        'tailwind.config.ts',
-        'scripts/**'
-      ]
     },
-    server: {
-      deps: {
-        inline: [/@radix-ui/]
-      }
-    }
   }
 }) 
