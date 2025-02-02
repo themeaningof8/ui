@@ -5,7 +5,7 @@
 import "@testing-library/jest-dom/vitest";
 import { cleanup } from "@testing-library/react";
 import { afterEach, beforeAll, beforeEach } from "vitest";
-import { checkWCAG3Metrics, reportWCAG3Results } from "./src/tests/wcag3";
+import { testBasicAccessibility, testWCAG3Compliance, testKeyboardInteraction } from "./src/tests/wcag3/helpers";
 
 // JSDOMにないPointer APIのメソッドをモック実装
 beforeAll(() => {
@@ -49,8 +49,8 @@ beforeAll(() => {
 // 各テスト前にWCAG 3.0メトリクスのレポート機能を設定
 beforeEach((context) => {
 	// テストコンテキストにWCAG 3.0メトリクスチェック関数を追加
-	context.checkWCAG3 = checkWCAG3Metrics;
-	context.reportWCAG3 = reportWCAG3Results;
+	context.checkWCAG3 = testWCAG3Compliance;
+	context.reportWCAG3 = testBasicAccessibility;
 });
 
 // 各テスト後にクリーンアップを実行
@@ -96,11 +96,9 @@ global.IntersectionObserver = MockIntersectionObserver as unknown as typeof Inte
 global.MutationObserver = MockMutationObserver as unknown as typeof MutationObserver;
 
 // WCAG 3.0メトリクスのグローバル型定義
-declare global {
-	namespace Vi {
-		interface TestContext {
-			checkWCAG3: typeof checkWCAG3Metrics;
-			reportWCAG3: typeof reportWCAG3Results;
-		}
+declare module "vitest" {
+	interface TestContext {
+		checkWCAG3: typeof testWCAG3Compliance;
+		reportWCAG3: typeof testBasicAccessibility;
 	}
 }
