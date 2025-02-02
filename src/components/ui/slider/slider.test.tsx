@@ -9,16 +9,6 @@ import { describe, expect, it, vi } from 'vitest'
 
 import { Slider } from '.'
 
-// ResizeObserverのモック
-class ResizeObserverMock {
-  observe() {}
-  unobserve() {}
-  disconnect() {}
-}
-
-// グローバルにResizeObserverを定義
-global.ResizeObserver = ResizeObserverMock
-
 describe('Slider', () => {
   it('デフォルト値が正しく設定されること', () => {
     render(<Slider defaultValue={[50]} />)

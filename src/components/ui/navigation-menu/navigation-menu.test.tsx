@@ -15,16 +15,6 @@ import {
   NavigationMenuLink,
 } from '.'
 
-// ResizeObserverのモック
-class ResizeObserverMock {
-  observe() {}
-  unobserve() {}
-  disconnect() {}
-}
-
-// グローバルにResizeObserverを定義
-global.ResizeObserver = ResizeObserverMock
-
 describe('NavigationMenu', () => {
   it('トリガーをクリックするとメニューが表示されること', async () => {
     render(
