@@ -87,7 +87,13 @@ const cardFooterVariants = tv({
  * Card コンポーネント
  */
 export function Card({ className, ...props }: CardProps) {
-	return <div className={cn(cardVariants(), className)} {...props} />;
+	return (
+		<div
+			role="article"
+			className={cn(cardVariants(), className)}
+			{...props}
+		/>
+	);
 }
 
 /**
