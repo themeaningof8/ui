@@ -5,11 +5,12 @@
 import { render, screen, waitFor, act } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { Avatar, AvatarImage, AvatarFallback, type AvatarProps } from '@/components/ui/avatar';
+import { testBasicAccessibility } from '@/tests/wcag3/helpers';
 
 describe('Avatar コンポーネント', () => {
   describe('基本機能', () => {
     it('デフォルト状態でレンダリングされる', () => {
-      render(<Avatar>
+      render(<Avatar alt="Test Avatar">
         <AvatarImage src="test.jpg" alt="Test Avatar" />
         <AvatarFallback>TA</AvatarFallback>
       </Avatar>);
@@ -20,7 +21,7 @@ describe('Avatar コンポーネント', () => {
     });
 
     it('カスタムクラスが適用される', () => {
-      const { container } = render(<Avatar className="custom-class" />);
+      const { container } = render(<Avatar alt="Test Avatar" className="custom-class" />);
       const avatar = container.querySelector('div[class*="custom-class"]');
       expect(avatar).toHaveClass('custom-class');
     });
@@ -32,7 +33,7 @@ describe('Avatar コンポーネント', () => {
       ['default', ['h-10', 'w-10']],
       ['lg', ['h-12', 'w-12']],
     ])('size="%s" の場合、適切なサイズが適用される', (size, expectedClasses) => {
-      const { container } = render(<Avatar size={size as AvatarProps['size']} />);
+      const { container } = render(<Avatar alt="Test Avatar" size={size as AvatarProps['size']} />);
       const avatar = container.firstElementChild;
       expect(avatar).not.toBeNull();
       for (const className of expectedClasses) {
@@ -90,7 +91,7 @@ describe('Avatar コンポーネント', () => {
   describe('AvatarFallback', () => {
     it('指定した遅延後にフォールバックが表示される', async () => {
       render(
-        <Avatar>
+        <Avatar alt="Test Avatar">
           <AvatarFallback delayMs={100}>TA</AvatarFallback>
         </Avatar>
       );
@@ -113,5 +114,106 @@ describe('Avatar コンポーネント', () => {
       const fallback = await screen.findByText('TA');
       expect(fallback).toHaveClass('custom-fallback');
     });
+
+    it('フォールバックのコントラスト比が適切である', async () => {
+      const { container } = render(
+        <Avatar alt="Test Avatar">
+          <AvatarFallback delayMs={0}>TA</AvatarFallback>
+        </Avatar>
+      );
+
+      // フォールバックのテキストを待機
+      const fallbackText = await screen.findByText('TA');
+
+      // Avatar要素のスタイルをテスト
+      const avatarRoot = container.firstElementChild;
+      expect(avatarRoot).toHaveClass('bg-base-ui', 'text-base-high');
+
+      // フォールバック要素のスタイルをテスト
+      const fallbackElement = fallbackText.closest('div[class*="flex h-full w-full"]');
+      expect(fallbackElement).not.toBeNull();
+      expect(fallbackElement).toHaveClass(
+        'flex',
+        'h-full',
+        'w-full',
+        'items-center',
+        'justify-center',
+        'rounded-full',
+        'bg-base-ui',
+        'font-medium',
+        'text-base-high'
+      );
+    });
+  });
+
+  describe('アクセシビリティ', () => {
+    describe('WCAG 3.0メトリクス', () => {
+      it('適切なサイズと間隔が設定されている', () => {
+        render(
+          <Avatar alt="Test Avatar">
+            <AvatarImage src="test.jpg" alt="Test Avatar" />
+            <AvatarFallback>TA</AvatarFallback>
+          </Avatar>
+        );
+
+        const avatar = screen.getByRole('img').parentElement;
+        expect(avatar).toHaveClass('h-10', 'w-10');
+        expect(avatar).toHaveClass('rounded-full');
+      });
+
+      it('画像に適切なアスペクト比が設定されている', () => {
+        render(
+          <Avatar alt="Test Avatar">
+            <AvatarImage src="test.jpg" alt="Test Avatar" />
+            <AvatarFallback>TA</AvatarFallback>
+          </Avatar>
+        );
+
+        const img = screen.getByRole('img');
+        expect(img).toHaveClass('aspect-square');
+      });
+
+      it('フォールバックのコントラスト比が適切である', async () => {
+        const { container } = render(
+          <Avatar alt="Test Avatar">
+            <AvatarFallback delayMs={0}>TA</AvatarFallback>
+          </Avatar>
+        );
+
+        // フォールバックのテキストを待機
+        const fallbackText = await screen.findByText('TA');
+
+        // Avatar要素のスタイルをテスト
+        const avatarRoot = container.firstElementChild;
+        expect(avatarRoot).toHaveClass('bg-base-ui', 'text-base-high');
+
+        // フォールバック要素のスタイルをテスト
+        const fallbackElement = fallbackText.closest('div[class*="flex h-full w-full"]');
+        expect(fallbackElement).not.toBeNull();
+        expect(fallbackElement).toHaveClass(
+          'flex',
+          'h-full',
+          'w-full',
+          'items-center',
+          'justify-center',
+          'rounded-full',
+          'bg-base-ui',
+          'font-medium',
+          'text-base-high'
+        );
+      });
+    });
+
+    // 基本的なアクセシビリティテスト
+    testBasicAccessibility(
+      <Avatar alt="Test Avatar">
+        <AvatarImage src="test.jpg" alt="Test Avatar" />
+        <AvatarFallback>TA</AvatarFallback>
+      </Avatar>,
+      {
+        expectedRole: 'img',
+        testDisabled: false,
+      }
+    );
   });
 }); 
