@@ -12,8 +12,25 @@ describe('アコーディオン', () => {
   const TestAccordion = (
     <Accordion type="single" collapsible>
       <AccordionItem value="item-1">
-        <AccordionTrigger>テスト</AccordionTrigger>
-        <AccordionContent>コンテンツ</AccordionContent>
+        <AccordionTrigger>テスト1</AccordionTrigger>
+        <AccordionContent>コンテンツ1</AccordionContent>
+      </AccordionItem>
+    </Accordion>
+  )
+
+  const TestAccordionMultiple = (
+    <Accordion type="single" collapsible>
+      <AccordionItem value="item-1">
+        <AccordionTrigger>テスト1</AccordionTrigger>
+        <AccordionContent>コンテンツ1</AccordionContent>
+      </AccordionItem>
+      <AccordionItem value="item-2">
+        <AccordionTrigger>テスト2</AccordionTrigger>
+        <AccordionContent>コンテンツ2</AccordionContent>
+      </AccordionItem>
+      <AccordionItem value="item-3">
+        <AccordionTrigger>テスト3</AccordionTrigger>
+        <AccordionContent>コンテンツ3</AccordionContent>
       </AccordionItem>
     </Accordion>
   )
@@ -43,10 +60,10 @@ describe('アコーディオン', () => {
   })
 
   describe('アコーディオントリガー', () => {
-    const TestTriggerWrapper = (
+    const wrapTrigger = (trigger: React.ReactElement) => (
       <Accordion type="single" collapsible>
-        <AccordionItem value="item-1">
-          <AccordionTrigger>テスト</AccordionTrigger>
+        <AccordionItem value="item-1" disabled={(trigger.props as { disabled?: boolean }).disabled}>
+          {trigger}
           <AccordionContent>コンテンツ</AccordionContent>
         </AccordionItem>
       </Accordion>
@@ -57,15 +74,17 @@ describe('アコーディオン', () => {
       expectedRole: 'button',
       testDisabled: true,
       useDataDisabled: true,
+      wrapper: wrapTrigger,
     })
 
     // WCAG 3.0メトリクスのコンプライアンステスト
-    testWCAG3Compliance(TestTriggerWrapper)
+    testWCAG3Compliance(TestAccordion)
 
     // キーボード操作のテスト
-    testKeyboardInteraction(TestTriggerWrapper, {
+    testKeyboardInteraction(TestAccordionMultiple, {
       expectedRole: 'button',
       triggerKeys: [' ', 'Enter'],
+      isAccordion: true,
     })
   })
 }) 

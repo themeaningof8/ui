@@ -18,6 +18,7 @@ export const testBasicAccessibility = (
 		expectedRole,
 		testDisabled = true,
 		useDataDisabled = false,
+		wrapper,
 	}: {
 		/** 期待されるARIAロール */
 		expectedRole: string;
@@ -25,11 +26,13 @@ export const testBasicAccessibility = (
 		testDisabled?: boolean;
 		/** data-disabled属性を使用するかどうか（Radix UI用） */
 		useDataDisabled?: boolean;
+		/** コンポーネントをラップするための関数 */
+		wrapper?: (component: ReactElement) => ReactElement;
 	},
 ) => {
 	describe("基本機能", () => {
 		it("正しいロールが設定されている", async () => {
-			render(component);
+			render(wrapper ? wrapper(component) : component);
 			// アコーディオンコンテンツの場合、開いた状態でのみregionロールが取得できる
 			if (expectedRole === "region") {
 				const trigger = screen.getByRole("button");
@@ -40,8 +43,8 @@ export const testBasicAccessibility = (
 
 		if (testDisabled) {
 			it("無効化状態が適切に設定される", () => {
-				const { rerender } = render(component);
-				const element = screen.getByRole("button");
+				const { rerender } = render(wrapper ? wrapper(component) : component);
+				const element = screen.getByRole(expectedRole);
 				
 				// 初期状態の確認
 				if (useDataDisabled) {
@@ -52,7 +55,7 @@ export const testBasicAccessibility = (
 
 				// disabledプロパティを持つ新しいコンポーネントを再レンダリング
 				const props = { disabled: true };
-				rerender(React.cloneElement(component, props));
+				rerender(wrapper ? wrapper(React.cloneElement(component, props)) : React.cloneElement(component, props));
 
 				// 無効化状態の確認
 				if (useDataDisabled) {
@@ -69,15 +72,23 @@ export const testBasicAccessibility = (
  * WCAG 3.0メトリクスのコンプライアンステストを実行します
  * @param component テスト対象のコンポーネント
  */
-export const testWCAG3Compliance = (component: ReactElement) => {
+export const testWCAG3Compliance = (
+	component: ReactElement,
+	{
+		wrapper,
+	}: {
+		/** コンポーネントをラップするための関数 */
+		wrapper?: (component: ReactElement) => ReactElement;
+	} = {},
+) => {
 	describe("WCAG 3.0メトリクス", () => {
 		it("コントラスト比が適切である", () => {
-			render(component);
+			render(wrapper ? wrapper(component) : component);
 			// コントラスト比のチェックはWCAG3メトリクスで実装
 		});
 
 		it("フォーカスインジケータが視認できる", () => {
-			render(component);
+			render(wrapper ? wrapper(component) : component);
 			const element = screen.getByRole("button");
 			element.focus();
 			expect(element).toHaveClass("focus-visible:outline-none");
@@ -87,7 +98,7 @@ export const testWCAG3Compliance = (component: ReactElement) => {
 		});
 
 		it("インタラクティブな要素のサイズが適切である", () => {
-			render(component);
+			render(wrapper ? wrapper(component) : component);
 			const element = screen.getByRole("button");
 
 			// JSDOM環境ではレイアウト計算が正しく行われないため、
@@ -115,6 +126,7 @@ export const testKeyboardInteraction = (
 		expectedRole,
 		triggerKeys = [" ", "Enter"],
 		isAccordion = false,
+		wrapper,
 	}: {
 		/** 期待されるARIAロール */
 		expectedRole: string;
@@ -122,35 +134,43 @@ export const testKeyboardInteraction = (
 		triggerKeys?: string[];
 		/** アコーディオンコンポーネントかどうか */
 		isAccordion?: boolean;
+		/** コンポーネントをラップするための関数 */
+		wrapper?: (component: ReactElement) => ReactElement;
 	},
 ) => {
 	describe("キーボード操作", () => {
 		const user = userEvent.setup();
 
 		it("Tabキーでフォーカスできる", async () => {
-			render(component);
-			const element = screen.getByRole("button");
+			render(wrapper ? wrapper(component) : component);
+			const elements = screen.getAllByRole(expectedRole);
+			const firstElement = elements[0];
 
 			await user.tab();
-			expect(element).toHaveFocus();
+			expect(firstElement).toHaveFocus();
 		});
 
-		for (const key of triggerKeys) {
-			it(`${key}キーで操作できる`, async () => {
-				const onKeyDown = vi.fn();
-				const props = { onKeyDown };
-				const { rerender } = render(React.cloneElement(component, props));
+		if (triggerKeys.length > 0) {
+			for (const key of triggerKeys) {
+				it(`${key}キーで操作できる`, async () => {
+					const onKeyDown = vi.fn();
+					const props = { onKeyDown };
+					const { rerender } = render(
+						wrapper ? wrapper(React.cloneElement(component, props)) : React.cloneElement(component, props)
+					);
 
-				const element = screen.getByRole("button");
-				await user.tab();
-				await user.keyboard(key);
-				expect(onKeyDown).toHaveBeenCalled();
-			});
+					const elements = screen.getAllByRole(expectedRole);
+					const firstElement = elements[0];
+					await user.tab();
+					await user.keyboard(key);
+					expect(onKeyDown).toHaveBeenCalled();
+				});
+			}
 		}
 
 		if (isAccordion) {
 			it("矢印キーで適切にフォーカス移動できる", async () => {
-				render(component);
+				render(wrapper ? wrapper(component) : component);
 				const triggers = screen.getAllByRole("button");
 				
 				// 最初のトリガーにフォーカス
@@ -175,7 +195,7 @@ export const testKeyboardInteraction = (
 			});
 
 			it("適切なARIA属性が設定されている", () => {
-				render(component);
+				render(wrapper ? wrapper(component) : component);
 				const triggers = screen.getAllByRole("button");
 				
 				for (const trigger of triggers) {

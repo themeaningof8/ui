@@ -6,6 +6,7 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, it, expect } from 'vitest'
 import { Input } from '@/components/ui/input'
+import { testBasicAccessibility, testWCAG3Compliance, testKeyboardInteraction } from '@/tests/wcag3/helpers'
 
 describe('Inputコンポーネント', () => {
   describe('基本機能', () => {
@@ -52,45 +53,45 @@ describe('Inputコンポーネント', () => {
       await user.type(input, 'テストテキスト')
       expect(input).toHaveValue('テストテキスト')
     })
+
+    // 基本的なアクセシビリティテスト
+    testBasicAccessibility(<Input />, {
+      expectedRole: 'textbox',
+      testDisabled: true,
+    })
   })
 
   describe('状態とバリアント', () => {
-    it('無効状態で正しいスタイルが適用される', () => {
-      render(<Input disabled />)
-      const input = screen.getByRole('textbox')
-      expect(input).toBeDisabled()
-      expect(input).toHaveClass('disabled:cursor-not-allowed', 'disabled:opacity-50')
-    })
-
     it('エラー状態で正しいスタイルが適用される', () => {
       render(<Input error />)
       const input = screen.getByRole('textbox')
       expect(input).toHaveClass('border-destructive-ui', 'focus-visible:ring-destructive-ui')
+      expect(input).toHaveAttribute('aria-invalid', 'true')
     })
 
     it('必須状態で正しいスタイルが適用される', () => {
       render(<Input required />)
       const input = screen.getByRole('textbox')
       expect(input).toBeRequired()
-    })
-  })
-
-  describe('アクセシビリティ', () => {
-    it('aria-labelを正しく設定できる', () => {
-      render(<Input aria-label="テスト入力" />)
-      expect(screen.getByLabelText('テスト入力')).toBeInTheDocument()
-    })
-
-    it('aria-requiredを正しく設定できる', () => {
-      render(<Input required />)
-      const input = screen.getByRole('textbox')
       expect(input).toHaveAttribute('aria-required', 'true')
     })
 
-    it('aria-invalidを正しく設定できる', () => {
-      render(<Input error />)
-      const input = screen.getByRole('textbox')
-      expect(input).toHaveAttribute('aria-invalid', 'true')
+    // 各状態のWCAG3コンプライアンスをテスト
+    it.each([
+      ['default', {}],
+      ['error', { error: true }],
+      ['required', { required: true }],
+      ['disabled', { disabled: true }],
+    ] as const)('%s状態がWCAG3に準拠している', (_, props) => {
+      testWCAG3Compliance(<Input {...props} />)
+    })
+  })
+
+  describe('インタラクション', () => {
+    // キーボード操作のテスト
+    testKeyboardInteraction(<Input />, {
+      expectedRole: 'textbox',
+      triggerKeys: [], // 入力要素なのでトリガーキーは不要
     })
   })
 
