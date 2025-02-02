@@ -78,7 +78,29 @@ describe('アコーディオン', () => {
     })
 
     // WCAG 3.0メトリクスのコンプライアンステスト
-    testWCAG3Compliance(TestAccordion)
+    testWCAG3Compliance(<AccordionTrigger>テスト</AccordionTrigger>, {
+      expectedRole: "button",
+      focusClasses: {
+        outline: "focus-visible:outline-none",
+        ring: "focus-visible:ring-2",
+        ringColor: "focus-visible:ring-accent-solid",
+        ringOffset: "focus-visible:ring-offset-2",
+      },
+      sizeClasses: {
+        height: "h-12",
+        width: "w-full",
+        padding: ["px-2", "py-4"],
+        layout: ["flex", "items-center", "justify-between"],
+      },
+      wrapper: (trigger) => (
+        <Accordion type="single">
+          <AccordionItem value="test">
+            {trigger}
+            <AccordionContent>テストコンテンツ</AccordionContent>
+          </AccordionItem>
+        </Accordion>
+      ),
+    })
 
     // キーボード操作のテスト
     testKeyboardInteraction(TestAccordionMultiple, {
