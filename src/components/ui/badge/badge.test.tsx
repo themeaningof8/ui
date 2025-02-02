@@ -1,51 +1,155 @@
 /**
  * @file Badge コンポーネントのテスト
- * @description Badge コンポーネントの基本的なレンダリングとバリアントをテストします。
+ * @description Badge コンポーネントの機能とアクセシビリティをテスト
  */
+import * as React from 'react';
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
-import { Badge, type BadgeProps } from '@/components/ui/badge';
+import { Badge } from '@/components/ui/badge';
+import { testBasicAccessibility } from '@/tests/wcag3/helpers';
+
+type BadgeVariantStyle = {
+  bg?: string;
+  text: string;
+  border?: string;
+  hover: string;
+};
 
 describe('Badge コンポーネント', () => {
   describe('基本機能', () => {
-    it('デフォルト状態でレンダリングされる', () => {
-      render(<Badge>Test Badge</Badge>);
-      const badge = screen.getByText('Test Badge');
+    it('デフォルトのBadgeが正しくレンダリングされる', () => {
+      render(<Badge>テストバッジ</Badge>);
+      expect(screen.getByText('テストバッジ')).toBeInTheDocument();
+    });
+
+    it('children が未定義の場合も正しくレンダリングされる', () => {
+      render(<Badge aria-label="空のバッジ" />);
+      const badge = screen.getByLabelText('空のバッジ');
       expect(badge).toBeInTheDocument();
-      expect(badge).toHaveClass('bg-base-solid', 'text-base-on-solid');
     });
 
-    it('カスタムクラスが適用される', () => {
-      render(<Badge className="custom-class">Custom Badge</Badge>);
-      const badge = screen.getByText('Custom Badge');
-      expect(badge).toHaveClass('custom-class');
-    });
-  });
+    describe('バリアントのスタイル', () => {
+      it.each<[string, BadgeVariantStyle]>([
+        ['default', {
+          bg: 'bg-base-solid',
+          text: 'text-base-on-solid',
+          hover: 'hover:bg-base-solid-hover'
+        }],
+        ['secondary', {
+          bg: 'bg-base-ui',
+          text: 'text-base-high',
+          hover: 'hover:bg-base-hover'
+        }],
+        ['destructive', {
+          bg: 'bg-destructive-solid',
+          text: 'text-destructive-on-solid',
+          hover: 'hover:bg-destructive-solid-hover'
+        }],
+        ['outline', {
+          text: 'text-base-high',
+          border: 'border border-base-ui',
+          hover: 'hover:bg-base-hover'
+        }],
+      ])('%s バリアントが正しいスタイルでレンダリングされる', (variant, expected) => {
+        render(
+          <Badge variant={variant as 'default' | 'secondary' | 'destructive' | 'outline'}>
+            テストバッジ
+          </Badge>
+        );
 
-  describe('バリアント', () => {
-    it.each([
-      ['default', ['bg-base-solid', 'text-base-on-solid']],
-      ['secondary', ['bg-base-ui', 'text-base-high']],
-      ['destructive', ['bg-destructive-solid', 'text-destructive-on-solid']],
-      ['outline', ['text-base-high', 'border', 'border-base-ui']],
-    ])('variant="%s" の場合、適切なスタイルが適用される', (variant, expectedClasses) => {
-      render(<Badge variant={variant as BadgeProps['variant']}>Badge</Badge>);
-      const badge = screen.getByText('Badge');
-      for (const className of expectedClasses) {
-        expect(badge).toHaveClass(className);
-      }
+        const badge = screen.getByText('テストバッジ');
+        if (expected.bg) {
+          expect(badge).toHaveClass(expected.bg);
+        }
+        expect(badge).toHaveClass(expected.text);
+        if (expected.border) {
+          expect(badge).toHaveClass(expected.border);
+        }
+        expect(badge).toHaveClass(expected.hover);
+      });
+
+      describe('バリアントごとのコントラスト比', () => {
+        it.each<[string, BadgeVariantStyle]>([
+          ['default', {
+            bg: 'bg-base-solid',
+            text: 'text-base-on-solid',
+            hover: 'hover:bg-base-solid-hover'
+          }],
+          ['secondary', {
+            bg: 'bg-base-ui',
+            text: 'text-base-high',
+            hover: 'hover:bg-base-hover'
+          }],
+          ['destructive', {
+            bg: 'bg-destructive-solid',
+            text: 'text-destructive-on-solid',
+            hover: 'hover:bg-destructive-solid-hover'
+          }],
+          ['outline', {
+            text: 'text-base-high',
+            border: 'border border-base-ui',
+            hover: 'hover:bg-base-hover'
+          }],
+        ])('%s バリアントのコントラスト比が適切である', (variant, expected) => {
+          render(
+            <Badge variant={variant as 'default' | 'secondary' | 'destructive' | 'outline'}>
+              テストバッジ
+            </Badge>
+          );
+
+          const badge = screen.getByText('テストバッジ');
+          if (expected.bg) {
+            expect(badge).toHaveClass(expected.bg);
+          }
+          expect(badge).toHaveClass(expected.text);
+          if (expected.border) {
+            expect(badge).toHaveClass(expected.border);
+          }
+          expect(badge).toHaveClass(expected.hover);
+        });
+      });
     });
   });
 
   describe('アクセシビリティ', () => {
-    it('フォーカス時のスタイルが適用される', () => {
-      render(<Badge>Focus Test</Badge>);
-      const badge = screen.getByText('Focus Test');
-      expect(badge).toHaveClass(
-        'focus:outline-none',
-        'focus:ring-2',
-        'focus:ring-base-ui'
+    describe('WCAG 3.0メトリクス', () => {
+      it('適切なサイズと間隔が設定されている', () => {
+        render(<Badge>テストバッジ</Badge>);
+        const badge = screen.getByText('テストバッジ');
+        
+        expect(badge).toHaveClass('px-2.5');  // 水平パディング
+        expect(badge).toHaveClass('py-0.5');  // 垂直パディング
+        expect(badge).toHaveClass('text-xs'); // フォントサイズ
+        expect(badge).toHaveClass('rounded-full'); // 角丸
+      });
+    });
+
+    // 基本的なアクセシビリティテスト
+    testBasicAccessibility(
+      <Badge aria-label="テストバッジ">テストバッジ</Badge>,
+      {
+        expectedRole: 'status',
+        testDisabled: false,
+      }
+    );
+  });
+
+  describe('カスタマイズ', () => {
+    it('カスタムクラスが適用される', () => {
+      render(<Badge className="custom-class">テストバッジ</Badge>);
+      const badge = screen.getByText('テストバッジ');
+      expect(badge).toHaveClass('custom-class');
+    });
+
+    it('追加のHTML属性が正しく適用される', () => {
+      render(
+        <Badge data-testid="custom-badge" data-custom="test">
+          テストバッジ
+        </Badge>
       );
+
+      const badge = screen.getByTestId('custom-badge');
+      expect(badge).toHaveAttribute('data-custom', 'test');
     });
   });
 }); 

@@ -17,7 +17,7 @@ import { cn } from "@/lib/cn";
 /**
  * Badge のバリアントを定義
  */
-export interface BadgeProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
 	/**
 	 * バッジのスタイルバリアント
 	 * @default "default"
@@ -49,8 +49,15 @@ const badgeVariants = tv({
  * @param props - コンポーネントのプロパティ
  * @returns Badge コンポーネント
  */
-export function Badge({ className, variant, ...props }: BadgeProps) {
+export function Badge({ className, variant, children, ...props }: BadgeProps) {
 	return (
-		<div className={cn(badgeVariants({ variant }), className)} {...props} />
+		<span
+			role="status"
+			aria-label={typeof children === 'string' ? children : undefined}
+			className={cn(badgeVariants({ variant }), className)}
+			{...props}
+		>
+			{children}
+		</span>
 	);
 }
