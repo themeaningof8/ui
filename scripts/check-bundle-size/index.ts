@@ -27,24 +27,29 @@ export function getFileSize(filePath: string): number {
 /**
  * @async
  * @function checkBundleSize
- * @description dist/assets 内のアセットファイルのサイズをチェックする
+ * @description dist ディレクトリ内のビルド成果物のサイズをチェックする
  *              ・総サイズ、個別チャンク、前回統計との増加率の各条件を検証し、条件に合致しない場合は process.exit(1) を実行する
  * @throws 例外発生時、詳細なエラーメッセージを出力した上で process.exit(1) によりプロセスを終了する
  */
 async function checkBundleSize() {
 	try {
 		const distDir = path.resolve(process.cwd(), "dist");
-		const assetsDir = path.resolve(distDir, "assets");
 
-		// アセットファイルの一覧を取得
-		const files = fs.readdirSync(assetsDir);
-		const assets = files.map((file) => ({
-			name: file,
-			path: path.resolve(assetsDir, file),
-			size: getFileSize(path.resolve(assetsDir, file)),
-		}));
+		if (!fs.existsSync(distDir)) {
+			throw new Error(`ビルド出力ディレクトリが見つかりません: ${distDir}`);
+		}
 
-		// JavaScriptファイルのみを抽出
+		// ビルド成果物の一覧を取得
+		const files = fs.readdirSync(distDir);
+		const assets = files
+			.filter(file => file.endsWith('.js') || file.endsWith('.css'))
+			.map((file) => ({
+				name: file,
+				path: path.resolve(distDir, file),
+				size: getFileSize(path.resolve(distDir, file)),
+			}));
+
+		// JavaScriptファイルとCSSファイルを分類
 		const jsAssets = assets.filter((asset) => asset.name.endsWith(".js"));
 		const cssAssets = assets.filter((asset) => asset.name.endsWith(".css"));
 
@@ -125,10 +130,10 @@ async function checkBundleSize() {
 
 		console.log("\nBundle size check completed successfully");
 	} catch (error) {
-    const errorMessage = error instanceof Error ? error.message : String(error);
-    console.error(`Error analyzing bundle size: ${errorMessage}`);
-    process.exit(1);
-  }
+		const errorMessage = error instanceof Error ? error.message : String(error);
+		console.error(`Error analyzing bundle size: ${errorMessage}`);
+		process.exit(1);
+	}
 }
 
 // デフォルトエクスポートも追加（必要に応じテスト側で default インポート可能に）
@@ -136,5 +141,5 @@ export default checkBundleSize;
 
 // モジュールが直接実行された場合のみ checkBundleSize() を実行
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  checkBundleSize();
+	checkBundleSize();
 }

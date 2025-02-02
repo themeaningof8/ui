@@ -4,7 +4,7 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react'
-import { Button } from '.'
+import { Button } from '@/components/ui/button'
 
 const meta = {
   title: 'UI/Button',

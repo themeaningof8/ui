@@ -42,6 +42,34 @@
   - [ ] GitHub Actionsワークフロー
   - [ ] Chromaticスナップショット管理
 
+### 4.3 コンポーネント構成
+- **ディレクトリ構造**:
+  ```
+  src/components/ui/[component-name]/
+  ├── index.tsx             # メインコンポーネント
+  ├── [component-name].test.tsx  # テストファイル
+  └── [component-name].stories.tsx  # Storybookファイル
+  ```
+- **命名規則**:
+  - ファイル名: ケバブケース
+  - コンポーネント名: パスカルケース
+  - 内部変数: キャメルケース
+- **必須ファイル**:
+  - [ ] メインコンポーネント（index.tsx）
+  - [ ] JSDoc形式のコメント
+  - [ ] テストファイル（カバレッジ80%以上）
+  - [ ] Storybookファイル（基本・バリエーション・エッジケース）
+- **インポート規則**:
+  - エイリアスの使用を必須とする（相対パス禁止）
+  - 基本エイリアス:
+    - `@/components/*`: コンポーネント
+    - `@/lib/*`: ユーティリティ関数
+    - `@/styles/*`: スタイル関連
+    - `@/types/*`: 型定義
+    - `@/hooks/*`: カスタムフック
+    - `@/constants/*`: 定数
+  - 例: `import { Button } from '@/components/ui/button';`
+
 ## 5. UI/UXガイドライン
 ### 5.1 デザインシステム
 - **カラーパレット**:

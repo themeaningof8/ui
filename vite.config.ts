@@ -40,7 +40,7 @@ export default defineConfig(({ mode }) => ({
     target: 'esnext',
     minify: 'esbuild',
     cssMinify: true,
-    sourcemap: mode === 'development',
+    sourcemap: mode === 'development' || mode === 'analyze',
     reportCompressedSize: true,
     chunkSizeWarningLimit: 500,
     lib: {
