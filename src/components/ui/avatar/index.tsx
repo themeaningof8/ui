@@ -4,10 +4,14 @@
  * 
  * @example
  * ```tsx
+ * // コンポーネントベースの使用法
  * <Avatar>
  *   <AvatarImage src="https://example.com/avatar.jpg" alt="ユーザー名" />
  *   <AvatarFallback>UN</AvatarFallback>
  * </Avatar>
+ * 
+ * // プロパティベースの使用法
+ * <Avatar src="https://example.com/avatar.jpg" fallback="UN" />
  * ```
  */
 
@@ -24,6 +28,18 @@ export interface AvatarProps extends React.HTMLAttributes<HTMLDivElement> {
    * @default "default"
    */
   size?: 'sm' | 'default' | 'lg';
+  /**
+   * 画像のURL
+   */
+  src?: string;
+  /**
+   * 画像の代替テキスト（必須）
+   */
+  alt: string;
+  /**
+   * フォールバックの内容
+   */
+  fallback?: string;
 }
 
 /**
@@ -35,7 +51,7 @@ export interface AvatarImageProps extends React.ImgHTMLAttributes<HTMLImageEleme
    */
   onLoadingStatusChange?: (status: 'loading' | 'loaded' | 'error') => void;
   /**
-   * 画像の代替テキスト
+   * 画像の代替テキスト（必須）
    */
   alt: string;
 }
@@ -82,16 +98,53 @@ const avatarFallbackVariants = tv({
 /**
  * Avatar コンポーネント
  */
-export function Avatar({ className, size, ...props }: AvatarProps) {
+export function Avatar({
+  className,
+  size,
+  src,
+  alt,
+  fallback,
+  children,
+  ...props
+}: AvatarProps) {
+  const [status, setStatus] = React.useState<'loading' | 'loaded' | 'error'>('loading');
+
+  // 子要素が提供されている場合はそれを使用し、そうでない場合は src と fallback から生成
+  const content = children ?? (
+    <>
+      {src && (
+        <AvatarImage
+          src={src}
+          alt={alt}
+          onLoadingStatusChange={setStatus}
+        />
+      )}
+      {(status === 'error' || !src) && (
+        <AvatarFallback>{fallback}</AvatarFallback>
+      )}
+    </>
+  );
+
   return (
-    <div className={cn(avatarVariants({ size }), className)} {...props} />
+    <div
+      className={cn(avatarVariants({ size }), className)}
+      aria-label={alt}
+      {...props}
+    >
+      {content}
+    </div>
   );
 }
 
 /**
  * AvatarImage コンポーネント
  */
-export function AvatarImage({ className, onLoadingStatusChange, alt, ...props }: AvatarImageProps) {
+export function AvatarImage({
+  className,
+  onLoadingStatusChange,
+  alt,
+  ...props
+}: AvatarImageProps) {
   const [status, setStatus] = React.useState<'loading' | 'loaded' | 'error'>('loading');
 
   React.useEffect(() => {
@@ -100,12 +153,11 @@ export function AvatarImage({ className, onLoadingStatusChange, alt, ...props }:
 
   return (
     <img
+      {...props}
       className={cn(avatarImageVariants(), className)}
       onLoad={() => setStatus('loaded')}
       onError={() => setStatus('error')}
       alt={alt}
-      aria-label={alt}
-      {...props}
     />
   );
 }
@@ -113,7 +165,11 @@ export function AvatarImage({ className, onLoadingStatusChange, alt, ...props }:
 /**
  * AvatarFallback コンポーネント
  */
-export function AvatarFallback({ className, delayMs = 600, ...props }: AvatarFallbackProps) {
+export function AvatarFallback({
+  className,
+  delayMs = 600,
+  ...props
+}: AvatarFallbackProps) {
   const [isLoaded, setIsLoaded] = React.useState(false);
 
   React.useEffect(() => {
@@ -128,4 +184,8 @@ export function AvatarFallback({ className, delayMs = 600, ...props }: AvatarFal
   return (
     <div className={cn(avatarFallbackVariants(), className)} {...props} />
   );
-} 
+}
+
+Avatar.displayName = 'Avatar';
+AvatarImage.displayName = 'AvatarImage';
+AvatarFallback.displayName = 'AvatarFallback'; 

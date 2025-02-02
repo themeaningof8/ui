@@ -38,10 +38,10 @@ const Toggle = React.forwardRef<React.ElementRef<typeof SwitchPrimitives.Root>, 
     return (
       <SwitchPrimitives.Root
         className={cn(
-          'peer inline-flex shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors',
+          'peer inline-flex shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors bg-base-ui-bg',
           'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-base-ui focus-visible:ring-offset-2',
           'disabled:cursor-not-allowed disabled:opacity-50',
-          'data-[state=checked]:bg-base-solid data-[state=unchecked]:bg-base-muted',
+          'data-[state=checked]:bg-accent-solid data-[state=unchecked]:bg-base-bg',
           sizes[size],
           className
         )}

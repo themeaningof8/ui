@@ -1,0 +1,33 @@
+
+ 【要件定義】
+ 
+・対象コンポーネント:
+  - shadcn/ui にあるすべての UI コンポーネント（Toast を除く）を実装する
+    例：Button, Input, Label, Form, Dialog, Card, Tabs, Accordion, Dropdown Menu, Avatar, Tooltip, Popover 等
+
+・技術スタック:
+  - Bun, TypeScript, React
+  - Tailwind CSS v4（Zero Config）※ color-scales.css に定義されている色を利用
+  - Storybook
+  - Vitest
+
+・実装詳細:
+  - Next.js や React Router での利用を想定して設計する
+  - 各コンポーネントは、JSDoc 形式のファイルヘッダーや、日本語コメントを各ファイル、クラス、メソッド、プロパティに記述する
+  - API やプロパティについては shadcn/ui の実装に準拠する（例：Button コンポーネントでは variant プロパティやサイズ指定など）
+  - パスは相対パスを使わず、必ずエイリアスを使用する（例: '@/components/ui/button' など）
+  - 機能実装の終わりには必ず bun run test を実行し、テストに通ることを確認する
+
+・スタイリング:
+  - Tailwind CSS v4 のみを使用し、color-scales.css にあるカラーパレットに沿って実装する
+  - バリアントの実装には tailwind-variants を使用する（class-variance-authority は使用しない）
+  - クラス名の結合には cn.ts を使用する（utils.ts は使用しない）
+  - color-scales.css で定義されていない色は使用しない
+
+・Storybook:
+  - 各コンポーネントの使用例を Storybook 上で確認できるようにする
+    - 使用例パターンとして「デフォルト表示」、「必須状態・エラー状態」、および各種インタラクション例（例：クリック、入力、ドロップダウン展開など）を用意
+
+・テスト:
+  - Vitest を使って、各コンポーネントのレンダリングやアクセシビリティ、インタラクションなど基本動作をカバーするテストを実装する
+/

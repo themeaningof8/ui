@@ -18,7 +18,7 @@ const inputVariants = tv({
     // プレースホルダー
     "placeholder:text-base-low",
     // フォーカス状態
-    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-base-ui focus-visible:ring-offset-2",
     // 無効状態
     "disabled:cursor-not-allowed disabled:opacity-50"
   ],
