@@ -3,7 +3,7 @@
  * @description Dialog コンポーネントの様々な状態とバリエーションを表示します。
  */
 import type { Meta, StoryObj } from '@storybook/react'
-import { Button } from '../button'
+import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogContent,

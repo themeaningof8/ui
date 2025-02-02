@@ -3,7 +3,7 @@
  * @description Badge コンポーネントの様々な状態とバリアントを表示します。
  */
 import type { Meta, StoryObj } from '@storybook/react';
-import { Badge } from './';
+import { Badge } from '@/components/ui/badge';
 
 const meta = {
   title: 'UI/Badge',

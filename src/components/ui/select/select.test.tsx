@@ -14,7 +14,7 @@ import {
   SelectItem,
   SelectLabel,
   SelectSeparator,
-} from './';
+} from '@/components/ui/select';
 
 // scrollIntoViewのモック
 beforeAll(() => {

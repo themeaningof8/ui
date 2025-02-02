@@ -12,7 +12,7 @@ import {
   SelectItem,
   SelectLabel,
   SelectSeparator,
-} from './';
+} from '@/components/ui/select';
 
 const meta = {
   title: 'UI/Select',

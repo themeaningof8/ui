@@ -4,7 +4,7 @@
  */
 import { render, screen, waitFor, act } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
-import { Avatar, AvatarImage, AvatarFallback, type AvatarProps } from './';
+import { Avatar, AvatarImage, AvatarFallback, type AvatarProps } from '@/components/ui/avatar';
 
 describe('Avatar コンポーネント', () => {
   describe('基本機能', () => {

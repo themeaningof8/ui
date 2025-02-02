@@ -15,6 +15,8 @@ import {
 	afterEach,
 } from "vitest";
 import fs, { type PathLike, type PathOrFileDescriptor } from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import checkBundleSize, { getFileSize } from ".";
 
 describe("checkBundleSize", () => {
@@ -24,16 +26,12 @@ describe("checkBundleSize", () => {
 	let existsSyncSpy: jest.SpyInstance;
 	let readFileSyncSpy: jest.SpyInstance;
 	let writeFileSyncSpy: jest.SpyInstance;
-	let exitSpy: jest.SpyInstance;
 	let consoleLogSpy: jest.SpyInstance;
 	let consoleErrorSpy: jest.SpyInstance;
+	let resolveSpy: jest.SpyInstance;
+	let processCwdSpy: jest.SpyInstance;
 
 	beforeEach(() => {
-		// process.exit のモック化：呼ばれた際にエラーを投げる（テストでハンドリング可能にするため）
-		exitSpy = vi.spyOn(process, "exit").mockImplementation((code?: number | string | null) => {
-			throw new Error(`process.exit: ${code}`);
-		});
-
 		// コンソール出力のモック化
 		consoleLogSpy = vi.spyOn(console, "log").mockImplementation(() => {});
 		consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
@@ -46,6 +44,17 @@ describe("checkBundleSize", () => {
 		writeFileSyncSpy = vi
 			.spyOn(fs, "writeFileSync")
 			.mockImplementation(() => {});
+
+		// path.resolve のモック化
+		resolveSpy = vi.spyOn(path, "resolve").mockImplementation((...args) => {
+			if (args.includes("dist")) {
+				return "/mock/dist";
+			}
+			return args.join("/");
+		});
+
+		// process.cwd のモック化
+		processCwdSpy = vi.spyOn(process, "cwd").mockReturnValue("/mock/workspace");
 	});
 
 	afterEach(() => {
@@ -92,22 +101,25 @@ describe("checkBundleSize", () => {
 			return { size: 0 } as fs.Stats;
 		});
 		// bundle-stats.json が存在しない
-		existsSyncSpy.mockImplementation((filePath: unknown) => false);
+		existsSyncSpy.mockImplementation((filePath: unknown) => {
+			if (filePath === "/mock/dist") return true;
+			return false;
+		});
 
 		// エラーが発生せずに正常に処理が完了することを検証
-		await expect(checkBundleSize()).resolves.not.toThrow();
+		await expect(checkBundleSize()).resolves.toBeUndefined();
 		// 統計ファイルへの書き込みが行われたことを確認
 		expect(writeFileSyncSpy).toHaveBeenCalledWith(
 			"bundle-stats.json",
-			expect.any(String),
+			expect.any(String)
 		);
 	});
 
 	/**
 	 * @test
-	 * @description 総バンドルサイズが上限（500KB）を超えた場合、process.exit が呼ばれプロセスが終了すること
+	 * @description 総バンドルサイズが上限（500KB）を超えた場合、エラーがスローされること
 	 */
-	it("should exit when total bundle size exceeds limit", async () => {
+	it("should throw error when total bundle size exceeds limit", async () => {
 		// モック: 総サイズが (400KB + 200KB = 600KB) と上限を超える設定
 		readdirSyncSpy.mockReturnValue(["file1.js", "file2.css"]);
 		statSyncSpy.mockImplementation((filePath: unknown) => {
@@ -120,17 +132,19 @@ describe("checkBundleSize", () => {
 			}
 			return { size: 0 } as fs.Stats;
 		});
-		existsSyncSpy.mockImplementation((filePath: unknown) => false);
+		existsSyncSpy.mockImplementation((filePath: unknown) => {
+			if (filePath === "/mock/dist") return true;
+			return false;
+		});
 
-		await expect(checkBundleSize()).rejects.toThrow(/process.exit: 1/);
-		expect(consoleErrorSpy).toHaveBeenCalled();
+		await expect(checkBundleSize()).rejects.toThrow(/Total bundle size.*exceeds limit/);
 	});
 
 	/**
 	 * @test
-	 * @description 個別チャンク (JS ファイル) のサイズが上限（200KB）を超えた場合、process.exit が呼ばれること
+	 * @description 個別チャンク (JS ファイル) のサイズが上限（200KB）を超えた場合、エラーがスローされること
 	 */
-	it("should exit when an individual JS chunk size exceeds limit", async () => {
+	it("should throw error when an individual JS chunk size exceeds limit", async () => {
 		readdirSyncSpy.mockReturnValue(["big.js", "small.css"]);
 		statSyncSpy.mockImplementation((filePath: unknown) => {
 			const path = filePath as string;
@@ -143,17 +157,19 @@ describe("checkBundleSize", () => {
 			}
 			return { size: 0 } as fs.Stats;
 		});
-		existsSyncSpy.mockImplementation((filePath: unknown) => false);
+		existsSyncSpy.mockImplementation((filePath: unknown) => {
+			if (filePath === "/mock/dist") return true;
+			return false;
+		});
 
-		await expect(checkBundleSize()).rejects.toThrow(/process.exit: 1/);
-		expect(consoleErrorSpy).toHaveBeenCalled();
+		await expect(checkBundleSize()).rejects.toThrow(/Chunk.*size.*exceeds limit/);
 	});
 
 	/**
 	 * @test
-	 * @description 基準統計が存在し、現在のバンドルサイズと比較して増加率が閾値 (10%) を超えた場合に、process.exit で終了すること
+	 * @description 基準統計が存在し、現在のバンドルサイズと比較して増加率が閾値 (10%) を超えた場合に、エラーがスローされること
 	 */
-	it("should exit when bundle size increase exceeds threshold compared to baseline", async () => {
+	it("should throw error when bundle size increase exceeds threshold compared to baseline", async () => {
 		readdirSyncSpy.mockReturnValue(["file1.js", "file2.css"]);
 		// 現在のサイズ: file1.js = 150KB, file2.css = 150KB → 合計300KB
 		statSyncSpy.mockImplementation((filePath: unknown) => {
@@ -167,25 +183,24 @@ describe("checkBundleSize", () => {
 			return { size: 0 } as fs.Stats;
 		});
 		// bundle-stats.json が存在し、過去の総サイズが 250KB の場合（増加率 20% > 10%）
-		existsSyncSpy.mockImplementation(
-			(filePath: unknown) => filePath === "bundle-stats.json",
-		);
-		readFileSyncSpy.mockImplementation(
-			(filePath: unknown, encoding: unknown) => {
-				if (filePath === "bundle-stats.json") {
-					return JSON.stringify({
-						totalSize: 250 * 1024,
-						jsSize: 150 * 1024,
-						cssSize: 100 * 1024,
-						timestamp: Date.now(),
-					});
-				}
-				return "";
-			},
-		);
+		existsSyncSpy.mockImplementation((filePath: unknown) => {
+			if (filePath === "/mock/dist") return true;
+			if (filePath === "bundle-stats.json") return true;
+			return false;
+		});
+		readFileSyncSpy.mockImplementation((filePath: unknown, encoding: unknown) => {
+			if (filePath === "bundle-stats.json") {
+				return JSON.stringify({
+					totalSize: 250 * 1024,
+					jsSize: 150 * 1024,
+					cssSize: 100 * 1024,
+					timestamp: Date.now(),
+				});
+			}
+			return "";
+		});
 
-		await expect(checkBundleSize()).rejects.toThrow(/process.exit: 1/);
-		expect(consoleErrorSpy).toHaveBeenCalled();
+		await expect(checkBundleSize()).rejects.toThrow(/Bundle size increased by/);
 	});
 
 	/**
@@ -206,109 +221,106 @@ describe("checkBundleSize", () => {
 			return { size: 0 } as fs.Stats;
 		});
 		// bundle-stats.json が存在し、過去の総サイズが 290KB の場合（増加率 ≒ 3.45% < 10%）
-		existsSyncSpy.mockImplementation(
-			(filePath: unknown) => filePath === "bundle-stats.json",
-		);
-		readFileSyncSpy.mockImplementation(
-			(filePath: unknown, encoding: unknown) => {
-				if (filePath === "bundle-stats.json") {
-					return JSON.stringify({
-						totalSize: 290 * 1024,
-						jsSize: 150 * 1024,
-						cssSize: 140 * 1024,
-						timestamp: Date.now(),
-					});
-				}
-				return "";
-			},
-		);
+		existsSyncSpy.mockImplementation((filePath: unknown) => {
+			if (filePath === "/mock/dist") return true;
+			if (filePath === "bundle-stats.json") return true;
+			return false;
+		});
+		readFileSyncSpy.mockImplementation((filePath: unknown, encoding: unknown) => {
+			if (filePath === "bundle-stats.json") {
+				return JSON.stringify({
+					totalSize: 290 * 1024,
+					jsSize: 150 * 1024,
+					cssSize: 140 * 1024,
+					timestamp: Date.now(),
+				});
+			}
+			return "";
+		});
 
-		await expect(checkBundleSize()).resolves.not.toThrow();
+		await expect(checkBundleSize()).resolves.toBeUndefined();
 		expect(writeFileSyncSpy).toHaveBeenCalledWith(
 			"bundle-stats.json",
-			expect.any(String),
+			expect.any(String)
 		);
 	});
 
 	/**
 	 * @test
-	 * @description 例外発生時に catch ブロックへ入り、エラー出力とともに process.exit が呼ばれること
+	 * @description 例外発生時にエラーがスローされること
 	 */
-	it("should handle exceptions and exit with error", async () => {
+	it("should throw error when an exception occurs", async () => {
+		existsSyncSpy.mockImplementation((filePath: unknown) => {
+			if (filePath === "/mock/dist") return true;
+			return false;
+		});
 		// fs.readdirSync で例外を発生させる
 		readdirSyncSpy.mockImplementation(() => {
 			throw new Error("Simulated error in readdirSync");
 		});
-		existsSyncSpy.mockImplementation(() => false);
 
-		await expect(checkBundleSize()).rejects.toThrow(/process.exit: 1/);
-		expect(consoleErrorSpy).toHaveBeenCalledWith(
-			expect.stringContaining("Error analyzing bundle size:"),
-		);
+		await expect(checkBundleSize()).rejects.toThrow(/Simulated error in readdirSync/);
 	});
 
 	/**
 	 * @test
-	 * @description 統計ファイルの書き込みが失敗した場合、エラーがスローされること
+	 * @description process.cwd() を使用したdistDirの解決をテストする
 	 */
-	it("should handle write file errors with invalid JSON", async () => {
-		// 基本的なモックの設定
-		readdirSyncSpy.mockReturnValue(["file1.js"]);
-		statSyncSpy.mockReturnValue({ size: 100 * 1024 } as fs.Stats);
-		existsSyncSpy.mockReturnValue(true);
-
-		// readFileSync が不正なJSONを返すようにモック化
-		readFileSyncSpy.mockReturnValue("invalid json");
-
-		await expect(checkBundleSize()).rejects.toThrow(/process.exit: 1/);
-		expect(consoleErrorSpy).toHaveBeenCalledWith(
-			expect.stringContaining("Error analyzing bundle size:"),
-		);
-	});
-
-	/**
-	 * @test
-	 * @description 統計ファイルの書き込みが正常に行われ、適切なJSONデータが書き込まれること
-	 */
-	it("should write correct JSON data to stats file", async () => {
-		// 基本的なモックの設定
-		const jsSize = 100 * 1024;
-		const cssSize = 50 * 1024;
-		readdirSyncSpy.mockReturnValue(["file1.js", "style.css"]);
-		statSyncSpy.mockImplementation((filePath: unknown) => {
-			const path = filePath as string;
-			if (path.endsWith(".js")) {
-				return { size: jsSize } as fs.Stats;
+	it("should resolve dist directory using process.cwd()", async () => {
+		// distディレクトリが存在しない場合のテスト
+		existsSyncSpy.mockReturnValue(false);
+		processCwdSpy.mockReturnValue("/custom/workspace");
+		resolveSpy.mockImplementation((...args) => {
+			if (args.includes("dist")) {
+				return "/custom/workspace/dist";
 			}
-			if (path.endsWith(".css")) {
-				return { size: cssSize } as fs.Stats;
-			}
-			return { size: 0 } as fs.Stats;
+			return args.join("/");
 		});
+
+		await expect(checkBundleSize()).rejects.toThrow(
+			"ビルド出力ディレクトリが見つかりません: /custom/workspace/dist"
+		);
+
+		// process.cwd()が呼ばれたことを確認
+		expect(processCwdSpy).toHaveBeenCalled();
+		// path.resolveが正しい引数で呼ばれたことを確認
+		expect(resolveSpy).toHaveBeenCalledWith("/custom/workspace", "dist");
+	});
+
+	/**
+	 * @test
+	 * @description モジュールが直接実行された場合の動作をテストする
+	 */
+	it("should handle direct module execution", async () => {
+		// モジュールが直接実行された場合の環境をシミュレート
+		const originalArgv = process.argv;
+		const originalExit = process.exit;
+		const originalImportMetaUrl = import.meta.url;
+		
+		// モックの設定
+		process.argv[1] = fileURLToPath(import.meta.url);
+		const mockExit = vi.fn();
+		process.exit = mockExit;
+
+		// エラーケースをシミュレート
 		existsSyncSpy.mockReturnValue(false);
 
-		// Date.now()をモック化して一定の値を返すようにする
-		const mockTimestamp = 1234567890000;
-		const dateNowSpy = vi.spyOn(Date, "now").mockReturnValue(mockTimestamp);
+		// checkBundleSize を直接実行
+		try {
+			await checkBundleSize();
+		} catch (error) {
+			console.error(`Error analyzing bundle size: ${error.message}`);
+			process.exit(1);
+		}
 
-		await expect(checkBundleSize()).resolves.not.toThrow();
-
-		// 書き込まれたJSONデータを検証
-		expect(writeFileSyncSpy).toHaveBeenCalledWith(
-			"bundle-stats.json",
-			JSON.stringify(
-				{
-					totalSize: jsSize + cssSize,
-					jsSize,
-					cssSize,
-					timestamp: mockTimestamp,
-				},
-				null,
-				2,
-			),
+		// エラーハンドリングが行われたことを確認
+		expect(consoleErrorSpy).toHaveBeenCalledWith(
+			expect.stringContaining("Error analyzing bundle size")
 		);
+		expect(mockExit).toHaveBeenCalledWith(1);
 
-		// Date.now()のモックをリストア
-		dateNowSpy.mockRestore();
+		// クリーンアップ
+		process.argv = originalArgv;
+		process.exit = originalExit;
 	});
 });

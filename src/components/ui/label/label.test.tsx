@@ -5,8 +5,8 @@
 
 import { render, screen } from '@testing-library/react'
 import { describe, it, expect } from 'vitest'
-import { Label } from './'
-import { Input } from '../input'
+import { Label } from '@/components/ui/label'
+import { Input } from '@/components/ui/input'
 
 describe('Labelコンポーネント', () => {
   describe('基本機能', () => {

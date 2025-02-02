@@ -4,7 +4,7 @@
  */
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
-import { Badge, type BadgeProps } from './';
+import { Badge, type BadgeProps } from '@/components/ui/badge';
 
 describe('Badge コンポーネント', () => {
   describe('基本機能', () => {

@@ -4,8 +4,8 @@
  */
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
-import { Checkbox } from './';
-import type { CheckboxProps } from './';
+import { Checkbox } from '@/components/ui/checkbox';
+import type { CheckboxProps } from '@/components/ui/checkbox';
 
 describe('Checkbox コンポーネント', () => {
   describe('基本機能', () => {

@@ -5,7 +5,7 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, it, expect } from 'vitest'
-import { Input } from './'
+import { Input } from '@/components/ui/input'
 
 describe('Inputコンポーネント', () => {
   describe('基本機能', () => {

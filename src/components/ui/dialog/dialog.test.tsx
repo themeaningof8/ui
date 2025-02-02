@@ -14,8 +14,8 @@ import {
   DialogDescription,
   DialogFooter,
   DialogClose,
-} from './';
-import { Button } from '../button';
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
 
 describe('Dialog Component', () => {
   const user = userEvent.setup();

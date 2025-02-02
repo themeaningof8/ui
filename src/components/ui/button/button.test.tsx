@@ -5,8 +5,8 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi } from 'vitest';
-import { Button, type ButtonProps } from './';
 import { Link, MemoryRouter } from 'react-router-dom';
+import { Button, type ButtonProps } from '@/components/ui/button';
 
 describe('Button コンポーネント', () => {
   describe('基本機能', () => {

@@ -5,7 +5,7 @@
 import * as React from 'react';
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
-import { Alert, AlertTitle, AlertDescription } from '.';
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 
 describe('Alert Component', () => {
   describe('基本機能', () => {

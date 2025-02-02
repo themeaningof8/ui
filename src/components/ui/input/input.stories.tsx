@@ -4,7 +4,7 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react'
-import { Input } from './'
+import { Input } from '@/components/ui/input'
 
 /**
  * Inputコンポーネントは、ユーザーからのテキスト入力を受け付けるための基本的なフォーム要素です。

@@ -3,7 +3,7 @@
  * @description Avatar コンポーネントの様々な状態と使用例を表示します。
  */
 import type { Meta, StoryObj } from '@storybook/react';
-import { Avatar, AvatarImage, AvatarFallback } from './';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 
 const meta = {
   title: 'UI/Avatar',
