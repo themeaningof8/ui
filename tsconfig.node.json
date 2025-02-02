@@ -12,6 +12,7 @@
   },
   "include": [
     "vite.config.ts",
-    "vitest.setup.ts"
+    "vitest.setup.ts",
+    "src/tests/**/*.ts"
   ]
 }

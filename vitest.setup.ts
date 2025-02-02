@@ -4,7 +4,8 @@
  */
 import "@testing-library/jest-dom/vitest";
 import { cleanup } from "@testing-library/react";
-import { afterEach } from "vitest";
+import { afterEach, beforeAll, beforeEach } from "vitest";
+import { checkWCAG3Metrics, reportWCAG3Results } from "./src/tests/wcag3";
 
 // JSDOMにないPointer APIのメソッドをモック実装
 beforeAll(() => {
@@ -43,6 +44,13 @@ beforeAll(() => {
 			removeEventListener: () => {},
 			dispatchEvent: () => false,
 		}));
+});
+
+// 各テスト前にWCAG 3.0メトリクスのレポート機能を設定
+beforeEach((context) => {
+	// テストコンテキストにWCAG 3.0メトリクスチェック関数を追加
+	context.checkWCAG3 = checkWCAG3Metrics;
+	context.reportWCAG3 = reportWCAG3Results;
 });
 
 // 各テスト後にクリーンアップを実行
@@ -86,3 +94,13 @@ class MockMutationObserver implements MutationObserver {
 global.ResizeObserver = MockResizeObserver;
 global.IntersectionObserver = MockIntersectionObserver as unknown as typeof IntersectionObserver;
 global.MutationObserver = MockMutationObserver as unknown as typeof MutationObserver;
+
+// WCAG 3.0メトリクスのグローバル型定義
+declare global {
+	namespace Vi {
+		interface TestContext {
+			checkWCAG3: typeof checkWCAG3Metrics;
+			reportWCAG3: typeof reportWCAG3Results;
+		}
+	}
+}
