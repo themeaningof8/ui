@@ -15,6 +15,9 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
+      exclude: ['dist', ".storybook", "**/*.config.{ts,tsx}", "**/*.stories.{ts,tsx}"]
     },
+    include: ['**/*.test.{ts,tsx}'],
+    exclude: ['dist', 'node_modules'],
   }
 }) 

@@ -43,116 +43,19 @@ export default defineConfig(({ mode }) => ({
     sourcemap: mode === 'development',
     reportCompressedSize: true,
     chunkSizeWarningLimit: 500,
+    lib: {
+      entry: resolve(__dirname, 'src/index.ts'),
+      name: '@themeaningof8/ui',
+      formats: ['es'],
+      fileName: (format) => `index.${format}.js`
+    },
     rollupOptions: {
-      input: {
-        main: resolve(__dirname, 'index.html')
-      },
+      external: ['react', 'react-dom', 'react/jsx-runtime'],
       output: {
-        manualChunks(id) {
-          // React Core
-          if (id.includes('node_modules/react/') && !id.includes('node_modules/react/jsx-runtime')) {
-            return 'react-core';
-          }
-
-          // React JSX Runtime
-          if (id.includes('node_modules/react/jsx-runtime')) {
-            return 'react-jsx';
-          }
-
-          // React DOM - 機能別に分割
-          if (id.includes('node_modules/react-dom/')) {
-            if (id.includes('/client/')) {
-              return 'react-dom-client';
-            }
-            if (id.includes('/server/')) {
-              return 'react-dom-server';
-            }
-            return 'react-dom-core';
-          }
-
-          // UIコンポーネントライブラリのチャンク
-          if (id.includes('node_modules/@radix-ui/')) {
-            // Radix UIの基本機能
-            if (id.includes('/core/') || id.includes('/primitive/')) {
-              return 'radix-core';
-            }
-            // Accordionコンポーネント
-            if (id.includes('/react-accordion/')) {
-              return 'radix-accordion';
-            }
-            // その他のRadixコンポーネント
-            return 'radix-other';
-          }
-
-          // アイコンライブラリ（動的インポート用）
-          if (id.includes('node_modules/lucide-react/')) {
-            // 頻繁に使用されるアイコンをコアバンドルに
-            const commonIcons = ['menu', 'search', 'user', 'settings', 'home'];
-            const match = id.match(/lucide-react\/dist\/esm\/icons\/([^.]+)\.js$/);
-            if (match) {
-              const iconName = match[1];
-              if (commonIcons.includes(iconName)) {
-                return 'icons-common';
-              }
-              return `icon-${iconName}`;
-            }
-            return 'icons-core';
-          }
-
-          // Tailwind関連
-          if (id.includes('node_modules/tailwind-variants/') ||
-            id.includes('node_modules/tailwind-merge/')) {
-            return 'tailwind-utils';
-          }
-
-          // アニメーション
-          if (id.includes('node_modules/tailwindcss-animate/')) {
-            return 'animations';
-          }
-
-          // ページ単位でのコード分割
-          if (id.includes('/src/pages/')) {
-            const match = id.match(/\/src\/pages\/([^/]+)\//);
-            if (match) {
-              return `page-${match[1].toLowerCase()}`;
-            }
-            return 'pages-other';
-          }
-
-          // 共通コンポーネント（よく使用されるもの）
-          if (id.includes('/src/components/ui/') &&
-            !id.includes('.test.') &&
-            !id.includes('.spec.') &&
-            !id.includes('/tests/') &&
-            !id.includes('/stories/')) {
-            const match = id.match(/\/components\/ui\/([^/]+)\//);
-            if (match) {
-              return `ui-${match[1]}`;
-            }
-            return 'ui-components';
-          }
-
-          // 機能別コンポーネント
-          if (id.includes('/src/components/') &&
-            !id.includes('/src/components/ui/') &&
-            !id.includes('.test.') &&
-            !id.includes('.spec.') &&
-            !id.includes('/tests/') &&
-            !id.includes('/stories/')) {
-            const match = id.match(/\/src\/components\/([^/]+)\//);
-            if (match) {
-              return `component-${match[1]}`;
-            }
-            return 'components-other';
-          }
-
-          // フックのチャンク
-          if (id.includes('/src/hooks/') &&
-            !id.includes('.test.') &&
-            !id.includes('.spec.') &&
-            !id.includes('/tests/')) {
-            return 'hooks';
-          }
+        globals: {
+          react: 'React',
+          'react-dom': 'ReactDOM',
+          'react/jsx-runtime': 'jsxRuntime'
         }
       }
     },

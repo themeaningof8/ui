@@ -1,18 +1,21 @@
 import fs from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 
-const LIMITS = {
-	TOTAL: 500 * 1024, // 500KB
-	CHUNK: 200 * 1024, // 200KB
-	THRESHOLD_INCREASE: 0.1, // 10%増加まで許容
+/** 各サイズ制限の設定 */
+export const LIMITS: { TOTAL: number; CHUNK: number; THRESHOLD_INCREASE: number } = {
+  TOTAL: 500 * 1024, // 500KB
+  CHUNK: 200 * 1024, // 200KB
+  THRESHOLD_INCREASE: 0.1, // 10%増加まで許容
 };
 
 /**
- * ファイルサイズを取得する（存在しない場合は0を返す）
- * @param {string} filePath
- * @returns {number}
+ * @function getFileSize
+ * @description 指定されたファイルパスのファイルサイズを取得する
+ * @param {string} filePath - 対象のファイルパス
+ * @returns {number} ファイルサイズ（バイト単位）
  */
-function getFileSize(filePath) {
+export function getFileSize(filePath: string): number {
 	try {
 		const stats = fs.statSync(filePath);
 		return stats.size;
@@ -21,6 +24,13 @@ function getFileSize(filePath) {
 	}
 }
 
+/**
+ * @async
+ * @function checkBundleSize
+ * @description dist/assets 内のアセットファイルのサイズをチェックする
+ *              ・総サイズ、個別チャンク、前回統計との増加率の各条件を検証し、条件に合致しない場合は process.exit(1) を実行する
+ * @throws 例外発生時、詳細なエラーメッセージを出力した上で process.exit(1) によりプロセスを終了する
+ */
 async function checkBundleSize() {
 	try {
 		const distDir = path.resolve(process.cwd(), "dist");
@@ -115,9 +125,16 @@ async function checkBundleSize() {
 
 		console.log("\nBundle size check completed successfully");
 	} catch (error) {
-		console.error("Error analyzing bundle size:", error.message);
-		process.exit(1);
-	}
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error(`Error analyzing bundle size: ${errorMessage}`);
+    process.exit(1);
+  }
 }
 
-checkBundleSize();
+// デフォルトエクスポートも追加（必要に応じテスト側で default インポート可能に）
+export default checkBundleSize;
+
+// モジュールが直接実行された場合のみ checkBundleSize() を実行
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  checkBundleSize();
+}
