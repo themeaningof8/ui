@@ -6,6 +6,8 @@ import * as React from 'react';
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
+import { testBasicAccessibility } from '@/tests/wcag3/helpers';
+import { Terminal } from 'lucide-react';
 
 describe('Alert Component', () => {
   describe('基本機能', () => {
@@ -130,6 +132,151 @@ describe('Alert Component', () => {
 
       const description = screen.getByText('テスト説明文');
       expect(description).toHaveClass('text-sm', '[&_p]:leading-relaxed');
+    });
+
+    // 基本的なアクセシビリティテスト
+    testBasicAccessibility(
+      <Alert>
+        <AlertTitle>テストタイトル</AlertTitle>
+        <AlertDescription>テスト説明文</AlertDescription>
+      </Alert>,
+      {
+        expectedRole: 'alert',
+        testDisabled: false,
+      }
+    );
+
+    describe('WCAG 3.0メトリクス', () => {
+      it('適切なサイズと間隔が設定されている', () => {
+        render(
+          <Alert>
+            <AlertTitle>テストタイトル</AlertTitle>
+            <AlertDescription>テスト説明文</AlertDescription>
+          </Alert>
+        );
+
+        const alert = screen.getByRole('alert');
+        // サイズと間隔のクラス
+        expect(alert).toHaveClass('w-full');  // 幅
+        expect(alert).toHaveClass('p-4');     // パディング
+        expect(alert).toHaveClass('rounded-lg'); // 角丸
+      });
+
+      it('アイコンとテキストの配置が適切である', () => {
+        render(
+          <Alert>
+            <AlertTitle>テストタイトル</AlertTitle>
+            <AlertDescription>テスト説明文</AlertDescription>
+          </Alert>
+        );
+
+        const alert = screen.getByRole('alert');
+        // アイコンの配置
+        expect(alert).toHaveClass('[&>svg]:absolute');
+        expect(alert).toHaveClass('[&>svg]:left-4');
+        expect(alert).toHaveClass('[&>svg]:top-4');
+        // テキストの配置
+        expect(alert).toHaveClass('[&>svg~*]:pl-7');
+        expect(alert).toHaveClass('[&>svg+div]:translate-y-[-3px]');
+      });
+
+      describe('バリアントごとのコントラスト比', () => {
+        it.each([
+          ['default', {
+            bg: 'bg-base-app',
+            text: 'text-base-high',
+            border: 'border-base-subtle'
+          }],
+          ['destructive', {
+            bg: 'bg-destructive-app',
+            text: 'text-destructive-high',
+            border: 'border-destructive-subtle'
+          }],
+          ['success', {
+            bg: 'bg-accent-app',
+            text: 'text-accent-high',
+            border: 'border-accent-subtle'
+          }],
+          ['warning', {
+            bg: 'bg-base-app',
+            text: 'text-base-high',
+            border: 'border-base-subtle'
+          }],
+        ])('%s バリアントのコントラスト比が適切である', (variant, expected) => {
+          render(
+            <Alert variant={variant as 'default' | 'destructive' | 'success' | 'warning'}>
+              <AlertTitle>テストタイトル</AlertTitle>
+              <AlertDescription>テスト説明文</AlertDescription>
+            </Alert>
+          );
+
+          const alert = screen.getByRole('alert');
+          expect(alert).toHaveClass(expected.bg);
+          expect(alert).toHaveClass(expected.text);
+          expect(alert).toHaveClass(expected.border);
+        });
+      });
+
+      describe('テキストの可読性', () => {
+        it('タイトルのテキストスタイルが適切である', () => {
+          render(
+            <Alert>
+              <AlertTitle>テストタイトル</AlertTitle>
+            </Alert>
+          );
+
+          const title = screen.getByText('テストタイトル');
+          expect(title).toHaveClass('mb-1');
+          expect(title).toHaveClass('font-medium');
+          expect(title).toHaveClass('leading-none');
+          expect(title).toHaveClass('tracking-tight');
+        });
+
+        it('説明文のテキストスタイルが適切である', () => {
+          render(
+            <Alert>
+              <AlertDescription>テスト説明文</AlertDescription>
+            </Alert>
+          );
+
+          const description = screen.getByText('テスト説明文');
+          expect(description).toHaveClass('text-sm');
+          expect(description).toHaveClass('[&_p]:leading-relaxed');
+        });
+      });
+    });
+
+    describe('アイコンとテキストの関係性', () => {
+      it('アイコンが装飾的な要素として適切に配置される', () => {
+        render(
+          <Alert>
+            <Terminal className="h-4 w-4" />
+            <AlertTitle>テストタイトル</AlertTitle>
+            <AlertDescription>テスト説明文</AlertDescription>
+          </Alert>
+        );
+
+        const alert = screen.getByRole('alert');
+        // アイコンの配置用のスタイル
+        expect(alert).toHaveClass('[&>svg]:absolute');
+        expect(alert).toHaveClass('[&>svg]:left-4');
+        expect(alert).toHaveClass('[&>svg]:top-4');
+      });
+
+      it('アイコンとテキストの間に適切な間隔が設定される', () => {
+        render(
+          <Alert>
+            <Terminal className="h-4 w-4" />
+            <AlertTitle>テストタイトル</AlertTitle>
+            <AlertDescription>テスト説明文</AlertDescription>
+          </Alert>
+        );
+
+        const alert = screen.getByRole('alert');
+        // アイコンとテキストの間隔用のスタイル
+        expect(alert).toHaveClass('[&>svg~*]:pl-7');
+        expect(alert).toHaveClass('[&>svg+div]:translate-y-[-3px]');
+      });
     });
   });
 
