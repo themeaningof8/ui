@@ -53,9 +53,10 @@ describe('アコーディオン', () => {
     )
 
     // 基本的なアクセシビリティテスト
-    testBasicAccessibility(TestTriggerWrapper, {
+    testBasicAccessibility(<AccordionTrigger>テスト</AccordionTrigger>, {
       expectedRole: 'button',
       testDisabled: true,
+      useDataDisabled: true,
     })
 
     // WCAG 3.0メトリクスのコンプライアンステスト

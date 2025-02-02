@@ -7,7 +7,7 @@ import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi } from 'vitest';
 import { Link, MemoryRouter } from 'react-router-dom';
 import { Button, type ButtonProps } from '@/components/ui/button';
-import { checkWCAG3Metrics, reportWCAG3Results } from '@/tests/wcag3';
+import { testBasicAccessibility, testWCAG3Compliance, testKeyboardInteraction } from '@/tests/wcag3/helpers';
 
 describe('Button', () => {
   describe('基本機能', () => {
@@ -21,9 +21,9 @@ describe('Button', () => {
       expect(screen.getByRole('button')).toHaveClass('custom-class');
     });
 
-    it('無効化された状態が正しく表示される', () => {
-      render(<Button disabled>テストボタン</Button>);
-      expect(screen.getByRole('button')).toBeDisabled();
+    testBasicAccessibility(<Button>テストボタン</Button>, {
+      expectedRole: 'button',
+      testDisabled: true,
     });
   });
 
@@ -42,6 +42,18 @@ describe('Button', () => {
         expect(button).toHaveClass(className);
       }
     });
+
+    // 各バリアントのWCAG3コンプライアンスをテスト
+    it.each([
+      'default',
+      'destructive',
+      'outline',
+      'secondary',
+      'ghost',
+      'link',
+    ] as const)('variant="%s" がWCAG3に準拠している', (variant) => {
+      testWCAG3Compliance(<Button variant={variant}>テストボタン</Button>);
+    });
   });
 
   describe('サイズ', () => {
@@ -56,6 +68,16 @@ describe('Button', () => {
       for (const className of expectedClasses) {
         expect(button).toHaveClass(className);
       }
+    });
+
+    // 各サイズのWCAG3コンプライアンスをテスト
+    it.each([
+      'default',
+      'sm',
+      'lg',
+      'icon',
+    ] as const)('size="%s" がWCAG3に準拠している', (size) => {
+      testWCAG3Compliance(<Button size={size}>テストボタン</Button>);
     });
   });
 
@@ -75,65 +97,10 @@ describe('Button', () => {
       await userEvent.click(screen.getByRole('button'));
       expect(handleClick).not.toHaveBeenCalled();
     });
-  });
 
-  describe('アクセシビリティ', () => {
-    it('WCAG 3.0のメトリクスを満たしている', () => {
-      const renderResult = render(<Button>テストボタン</Button>);
-      const metrics = checkWCAG3Metrics(renderResult);
-      reportWCAG3Results(metrics);
-
-      // APCAコントラスト比が70以上であることを確認
-      expect(metrics.apca).toHaveLength(0);
-
-      // インタラクティブ要素が適切に設定されていることを確認
-      expect(metrics.interactiveElements).toHaveLength(1);
-      expect(metrics.interactiveElements[0].tagName.toLowerCase()).toBe('button');
-
-      // フォーカス可能要素が適切に設定されていることを確認
-      expect(metrics.focusableElements).toHaveLength(0);
-    });
-
-    it('各バリアントがWCAG 3.0のコントラスト要件を満たしている', () => {
-      const variants: ButtonProps['variant'][] = ['default', 'destructive', 'outline', 'secondary', 'ghost', 'link'];
-      
-      for (const variant of variants) {
-        const renderResult = render(<Button variant={variant}>テストボタン</Button>);
-        const metrics = checkWCAG3Metrics(renderResult);
-        
-        // APCAコントラスト比が70以上であることを確認
-        expect(metrics.apca).toHaveLength(0);
-      }
-    });
-
-    it('キーボード操作が適切に機能する', async () => {
-      const handleClick = vi.fn();
-      render(<Button onClick={handleClick}>テストボタン</Button>);
-      const button = screen.getByRole('button');
-
-      // ボタンにフォーカスを当てる
-      await userEvent.tab();
-      expect(button).toHaveFocus();
-
-      // Enterキーでクリックイベントが発火する
-      await userEvent.keyboard('{Enter}');
-      expect(handleClick).toHaveBeenCalledTimes(1);
-
-      // Spaceキーでクリックイベントが発火する
-      await userEvent.keyboard(' ');
-      expect(handleClick).toHaveBeenCalledTimes(2);
-    });
-
-    it('スクリーンリーダー対応が適切に設定されている', () => {
-      render(<Button disabled>テストボタン</Button>);
-      const button = screen.getByRole('button');
-
-      // ネイティブのbutton要素が使用されていることを確認
-      expect(button.tagName.toLowerCase()).toBe('button');
-
-      // 無効化状態が適切に通知される
-      expect(button).toBeDisabled();
-      expect(button).toHaveAttribute('aria-disabled', 'true');
+    testKeyboardInteraction(<Button>テストボタン</Button>, {
+      expectedRole: 'button',
+      triggerKeys: [' ', 'Enter'],
     });
   });
 
@@ -150,6 +117,15 @@ describe('Button', () => {
       const link = screen.getByRole('link');
       expect(link).toBeInTheDocument();
       expect(link).toHaveAttribute('href', '/test');
+
+      // リンクとしてのWCAG3コンプライアンスをテスト
+      testWCAG3Compliance(
+        <MemoryRouter>
+          <Button asChild>
+            <Link to="/test">リンクボタン</Link>
+          </Button>
+        </MemoryRouter>
+      );
     });
   });
 });

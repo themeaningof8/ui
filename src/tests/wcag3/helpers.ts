@@ -17,11 +17,14 @@ export const testBasicAccessibility = (
 	{
 		expectedRole,
 		testDisabled = true,
+		useDataDisabled = false,
 	}: {
 		/** 期待されるARIAロール */
 		expectedRole: string;
 		/** 無効化状態をテストするかどうか */
 		testDisabled?: boolean;
+		/** data-disabled属性を使用するかどうか（Radix UI用） */
+		useDataDisabled?: boolean;
 	},
 ) => {
 	describe("基本機能", () => {
@@ -39,12 +42,24 @@ export const testBasicAccessibility = (
 			it("無効化状態が適切に設定される", () => {
 				const { rerender } = render(component);
 				const element = screen.getByRole("button");
-				expect(element).not.toHaveAttribute("data-disabled");
+				
+				// 初期状態の確認
+				if (useDataDisabled) {
+					expect(element).not.toHaveAttribute("data-disabled");
+				} else {
+					expect(element).not.toBeDisabled();
+				}
 
 				// disabledプロパティを持つ新しいコンポーネントを再レンダリング
 				const props = { disabled: true };
 				rerender(React.cloneElement(component, props));
-				expect(element).toHaveAttribute("data-disabled");
+
+				// 無効化状態の確認
+				if (useDataDisabled) {
+					expect(element).toHaveAttribute("data-disabled");
+				} else {
+					expect(element).toBeDisabled();
+				}
 			});
 		}
 	});
