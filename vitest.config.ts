@@ -2,22 +2,27 @@
  * @file Vitestの設定ファイル
  * @description テスト環境の設定を定義します
  */
-import { defineConfig } from 'vitest/config'
+/// <reference types="vitest" />
+/// <reference types="vite/client" />
+
+import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tsconfigPaths from 'vite-tsconfig-paths'
 
 export default defineConfig({
   plugins: [react(), tsconfigPaths()],
   test: {
-    environment: 'jsdom',
     globals: true,
-    setupFiles: ['./vitest.setup.ts'],
+    environment: 'jsdom',
+    setupFiles: ['./src/tests/setup.ts'],
+    include: ['src/**/*.{test,spec}.{ts,tsx}'],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
-      exclude: ['dist', ".storybook", "**/*.config.{ts,tsx}", "**/*.stories.{ts,tsx}"]
+      exclude: [
+        'node_modules/',
+        'src/tests/setup.ts',
+      ],
     },
-    include: ['**/*.test.{ts,tsx}'],
-    exclude: ['dist', 'node_modules'],
   }
 }) 

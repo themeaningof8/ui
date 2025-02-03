@@ -1,131 +1,197 @@
-# UIコンポーネント分類とテスト要件
+# UIコンポーネント分類とWCAG 3.0テスト要件
 
 ## 1. コンテナ系コンポーネント
-- [x] Alert (実装済み)
-  - testBasicAccessibility
-  - testWCAG3Compliance
-- [x] Card (実装済み)
-  - testBasicAccessibility
-- [ ] Dialog
-  - testBasicAccessibility
-  - testWCAG3Compliance
-  - testKeyboardInteraction (モーダル操作)
-- [ ] HoverCard
-  - testBasicAccessibility
-  - testWCAG3Compliance
-- [ ] Popover
-  - testBasicAccessibility
-  - testWCAG3Compliance
-  - testKeyboardInteraction
+### Alert
+- [x] 実装済み
+- **WCAG 3.0要件**:
+  - [ ] ロール: `alert`
+  - [ ] ライブリージョン: `aria-live="polite"`
+  - [ ] コントラスト比: APCA 60以上
+  - [ ] アニメーション: 自動非表示の場合4秒以上表示
+
+### Card
+- [x] 実装済み
+- **WCAG 3.0要件**:
+  - [ ] セマンティックHTML構造
+  - [ ] ヘッダー/フッターの適切なマークアップ
+  - [ ] コントラスト比: APCA 60以上
+
+### Dialog
+- **WCAG 3.0要件**:
+  - [ ] モーダルトラップ: `aria-modal="true"`
+  - [ ] フォーカストラップ
+  - [ ] ESCキーでの閉じる機能
+  - [ ] 背景との十分なコントラスト
 
 ## 2. インタラクティブコンポーネント
-- [x] Accordion (実装済み)
-  - testBasicAccessibility
-  - testWCAG3Compliance
-  - testKeyboardInteraction
-- [x] Button (実装済み)
-  - testBasicAccessibility
-  - testWCAG3Compliance
-  - testKeyboardInteraction
-- [x] Checkbox (実装済み)
-  - testBasicAccessibility
-  - testWCAG3Compliance
-  - testKeyboardInteraction
-- [ ] Command
-  - testBasicAccessibility
-  - testWCAG3Compliance
-  - testKeyboardInteraction
-- [ ] DropdownMenu
-  - testBasicAccessibility
-  - testWCAG3Compliance
-  - testKeyboardInteraction
-- [ ] Switch
-  - testBasicAccessibility
-  - testWCAG3Compliance
-  - testKeyboardInteraction
-- [ ] Toggle
-  - testBasicAccessibility
-  - testWCAG3Compliance
-  - testKeyboardInteraction
+### Accordion
+- [x] 実装済み
+- **WCAG 3.0要件**:
+  - [ ] キーボード操作: 矢印キー対応
+  - [ ] 展開状態: `aria-expanded`
+  - [ ] ヘッダー/コンテンツの関連付け
+  - [ ] フォーカス可視性: APCA 60以上
+
+### Button
+- [x] 実装済み
+- **WCAG 3.0要件**:
+  - [ ] タッチターゲット: 最小44x44px
+  - [ ] キーボード操作: Enter/Space
+  - [ ] フォーカス可視性: APCA 60以上
+  - [ ] 無効状態の視覚的表示
+
+### Checkbox
+- [x] 実装済み
+- **WCAG 3.0要件**:
+  - [ ] ラベルとの関連付け
+  - [ ] エラー状態の明確な表示
+  - [ ] 必須項目の表示
+  - [ ] 入力補助情報の提供
 
 ## 3. ナビゲーション系コンポーネント
-- [x] Breadcrumb (実装済み)
-  - testBasicAccessibility
-  - testWCAG3Compliance
-  - testKeyboardInteraction
-- [ ] NavigationMenu
-  - testBasicAccessibility
-  - testWCAG3Compliance
-  - testKeyboardInteraction
-- [ ] Tabs
-  - testBasicAccessibility
-  - testWCAG3Compliance
-  - testKeyboardInteraction
-- [ ] Menubar
-  - testBasicAccessibility
-  - testWCAG3Compliance
-  - testKeyboardInteraction
+### Breadcrumb
+- [x] 実装済み
+- **WCAG 3.0要件**:
+  - [ ] 現在位置の明示
+  - [ ] 区切り文字のスキップ
+  - [ ] キーボードでの移動
+  - [ ] ナビゲーションランドマーク
+
+### NavigationMenu
+- **WCAG 3.0要件**:
+  - [ ] キーボード操作: 矢印キー
+  - [ ] 選択状態の表示
+  - [ ] パネルとの関連付け
+  - [ ] フォーカス管理
+
+### Tabs
+- **WCAG 3.0要件**:
+  - [ ] キーボード操作: 矢印キー
+  - [ ] 選択状態の表示
+  - [ ] パネルとの関連付け
+  - [ ] フォーカス管理
+
+### Menubar
+- **WCAG 3.0要件**:
+  - [ ] キーボード操作: 矢印キー
+  - [ ] 選択状態の表示
+  - [ ] パネルとの関連付け
+  - [ ] フォーカス管理
 
 ## 4. フォーム系コンポーネント
-- [x] Input (実装済み)
-  - testBasicAccessibility
-  - testWCAG3Compliance
-  - testKeyboardInteraction
-- [x] Select (実装済み)
-  - testBasicAccessibility
-  - testWCAG3Compliance
-  - testKeyboardInteraction
-- [ ] Textarea
-  - testBasicAccessibility
-  - testWCAG3Compliance
-  - testKeyboardInteraction
-- [ ] RadioGroup
-  - testBasicAccessibility
-  - testWCAG3Compliance
-  - testKeyboardInteraction
-- [ ] Form
-  - testBasicAccessibility
-  - testWCAG3Compliance
-  - testKeyboardInteraction
-- [ ] Label
-  - testBasicAccessibility
-  - testWCAG3Compliance
+### Input
+- [x] 実装済み
+- **WCAG 3.0要件**:
+  - [ ] ラベルとの関連付け
+  - [ ] エラー状態の明確な表示
+  - [ ] 必須項目の表示
+  - [ ] 入力補助情報の提供
+
+### Select
+- [x] 実装済み
+- **WCAG 3.0要件**:
+  - [ ] ラベルとの関連付け
+  - [ ] エラー状態の明確な表示
+  - [ ] 必須項目の表示
+  - [ ] 入力補助情報の提供
+
+### Textarea
+- **WCAG 3.0要件**:
+  - [ ] ラベルとの関連付け
+  - [ ] エラー状態の明確な表示
+  - [ ] 必須項目の表示
+  - [ ] 入力補助情報の提供
+
+### RadioGroup
+- **WCAG 3.0要件**:
+  - [ ] ラベルとの関連付け
+  - [ ] エラー状態の明確な表示
+  - [ ] 必須項目の表示
+  - [ ] 入力補助情報の提供
+
+### Form
+- **WCAG 3.0要件**:
+  - [ ] フィールドセットの適切な使用
+  - [ ] エラーメッセージの即時フィードバック
+  - [ ] 送信前の確認機能
+  - [ ] フォーカス順序の論理性
+
+### Label
+- **WCAG 3.0要件**:
+  - [ ] ラベルとの関連付け
+  - [ ] エラー状態の明確な表示
+  - [ ] 必須項目の表示
+  - [ ] 入力補助情報の提供
 
 ## 5. 装飾系コンポーネント
-- [ ] Avatar
-  - testBasicAccessibility
-  - testWCAG3Compliance
-- [ ] Badge
-  - testBasicAccessibility
-  - testWCAG3Compliance
-- [ ] Progress
-  - testBasicAccessibility
-  - testWCAG3Compliance
-- [ ] Separator
-  - testBasicAccessibility
-- [ ] Skeleton
-  - testBasicAccessibility
-- [ ] Spinner
-  - testBasicAccessibility
-  - testWCAG3Compliance
+### Avatar
+- **WCAG 3.0要件**:
+  - [ ] 代替テキスト
+  - [ ] 装飾的画像のスキップ
+  - [ ] 適切なサイズ設定
+
+### Badge
+- **WCAG 3.0要件**:
+  - [ ] コントラスト比: APCA 60以上
+  - [ ] 装飾的要素のスキップ
+  - [ ] テキストサイズの最小値確保
+
+### Progress
+- **WCAG 3.0要件**:
+  - [ ] ラベルとの関連付け
+  - [ ] エラー状態の明確な表示
+  - [ ] 必須項目の表示
+  - [ ] 入力補助情報の提供
+
+### Separator
+- **WCAG 3.0要件**:
+  - [ ] コントラスト比: APCA 60以上
+  - [ ] 装飾的要素のスキップ
+  - [ ] 適切なサイズ設定
+
+### Skeleton
+- **WCAG 3.0要件**:
+  - [ ] コントラスト比: APCA 60以上
+  - [ ] 装飾的要素のスキップ
+  - [ ] 適切なサイズ設定
+
+### Spinner
+- **WCAG 3.0要件**:
+  - [ ] ラベルとの関連付け
+  - [ ] エラー状態の明確な表示
+  - [ ] 必須項目の表示
+  - [ ] 入力補助情報の提供
 
 ## 6. その他
-- [ ] Slider
-  - testBasicAccessibility
-  - testWCAG3Compliance
-  - testKeyboardInteraction
-- [ ] Tooltip
-  - testBasicAccessibility
-  - testWCAG3Compliance
-- [ ] Sonner (Toast)
-  - testBasicAccessibility
-  - testWCAG3Compliance
-  - testKeyboardInteraction (閉じる操作)
+### Slider
+- **WCAG 3.0要件**:
+  - [ ] ラベルとの関連付け
+  - [ ] エラー状態の明確な表示
+  - [ ] 必須項目の表示
+  - [ ] 入力補助情報の提供
 
-## 実装優先順位
-1. インタラクティブコンポーネント
-2. フォーム系コンポーネント
-3. ナビゲーション系コンポーネント
-4. コンテナ系コンポーネント
-5. 装飾系コンポーネント
-6. その他のコンポーネント 
+### Tooltip
+- **WCAG 3.0要件**:
+  - [ ] ラベルとの関連付け
+  - [ ] エラー状態の明確な表示
+  - [ ] 必須項目の表示
+  - [ ] 入力補助情報の提供
+
+### Sonner (Toast)
+- **WCAG 3.0要件**:
+  - [ ] ラベルとの関連付け
+  - [ ] エラー状態の明確な表示
+  - [ ] 必須項目の表示
+  - [ ] 入力補助情報の提供
+
+## テスト優先順位
+1. キーボード操作とフォーカス管理
+2. ARIA属性とセマンティクス
+3. 視覚的な要件（コントラスト、サイズ）
+4. エラー状態とフィードバック
+5. アニメーションと動的コンテンツ
+
+## 実装ステータス
+- [x] 実装済み: 8コンポーネント
+- [ ] 未実装: 15コンポーネント
+- [ ] 検証中: 2コンポーネント 

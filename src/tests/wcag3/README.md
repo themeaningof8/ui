@@ -1,76 +1,149 @@
-# WCAG 3.0テストヘルパー使用ガイドライン
+# WCAG 3.0 テスト設計
 
-## テストヘルパーの種類
+## 1. テスト構成
 
-1. `testBasicAccessibility`
-   - 基本的なアクセシビリティテスト
-   - 全てのコンポーネントに必須
-   - ARIAロールとdisabled状態のテスト
+### 1.1 共通テスト（Base Tests）
+すべてのコンポーネントに適用される基本的なアクセシビリティテスト
 
-2. `testWCAG3Compliance`
-   - WCAG 3.0メトリクスのコンプライアンステスト
-   - 視覚的な要素を持つコンポーネントに必要
-   - コントラスト比、フォーカスインジケータ、サイズのテスト
+- **基本アクセシビリティ**
+  - 適切なARIAロールの設定
+  - 無効化状態の管理
+  - フォーカス可能性
 
-3. `testKeyboardInteraction`
-   - キーボード操作のテスト
-   - インタラクティブなコンポーネントに必要
-   - キーボードナビゲーションとフォーカス管理のテスト
+- **WCAG 3.0メトリクス**
+  - コントラスト比（APCA）
+  - フォーカスインジケータの視認性
+  - タッチターゲットサイズ
 
-## コンポーネントタイプ別の必要なテスト
+- **キーボード操作**
+  - Tabキーによるフォーカス移動
+  - 基本的なキー操作（Enter, Space）
+  - フォーカストラップ（必要な場合）
 
-### 1. コンテナ系コンポーネント
-- 例：Card, Alert, Dialog
-- 必要なテスト：
-  - `testBasicAccessibility`
-  - `testWCAG3Compliance`（視覚的な要素がある場合）
+### 1.2 コンポーネントカテゴリ別テスト
 
-### 2. インタラクティブコンポーネント
-- 例：Button, Checkbox, Select, Accordion
-- 必要なテスト：
-  - `testBasicAccessibility`
-  - `testWCAG3Compliance`
-  - `testKeyboardInteraction`
+#### コンテナ系
+- モーダル管理（Dialog, HoverCard）
+- コンテンツの構造化
+- スクロール管理
 
-### 3. ナビゲーション系コンポーネント
-- 例：Breadcrumb, Navigation Menu, Tabs
-- 必要なテスト：
-  - `testBasicAccessibility`
-  - `testWCAG3Compliance`
-  - `testKeyboardInteraction`（方向キーの操作を含む）
+#### インタラクティブ系
+- 状態管理（Accordion, Checkbox）
+- フィードバック
+- アニメーション制御
 
-### 4. フォーム系コンポーネント
-- 例：Input, Textarea, Radio Group
-- 必要なテスト：
-  - `testBasicAccessibility`
-  - `testWCAG3Compliance`（エラー状態のコントラストを含む）
-  - `testKeyboardInteraction`
+#### ナビゲーション系
+- キーボードナビゲーション
+- 現在位置の表示
+- フォーカス順序
 
-### 5. 装飾系コンポーネント
-- 例：Badge, Separator, Skeleton
-- 必要なテスト：
-  - `testBasicAccessibility`
-  - `testWCAG3Compliance`（コントラスト比のみ）
+#### フォーム系
+- バリデーション
+- エラー表示
+- 必須項目の表示
 
-## テスト実装のガイドライン
+#### 装飾系
+- 装飾的要素のスキップ
+- 代替テキスト
+- アニメーション制御
 
-1. 基本ルール
-   - 全てのコンポーネントは最低限`testBasicAccessibility`を実装
-   - インタラクティブな要素は必ず`testKeyboardInteraction`を実装
-   - 視覚的な要素は`testWCAG3Compliance`を実装
+## 2. テストヘルパー関数
 
-2. テストの優先順位
-   1. `testBasicAccessibility`
-   2. `testKeyboardInteraction`（インタラクティブな場合）
-   3. `testWCAG3Compliance`
+### 2.1 validateWCAGStyles
+スタイリングのWCAG準拠を検証
 
-3. テストケースの追加
-   - コンポーネント固有の機能に応じて追加のテストケースを実装
-   - エラー状態、無効状態、読み込み状態など、特殊な状態のテスト
+```typescript
+validateWCAGStyles(element, componentType)
+```
 
-4. アクセシビリティの検証ポイント
-   - 適切なARIAロールとプロパティ
-   - キーボード操作のサポート
-   - フォーカス管理
-   - コントラスト比
-   - テキストの可読性 
+### 2.2 testBasicAccessibility
+基本的なアクセシビリティ要件を検証
+
+```typescript
+testBasicAccessibility(component, options)
+```
+
+### 2.3 testWCAG3Compliance
+WCAG 3.0メトリクスを検証
+
+```typescript
+testWCAG3Compliance(component, options)
+```
+
+### 2.4 testKeyboardInteraction
+キーボード操作を検証
+
+```typescript
+testKeyboardInteraction(component, options)
+```
+
+## 3. スタイル規則
+
+### 3.1 必須スタイル
+- フォーカスインジケータ
+- タッチターゲットサイズ
+- コントラスト比
+
+### 3.2 コンポーネント固有スタイル
+各コンポーネントタイプに応じた固有のスタイル要件
+
+## 4. テスト実装ガイドライン
+
+### 4.1 基本方針
+1. 共通テストを必ず実装
+2. コンポーネント固有のテストを追加
+3. エッジケースの考慮
+
+### 4.2 実装手順
+1. コンポーネントの分類を確認
+2. 必要なテストヘルパーを選択
+3. 固有のテストケースを追加
+4. スタイル要件の検証を実装
+
+### 4.3 テストケース作成のポイント
+- ユーザーの操作シーケンスを考慮
+- エラー状態の検証
+- 異なるデバイスでの動作確認
+
+## 5. 実装例
+
+```typescript
+describe('Componentテスト', () => {
+  // 1. 共通WCAG 3.0テスト
+  runWCAG3Tests(<Component />, {
+    componentType: "button",
+    expectedRole: "button",
+    customConfig: {
+      keyboard: {
+        requiredKeys: ["Enter", "Space"]
+      }
+    }
+  });
+
+  // 2. コンポーネント固有のテスト
+  describe('コンポーネント固有のアクセシビリティ', () => {
+    // 固有のテストケース
+  });
+});
+```
+
+## 6. チェックリスト
+
+### 6.1 テスト実装時
+- [ ] 共通テストの実装
+- [ ] コンポーネント固有テストの実装
+- [ ] スタイル要件の検証
+- [ ] キーボード操作の検証
+- [ ] エラー状態の検証
+
+### 6.2 レビュー時
+- [ ] WCAG 3.0要件との整合性
+- [ ] テストカバレッジの確認
+- [ ] エッジケースの考慮
+- [ ] パフォーマンスの確認
+
+## 7. 今後の課題
+- [ ] コントラスト計算の精緻化
+- [ ] アニメーション検証の強化
+- [ ] デバイス依存の要件対応
+- [ ] 自動修正提案機能の実装 

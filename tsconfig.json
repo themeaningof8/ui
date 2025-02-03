@@ -33,7 +33,8 @@
       "@tests/*": [
         "src/tests/*"
       ]
-    }
+    },
+    "types": ["vitest/globals", "jest-axe"]
   },
   "include": [
     "src/**/*.ts",
@@ -41,7 +42,8 @@
     "src/**/*.js",
     "src/**/*.jsx",
     "src/**/*.test.ts",
-    "src/**/*.test.tsx"
+    "src/**/*.test.tsx",
+    "src/**/*.d.ts"
   ],
   "references": [
     {

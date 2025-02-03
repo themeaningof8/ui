@@ -1,229 +1,357 @@
 /**
  * @file WCAG 3.0テストヘルパー
- * @description コンポーネントのWCAG 3.0準拠テストを行うためのヘルパー関数
+ * @description アクセシビリティテストのための共通ユーティリティ関数
  */
-import { render, screen, waitFor } from "@testing-library/react";
+
+import { render } from "@testing-library/react";
+import type { RenderResult } from "@testing-library/react";
+import { axe } from "./axe-setup";
 import userEvent from "@testing-library/user-event";
-import { expect, describe, it, vi } from "vitest";
-import React, { type ReactElement } from "react";
+import { expect, describe, it } from "vitest";
+import type { ReactElement } from "react";
+import {
+	calculateContrast,
+	type AccessibilityRequirements,
+	wcagRequirements,
+} from "./styles";
+import "./matchers";
+import { APCAcontrast } from "apca-w3";
+import type { AxeResults } from "axe-core";
 
-/**
- * 基本的なアクセシビリティテストを実行します
- * @param component テスト対象のコンポーネント
- * @param options テストオプション
- */
-export const testBasicAccessibility = (
-	component: ReactElement,
-	{
-		expectedRole,
-		testDisabled = true,
-		useDataDisabled = false,
-		wrapper,
-	}: {
-		/** 期待されるARIAロール */
-		expectedRole: string;
-		/** 無効化状態をテストするかどうか */
-		testDisabled?: boolean;
-		/** data-disabled属性を使用するかどうか（Radix UI用） */
-		useDataDisabled?: boolean;
-		/** コンポーネントをラップするための関数 */
-		wrapper?: (component: ReactElement) => ReactElement;
-	},
-) => {
-	describe("基本機能", () => {
-		it("正しいロールが設定されている", async () => {
-			render(wrapper ? wrapper(component) : component);
-			expect(screen.getByRole(expectedRole)).toBeInTheDocument();
-		});
-
-		if (testDisabled) {
-			it("無効化状態が適切に設定される", () => {
-				const { rerender } = render(wrapper ? wrapper(component) : component);
-				const element = screen.getByRole(expectedRole);
-				
-				// 初期状態の確認
-				if (useDataDisabled) {
-					expect(element).not.toHaveAttribute("data-disabled");
-				} else {
-					expect(element).not.toBeDisabled();
-				}
-
-				// disabledプロパティを持つ新しいコンポーネントを再レンダリング
-				const props = { disabled: true };
-				rerender(wrapper ? wrapper(React.cloneElement(component, props)) : React.cloneElement(component, props));
-
-				// 無効化状態の確認
-				if (useDataDisabled) {
-					expect(element).toHaveAttribute("data-disabled");
-				} else {
-					expect(element).toBeDisabled();
-				}
-			});
-		}
-	});
-};
-
-/**
- * WCAG 3.0メトリクスのコンプライアンステストを実行します
- * @param component テスト対象のコンポーネント
- */
-export const testWCAG3Compliance = (
-	component: ReactElement,
-	{
-		wrapper,
-		expectedRole = "button",
-		focusClasses = {
-			outline: "focus-visible:outline-none",
-			ring: "focus-visible:ring-2",
-			ringColor: "focus-visible:ring-base-ui",
-			ringOffset: "focus-visible:ring-offset-2",
-		},
-		sizeClasses = {
-			height: "h-10",
-			width: "w-full",
-			padding: ["px-3", "py-2"],
-			layout: ["flex", "items-center", "justify-between"],
-		},
-	}: {
-		/** コンポーネントをラップするための関数 */
-		wrapper?: (component: ReactElement) => ReactElement;
-		/** 期待されるARIAロール（デフォルトは"button"） */
-		expectedRole?: string;
-		/** フォーカス時のクラス名 */
-		focusClasses?: {
-			outline: string;
-			ring: string;
-			ringColor: string;
-			ringOffset: string;
-		};
-		/** サイズ関連のクラス名 */
-		sizeClasses?: {
-			height: string;
-			width: string;
-			padding: string[];
-			layout: string[];
-		};
-	} = {},
-) => {
-	describe("WCAG 3.0メトリクス", () => {
-		it("コントラスト比が適切である", () => {
-			render(wrapper ? wrapper(component) : component);
-			// コントラスト比のチェックはWCAG3メトリクスで実装
-		});
-
-		it("フォーカスインジケータが視認できる", () => {
-			render(wrapper ? wrapper(component) : component);
-			const element = screen.getByRole(expectedRole);
-			element.focus();
-
-			// フォーカス時のスタイルをチェック
-			const className = element.className;
-			expect(className).toMatch(new RegExp(focusClasses.outline.replace(":", "\\:")));
-			expect(className).toMatch(new RegExp(focusClasses.ring.replace(":", "\\:")));
-			expect(className).toMatch(new RegExp(focusClasses.ringColor.replace(":", "\\:")));
-			expect(className).toMatch(new RegExp(focusClasses.ringOffset.replace(":", "\\:")));
-		});
-
-		it("インタラクティブな要素のサイズが適切である", () => {
-			render(wrapper ? wrapper(component) : component);
-			const element = screen.getByRole(expectedRole);
-			const className = element.className;
-
-			// サイズ関連のクラスをチェック
-			if (sizeClasses.height !== "h-full") {
-				expect(className).toMatch(new RegExp(sizeClasses.height));
-			}
-			if (sizeClasses.width !== "w-full") {
-				expect(className).toMatch(new RegExp(sizeClasses.width));
-			}
-			for (const padding of sizeClasses.padding) {
-				expect(className).toMatch(new RegExp(padding));
-			}
-			for (const layout of sizeClasses.layout) {
-				expect(className).toMatch(new RegExp(layout));
-			}
-		});
-	});
-};
-
-/**
- * キーボード操作のテストを実行します
- * @param component テスト対象のコンポーネント
- * @param options テストオプション
- */
-export const testKeyboardInteraction = (
-	component: React.ReactElement,
-	options: {
-		expectedRole: string;
-		triggerKeys: string[];
-		isAccordion?: boolean;
+// カスタムマッチャーの型定義
+declare module "vitest" {
+	interface CustomMatchers<R = void> {
+		toHaveNoViolations(): R;
+		toMeetContrastRatio(): R;
+		toHaveAdequateTouchTarget(): R;
+		toHaveVisibleFocusIndicator(): R;
 	}
-) => {
-	const { expectedRole, triggerKeys, isAccordion } = options;
+	interface Assertion extends CustomMatchers {}
+}
 
-	describe("キーボード操作", () => {
-		const user = userEvent.setup();
+/**
+ * コンポーネントタイプの定義
+ */
+export type ComponentType =
+	| "form"
+	| "button"
+	| "input"
+	| "select"
+	| "accordion"
+	| "dialog"
+	| "tabs"
+	| "menu"
+	| "radix";
 
-		it("Tabキーでフォーカスできる", async () => {
-			render(component);
-			const elements = screen.getAllByRole(expectedRole);
-			const firstElement = elements[0];
+/**
+ * キーボード操作の設定
+ */
+export interface KeyboardConfig {
+	/** 必須のキー操作 */
+	requiredKeys: string[];
+	/** オプションのキー操作 */
+	optionalKeys?: string[];
+	/** キー操作のカスタムテスト */
+	customTests?: {
+		keys: string[];
+		description: string;
+		test: (user: ReturnType<typeof userEvent.setup>) => Promise<void>;
+	}[];
+}
 
-			await user.tab();
-			expect(firstElement).toHaveFocus();
+/**
+ * ARIA属性の設定
+ */
+export interface AriaConfig {
+	/** 必須のARIA属性 */
+	requiredAttributes: string[];
+	/** 状態依存のARIA属性 */
+	conditionalAttributes?: {
+		attribute: string;
+		condition: string;
+		value: string;
+	}[];
+}
+
+/**
+ * フォーカス管理の設定
+ */
+export interface FocusConfig {
+	/** フォーカストラップが必要か */
+	trapFocus?: boolean;
+	/** フォーカスの自動移動が必要か */
+	autoFocus?: boolean;
+	/** フォーカス順序の検証が必要か */
+	validateOrder?: boolean;
+	/** カスタムのフォーカステスト */
+	customTests?: {
+		description: string;
+		test: (user: ReturnType<typeof userEvent.setup>) => Promise<void>;
+	}[];
+}
+
+/**
+ * コンポーネント固有の設定
+ */
+const componentConfigs: Partial<Record<
+	ComponentType,
+	{
+		keyboard: KeyboardConfig;
+		aria: AriaConfig;
+		focus: FocusConfig;
+	}
+>> = {
+	form: {
+		keyboard: {
+			requiredKeys: ["Tab", "Enter"],
+			optionalKeys: ["Space"],
+			customTests: [
+				{
+					keys: ["Escape"],
+					description: "Escapeキーでフォームをリセットできる",
+					test: async (user) => {
+						// フォーム固有のリセットテスト
+					},
+				},
+			],
+		},
+		aria: {
+			requiredAttributes: ["aria-invalid", "aria-describedby"],
+			conditionalAttributes: [
+				{
+					attribute: "aria-invalid",
+					condition: "エラー時",
+					value: "true",
+				},
+			],
+		},
+		focus: {
+			trapFocus: false,
+			autoFocus: false,
+			validateOrder: true,
+		},
+	},
+	dialog: {
+		keyboard: {
+			requiredKeys: ["Tab", "Escape"],
+			customTests: [
+				{
+					keys: ["Escape"],
+					description: "Escapeキーでダイアログを閉じる",
+					test: async (user) => {
+						// ダイアログ固有の閉じるテスト
+					},
+				},
+			],
+		},
+		aria: {
+			requiredAttributes: ["aria-modal", "aria-labelledby"],
+			conditionalAttributes: [
+				{
+					attribute: "aria-hidden",
+					condition: "非表示時",
+					value: "true",
+				},
+			],
+		},
+		focus: {
+			trapFocus: true,
+			autoFocus: true,
+			validateOrder: true,
+		},
+	},
+	accordion: {
+		keyboard: {
+			requiredKeys: ["Tab", "Enter", "Space", "ArrowUp", "ArrowDown"],
+			customTests: [
+				{
+					keys: ["Enter", "Space"],
+					description: "Enter/Spaceキーでパネルを開閉できる",
+					test: async (user) => {
+						// アコーディオン固有の開閉テスト
+					},
+				},
+			],
+		},
+		aria: {
+			requiredAttributes: ["aria-expanded", "aria-controls"],
+			conditionalAttributes: [
+				{
+					attribute: "aria-expanded",
+					condition: "展開時",
+					value: "true",
+				},
+			],
+		},
+		focus: {
+			trapFocus: false,
+			autoFocus: false,
+			validateOrder: true,
+		},
+	},
+};
+
+/**
+ * WCAG 3.0の基本テスト設定
+ */
+export interface WCAG3TestConfig {
+	/** コンポーネントの種類 */
+	componentType: ComponentType;
+	/** 期待されるARIAロール */
+	expectedRole?: string;
+	/** キーボード操作の設定 */
+	keyboard?: {
+		/** 必須のキー操作 */
+		requiredKeys: string[];
+		/** フォーカストラップが必要か */
+		requiresFocusTrap?: boolean;
+	};
+	/** カスタムテスト関数 */
+	customTests?: () => void;
+}
+
+/**
+ * アクセシビリティテストのオプション
+ */
+export interface AccessibilityTestOptions {
+	/** テスト対象のセレクタ設定 */
+	selectors?: {
+		/** コントラストをチェックする要素のセレクタ */
+		contrast?: string;
+		/** タッチターゲットをチェックする要素のセレクタ */
+		touchTarget?: string;
+		/** フォーカスインジケータをチェックする要素のセレクタ */
+		focusIndicator?: string;
+	};
+	/** スキップするテスト */
+	skip?: Array<"contrast" | "touchTarget" | "focusIndicator" | "axe">;
+	/** axe-coreのオプション設定 */
+	axeOptions?: {
+		/** 実行するルールの設定 */
+		runOnly?: {
+			/** ルールの種類 */
+			type: 'tag' | 'rule';
+			/** 実行するルールの値 */
+			values: string[];
+		};
+		/** 個別のルール設定 */
+		rules?: {
+			[ruleId: string]: {
+				/** ルールの有効/無効 */
+				enabled: boolean;
+				/** その他のオプション */
+				[key: string]: unknown;
+			};
+		};
+	};
+}
+
+/**
+ * WCAG 3.0の基本的なアクセシビリティテストを実行する
+ * 
+ * @param ui - テスト対象のReactコンポーネント
+ * @param options - テストオプション
+ * @returns レンダリング結果
+ */
+export const testAccessibility = (
+	ui: ReactElement,
+	options: AccessibilityTestOptions = {}
+): RenderResult => {
+	const result = render(ui);
+
+	// axe-coreによるテスト
+	if (!options.skip?.includes("axe")) {
+		it("アクセシビリティ違反がないこと", async () => {
+			const results = await axe(result.container, options.axeOptions);
+			expect(results).toHaveNoViolations();
 		});
+	}
 
-		for (const key of triggerKeys) {
-			it(`${key}キーで操作できる`, async () => {
-				const onKeyDown = vi.fn();
-				const props = { onKeyDown };
-				const wrappedComponent = React.cloneElement(component, props);
+	// コントラストのテスト
+	if (!options.skip?.includes("contrast") && options.selectors?.contrast) {
+		it("十分なコントラスト比があること", () => {
+			const elements = Array.from(result.container.querySelectorAll(options.selectors.contrast));
+			for (const element of elements) {
+				expect(element as HTMLElement).toMeetContrastRatio();
+			}
+		});
+	}
 
-				render(wrappedComponent);
-				const elements = screen.getAllByRole(expectedRole);
-				const firstElement = elements[0];
+	// タッチターゲットのテスト
+	if (!options.skip?.includes("touchTarget") && options.selectors?.touchTarget) {
+		it("十分なタッチターゲットサイズがあること", () => {
+			const elements = Array.from(result.container.querySelectorAll(options.selectors.touchTarget));
+			for (const element of elements) {
+				expect(element as HTMLElement).toHaveAdequateTouchTarget();
+			}
+		});
+	}
 
-				await user.tab();
-				await user.keyboard(`{${key}}`);
-				expect(onKeyDown).toHaveBeenCalled();
-			});
+	// フォーカスインジケータのテスト
+	if (!options.skip?.includes("focusIndicator") && options.selectors?.focusIndicator) {
+		it("視認可能なフォーカスインジケータがあること", () => {
+			const elements = Array.from(result.container.querySelectorAll(options.selectors.focusIndicator));
+			for (const element of elements) {
+				expect(element as HTMLElement).toHaveVisibleFocusIndicator();
+			}
+		});
+	}
+
+	return result;
+};
+
+/**
+ * キーボード操作のテストヘルパー
+ */
+export const keyboardTest = {
+	/**
+	 * Tabキーでのフォーカス移動をテストする
+	 */
+	tabNavigation: async (
+		container: HTMLElement,
+		expectedOrder: string[]
+	): Promise<void> => {
+		const user = userEvent.setup();
+		for (const selector of expectedOrder) {
+			await user.tab();
+			const element = container.querySelector(selector);
+			expect(element).toHaveFocus();
 		}
+	},
 
-		if (isAccordion) {
-			it("矢印キーで適切にフォーカス移動できる", async () => {
-				render(component);
-				const triggers = screen.getAllByRole("button");
-				
-				// 最初のトリガーにフォーカス
-				await user.tab();
-				expect(triggers[0]).toHaveFocus();
+	/**
+	 * 特定のキー操作をテストする
+	 */
+	keyPress: async (
+		element: HTMLElement,
+		key: string,
+		expectedResult: () => void
+	): Promise<void> => {
+		const user = userEvent.setup();
+		await user.type(element, `{${key}}`);
+		expectedResult();
+	},
+};
 
-				// 下矢印で次のトリガーにフォーカス
-				await user.keyboard("{ArrowDown}");
-				expect(triggers[1]).toHaveFocus();
-
-				// 上矢印で前のトリガーにフォーカス
-				await user.keyboard("{ArrowUp}");
-				expect(triggers[0]).toHaveFocus();
-
-				// Homeキーで最初のトリガーにフォーカス
-				await user.keyboard("{Home}");
-				expect(triggers[0]).toHaveFocus();
-
-				// Endキーで最後のトリガーにフォーカス
-				await user.keyboard("{End}");
-				expect(triggers[triggers.length - 1]).toHaveFocus();
-			});
-
-			it("適切なARIA属性が設定されている", () => {
-				render(component);
-				const triggers = screen.getAllByRole("button");
-				
-				for (const trigger of triggers) {
-					expect(trigger).toHaveAttribute("aria-expanded");
-					expect(trigger).toHaveAttribute("aria-controls");
-				}
-			});
+/**
+ * ARIAプロパティのテストヘルパー
+ */
+export const ariaTest = {
+	/**
+	 * ARIA属性の存在をチェックする
+	 */
+	hasAttribute: (element: HTMLElement, attribute: string, value?: string) => {
+		if (value) {
+			expect(element).toHaveAttribute(attribute, value);
+		} else {
+			expect(element).toHaveAttribute(attribute);
 		}
-	});
+	},
+
+	/**
+	 * ライブリージョンの設定をチェックする
+	 */
+	checkLiveRegion: (element: HTMLElement, politeness: "polite" | "assertive") => {
+		expect(element).toHaveAttribute("aria-live", politeness);
+	},
 };
