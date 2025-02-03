@@ -16,8 +16,108 @@ import {
   CommandItem,
   CommandShortcut,
 } from '.'
+import { testBasicAccessibility, testWCAG3Compliance, testKeyboardInteraction } from '@/tests/wcag3/helpers'
+import React from 'react'
 
 describe('Command', () => {
+  const TestComponent = ({
+    onKeyDown,
+    onSelect,
+  }: {
+    onKeyDown?: (event: React.KeyboardEvent<HTMLDivElement>) => void;
+    onSelect?: (value: string) => void;
+  }) => {
+    const [value, setValue] = React.useState<string>("");
+    const [selectedValue, setSelectedValue] = React.useState<string>("");
+
+    const items = React.useMemo(() => ["ホーム", "検索", "設定"], []);
+
+    const handleValueChange = React.useCallback((newValue: string) => {
+      setValue(newValue);
+    }, []);
+
+    const handleSelect = React.useCallback((value: string) => {
+      setSelectedValue(value);
+      onSelect?.(value);
+    }, [onSelect]);
+
+    const handleKeyDown = React.useCallback((event: React.KeyboardEvent<HTMLDivElement>) => {
+      onKeyDown?.(event);
+
+      if (event.key === "ArrowDown") {
+        event.preventDefault();
+        const currentIndex = items.indexOf(selectedValue);
+        const nextIndex = currentIndex === -1 ? 0 : (currentIndex + 1) % items.length;
+        const nextValue = items[nextIndex];
+        setValue(nextValue);
+        setSelectedValue(nextValue);
+      } else if (event.key === "ArrowUp") {
+        event.preventDefault();
+        const currentIndex = items.indexOf(selectedValue);
+        const nextIndex = currentIndex === -1 ? items.length - 1 : (currentIndex - 1 + items.length) % items.length;
+        const nextValue = items[nextIndex];
+        setValue(nextValue);
+        setSelectedValue(nextValue);
+      } else if (event.key === "Enter") {
+        event.preventDefault();
+        if (selectedValue) {
+          onSelect?.(selectedValue);
+        }
+      }
+    }, [items, selectedValue, onSelect, onKeyDown]);
+
+    return (
+      <Command
+        onKeyDown={handleKeyDown}
+        value={value}
+        onValueChange={handleValueChange}
+      >
+        <CommandInput placeholder="コマンドを検索..." />
+        <CommandList>
+          <CommandGroup>
+            {items.map((item) => (
+              <CommandItem
+                key={item}
+                value={item}
+                onSelect={handleSelect}
+              >
+                {item}
+              </CommandItem>
+            ))}
+          </CommandGroup>
+        </CommandList>
+      </Command>
+    );
+  };
+
+  // WCAG3テスト
+  testBasicAccessibility(<TestComponent />, {
+    expectedRole: "combobox",
+    testDisabled: false,
+  })
+
+  testWCAG3Compliance(<TestComponent />, {
+    expectedRole: "combobox",
+    focusClasses: {
+      outline: "focus-visible:outline-none",
+      ring: "focus-visible:ring-2",
+      ringColor: "focus-visible:ring-base-ui",
+      ringOffset: "focus-visible:ring-offset-2",
+    },
+    sizeClasses: {
+      height: "h-full",
+      width: "w-full",
+      padding: ["px-3", "py-3"],
+      layout: ["flex", "items-center"],
+    },
+  })
+
+  testKeyboardInteraction(<TestComponent />, {
+    expectedRole: "combobox",
+    triggerKeys: ["Enter", "ArrowDown", "ArrowUp", "Escape"],
+  })
+
+  // 既存のテスト
   it('基本的なコマンドパレットが表示されること', () => {
     render(
       <Command>
@@ -130,6 +230,57 @@ describe('Command', () => {
     expect(screen.getByText('⌘K')).toBeInTheDocument()
   })
 
+  it('キーボード操作が正しく動作すること', async () => {
+    const user = userEvent.setup()
+    const handleKeyDown = vi.fn()
+    const handleSelect = vi.fn()
+
+    render(
+      <TestComponent onKeyDown={handleKeyDown} onSelect={handleSelect} />
+    )
+
+    // 入力フィールドにフォーカス
+    const input = screen.getByRole('combobox')
+    await user.tab()
+    expect(input).toHaveFocus()
+
+    // 下矢印キーで最初の項目を選択
+    await user.keyboard('{ArrowDown}')
+    expect(handleKeyDown).toHaveBeenCalled()
+    const firstItem = screen.getByText('ホーム')
+    await waitFor(() => {
+      expect(firstItem).toHaveAttribute('data-selected', 'true')
+    })
+    expect(input).toHaveFocus()
+
+    // 下矢印キーで次の項目を選択
+    await user.keyboard('{ArrowDown}')
+    expect(handleKeyDown).toHaveBeenCalledTimes(2)
+    const secondItem = screen.getByText('検索')
+    await waitFor(() => {
+      expect(secondItem).toHaveAttribute('data-selected', 'true')
+    })
+    expect(input).toHaveFocus()
+
+    // 上矢印キーで前の項目を選択
+    await user.keyboard('{ArrowUp}')
+    expect(handleKeyDown).toHaveBeenCalledTimes(3)
+    await waitFor(() => {
+      expect(firstItem).toHaveAttribute('data-selected', 'true')
+    })
+    expect(input).toHaveFocus()
+
+    // Enterキーで選択
+    await user.keyboard('{Enter}')
+    expect(handleSelect).toHaveBeenCalledWith('ホーム')
+    expect(input).toHaveFocus()
+
+    // Escapeキーでフォーカスを外す
+    await user.keyboard('{Escape}')
+    expect(handleKeyDown).toHaveBeenCalledTimes(5)
+    expect(input).toHaveFocus()
+  })
+
   it('コマンドがクリックできること', async () => {
     const user = userEvent.setup()
     const handleSelect = vi.fn()
@@ -138,7 +289,7 @@ describe('Command', () => {
       <Command>
         <CommandList>
           <CommandGroup>
-            <CommandItem onSelect={handleSelect}>検索</CommandItem>
+            <CommandItem value="検索" onSelect={handleSelect}>検索</CommandItem>
           </CommandGroup>
         </CommandList>
       </Command>,
@@ -146,7 +297,6 @@ describe('Command', () => {
 
     const item = screen.getByText('検索')
     await user.click(item)
-
-    expect(handleSelect).toHaveBeenCalled()
+    expect(handleSelect).toHaveBeenCalledWith('検索')
   })
 }) 

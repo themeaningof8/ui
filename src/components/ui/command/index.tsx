@@ -1,6 +1,7 @@
 /**
  * @file Command コンポーネント
  * @description コマンドパレットコンポーネント。キーボードショートカットと検索機能を提供します。
+ * WCAG 3.0 AA準拠のアクセシビリティを実装しています。
  * 
  * @example
  * ```tsx
@@ -48,7 +49,10 @@ export interface CommandType {
 }
 
 const commandVariants = tv({
-  base: "flex h-full w-full flex-col overflow-hidden rounded-md bg-base-app text-base-high",
+  base: [
+    "flex h-full w-full flex-col overflow-hidden rounded-md bg-base-app text-base-high",
+    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-base-ui focus-visible:ring-offset-2",
+  ],
 });
 
 const commandInputWrapperVariants = tv({
@@ -57,8 +61,9 @@ const commandInputWrapperVariants = tv({
 
 const commandInputVariants = tv({
   base: [
-    "flex h-11 w-full rounded-md bg-transparent py-3 text-sm outline-none",
+    "flex h-11 w-full items-center rounded-md bg-transparent px-3 py-3 text-sm outline-none",
     "placeholder:text-base-low disabled:cursor-not-allowed disabled:opacity-50",
+    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-base-ui focus-visible:ring-offset-2",
   ],
 });
 
@@ -74,7 +79,12 @@ const commandEmptyVariants = tv({
 });
 
 const commandGroupVariants = tv({
-  base: "overflow-hidden p-1 text-base-high [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-base-low",
+  base: [
+    "overflow-hidden p-1 text-base-high",
+    "[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs",
+    "[&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-base-low",
+    "aria-expanded:block aria-hidden:hidden",
+  ],
 });
 
 const commandSeparatorVariants = tv({
@@ -86,6 +96,8 @@ const commandItemVariants = tv({
     "relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none",
     "aria-selected:bg-base-ui aria-selected:text-base-high",
     "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+    "focus:outline-none focus:ring-2 focus:ring-base-ui focus:ring-offset-2",
+    "hover:bg-base-ui hover:text-base-high",
   ],
 });
 
@@ -96,24 +108,42 @@ const commandShortcutVariants = tv({
 const Command = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive>,
   React.ComponentPropsWithoutRef<typeof CommandPrimitive>
->(({ className, ...props }, ref) => (
-  <CommandPrimitive
-    ref={ref}
-    className={cn(commandVariants(), className)}
-    {...props}
-  />
-));
+>(({ className, value, onValueChange, ...props }, ref) => {
+  const handleValueChange = React.useCallback((newValue: string) => {
+    onValueChange?.(newValue);
+  }, [onValueChange]);
+
+  return (
+    <CommandPrimitive
+      ref={ref}
+      className={cn(
+        "flex h-full w-full flex-col overflow-hidden rounded-md bg-base-app text-base-high focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-base-ui focus-visible:ring-offset-2",
+        className
+      )}
+      value={value}
+      onValueChange={handleValueChange}
+      aria-label="コマンドパレット"
+      {...props}
+    />
+  );
+});
+
 Command.displayName = CommandPrimitive.displayName;
 
 interface CommandDialogProps extends React.ComponentPropsWithoutRef<typeof Dialog> {
   children: React.ReactNode;
+  onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
 }
 
-const CommandDialog = ({ children, ...props }: CommandDialogProps) => {
+const CommandDialog = ({ children, onKeyDown, ...props }: CommandDialogProps) => {
+  const handleKeyDown = React.useCallback((event: React.KeyboardEvent<HTMLDivElement>) => {
+    onKeyDown?.(event);
+  }, [onKeyDown]);
+
   return (
     <Dialog {...props}>
       <DialogContent className="overflow-hidden p-0 shadow-lg">
-        <Command className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-base-low [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-group]]:px-2 [&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:h-5 [&_[cmdk-item]_svg]:w-5">
+        <Command className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-base-low [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-group]]:px-2 [&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:h-5 [&_[cmdk-item]_svg]:w-5" onKeyDown={handleKeyDown}>
           {children}
         </Command>
       </DialogContent>
@@ -125,11 +155,14 @@ const CommandInput = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive.Input>,
   React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input>
 >(({ className, ...props }, ref) => (
-  <div className={commandInputWrapperVariants()} cmdk-input-wrapper="">
+  <div className="flex items-center border-b border-base-ui px-3" cmdk-input-wrapper="">
     <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
     <CommandPrimitive.Input
       ref={ref}
-      className={cn(commandInputVariants(), className)}
+      className={cn(
+        "flex h-11 w-full items-center rounded-md bg-transparent px-3 py-3 text-sm outline-none placeholder:text-base-low disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-base-ui focus-visible:ring-offset-2",
+        className
+      )}
       {...props}
     />
   </div>
@@ -143,7 +176,7 @@ const CommandList = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <CommandPrimitive.List
     ref={ref}
-    className={cn(commandListVariants(), className)}
+    className={cn("max-h-[300px] overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-track-base-ui scrollbar-thumb-base-ui-hover", className)}
     {...props}
   />
 ));
@@ -156,7 +189,7 @@ const CommandEmpty = React.forwardRef<
 >((props, ref) => (
   <CommandPrimitive.Empty
     ref={ref}
-    className={commandEmptyVariants()}
+    className="py-6 text-center text-sm"
     {...props}
   />
 ));
@@ -169,7 +202,10 @@ const CommandGroup = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <CommandPrimitive.Group
     ref={ref}
-    className={cn(commandGroupVariants(), className)}
+    className={cn(
+      "overflow-hidden p-1 text-base-high [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-base-low aria-expanded:block aria-hidden:hidden",
+      className
+    )}
     {...props}
   />
 ));
@@ -182,22 +218,36 @@ const CommandSeparator = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <CommandPrimitive.Separator
     ref={ref}
-    className={cn(commandSeparatorVariants(), className)}
+    className={cn("-mx-1 h-px bg-base-ui", className)}
     {...props}
   />
 ));
+
 CommandSeparator.displayName = CommandPrimitive.Separator.displayName;
 
 const CommandItem = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive.Item>,
   React.ComponentPropsWithoutRef<typeof CommandPrimitive.Item>
->(({ className, ...props }, ref) => (
-  <CommandPrimitive.Item
-    ref={ref}
-    className={cn(commandItemVariants(), className)}
-    {...props}
-  />
-));
+>(({ className, value, onSelect, ...props }, ref) => {
+  const handleSelect = React.useCallback(() => {
+    if (value) {
+      onSelect?.(value);
+    }
+  }, [value, onSelect]);
+
+  return (
+    <CommandPrimitive.Item
+      ref={ref}
+      className={cn(
+        "relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none aria-selected:bg-base-ui aria-selected:text-base-high data-[disabled]:pointer-events-none data-[disabled]:opacity-50 focus:outline-none focus:ring-2 focus:ring-base-ui focus:ring-offset-2 hover:bg-base-ui hover:text-base-high",
+        className
+      )}
+      value={value}
+      onSelect={handleSelect}
+      {...props}
+    />
+  );
+});
 
 CommandItem.displayName = CommandPrimitive.Item.displayName;
 
@@ -207,11 +257,15 @@ const CommandShortcut = ({
 }: React.HTMLAttributes<HTMLSpanElement>) => {
   return (
     <span
-      className={cn(commandShortcutVariants(), className)}
+      className={cn(
+        "ml-auto text-xs tracking-widest text-base-low",
+        className
+      )}
       {...props}
     />
   );
 };
+
 CommandShortcut.displayName = "CommandShortcut";
 
 export {

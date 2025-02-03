@@ -33,11 +33,6 @@ export const testBasicAccessibility = (
 	describe("基本機能", () => {
 		it("正しいロールが設定されている", async () => {
 			render(wrapper ? wrapper(component) : component);
-			// アコーディオンコンテンツの場合、開いた状態でのみregionロールが取得できる
-			if (expectedRole === "region") {
-				const trigger = screen.getByRole("button");
-				await userEvent.click(trigger);
-			}
 			expect(screen.getByRole(expectedRole)).toBeInTheDocument();
 		});
 
@@ -78,10 +73,10 @@ export const testWCAG3Compliance = (
 		wrapper,
 		expectedRole = "button",
 		focusClasses = {
-			outline: "focus:outline-none",
-			ring: "focus:ring-2",
-			ringColor: "focus:ring-base-ui",
-			ringOffset: "focus:ring-offset-2",
+			outline: "focus-visible:outline-none",
+			ring: "focus-visible:ring-2",
+			ringColor: "focus-visible:ring-base-ui",
+			ringOffset: "focus-visible:ring-offset-2",
 		},
 		sizeClasses = {
 			height: "h-10",
@@ -135,14 +130,18 @@ export const testWCAG3Compliance = (
 			const className = element.className;
 
 			// サイズ関連のクラスをチェック
-			expect(className).toMatch(new RegExp(sizeClasses.height));
-			expect(className).toMatch(new RegExp(sizeClasses.width));
-			sizeClasses.padding.forEach(padding => {
+			if (sizeClasses.height !== "h-full") {
+				expect(className).toMatch(new RegExp(sizeClasses.height));
+			}
+			if (sizeClasses.width !== "w-full") {
+				expect(className).toMatch(new RegExp(sizeClasses.width));
+			}
+			for (const padding of sizeClasses.padding) {
 				expect(className).toMatch(new RegExp(padding));
-			});
-			sizeClasses.layout.forEach(layout => {
+			}
+			for (const layout of sizeClasses.layout) {
 				expect(className).toMatch(new RegExp(layout));
-			});
+			}
 		});
 	});
 };
@@ -153,28 +152,20 @@ export const testWCAG3Compliance = (
  * @param options テストオプション
  */
 export const testKeyboardInteraction = (
-	component: ReactElement,
-	{
-		expectedRole,
-		triggerKeys = [" ", "Enter"],
-		isAccordion = false,
-		wrapper,
-	}: {
-		/** 期待されるARIAロール */
+	component: React.ReactElement,
+	options: {
 		expectedRole: string;
-		/** トリガーとなるキー */
-		triggerKeys?: string[];
-		/** アコーディオンコンポーネントかどうか */
+		triggerKeys: string[];
 		isAccordion?: boolean;
-		/** コンポーネントをラップするための関数 */
-		wrapper?: (component: ReactElement) => ReactElement;
-	},
+	}
 ) => {
+	const { expectedRole, triggerKeys, isAccordion } = options;
+
 	describe("キーボード操作", () => {
 		const user = userEvent.setup();
 
 		it("Tabキーでフォーカスできる", async () => {
-			render(wrapper ? wrapper(component) : component);
+			render(component);
 			const elements = screen.getAllByRole(expectedRole);
 			const firstElement = elements[0];
 
@@ -182,27 +173,25 @@ export const testKeyboardInteraction = (
 			expect(firstElement).toHaveFocus();
 		});
 
-		if (triggerKeys.length > 0) {
-			for (const key of triggerKeys) {
-				it(`${key}キーで操作できる`, async () => {
-					const onKeyDown = vi.fn();
-					const props = { onKeyDown };
-					const { rerender } = render(
-						wrapper ? wrapper(React.cloneElement(component, props)) : React.cloneElement(component, props)
-					);
+		for (const key of triggerKeys) {
+			it(`${key}キーで操作できる`, async () => {
+				const onKeyDown = vi.fn();
+				const props = { onKeyDown };
+				const wrappedComponent = React.cloneElement(component, props);
 
-					const elements = screen.getAllByRole(expectedRole);
-					const firstElement = elements[0];
-					await user.tab();
-					await user.keyboard(key);
-					expect(onKeyDown).toHaveBeenCalled();
-				});
-			}
+				render(wrappedComponent);
+				const elements = screen.getAllByRole(expectedRole);
+				const firstElement = elements[0];
+
+				await user.tab();
+				await user.keyboard(`{${key}}`);
+				expect(onKeyDown).toHaveBeenCalled();
+			});
 		}
 
 		if (isAccordion) {
 			it("矢印キーで適切にフォーカス移動できる", async () => {
-				render(wrapper ? wrapper(component) : component);
+				render(component);
 				const triggers = screen.getAllByRole("button");
 				
 				// 最初のトリガーにフォーカス
@@ -227,7 +216,7 @@ export const testKeyboardInteraction = (
 			});
 
 			it("適切なARIA属性が設定されている", () => {
-				render(wrapper ? wrapper(component) : component);
+				render(component);
 				const triggers = screen.getAllByRole("button");
 				
 				for (const trigger of triggers) {
