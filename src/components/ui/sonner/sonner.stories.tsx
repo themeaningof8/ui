@@ -1,5 +1,5 @@
 /**
- * Sonnerコンポーネントのストーリー
+ * Sonnerのストーリー
  * @module Sonner.stories
  */
 

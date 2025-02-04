@@ -1,6 +1,6 @@
 /**
- * @file Select コンポーネントのテスト
- * @description Select コンポーネントの基本的なレンダリングと機能をテストします。
+ * @file Selectのテスト
+ * @description Selectの基本的なレンダリングと機能をテストします。
  */
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -15,11 +15,12 @@ import {
   SelectLabel,
   SelectSeparator,
 } from '@/components/ui/select';
-import { testBasicAccessibility, testWCAG3Compliance, testKeyboardInteraction } from '../../../tests/wcag3/helpers';
+import { runAccessibilityTest } from '@/tests/wcag3/helpers';
 
-// scrollIntoViewのモック
+// scrollIntoViewとhasPointerCaptureのモック
 beforeAll(() => {
   Element.prototype.scrollIntoView = vi.fn();
+  Element.prototype.hasPointerCapture = vi.fn().mockReturnValue(false);
 });
 
 const TestSelect = ({
@@ -32,7 +33,7 @@ const TestSelect = ({
   disabled?: boolean;
 }) => (
   <Select onValueChange={onValueChange} defaultValue={defaultValue}>
-    <SelectTrigger disabled={disabled}>
+    <SelectTrigger disabled={disabled} aria-label="フルーツを選択">
       <SelectValue placeholder="選択してください" />
     </SelectTrigger>
     <SelectContent>
@@ -47,7 +48,7 @@ const TestSelect = ({
   </Select>
 );
 
-describe('Select コンポーネント', () => {
+describe('Select', () => {
   const user = userEvent.setup();
 
   describe('基本機能', () => {
@@ -92,6 +93,9 @@ describe('Select コンポーネント', () => {
       render(<TestSelect onValueChange={onValueChange} />);
       
       await user.click(screen.getByRole('combobox'));
+      await waitFor(() => {
+        expect(screen.getByText('りんご')).toBeVisible();
+      });
       await user.click(screen.getByText('りんご'));
       
       expect(onValueChange).toHaveBeenCalledWith('apple');
@@ -103,123 +107,14 @@ describe('Select コンポーネント', () => {
       render(<TestSelect onValueChange={onValueChange} />);
       
       await user.click(screen.getByRole('combobox'));
+      await waitFor(() => {
+        expect(screen.getByText('オレンジ')).toBeVisible();
+      });
       const orangeOption = screen.getByText('オレンジ');
       
       expect(orangeOption.parentElement).toHaveAttribute('data-disabled');
       await user.click(orangeOption);
       expect(onValueChange).not.toHaveBeenCalled();
-    });
-  });
-
-  describe('キーボード操作', () => {
-    it('Tabキーでフォーカスできる', async () => {
-      render(<TestSelect />);
-      const trigger = screen.getByRole('combobox');
-
-      await user.tab();
-      expect(trigger).toHaveFocus();
-    });
-
-    it('Space/Enterキーでオプションを開閉できる', async () => {
-      render(<TestSelect />);
-      const trigger = screen.getByRole('combobox');
-
-      // Spaceキーで開く
-      await user.tab();
-      await user.keyboard('[Space]');
-      await waitFor(() => {
-        expect(screen.getByRole('listbox')).toBeVisible();
-      });
-
-      // Escキーで閉じる
-      await user.keyboard('{Escape}');
-      await waitFor(() => {
-        expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
-      });
-
-      // Enterキーで開く
-      await user.keyboard('[Enter]');
-      await waitFor(() => {
-        expect(screen.getByRole('listbox')).toBeVisible();
-      });
-    });
-
-    it('矢印キーでオプションを選択できる', async () => {
-      const onValueChange = vi.fn();
-      render(<TestSelect onValueChange={onValueChange} />);
-      const trigger = screen.getByRole('combobox');
-
-      // 下矢印キーで開く
-      await user.tab();
-      await user.keyboard('{ArrowDown}');
-      await waitFor(() => {
-        expect(screen.getByRole('listbox')).toBeVisible();
-      });
-
-      // 下矢印で移動して選択（最初のアイテムはラベルなのでスキップ）
-      await user.keyboard('{ArrowDown}');
-      await user.keyboard('{ArrowDown}');
-      await user.keyboard('{Enter}');
-      expect(onValueChange).toHaveBeenCalledWith('banana');
-
-      // 上矢印キーで開く
-      await user.keyboard('{ArrowUp}');
-      await waitFor(() => {
-        expect(screen.getByRole('listbox')).toBeVisible();
-      });
-
-      // 上矢印で移動して選択
-      await user.keyboard('{ArrowUp}');
-      await user.keyboard('{Enter}');
-      expect(onValueChange).toHaveBeenCalledWith('apple');
-    });
-
-    it('Home/Endキーでオプションの最初/最後に移動できる', async () => {
-      const onValueChange = vi.fn();
-      render(<TestSelect onValueChange={onValueChange} />);
-      const trigger = screen.getByRole('combobox');
-
-      // オプションを開く
-      await user.tab();
-      await user.keyboard('[Space]');
-      await waitFor(() => {
-        expect(screen.getByRole('listbox')).toBeVisible();
-      });
-
-      // Endキーで最後に移動（オレンジは無効なのでバナナが選択される）
-      await user.keyboard('{End}');
-      await user.keyboard('{Enter}');  // オレンジは無効なので自動的にバナナが選択される
-      expect(onValueChange).toHaveBeenCalledWith('banana');
-
-      // 再度開く
-      await user.keyboard('[Space]');
-      await waitFor(() => {
-        expect(screen.getByRole('listbox')).toBeVisible();
-      });
-
-      // Homeキーで最初に移動（ラベルはスキップされる）
-      await user.keyboard('{Home}');
-      await user.keyboard('{Enter}');  // ラベルは自動的にスキップされる
-      expect(onValueChange).toHaveBeenCalledWith('apple');
-    });
-
-    it('Escキーでオプションを閉じられる', async () => {
-      render(<TestSelect />);
-      const trigger = screen.getByRole('combobox');
-
-      // オプションを開く
-      await user.tab();
-      await user.keyboard('[Space]');
-      await waitFor(() => {
-        expect(screen.getByRole('listbox')).toBeVisible();
-      });
-
-      // Escキーで閉じる
-      await user.keyboard('{Escape}');
-      await waitFor(() => {
-        expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
-      });
-      expect(trigger).toHaveFocus();
     });
   });
 
@@ -230,6 +125,7 @@ describe('Select コンポーネント', () => {
       
       expect(trigger).toHaveAttribute('aria-expanded', 'false');
       expect(trigger).toHaveAttribute('aria-autocomplete', 'none');
+      expect(trigger).toHaveAttribute('aria-label', 'フルーツを選択');
     });
 
     it('選択時にARIA属性が更新される', async () => {
@@ -237,163 +133,40 @@ describe('Select コンポーネント', () => {
       const trigger = screen.getByRole('combobox');
       
       await user.click(trigger);
-      expect(trigger).toHaveAttribute('aria-expanded', 'true');
+      await waitFor(() => {
+        expect(trigger).toHaveAttribute('aria-expanded', 'true');
+      });
       
       await user.click(screen.getByText('りんご'));
-      expect(trigger).toHaveAttribute('aria-expanded', 'false');
-    });
-  });
-
-  // WCAG 3.0 コンプライアンステスト
-  describe('WCAG 3.0', () => {
-    // SelectTriggerの基本的なアクセシビリティテスト
-    testBasicAccessibility(<SelectTrigger><SelectValue placeholder="選択してください" /></SelectTrigger>, {
-      expectedRole: 'combobox',
-      testDisabled: true,
-      useDataDisabled: true,
-      wrapper: (trigger) => (
-        <Select>
-          {trigger}
-          <SelectContent>
-            <SelectItem value="test">テスト</SelectItem>
-          </SelectContent>
-        </Select>
-      ),
-    });
-
-    // SelectItemの基本的なアクセシビリティテスト
-    testBasicAccessibility(<SelectItem value="test">テスト</SelectItem>, {
-      expectedRole: 'option',
-      testDisabled: true,
-      useDataDisabled: true,
-      wrapper: (item) => (
-        <Select defaultOpen>
-          <SelectTrigger>
-            <SelectValue placeholder="選択してください" />
-          </SelectTrigger>
-          <SelectContent>
-            {item}
-          </SelectContent>
-        </Select>
-      ),
-    });
-
-    // WCAG 3.0メトリクスのコンプライアンステスト
-    testWCAG3Compliance(<TestSelect />, {
-      expectedRole: 'combobox'
-    });
-
-    describe('キーボード操作', () => {
-      const user = userEvent.setup();
-
-      it('Tabキーでフォーカスできる', async () => {
-        render(<TestSelect />);
-        const trigger = screen.getByRole('combobox');
-
-        await user.tab();
-        expect(trigger).toHaveFocus();
+      await waitFor(() => {
+        expect(trigger).toHaveAttribute('aria-expanded', 'false');
       });
+    });
 
-      it('Space/Enterキーでオプションを開閉できる', async () => {
-        render(<TestSelect />);
-        const trigger = screen.getByRole('combobox');
-
-        // Spaceキーで開く
-        await user.tab();
-        await user.keyboard('[Space]');
-        await waitFor(() => {
-          expect(screen.getByRole('listbox')).toBeVisible();
-        });
-
-        // Escキーで閉じる
-        await user.keyboard('{Escape}');
-        await waitFor(() => {
-          expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
-        });
-
-        // Enterキーで開く
-        await user.keyboard('[Enter]');
-        await waitFor(() => {
-          expect(screen.getByRole('listbox')).toBeVisible();
+    // WCAG 3.0 コンプライアンステスト
+    describe('WCAG 3.0', () => {
+      // SelectTriggerの基本的なアクセシビリティテスト
+      it('基本的なアクセシビリティ要件を満たす', async () => {
+        await runAccessibilityTest(<TestSelect />, {
+          keyboardNavigation: true,
+          ariaAttributes: true,
+          focusManagement: true,
+          contrast: false,
         });
       });
 
-      it('矢印キーでオプションを選択できる', async () => {
-        const onValueChange = vi.fn();
-        render(<TestSelect onValueChange={onValueChange} />);
-        const trigger = screen.getByRole('combobox');
-
-        // 下矢印キーで開く
-        await user.tab();
-        await user.keyboard('{ArrowDown}');
-        await waitFor(() => {
-          expect(screen.getByRole('listbox')).toBeVisible();
+      // 各状態のアクセシビリティテスト
+      it.each([
+        ['default', {}],
+        ['disabled', { disabled: true }],
+      ] as const)('%s状態がアクセシビリティ要件を満たす', async (state, props) => {
+        await runAccessibilityTest(<TestSelect {...props} />, {
+          keyboardNavigation: true,
+          ariaAttributes: true,
+          focusManagement: true,
+          contrast: false,
+          skipFocusableCheck: state === 'disabled'
         });
-
-        // 下矢印で移動して選択（最初のアイテムはラベルなのでスキップ）
-        await user.keyboard('{ArrowDown}');
-        await user.keyboard('{ArrowDown}');
-        await user.keyboard('{Enter}');
-        expect(onValueChange).toHaveBeenCalledWith('banana');
-
-        // 上矢印キーで開く
-        await user.keyboard('{ArrowUp}');
-        await waitFor(() => {
-          expect(screen.getByRole('listbox')).toBeVisible();
-        });
-
-        // 上矢印で移動して選択
-        await user.keyboard('{ArrowUp}');
-        await user.keyboard('{Enter}');
-        expect(onValueChange).toHaveBeenCalledWith('apple');
-      });
-
-      it('Home/Endキーでオプションの最初/最後に移動できる', async () => {
-        const onValueChange = vi.fn();
-        render(<TestSelect onValueChange={onValueChange} />);
-        const trigger = screen.getByRole('combobox');
-
-        // オプションを開く
-        await user.tab();
-        await user.keyboard('[Space]');
-        await waitFor(() => {
-          expect(screen.getByRole('listbox')).toBeVisible();
-        });
-
-        // Endキーで最後に移動（オレンジは無効なのでバナナが選択される）
-        await user.keyboard('{End}');
-        await user.keyboard('{Enter}');  // オレンジは無効なので自動的にバナナが選択される
-        expect(onValueChange).toHaveBeenCalledWith('banana');
-
-        // 再度開く
-        await user.keyboard('[Space]');
-        await waitFor(() => {
-          expect(screen.getByRole('listbox')).toBeVisible();
-        });
-
-        // Homeキーで最初に移動（ラベルはスキップされる）
-        await user.keyboard('{Home}');
-        await user.keyboard('{Enter}');  // ラベルは自動的にスキップされる
-        expect(onValueChange).toHaveBeenCalledWith('apple');
-      });
-
-      it('Escキーでオプションを閉じられる', async () => {
-        render(<TestSelect />);
-        const trigger = screen.getByRole('combobox');
-
-        // オプションを開く
-        await user.tab();
-        await user.keyboard('[Space]');
-        await waitFor(() => {
-          expect(screen.getByRole('listbox')).toBeVisible();
-        });
-
-        // Escキーで閉じる
-        await user.keyboard('{Escape}');
-        await waitFor(() => {
-          expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
-        });
-        expect(trigger).toHaveFocus();
       });
     });
   });

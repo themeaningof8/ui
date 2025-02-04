@@ -1,12 +1,12 @@
 /**
- * @file Progressコンポーネントのテスト
- * @description Progressコンポーネントの機能とアクセシビリティをテスト
+ * @file Progressのテスト
+ * @description Progressの機能とアクセシビリティをテスト
  */
 
 import { render, screen } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 
-import { Progress } from '.'
+import { Progress } from '@/components/ui/progress'
 
 describe('Progress', () => {
   it('基本的なプログレスバーが表示されること', () => {

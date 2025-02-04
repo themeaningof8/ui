@@ -1,5 +1,5 @@
 /**
- * @file Button コンポーネント
+ * @file Button
  * @description shadcn/ui 準拠のボタンコンポーネント。Next.js や React Router での利用を想定し、asChild によるリンクラップをサポートします。
  *
  * @remarks

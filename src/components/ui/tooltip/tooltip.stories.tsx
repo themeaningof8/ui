@@ -1,10 +1,10 @@
 /**
- * @file Tooltipコンポーネントのストーリー
- * @description Tooltipコンポーネントの使用例とバリエーションを表示
+ * @file Tooltipのストーリー
+ * @description Tooltipの使用例とバリエーションを表示
  */
 import type { Meta, StoryObj } from '@storybook/react';
-import { Button } from '../button';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '.';
+import { Button } from '@/components/ui/button';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 /**
  * @description Tooltipコンポーネントのメタデータ

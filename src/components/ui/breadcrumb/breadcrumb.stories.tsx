@@ -1,6 +1,6 @@
 /**
- * @file Breadcrumbコンポーネントのストーリー
- * @description Breadcrumbコンポーネントの様々な状態とバリエーションを表示
+ * @file Breadcrumbのストーリー
+ * @description Breadcrumbの様々な状態とバリエーションを表示
  */
 
 import type { Meta } from '@storybook/react'
@@ -11,7 +11,7 @@ import {
   BreadcrumbLink,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from '.'
+} from '@/components/ui/breadcrumb'
 
 const meta = {
   title: 'UI/Breadcrumb',

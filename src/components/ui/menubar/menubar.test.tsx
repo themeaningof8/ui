@@ -1,6 +1,6 @@
 /**
- * @file Menubarコンポーネントのテスト
- * @description Menubarコンポーネントの機能とアクセシビリティをテスト
+ * @file Menubarのテスト
+ * @description Menubarの機能とアクセシビリティをテスト
  */
 
 import { render, screen } from '@testing-library/react'
@@ -21,7 +21,7 @@ import {
   MenubarSub,
   MenubarSubContent,
   MenubarSubTrigger,
-} from '.'
+} from '@/components/ui/menubar'
 import * as MenubarPrimitive from '@radix-ui/react-menubar'
 
 describe('Menubar', () => {

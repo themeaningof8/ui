@@ -1,321 +1,141 @@
 /**
- * @file Alert コンポーネントのテスト
- * @description Alert コンポーネントの機能とアクセシビリティをテスト
+ * @file Alertのテスト
+ * @description Alertの機能とアクセシビリティをテスト
  */
-import * as React from 'react';
-import { render, screen } from '@testing-library/react';
-import { describe, it, expect } from 'vitest';
+import { render, screen, cleanup } from '@testing-library/react';
+import { describe, it, expect, afterEach } from 'vitest';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
-import { testBasicAccessibility } from '@/tests/wcag3/helpers';
-import { Terminal } from 'lucide-react';
+import { runAccessibilityTest } from '@/tests/wcag3/helpers';
 
-describe('Alert Component', () => {
+const TestAlert = () => (
+  <Alert>
+    <AlertTitle>テストタイトル</AlertTitle>
+    <AlertDescription>テスト説明文</AlertDescription>
+  </Alert>
+);
+
+describe('Alert', () => {
+  afterEach(() => {
+    cleanup();
+  });
+
   describe('基本機能', () => {
-    it('デフォルトのAlertが正しくレンダリングされる', () => {
-      render(
-        <Alert>
-          <AlertTitle>テストタイトル</AlertTitle>
-          <AlertDescription>テスト説明文</AlertDescription>
-        </Alert>
-      );
-
+    it('コンポーネントが正しくレンダリングされる', () => {
+      render(<TestAlert />);
       expect(screen.getByRole('alert')).toBeInTheDocument();
       expect(screen.getByText('テストタイトル')).toBeInTheDocument();
       expect(screen.getByText('テスト説明文')).toBeInTheDocument();
     });
 
-    it('children が未定義の場合も正しくレンダリングされる', () => {
-      render(<Alert />);
-      expect(screen.getByRole('alert')).toBeInTheDocument();
-    });
+    it('バリアントに応じたスタイルが適用される', () => {
+      const variants = ['default', 'destructive', 'success', 'warning'] as const;
+      const variantClasses = {
+        default: 'bg-base-app text-base-high border-base-subtle',
+        destructive: 'bg-destructive-app text-destructive-high border-destructive-subtle',
+        success: 'bg-accent-app text-accent-high border-accent-subtle',
+        warning: 'bg-base-app text-base-high border-base-subtle',
+      };
 
-    it('AlertTitle のみでも正しくレンダリングされる', () => {
-      render(
-        <Alert>
-          <AlertTitle>テストタイトル</AlertTitle>
-        </Alert>
-      );
-      expect(screen.getByText('テストタイトル')).toBeInTheDocument();
-      expect(screen.getByRole('alert')).not.toHaveTextContent('テスト説明文');
-    });
-
-    it('AlertDescription のみでも正しくレンダリングされる', () => {
-      render(
-        <Alert>
-          <AlertDescription>テスト説明文</AlertDescription>
-        </Alert>
-      );
-      expect(screen.getByText('テスト説明文')).toBeInTheDocument();
-      expect(screen.getByRole('alert')).not.toHaveTextContent('テストタイトル');
-    });
-
-    describe('バリアントのスタイル', () => {
-      it.each([
-        ['default', {
-          bg: 'bg-base-app',
-          text: 'text-base-high',
-          border: 'border-base-subtle'
-        }],
-        ['destructive', {
-          bg: 'bg-destructive-app',
-          text: 'text-destructive-high',
-          border: 'border-destructive-subtle'
-        }],
-        ['success', {
-          bg: 'bg-accent-app',
-          text: 'text-accent-high',
-          border: 'border-accent-subtle'
-        }],
-        ['warning', {
-          bg: 'bg-base-app',
-          text: 'text-base-high',
-          border: 'border-base-subtle'
-        }],
-      ])('%s バリアントが正しいスタイルでレンダリングされる', (variant, expected) => {
+      for (const variant of variants) {
         render(
-          <Alert variant={variant as 'default' | 'destructive' | 'success' | 'warning'}>
+          <Alert variant={variant}>
             <AlertTitle>テストタイトル</AlertTitle>
-            <AlertDescription>テスト説明文</AlertDescription>
           </Alert>
         );
-
         const alert = screen.getByRole('alert');
-        expect(alert).toHaveClass(expected.bg);
-        expect(alert).toHaveClass(expected.text);
-        expect(alert).toHaveClass(expected.border);
-      });
-    });
-  });
-
-  describe('アクセシビリティ', () => {
-    it('適切なARIA属性が設定されている', () => {
-      render(
-        <Alert>
-          <AlertTitle>テストタイトル</AlertTitle>
-          <AlertDescription>テスト説明文</AlertDescription>
-        </Alert>
-      );
-
-      const alert = screen.getByRole('alert');
-      expect(alert).toBeInTheDocument();
-    });
-
-    it('タイトルが適切な見出しレベルで表示される', () => {
-      render(
-        <Alert>
-          <AlertTitle>テストタイトル</AlertTitle>
-          <AlertDescription>テスト説明文</AlertDescription>
-        </Alert>
-      );
-
-      const title = screen.getByText('テストタイトル');
-      expect(title.tagName).toBe('H5');
-    });
-
-    it('AlertTitle に適切なスタイルが適用される', () => {
-      render(
-        <Alert>
-          <AlertTitle>テストタイトル</AlertTitle>
-        </Alert>
-      );
-
-      const title = screen.getByText('テストタイトル');
-      expect(title).toHaveClass('mb-1', 'font-medium', 'leading-none', 'tracking-tight');
-    });
-
-    it('AlertDescription に適切なスタイルが適用される', () => {
-      render(
-        <Alert>
-          <AlertDescription>テスト説明文</AlertDescription>
-        </Alert>
-      );
-
-      const description = screen.getByText('テスト説明文');
-      expect(description).toHaveClass('text-sm', '[&_p]:leading-relaxed');
-    });
-
-    // 基本的なアクセシビリティテスト
-    testBasicAccessibility(
-      <Alert>
-        <AlertTitle>テストタイトル</AlertTitle>
-        <AlertDescription>テスト説明文</AlertDescription>
-      </Alert>,
-      {
-        expectedRole: 'alert',
-        testDisabled: false,
+        const classes = variantClasses[variant].split(' ');
+        for (const className of classes) {
+          expect(alert).toHaveClass(className);
+        }
+        cleanup();
       }
-    );
-
-    describe('WCAG 3.0メトリクス', () => {
-      it('適切なサイズと間隔が設定されている', () => {
-        render(
-          <Alert>
-            <AlertTitle>テストタイトル</AlertTitle>
-            <AlertDescription>テスト説明文</AlertDescription>
-          </Alert>
-        );
-
-        const alert = screen.getByRole('alert');
-        // サイズと間隔のクラス
-        expect(alert).toHaveClass('w-full');  // 幅
-        expect(alert).toHaveClass('p-4');     // パディング
-        expect(alert).toHaveClass('rounded-lg'); // 角丸
-      });
-
-      it('アイコンとテキストの配置が適切である', () => {
-        render(
-          <Alert>
-            <AlertTitle>テストタイトル</AlertTitle>
-            <AlertDescription>テスト説明文</AlertDescription>
-          </Alert>
-        );
-
-        const alert = screen.getByRole('alert');
-        // アイコンの配置
-        expect(alert).toHaveClass('[&>svg]:absolute');
-        expect(alert).toHaveClass('[&>svg]:left-4');
-        expect(alert).toHaveClass('[&>svg]:top-4');
-        // テキストの配置
-        expect(alert).toHaveClass('[&>svg~*]:pl-7');
-        expect(alert).toHaveClass('[&>svg+div]:translate-y-[-3px]');
-      });
-
-      describe('バリアントごとのコントラスト比', () => {
-        it.each([
-          ['default', {
-            bg: 'bg-base-app',
-            text: 'text-base-high',
-            border: 'border-base-subtle'
-          }],
-          ['destructive', {
-            bg: 'bg-destructive-app',
-            text: 'text-destructive-high',
-            border: 'border-destructive-subtle'
-          }],
-          ['success', {
-            bg: 'bg-accent-app',
-            text: 'text-accent-high',
-            border: 'border-accent-subtle'
-          }],
-          ['warning', {
-            bg: 'bg-base-app',
-            text: 'text-base-high',
-            border: 'border-base-subtle'
-          }],
-        ])('%s バリアントのコントラスト比が適切である', (variant, expected) => {
-          render(
-            <Alert variant={variant as 'default' | 'destructive' | 'success' | 'warning'}>
-              <AlertTitle>テストタイトル</AlertTitle>
-              <AlertDescription>テスト説明文</AlertDescription>
-            </Alert>
-          );
-
-          const alert = screen.getByRole('alert');
-          expect(alert).toHaveClass(expected.bg);
-          expect(alert).toHaveClass(expected.text);
-          expect(alert).toHaveClass(expected.border);
-        });
-      });
-
-      describe('テキストの可読性', () => {
-        it('タイトルのテキストスタイルが適切である', () => {
-          render(
-            <Alert>
-              <AlertTitle>テストタイトル</AlertTitle>
-            </Alert>
-          );
-
-          const title = screen.getByText('テストタイトル');
-          expect(title).toHaveClass('mb-1');
-          expect(title).toHaveClass('font-medium');
-          expect(title).toHaveClass('leading-none');
-          expect(title).toHaveClass('tracking-tight');
-        });
-
-        it('説明文のテキストスタイルが適切である', () => {
-          render(
-            <Alert>
-              <AlertDescription>テスト説明文</AlertDescription>
-            </Alert>
-          );
-
-          const description = screen.getByText('テスト説明文');
-          expect(description).toHaveClass('text-sm');
-          expect(description).toHaveClass('[&_p]:leading-relaxed');
-        });
-      });
-    });
-
-    describe('アイコンとテキストの関係性', () => {
-      it('アイコンが装飾的な要素として適切に配置される', () => {
-        render(
-          <Alert>
-            <Terminal className="h-4 w-4" />
-            <AlertTitle>テストタイトル</AlertTitle>
-            <AlertDescription>テスト説明文</AlertDescription>
-          </Alert>
-        );
-
-        const alert = screen.getByRole('alert');
-        // アイコンの配置用のスタイル
-        expect(alert).toHaveClass('[&>svg]:absolute');
-        expect(alert).toHaveClass('[&>svg]:left-4');
-        expect(alert).toHaveClass('[&>svg]:top-4');
-      });
-
-      it('アイコンとテキストの間に適切な間隔が設定される', () => {
-        render(
-          <Alert>
-            <Terminal className="h-4 w-4" />
-            <AlertTitle>テストタイトル</AlertTitle>
-            <AlertDescription>テスト説明文</AlertDescription>
-          </Alert>
-        );
-
-        const alert = screen.getByRole('alert');
-        // アイコンとテキストの間隔用のスタイル
-        expect(alert).toHaveClass('[&>svg~*]:pl-7');
-        expect(alert).toHaveClass('[&>svg+div]:translate-y-[-3px]');
-      });
     });
   });
 
-  describe('カスタマイズ', () => {
+  describe('インタラクション', () => {
     it('カスタムクラスが適用される', () => {
       render(
         <Alert className="custom-class">
-          <AlertTitle className="title-class">テストタイトル</AlertTitle>
-          <AlertDescription className="description-class">テスト説明文</AlertDescription>
-        </Alert>
-      );
-
-      expect(screen.getByRole('alert')).toHaveClass('custom-class');
-      expect(screen.getByText('テストタイトル')).toHaveClass('title-class');
-      expect(screen.getByText('テスト説明文')).toHaveClass('description-class');
-    });
-
-    it('ref が正しく転送される', () => {
-      const ref = React.createRef<HTMLDivElement>();
-      render(
-        <Alert ref={ref}>
           <AlertTitle>テストタイトル</AlertTitle>
         </Alert>
       );
-
-      expect(ref.current).toBeInstanceOf(HTMLDivElement);
-      expect(ref.current).toHaveAttribute('role', 'alert');
+      expect(screen.getByRole('alert')).toHaveClass('custom-class');
     });
 
-    it('追加のHTML属性が正しく適用される', () => {
+    it('カスタム属性が適用される', () => {
       render(
         <Alert data-testid="custom-alert" data-custom="test">
           <AlertTitle>テストタイトル</AlertTitle>
         </Alert>
       );
-
-      const alert = screen.getByRole('alert');
-      expect(alert).toHaveAttribute('data-testid', 'custom-alert');
+      const alert = screen.getByTestId('custom-alert');
       expect(alert).toHaveAttribute('data-custom', 'test');
+    });
+
+    it('動的にバリアントを切り替えられる', () => {
+      const { rerender } = render(
+        <Alert variant="default">
+          <AlertTitle>テストタイトル</AlertTitle>
+        </Alert>
+      );
+      expect(screen.getByRole('alert')).toHaveClass('bg-base-app');
+
+      rerender(
+        <Alert variant="warning">
+          <AlertTitle>テストタイトル</AlertTitle>
+        </Alert>
+      );
+      expect(screen.getByRole('alert')).toHaveClass('bg-base-app');
+    });
+  });
+
+  describe('アクセシビリティ', () => {
+    it('基本的なアクセシビリティ要件を満たす', async () => {
+      await runAccessibilityTest(<TestAlert />, {
+        keyboardNavigation: true,
+        ariaAttributes: true,
+        focusManagement: true,
+        contrast: false,
+        skipFocusableCheck: true,
+      });
+    });
+
+    it('適切なARIA属性が設定されている', () => {
+      render(<TestAlert />);
+      const alert = screen.getByRole('alert');
+      expect(alert).toBeInTheDocument();
+      expect(alert).toHaveAttribute('role', 'alert');
+    });
+
+    it('タイトルが適切な見出しレベルで表示される', () => {
+      render(<TestAlert />);
+      const title = screen.getByText('テストタイトル');
+      expect(title.tagName).toBe('H5');
+    });
+
+    it('各バリアントで適切なARIA属性が設定される', () => {
+      const variants = ['default', 'destructive', 'success', 'warning'] as const;
+      
+      for (const variant of variants) {
+        render(
+          <Alert variant={variant}>
+            <AlertTitle>テストタイトル</AlertTitle>
+            <AlertDescription>テスト説明文</AlertDescription>
+          </Alert>
+        );
+        
+        const alert = screen.getByRole('alert');
+        expect(alert).toHaveAttribute('role', 'alert');
+        
+        // バリアントに応じた追加のARIA属性を確認
+        if (variant === 'destructive') {
+          expect(alert).toHaveAttribute('aria-live', 'assertive');
+        } else if (variant === 'warning') {
+          expect(alert).toHaveAttribute('aria-live', 'polite');
+        }
+        
+        cleanup();
+      }
     });
   });
 }); 

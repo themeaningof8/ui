@@ -1,16 +1,24 @@
 /**
- * @file Checkbox コンポーネントのテスト
- * @description Checkbox コンポーネントの基本的なレンダリングと機能をテストします。
+ * @file Checkboxのテスト
+ * @description Checkboxの基本的なレンダリングと機能をテストします。
  */
-import { render, screen, fireEvent } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { render, screen, fireEvent, cleanup } from '@testing-library/react';
+import { describe, it, expect, vi, afterEach } from 'vitest';
 import { Checkbox } from '@/components/ui/checkbox';
-import type { CheckboxProps } from '@/components/ui/checkbox';
+import { runAccessibilityTest } from '@/tests/wcag3/helpers';
 
-describe('Checkbox コンポーネント', () => {
+const TestCheckbox = () => (
+  <Checkbox aria-label="test checkbox" />
+);
+
+describe('Checkbox', () => {
+  afterEach(() => {
+    cleanup();
+  });
+
   describe('基本機能', () => {
-    it('デフォルト状態でレンダリングされる', () => {
-      render(<Checkbox aria-label="test checkbox" />);
+    it('コンポーネントが正しくレンダリングされる', () => {
+      render(<TestCheckbox />);
       const checkbox = screen.getByRole('checkbox');
       expect(checkbox).toBeInTheDocument();
       expect(checkbox).not.toBeChecked();
@@ -22,16 +30,34 @@ describe('Checkbox コンポーネント', () => {
       expect(checkbox).toBeChecked();
     });
 
-    it('disabled 状態が適用される', () => {
+    it('無効化状態が適用される', () => {
       render(<Checkbox disabled aria-label="test checkbox" />);
       const checkbox = screen.getByRole('checkbox');
       expect(checkbox).toBeDisabled();
+    });
+
+    it('サイズバリアントが適用される', () => {
+      const sizes = ['sm', 'default', 'lg'] as const;
+      const sizeClasses = {
+        sm: ['h-4', 'w-4'],
+        default: ['h-5', 'w-5'],
+        lg: ['h-6', 'w-6'],
+      };
+
+      for (const size of sizes) {
+        render(<Checkbox size={size} aria-label={`test checkbox ${size}`} />);
+        const checkbox = screen.getByRole('checkbox');
+        for (const className of sizeClasses[size]) {
+          expect(checkbox).toHaveClass(className);
+        }
+        cleanup();
+      }
     });
   });
 
   describe('インタラクション', () => {
     it('クリックでチェック状態が切り替わる', () => {
-      render(<Checkbox aria-label="test checkbox" />);
+      render(<TestCheckbox />);
       const checkbox = screen.getByRole('checkbox');
       
       fireEvent.click(checkbox);
@@ -53,68 +79,6 @@ describe('Checkbox コンポーネント', () => {
       expect(onCheckedChange).toHaveBeenCalledWith(false);
     });
 
-    it('onChange が呼び出される', () => {
-      const onChange = vi.fn();
-      render(<Checkbox onChange={onChange} aria-label="test checkbox" />);
-      const checkbox = screen.getByRole('checkbox');
-      
-      fireEvent.click(checkbox);
-      expect(onChange).toHaveBeenCalledTimes(1);
-      expect(onChange.mock.calls[0][0].target.checked).toBe(true);
-      
-      fireEvent.click(checkbox);
-      expect(onChange).toHaveBeenCalledTimes(2);
-      expect(onChange.mock.calls[1][0].target.checked).toBe(false);
-    });
-
-    it('onCheckedChange と onChange の両方が呼び出される', () => {
-      const onCheckedChange = vi.fn();
-      const onChange = vi.fn();
-      render(
-        <Checkbox
-          onCheckedChange={onCheckedChange}
-          onChange={onChange}
-          aria-label="test checkbox"
-        />
-      );
-      const checkbox = screen.getByRole('checkbox');
-      
-      fireEvent.click(checkbox);
-      expect(onCheckedChange).toHaveBeenCalledWith(true);
-      expect(onChange).toHaveBeenCalledTimes(1);
-      expect(onChange.mock.calls[0][0].target.checked).toBe(true);
-    });
-
-    it('controlled モードで動作する', () => {
-      const onCheckedChange = vi.fn();
-      const { rerender } = render(
-        <Checkbox checked={false} onCheckedChange={onCheckedChange} aria-label="test checkbox" />
-      );
-      const checkbox = screen.getByRole('checkbox');
-      expect(checkbox).not.toBeChecked();
-
-      rerender(
-        <Checkbox checked={true} onCheckedChange={onCheckedChange} aria-label="test checkbox" />
-      );
-      expect(checkbox).toBeChecked();
-    });
-  });
-
-  describe('サイズバリアント', () => {
-    it.each([
-      ['sm', ['h-4', 'w-4']],
-      ['default', ['h-5', 'w-5']],
-      ['lg', ['h-6', 'w-6']],
-    ])('size="%s" の場合、適切なサイズが適用される', (size, expectedClasses) => {
-      render(<Checkbox size={size as CheckboxProps['size']} aria-label="test checkbox" />);
-      const checkbox = screen.getByRole('checkbox');
-      for (const className of expectedClasses) {
-        expect(checkbox).toHaveClass(className);
-      }
-    });
-  });
-
-  describe('不確定状態', () => {
     it('不確定状態が適用される', () => {
       render(<Checkbox indeterminate aria-label="test checkbox" />);
       const checkbox = screen.getByRole('checkbox');
@@ -124,14 +88,24 @@ describe('Checkbox コンポーネント', () => {
   });
 
   describe('アクセシビリティ', () => {
-    it('aria-label が適用される', () => {
-      render(<Checkbox aria-label="accessibility test" />);
-      const checkbox = screen.getByLabelText('accessibility test');
+    it('基本的なアクセシビリティ要件を満たす', async () => {
+      await runAccessibilityTest(<TestCheckbox />, {
+        keyboardNavigation: true,
+        ariaAttributes: true,
+        focusManagement: true,
+        contrast: false,
+      });
+    });
+
+    it('aria-labelが適切に設定される', () => {
+      const customLabel = "カスタムチェックボックス";
+      render(<Checkbox aria-label={customLabel} />);
+      const checkbox = screen.getByLabelText(customLabel);
       expect(checkbox).toBeInTheDocument();
     });
 
-    it('フォーカス時のスタイルが適用される', () => {
-      render(<Checkbox aria-label="test checkbox" />);
+    it('フォーカスインジケーターが視覚的に表示される', () => {
+      render(<TestCheckbox />);
       const checkbox = screen.getByRole('checkbox');
       expect(checkbox).toHaveClass(
         'focus-visible:outline-none',

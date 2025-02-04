@@ -1,10 +1,10 @@
 /**
- * Tabsコンポーネントのストーリー
+ * Tabsのストーリー
  * @module TabsStories
  */
 
 import type { Meta, StoryObj } from '@storybook/react'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '.'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 const meta = {
   title: 'UI/Tabs',

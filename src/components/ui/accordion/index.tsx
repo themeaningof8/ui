@@ -1,5 +1,5 @@
 /**
- * アコーディオンコンポーネント
+ * アコーディオン
  * @module Accordion
  * @description RadixのAccordionをベースにしたアコーディオンコンポーネント
  */

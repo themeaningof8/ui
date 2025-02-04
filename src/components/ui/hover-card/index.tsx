@@ -78,6 +78,7 @@ const HoverCardContent = React.forwardRef<
       align={align}
       sideOffset={sideOffset}
       className={hoverCardContentVariants({ className })}
+      role="tooltip"
       {...props}
     />
   </HoverCardPrimitive.Portal>

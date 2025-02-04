@@ -51,13 +51,12 @@ const badgeVariants = tv({
  */
 export function Badge({ className, variant, children, ...props }: BadgeProps) {
 	return (
-		<span
-			role="status"
+		<output
 			aria-label={typeof children === 'string' ? children : undefined}
 			className={cn(badgeVariants({ variant }), className)}
 			{...props}
 		>
 			{children}
-		</span>
+		</output>
 	);
 }

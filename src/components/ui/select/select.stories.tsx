@@ -1,6 +1,6 @@
 /**
- * @file Select コンポーネントの Storybook ストーリー
- * @description Select コンポーネントの様々な状態とバリエーションを表示します。
+ * @file Selectの Storybook ストーリー
+ * @description Selectの様々な状態とバリエーションを表示します。
  */
 import type { Meta, StoryObj } from '@storybook/react';
 import {

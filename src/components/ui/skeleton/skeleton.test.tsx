@@ -1,12 +1,11 @@
 /**
- * @file Skeletonコンポーネントのテスト
- * @description Skeletonコンポーネントの機能をテスト
+ * @file Skeletonのテスト
+ * @description Skeletonの機能をテスト
  */
 
 import { render, screen } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
-
-import { Skeleton } from '.'
+import { Skeleton } from '@/components/ui/skeleton' 
 
 describe('Skeleton', () => {
   it('基本的なスケルトンが表示されること', () => {

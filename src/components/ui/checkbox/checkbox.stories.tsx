@@ -1,6 +1,6 @@
 /**
- * @file Checkbox コンポーネントの Storybook ストーリー
- * @description Checkbox コンポーネントの様々な状態とバリエーションを表示します。
+ * @file Checkboxの Storybook ストーリー
+ * @description Checkboxの様々な状態とバリエーションを表示します。
  */
 import type { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';

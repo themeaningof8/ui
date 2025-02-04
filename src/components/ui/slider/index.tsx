@@ -1,6 +1,6 @@
 /**
- * @file Slider コンポーネント
- * @description アクセシブルなスライダーコンポーネント
+ * @file Slider
+ * @description アクセシブルなスライダー
  * 
  * @example
  * ```tsx

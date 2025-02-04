@@ -1,5 +1,5 @@
 /**
- * @file Inputコンポーネントのストーリー
+ * @file Inputのストーリー
  * @description 基本的な入力フィールドの様々なバリエーションを表示
  */
 
@@ -7,7 +7,7 @@ import type { Meta, StoryObj } from '@storybook/react'
 import { Input } from '@/components/ui/input'
 
 /**
- * Inputコンポーネントは、ユーザーからのテキスト入力を受け付けるための基本的なフォーム要素です。
+ * Inputは、ユーザーからのテキスト入力を受け付けるための基本的なフォーム要素です。
  * アクセシビリティに配慮し、様々な状態や用途に対応できるように設計されています。
  */
 const meta = {

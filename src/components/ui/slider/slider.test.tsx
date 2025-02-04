@@ -1,13 +1,12 @@
 /**
- * @file Sliderコンポーネントのテスト
- * @description Sliderコンポーネントの機能とアクセシビリティをテスト
+ * @file Sliderのテスト
+ * @description Sliderの機能とアクセシビリティをテスト
  */
 
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
-
-import { Slider } from '.'
+import { Slider } from '@/components/ui/slider'
 
 describe('Slider', () => {
   it('デフォルト値が正しく設定されること', () => {

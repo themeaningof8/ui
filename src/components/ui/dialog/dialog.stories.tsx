@@ -1,6 +1,6 @@
 /**
- * @file Dialog コンポーネントの Storybook ストーリー
- * @description Dialog コンポーネントの様々な状態とバリエーションを表示します。
+ * @file Dialogの Storybook ストーリー
+ * @description Dialogの様々な状態とバリエーションを表示します。
  */
 import type { Meta, StoryObj } from '@storybook/react'
 import { Button } from '@/components/ui/button'
@@ -15,7 +15,7 @@ import {
   DialogOverlay,
   DialogPortal,
   DialogClose,
-} from '.'
+} from '@/components/ui/dialog'
 
 const meta = {
   title: 'UI/Dialog',

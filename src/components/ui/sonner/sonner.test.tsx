@@ -1,5 +1,5 @@
 /**
- * @file Sonnerコンポーネントのテストファイル
+ * @file Sonnerのテストファイル
  * @description トースト通知の基本機能、アクセシビリティ、カスタマイズ機能をテスト
  */
 
@@ -8,9 +8,9 @@ import userEvent from '@testing-library/user-event'
 import { describe, it, expect, beforeEach, afterEach } from 'vitest'
 import '@testing-library/jest-dom'
 import { toast } from 'sonner'
-import { Toaster } from '.'
+import { Toaster } from '@/components/ui/sonner'
 
-describe('Toaster Component', () => {
+describe('Toaster', () => {
   beforeEach(() => {
     userEvent.setup()
   })

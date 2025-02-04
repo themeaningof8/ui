@@ -1,5 +1,5 @@
 /**
- * @file Switch コンポーネント
+ * @file Switch
  * @description トグルスイッチとして機能するコンポーネント。アクセシビリティに配慮し、キーボード操作にも対応。
  * 
  * @example

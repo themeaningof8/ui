@@ -1,5 +1,5 @@
 /**
- * @file Textarea コンポーネント
+ * @file Textarea
  * @description アクセシブルな複数行テキスト入力コンポーネント
  * 
  * @example

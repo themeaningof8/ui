@@ -1,10 +1,10 @@
 /**
- * @file Paginationコンポーネントのストーリー
- * @description Paginationコンポーネントの様々な状態とバリエーションを表示
+ * @file Paginationのストーリー
+ * @description Paginationの様々な状態とバリエーションを表示
  */
 
 import type { Meta, StoryObj } from '@storybook/react'
-import { Pagination } from '.'
+import { Pagination } from '@/components/ui/pagination'
 
 const meta = {
   title: 'UI/Pagination',

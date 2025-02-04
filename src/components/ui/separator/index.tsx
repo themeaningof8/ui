@@ -1,6 +1,6 @@
 /**
- * @file Separator コンポーネント
- * @description コンテンツを視覚的に分離するためのセパレーターコンポーネント
+ * @file Separator
+ * @description コンテンツを視覚的に分離するためのセパレーター
  *
  * @example
  * ```tsx

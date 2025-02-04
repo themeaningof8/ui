@@ -1,5 +1,5 @@
 /**
- * @file Checkbox コンポーネント
+ * @file Checkbox
  * @description アクセシブルなチェックボックスコンポーネント
  * 
  * @example

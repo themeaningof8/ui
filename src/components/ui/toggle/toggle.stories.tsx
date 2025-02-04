@@ -1,10 +1,10 @@
 /**
- * @file Toggleコンポーネントのストーリー
- * @description Toggleコンポーネントの使用例とバリエーションを表示
+ * @file Toggleのストーリー
+ * @description Toggleの使用例とバリエーションを表示
  */
 import type { Meta, StoryObj } from '@storybook/react';
-import { Toggle } from '.';
-import { Label } from '../label';
+import { Toggle } from '@/components/ui/toggle';
+import { Label } from '@components/ui/label';
 
 /**
  * @description Toggleコンポーネントのメタデータ

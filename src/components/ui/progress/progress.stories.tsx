@@ -1,10 +1,10 @@
 /**
- * @file Progressコンポーネントのストーリー
- * @description Progressコンポーネントの様々な状態とバリエーションを表示
+ * @file Progressのストーリー
+ * @description Progressの様々な状態とバリエーションを表示
  */
 
 import type { Meta } from '@storybook/react'
-import { Progress } from '.'
+import { Progress } from '@/components/ui/progress'
 
 const meta = {
   title: 'UI/Progress',

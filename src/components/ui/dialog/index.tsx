@@ -1,6 +1,6 @@
 /**
- * @file Dialog コンポーネント
- * @description アクセシブルなダイアログ（モーダル）コンポーネント
+ * @file Dialog 
+ * @description アクセシブルなダイアログ（モーダル）
  * 
  * @example
  * ```tsx

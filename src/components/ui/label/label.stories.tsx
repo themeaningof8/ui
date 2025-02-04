@@ -1,6 +1,6 @@
 /**
- * @file ラベルコンポーネントのストーリー
- * @description ラベルコンポーネントの使用例を表示
+ * @file ラベルのストーリー
+ * @description ラベルの使用例を表示
  */
 
 import type { Meta, StoryObj } from '@storybook/react'

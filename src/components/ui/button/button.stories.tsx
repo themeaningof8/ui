@@ -1,5 +1,5 @@
 /**
- * Buttonコンポーネントのストーリー
+ * Buttonのストーリー
  * @module ButtonStories
  */
 

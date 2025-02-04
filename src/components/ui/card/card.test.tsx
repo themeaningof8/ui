@@ -1,10 +1,10 @@
 /**
- * @file Card コンポーネントのテスト
- * @description Card コンポーネントとそのサブコンポーネントの基本的なレンダリングと機能をテストします。
+ * @file Cardのテスト
+ * @description Cardとそのサブコンポーネントの基本的なレンダリングと機能をテストします。
  */
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
-import { testBasicAccessibility } from '@/tests/wcag3/helpers';
+import { runAccessibilityTest } from '@/tests/wcag3/helpers';
 import {
   Card,
   CardHeader,
@@ -14,20 +14,21 @@ import {
   CardFooter,
 } from './';
 
-describe('Card コンポーネント', () => {
+const TestCard = () => (
+  <Card>
+    <CardHeader>
+      <CardTitle>Test Title</CardTitle>
+      <CardDescription>Test Description</CardDescription>
+    </CardHeader>
+    <CardContent>Test Content</CardContent>
+    <CardFooter>Test Footer</CardFooter>
+  </Card>
+);
+
+describe('Card', () => {
   describe('基本機能', () => {
     it('デフォルト状態でレンダリングされる', () => {
-      render(
-        <Card>
-          <CardHeader>
-            <CardTitle>Test Title</CardTitle>
-            <CardDescription>Test Description</CardDescription>
-          </CardHeader>
-          <CardContent>Test Content</CardContent>
-          <CardFooter>Test Footer</CardFooter>
-        </Card>
-      );
-
+      render(<TestCard />);
       expect(screen.getByText('Test Title')).toBeInTheDocument();
       expect(screen.getByText('Test Description')).toBeInTheDocument();
       expect(screen.getByText('Test Content')).toBeInTheDocument();
@@ -120,16 +121,18 @@ describe('Card コンポーネント', () => {
   });
 
   describe('アクセシビリティ', () => {
-    it('適切なHTML要素とARIAロールが使用されている', () => {
-      render(
-        <Card>
-          <CardHeader>
-            <CardTitle>Test Title</CardTitle>
-            <CardDescription>Test Description</CardDescription>
-          </CardHeader>
-        </Card>
-      );
+    it('基本的なアクセシビリティ要件を満たす', async () => {
+      await runAccessibilityTest(<TestCard />, {
+        keyboardNavigation: true,
+        ariaAttributes: true,
+        focusManagement: true,
+        contrast: false,
+        skipFocusableCheck: true // カードはフォーカス可能な要素を必要としない
+      });
+    });
 
+    it('適切なHTML要素とARIAロールが使用されている', () => {
+      render(<TestCard />);
       const card = screen.getByRole('article');
       expect(card).toBeInTheDocument();
       expect(screen.getByText('Test Title').tagName).toBe('H3');
@@ -137,42 +140,15 @@ describe('Card コンポーネント', () => {
     });
 
     it('コンテンツの階層構造が適切である', () => {
-      render(
-        <Card>
-          <CardHeader>
-            <CardTitle>Test Title</CardTitle>
-            <CardDescription>Test Description</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p>Test Content</p>
-          </CardContent>
-        </Card>
-      );
-
+      render(<TestCard />);
       const card = screen.getByRole('article');
       const title = screen.getByText('Test Title');
       const description = screen.getByText('Test Description');
       const content = screen.getByText('Test Content');
 
       expect(title.parentElement).toBe(description.parentElement);
-      expect(content.parentElement?.parentElement).toBe(card);
+      expect(content.parentElement?.closest('[role="article"]')).toBe(card);
     });
-
-    // WCAG 3.0の基本的なアクセシビリティテスト
-    testBasicAccessibility(
-      <Card>
-        <CardHeader>
-          <CardTitle>Test Title</CardTitle>
-          <CardDescription>Test Description</CardDescription>
-        </CardHeader>
-        <CardContent>Test Content</CardContent>
-        <CardFooter>Test Footer</CardFooter>
-      </Card>,
-      {
-        expectedRole: 'article',
-        testDisabled: false,
-      }
-    );
 
     it('複数のカードが適切なロールを持つ', () => {
       render(

@@ -1,6 +1,6 @@
 /**
- * @file Toggleコンポーネント
- * @description オン/オフを切り替えることができるトグルスイッチコンポーネント
+ * @file Toggle
+ * @description オン/オフを切り替えることができるトグルスイッチ
  */
 import * as React from 'react';
 import * as SwitchPrimitives from '@radix-ui/react-switch';

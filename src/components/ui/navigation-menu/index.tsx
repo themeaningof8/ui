@@ -1,5 +1,5 @@
 /**
- * @file NavigationMenu コンポーネント
+ * @file NavigationMenu
  * @description アクセシブルなナビゲーションメニューコンポーネント
  * 
  * @example

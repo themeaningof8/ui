@@ -1,6 +1,6 @@
 /**
- * @file Menubarコンポーネントのストーリー
- * @description Menubarコンポーネントの様々な状態とバリエーションを表示
+ * @file Menubarのストーリー
+ * @description Menubarの様々な状態とバリエーションを表示
  */
 
 import type { Meta } from '@storybook/react'
@@ -19,7 +19,7 @@ import {
   MenubarSub,
   MenubarSubContent,
   MenubarSubTrigger,
-} from '.'
+} from '@/components/ui/menubar'
 
 const meta = {
   title: 'UI/Menubar',

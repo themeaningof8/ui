@@ -1,6 +1,6 @@
 /**
- * @file Paginationコンポーネント
- * @description ページネーションコンポーネント。ページ間のナビゲーションを提供します。
+ * @file Pagination
+ * @description ページネーション。ページ間のナビゲーションを提供します。
  */
 
 import * as React from "react";

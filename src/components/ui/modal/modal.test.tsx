@@ -1,13 +1,13 @@
 /**
- * @file Modalコンポーネントのテスト
- * @description Modalコンポーネントの機能とアクセシビリティをテスト
+ * @file Modalのテスト
+ * @description Modalの機能とアクセシビリティをテスト
  */
 
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 
-import { Modal } from '.'
+import { Modal } from '@/components/ui/modal'
 
 describe('Modal', () => {
   it('モーダルが開いた状態で表示されること', () => {

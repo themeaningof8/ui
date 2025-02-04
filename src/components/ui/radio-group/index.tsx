@@ -1,5 +1,5 @@
 /**
- * @file RadioGroup コンポーネント
+ * @file RadioGroup
  * @description アクセシブルなラジオグループコンポーネント
  * 
  * @example

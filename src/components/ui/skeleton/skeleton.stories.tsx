@@ -1,10 +1,10 @@
 /**
- * @file Skeletonコンポーネントのストーリー
- * @description Skeletonコンポーネントの様々な状態とバリエーションを表示
+ * @file Skeletonのストーリー
+ * @description Skeletonの様々な状態とバリエーションを表示
  */
 
 import type { Meta } from '@storybook/react'
-import { Skeleton } from '.'
+import { Skeleton } from '@/components/ui/skeleton'
 
 const meta = {
   title: 'UI/Skeleton',

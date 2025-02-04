@@ -1,6 +1,6 @@
 /**
- * @file NavigationMenuコンポーネントのストーリー
- * @description NavigationMenuコンポーネントの様々な状態とバリエーションを表示
+ * @file NavigationMenuのストーリー
+ * @description NavigationMenuの様々な状態とバリエーションを表示
  */
 
 import type { Meta, StoryObj } from '@storybook/react'
@@ -11,7 +11,7 @@ import {
   NavigationMenuTrigger,
   NavigationMenuContent,
   NavigationMenuLink,
-} from '.'
+} from '@/components/ui/navigation-menu'
 
 const meta = {
   title: 'UI/NavigationMenu',

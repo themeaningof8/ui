@@ -1,10 +1,10 @@
 /**
- * @file Switchコンポーネントのストーリー
- * @description Switchコンポーネントの様々な状態とバリエーションを表示
+ * @file Switchのストーリー
+ * @description Switchの様々な状態とバリエーションを表示
  */
 
 import type { Meta, StoryObj } from '@storybook/react'
-import { Switch } from '.'
+import { Switch } from '@/components/ui/switch'
 
 const meta = {
   title: 'UI/Switch',

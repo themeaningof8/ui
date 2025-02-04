@@ -1,12 +1,12 @@
 /**
- * @file RadioGroupコンポーネントのテスト
- * @description RadioGroupコンポーネントの機能とアクセシビリティをテスト
+ * @file RadioGroupのテスト
+ * @description RadioGroupの機能とアクセシビリティをテスト
  */
 
 import { describe, expect, it } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { RadioGroup, RadioGroupItem, RadioGroupItemText } from '.'
+import { RadioGroup, RadioGroupItem, RadioGroupItemText } from '@/components/ui/radio-group'
 
 describe('RadioGroup', () => {
   it('デフォルト値が正しく設定されること', () => {

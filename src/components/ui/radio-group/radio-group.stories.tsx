@@ -1,10 +1,10 @@
 /**
- * @file RadioGroupコンポーネントのストーリー
- * @description RadioGroupコンポーネントの様々な状態とバリエーションを表示
+ * @file RadioGroupのストーリー
+ * @description RadioGroupの様々な状態とバリエーションを表示
  */
 
 import type { Meta, StoryObj } from '@storybook/react'
-import { RadioGroup, RadioGroupItem, RadioGroupItemText } from '.'
+import { RadioGroup, RadioGroupItem, RadioGroupItemText } from '@/components/ui/radio-group'
 
 const meta = {
   title: 'UI/RadioGroup',

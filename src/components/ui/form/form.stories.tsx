@@ -1,6 +1,6 @@
 /**
- * @file フォームコンポーネントのストーリー
- * @description フォームコンポーネントの使用例を表示
+ * @file フォームのストーリー
+ * @description フォームの使用例を表示
  */
 
 import type { Meta, StoryObj } from '@storybook/react'
@@ -33,7 +33,7 @@ const meta = {
     layout: 'centered',
     docs: {
       description: {
-        component: 'react-hook-formとzodを使用した型安全なフォームコンポーネント'
+        component: 'react-hook-formとzodを使用した型安全なフォーム'
       }
     }
   },

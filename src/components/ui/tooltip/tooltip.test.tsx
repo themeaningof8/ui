@@ -1,14 +1,14 @@
 /**
- * @file Tooltipコンポーネントのテスト
- * @description Tooltipコンポーネントの機能とアクセシビリティをテスト
+ * @file Tooltipのテスト
+ * @description Tooltipの機能とアクセシビリティをテスト
  */
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect } from 'vitest';
-import { Button } from '../button';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '.';
+import { Button } from '@/components/ui/button';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
-describe('Tooltip Component', () => {
+describe('Tooltip', () => {
   const user = userEvent.setup();
 
   const renderTooltip = (side?: 'top' | 'right' | 'bottom' | 'left') => {

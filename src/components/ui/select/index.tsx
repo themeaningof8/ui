@@ -1,5 +1,5 @@
 /**
- * @file Select コンポーネント
+ * @file Select
  * @description アクセシブルなドロップダウン選択コンポーネント
  * 
  * @example

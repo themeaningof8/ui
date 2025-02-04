@@ -1,12 +1,12 @@
 /**
- * @file Switchコンポーネントのテスト
- * @description Switchコンポーネントの機能とアクセシビリティをテスト
+ * @file Switchのテスト
+ * @description Switchの機能とアクセシビリティをテスト
  */
 
 import { describe, expect, it, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { Switch } from '.'
+import { Switch } from '@/components/ui/switch'
 
 describe('Switch', () => {
   it('正しくレンダリングされること', () => {

@@ -1,6 +1,6 @@
 /**
- * @file ラベルコンポーネント
- * @description フォーム要素のラベルを提供するコンポーネント
+ * @file ラベル
+ * @description フォーム要素のラベルを提供する
  */
 
 import * as React from "react"

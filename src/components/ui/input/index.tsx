@@ -1,5 +1,5 @@
 /**
- * @file Inputコンポーネント
+ * @file Input
  * @description 基本的な入力フィールドを提供するコンポーネント
  */
 

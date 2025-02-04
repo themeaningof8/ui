@@ -1,5 +1,5 @@
 /**
- * @file Alert コンポーネント
+ * @file Alert
  * @description ユーザーに対して重要な情報、警告、エラーなどを表示するためのコンポーネント
  * 主な用途：
  * - 情報通知（information）
@@ -32,7 +32,7 @@ const alert = tv({
 
 /**
  * @interface AlertProps
- * @description Alert コンポーネントのプロパティ
+ * @description Alertのプロパティ
  */
 export interface AlertProps
   extends React.HTMLAttributes<HTMLDivElement>,
@@ -48,14 +48,20 @@ export interface AlertProps
  * @description Alert のルートコンポーネント
  */
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
-  ({ className, variant, ...props }, ref) => (
-    <div
-      ref={ref}
-      role="alert"
-      className={cn(alert({ variant }), className)}
-      {...props}
-    />
-  )
+  ({ className, variant = 'default', ...props }, ref) => {
+    // バリアントに応じてaria-liveの値を設定
+    const ariaLive = variant === 'destructive' ? 'assertive' : variant === 'warning' ? 'polite' : undefined;
+
+    return (
+      <div
+        ref={ref}
+        role="alert"
+        aria-live={ariaLive}
+        className={cn(alert({ variant }), className)}
+        {...props}
+      />
+    );
+  }
 );
 Alert.displayName = 'Alert';
 

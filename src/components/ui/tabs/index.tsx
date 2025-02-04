@@ -1,7 +1,7 @@
 /**
- * タブコンポーネント
+ * タブ
  * @module Tabs
- * @description アクセシブルなタブインターフェースコンポーネント
+ * @description アクセシブルなタブインターフェース
  */
 
 import * as React from 'react'

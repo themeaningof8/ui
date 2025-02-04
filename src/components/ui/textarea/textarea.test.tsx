@@ -1,13 +1,13 @@
 /**
- * @file Textarea コンポーネントのテスト
- * @description Textarea コンポーネントの基本的なレンダリングと機能をテストします。
+ * @file Textareaのテスト
+ * @description Textareaの基本的なレンダリングと機能をテストします。
  */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi } from 'vitest';
-import { Textarea } from '.';
+import { Textarea } from '@/components/ui/textarea';
 
-describe('Textarea コンポーネント', () => {
+describe('Textarea', () => {
   const user = userEvent.setup();
 
   describe('基本機能', () => {

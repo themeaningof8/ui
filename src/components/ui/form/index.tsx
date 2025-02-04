@@ -1,6 +1,6 @@
 /**
- * @file フォームコンポーネント
- * @description react-hook-formとzodを使用した型安全なフォームコンポーネント
+ * @file フォーム
+ * @description react-hook-formとzodを使用した型安全なフォーム
  */
 
 import * as React from "react";
@@ -183,6 +183,7 @@ const FormMessage = React.forwardRef<
 			id={formMessageId}
 			className={cn(formMessageVariants(), className)}
 			role="alert"
+			aria-live="polite"
 			{...props}
 		>
 			{body}

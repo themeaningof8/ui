@@ -1,6 +1,6 @@
 /**
- * @file Textarea コンポーネントの Storybook ストーリー
- * @description Textarea コンポーネントの様々な状態とバリエーションを表示します。
+ * @file Textareaの Storybook ストーリー
+ * @description Textareaの様々な状態とバリエーションを表示します。
  */
 import type { Meta, StoryObj } from '@storybook/react';
 import { Textarea } from './';

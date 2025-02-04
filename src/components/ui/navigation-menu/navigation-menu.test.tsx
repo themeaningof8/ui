@@ -1,6 +1,6 @@
 /**
- * @file NavigationMenuコンポーネントのテスト
- * @description NavigationMenuコンポーネントの機能とアクセシビリティをテスト
+ * @file NavigationMenuのテスト
+ * @description NavigationMenuの機能とアクセシビリティをテスト
  */
 
 import { describe, expect, it, vi } from 'vitest'
@@ -13,7 +13,7 @@ import {
   NavigationMenuTrigger,
   NavigationMenuContent,
   NavigationMenuLink,
-} from '.'
+} from '@/components/ui/navigation-menu'
 
 describe('NavigationMenu', () => {
   it('トリガーをクリックするとメニューが表示されること', async () => {

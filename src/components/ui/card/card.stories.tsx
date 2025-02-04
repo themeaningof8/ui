@@ -1,6 +1,6 @@
 /**
- * @file Card コンポーネントの Storybook 設定
- * @description Card コンポーネントの様々な使用例を表示します。
+ * @file Cardの Storybook 設定
+ * @description Cardの様々な使用例を表示します。
  */
 import type { Meta, StoryObj } from '@storybook/react';
 import {

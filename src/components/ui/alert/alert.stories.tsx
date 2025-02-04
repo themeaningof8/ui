@@ -1,6 +1,6 @@
 /**
- * @file Alert コンポーネントの Stories
- * @description Alert コンポーネントの使用例とバリエーションを Storybook で表示
+ * @file AlertのStories
+ * @description Alertの使用例とバリエーションを Storybook で表示
  */
 import type { Meta, StoryObj } from '@storybook/react';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';

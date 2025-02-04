@@ -1,5 +1,5 @@
 /**
- * @file DropdownMenu コンポーネント
+ * @file DropdownMenu
  * @description アクセシブルなドロップダウンメニューコンポーネント。キーボード操作とスクリーンリーダーに対応。
  * 
  * @example

@@ -1,6 +1,6 @@
 /**
- * @file Tooltipコンポーネント
- * @description ホバーまたはフォーカス時に追加情報を表示するツールチップコンポーネント
+ * @file Tooltip
+ * @description ホバーまたはフォーカス時に追加情報を表示するツールチップ
  */
 import * as React from 'react';
 import * as TooltipPrimitive from '@radix-ui/react-tooltip';

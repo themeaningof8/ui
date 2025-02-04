@@ -1,6 +1,6 @@
 /**
- * @file Popover コンポーネントのテスト
- * @description Popover コンポーネントの機能とアクセシビリティをテスト
+ * @file Popoverのテスト
+ * @description Popoverの機能とアクセシビリティをテスト
  */
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -8,7 +8,7 @@ import { describe, it, expect } from 'vitest';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
-describe('Popover Component', () => {
+describe('Popover', () => {
   const user = userEvent.setup();
 
   const renderPopover = () => {

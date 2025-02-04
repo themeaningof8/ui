@@ -1,6 +1,6 @@
 /**
- * @file Popover コンポーネントの Stories
- * @description Popover コンポーネントの使用例とバリエーションを Storybook で表示
+ * @file Popoverの Stories
+ * @description Popoverの使用例とバリエーションを Storybook で表示
  */
 import type { Meta, StoryObj } from '@storybook/react';
 import { Button } from '@/components/ui/button';

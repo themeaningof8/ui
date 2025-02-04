@@ -1,6 +1,6 @@
 /**
- * @file Spinner コンポーネント
- * @description 読み込み中を示すスピナーコンポーネント。アクセシブルな役割として role="status" を持ち、視覚的に隠された読み込みメッセージを提供します。
+ * @file Spinner
+ * @description 読み込み中を示すスピナー。アクセシブルな役割として role="status" を持ち、視覚的に隠された読み込みメッセージを提供します。
  *
  * @example
  * <Spinner size="md" />

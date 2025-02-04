@@ -1,9 +1,9 @@
 /**
- * Accordionコンポーネントのストーリー
+ * Accordionのストーリー
  * @see https://storybook.js.org/docs/writing-stories
  */
 import type { Meta, StoryObj } from '@storybook/react'
-import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '.'
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion'
 
 const meta: Meta<typeof Accordion> = {
   title: 'UI/Accordion',

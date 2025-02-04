@@ -1,6 +1,6 @@
 /**
- * @file HoverCardコンポーネントのストーリー
- * @description HoverCardコンポーネントの様々な状態とバリエーションを表示
+ * @file HoverCardのストーリー
+ * @description HoverCardの様々な状態とバリエーションを表示
  */
 
 import type { Meta, StoryObj } from '@storybook/react'

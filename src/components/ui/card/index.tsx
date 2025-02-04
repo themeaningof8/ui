@@ -1,5 +1,5 @@
 /**
- * @file Card コンポーネント
+ * @file Card
  * @description コンテンツを整理して表示するためのカードコンポーネント群
  *
  * @example

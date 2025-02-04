@@ -1,13 +1,13 @@
 /**
- * @file Paginationコンポーネントのテスト
- * @description Paginationコンポーネントの機能とアクセシビリティをテスト
+ * @file Paginationのテスト
+ * @description Paginationの機能とアクセシビリティをテスト
  */
 
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 
-import { Pagination } from '.'
+import { Pagination } from '@/components/ui/pagination'
 
 describe('Pagination', () => {
   describe('基本機能', () => {

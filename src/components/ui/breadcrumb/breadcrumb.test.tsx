@@ -1,11 +1,11 @@
 /**
- * @file Breadcrumbコンポーネントのテスト
- * @description Breadcrumbコンポーネントの機能とアクセシビリティをテスト
+ * @file Breadcrumbのテスト
+ * @description Breadcrumbの機能とアクセシビリティをテスト
  */
 
 import { render, screen } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
-import { testBasicAccessibility } from '@/tests/wcag3/helpers'
+import { runAccessibilityTest } from '@/tests/wcag3/helpers'
 
 import {
   Breadcrumb,
@@ -14,7 +14,7 @@ import {
   BreadcrumbLink,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from '.'
+} from '@/components/ui/breadcrumb'
 
 describe('Breadcrumb', () => {
   describe('基本機能', () => {
@@ -187,22 +187,26 @@ describe('Breadcrumb', () => {
     })
 
     // WCAG 3.0の基本的なアクセシビリティテスト
-    testBasicAccessibility(
-      <Breadcrumb>
-        <BreadcrumbList>
-          <BreadcrumbItem>
-            <BreadcrumbLink href="/">ホーム</BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbPage>現在のページ</BreadcrumbPage>
-          </BreadcrumbItem>
-        </BreadcrumbList>
-      </Breadcrumb>,
-      {
-        expectedRole: 'navigation',
-        testDisabled: false,
-      }
-    )
+    it('基本的なアクセシビリティ要件を満たす', () => {
+      runAccessibilityTest(
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/">ホーム</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>現在のページ</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>,
+        {
+          ariaAttributes: true,
+          focusManagement: true,
+          contrast: true,
+          skipFocusableCheck: true
+        }
+      );
+    });
   })
 }) 

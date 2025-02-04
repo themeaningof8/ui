@@ -1,6 +1,6 @@
 /**
- * @file Badge コンポーネントの Storybook 設定
- * @description Badge コンポーネントの様々な状態とバリアントを表示します。
+ * @file BadgeのStorybook 設定
+ * @description Badgeの様々な状態とバリアントを表示します。
  */
 import type { Meta, StoryObj } from '@storybook/react';
 import { Badge } from '@/components/ui/badge';

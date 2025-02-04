@@ -1,7 +1,7 @@
 /**
- * Sonnerコンポーネント
+ * Sonner
  * @module Sonner
- * @description Sonnerトースト通知コンポーネント
+ * @description Sonnerトースト通知
  */
 
 "use client"

@@ -1,13 +1,13 @@
 /**
- * @file Toggleコンポーネントのテスト
- * @description Toggleコンポーネントの機能とアクセシビリティをテスト
+ * @file Toggleのテスト
+ * @description Toggleの機能とアクセシビリティをテスト
  */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect } from 'vitest';
-import { Toggle } from '.';
+import { Toggle } from '@/components/ui/toggle';
 
-describe('Toggle Component', () => {
+describe('Toggle', () => {
   const user = userEvent.setup();
 
   describe('基本機能', () => {

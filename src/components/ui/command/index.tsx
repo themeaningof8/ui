@@ -24,7 +24,6 @@ import { Command as CommandPrimitive } from "cmdk";
 import { Search } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { cn } from "@/lib/cn";
-import { tv } from "tailwind-variants";
 
 /**
  * コマンドの型定義
@@ -47,63 +46,6 @@ export interface CommandType {
   /** コマンドのアイコン */
   icon?: React.ReactNode;
 }
-
-const commandVariants = tv({
-  base: [
-    "flex h-full w-full flex-col overflow-hidden rounded-md bg-base-app text-base-high",
-    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-base-ui focus-visible:ring-offset-2",
-  ],
-});
-
-const commandInputWrapperVariants = tv({
-  base: "flex items-center border-b border-base-ui px-3",
-});
-
-const commandInputVariants = tv({
-  base: [
-    "flex h-11 w-full items-center rounded-md bg-transparent px-3 py-3 text-sm outline-none",
-    "placeholder:text-base-low disabled:cursor-not-allowed disabled:opacity-50",
-    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-base-ui focus-visible:ring-offset-2",
-  ],
-});
-
-const commandListVariants = tv({
-  base: [
-    "max-h-[300px] overflow-y-auto overflow-x-hidden",
-    "scrollbar-thin scrollbar-track-base-ui scrollbar-thumb-base-ui-hover",
-  ],
-});
-
-const commandEmptyVariants = tv({
-  base: "py-6 text-center text-sm text-base-low",
-});
-
-const commandGroupVariants = tv({
-  base: [
-    "overflow-hidden p-1 text-base-high",
-    "[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs",
-    "[&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-base-low",
-    "aria-expanded:block aria-hidden:hidden",
-  ],
-});
-
-const commandSeparatorVariants = tv({
-  base: "-mx-1 h-px bg-base-ui",
-});
-
-const commandItemVariants = tv({
-  base: [
-    "relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none",
-    "aria-selected:bg-base-ui aria-selected:text-base-high",
-    "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
-    "focus:outline-none focus:ring-2 focus:ring-base-ui focus:ring-offset-2",
-    "hover:bg-base-ui hover:text-base-high",
-  ],
-});
-
-const commandShortcutVariants = tv({
-  base: "ml-auto text-xs tracking-widest text-base-low",
-});
 
 const Command = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive>,

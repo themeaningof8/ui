@@ -1,6 +1,6 @@
 /**
- * @file Commandコンポーネントのストーリー
- * @description Commandコンポーネントの様々な状態とバリエーションを表示
+ * @file Commandのストーリー
+ * @description Commandの様々な状態とバリエーションを表示
  */
 
 import * as React from 'react'
@@ -26,8 +26,8 @@ import {
   CommandItem,
   CommandShortcut,
   CommandSeparator,
-} from '.'
-import { Button } from '../button'
+} from '@/components/ui/command'
+import { Button } from '@/components/ui/button'
 
 const meta = {
   title: 'UI/Command',

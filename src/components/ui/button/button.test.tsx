@@ -1,18 +1,22 @@
 /**
- * @file Button コンポーネントのテスト
- * @description Button コンポーネントの基本的なレンダリング、バリアント、サイズ、インタラクション、およびWCAG 3.0メトリクスをテストします。
+ * @file Buttonのテスト
+ * @description Buttonの基本的なレンダリング、バリアント、サイズ、インタラクション、およびWCAG 3.0メトリクスをテストします。
  */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi } from 'vitest';
 import { Link, MemoryRouter } from 'react-router-dom';
 import { Button, type ButtonProps } from '@/components/ui/button';
-import { testBasicAccessibility, testWCAG3Compliance, testKeyboardInteraction } from '@/tests/wcag3/helpers';
+import { runAccessibilityTest } from '@/tests/wcag3/helpers';
+
+const TestButton = () => (
+  <Button>テストボタン</Button>
+);
 
 describe('Button', () => {
   describe('基本機能', () => {
     it('デフォルト状態でレンダリングされる', () => {
-      render(<Button>テストボタン</Button>);
+      render(<TestButton />);
       expect(screen.getByRole('button')).toBeInTheDocument();
     });
 
@@ -21,9 +25,13 @@ describe('Button', () => {
       expect(screen.getByRole('button')).toHaveClass('custom-class');
     });
 
-    testBasicAccessibility(<Button>テストボタン</Button>, {
-      expectedRole: 'button',
-      testDisabled: true,
+    it('基本的なアクセシビリティ要件を満たす', async () => {
+      await runAccessibilityTest(<TestButton />, {
+        keyboardNavigation: true,
+        ariaAttributes: true,
+        focusManagement: true,
+        contrast: true
+      });
     });
   });
 
@@ -43,7 +51,7 @@ describe('Button', () => {
       }
     });
 
-    // 各バリアントのWCAG3コンプライアンスをテスト
+    // 各バリアントのアクセシビリティテスト
     it.each([
       'default',
       'destructive',
@@ -51,8 +59,16 @@ describe('Button', () => {
       'secondary',
       'ghost',
       'link',
-    ] as const)('variant="%s" がWCAG3に準拠している', (variant) => {
-      testWCAG3Compliance(<Button variant={variant}>テストボタン</Button>);
+    ] as const)('variant="%s" がアクセシビリティ要件を満たす', async (variant) => {
+      await runAccessibilityTest(
+        <Button variant={variant}>テストボタン</Button>,
+        {
+          keyboardNavigation: true,
+          ariaAttributes: true,
+          focusManagement: true,
+          contrast: true
+        }
+      );
     });
   });
 
@@ -70,14 +86,22 @@ describe('Button', () => {
       }
     });
 
-    // 各サイズのWCAG3コンプライアンスをテスト
+    // 各サイズのアクセシビリティテスト
     it.each([
       'default',
       'sm',
       'lg',
       'icon',
-    ] as const)('size="%s" がWCAG3に準拠している', (size) => {
-      testWCAG3Compliance(<Button size={size}>テストボタン</Button>);
+    ] as const)('size="%s" がアクセシビリティ要件を満たす', async (size) => {
+      await runAccessibilityTest(
+        <Button size={size}>テストボタン</Button>,
+        {
+          keyboardNavigation: true,
+          ariaAttributes: true,
+          focusManagement: true,
+          contrast: true
+        }
+      );
     });
   });
 
@@ -98,14 +122,22 @@ describe('Button', () => {
       expect(handleClick).not.toHaveBeenCalled();
     });
 
-    testKeyboardInteraction(<Button>テストボタン</Button>, {
-      expectedRole: 'button',
-      triggerKeys: [' ', 'Enter'],
+    it('キーボード操作が適切に機能する', async () => {
+      const handleClick = vi.fn();
+      render(<Button onClick={handleClick}>テストボタン</Button>);
+      const button = screen.getByRole('button');
+      
+      button.focus();
+      await userEvent.keyboard('{Enter}');
+      expect(handleClick).toHaveBeenCalledTimes(1);
+      
+      await userEvent.keyboard(' ');
+      expect(handleClick).toHaveBeenCalledTimes(2);
     });
   });
 
   describe('Linkコンポーネントとの統合', () => {
-    it('Linkコンポーネントとして正しくレンダリングされる', () => {
+    it('Linkコンポーネントとして正しくレンダリングされる', async () => {
       render(
         <MemoryRouter>
           <Button asChild>
@@ -118,13 +150,19 @@ describe('Button', () => {
       expect(link).toBeInTheDocument();
       expect(link).toHaveAttribute('href', '/test');
 
-      // リンクとしてのWCAG3コンプライアンスをテスト
-      testWCAG3Compliance(
+      // リンクとしてのアクセシビリティテスト
+      await runAccessibilityTest(
         <MemoryRouter>
           <Button asChild>
             <Link to="/test">リンクボタン</Link>
           </Button>
-        </MemoryRouter>
+        </MemoryRouter>,
+        {
+          keyboardNavigation: true,
+          ariaAttributes: true,
+          focusManagement: true,
+          contrast: true
+        }
       );
     });
   });

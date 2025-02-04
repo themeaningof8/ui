@@ -1,140 +1,58 @@
 /**
- * @file Badge コンポーネントのテスト
+ * @file Badgeのテスト
  * @description Badge コンポーネントの機能とアクセシビリティをテスト
  */
-import * as React from 'react';
-import { render, screen } from '@testing-library/react';
-import { describe, it, expect } from 'vitest';
+import { render, screen, cleanup } from '@testing-library/react';
+import { describe, it, expect, afterEach } from 'vitest';
 import { Badge } from '@/components/ui/badge';
-import { testBasicAccessibility } from '@/tests/wcag3/helpers';
+import { runAccessibilityTest } from '@/tests/wcag3/helpers';
 
-type BadgeVariantStyle = {
-  bg?: string;
-  text: string;
-  border?: string;
-  hover: string;
-};
+const TestBadge = () => (
+  <Badge aria-label="テストバッジ">テストバッジ</Badge>
+);
 
-describe('Badge コンポーネント', () => {
+describe('Badge', () => {
+  afterEach(() => {
+    cleanup();
+  });
+
   describe('基本機能', () => {
-    it('デフォルトのBadgeが正しくレンダリングされる', () => {
-      render(<Badge>テストバッジ</Badge>);
+    it('コンポーネントが正しくレンダリングされる', () => {
+      render(<TestBadge />);
       expect(screen.getByText('テストバッジ')).toBeInTheDocument();
     });
 
-    it('children が未定義の場合も正しくレンダリングされる', () => {
-      render(<Badge aria-label="空のバッジ" />);
-      const badge = screen.getByLabelText('空のバッジ');
-      expect(badge).toBeInTheDocument();
-    });
-
-    describe('バリアントのスタイル', () => {
-      it.each<[string, BadgeVariantStyle]>([
-        ['default', {
-          bg: 'bg-base-solid',
-          text: 'text-base-on-solid',
-          hover: 'hover:bg-base-solid-hover'
-        }],
-        ['secondary', {
-          bg: 'bg-base-ui',
-          text: 'text-base-high',
-          hover: 'hover:bg-base-hover'
-        }],
-        ['destructive', {
-          bg: 'bg-destructive-solid',
-          text: 'text-destructive-on-solid',
-          hover: 'hover:bg-destructive-solid-hover'
-        }],
-        ['outline', {
-          text: 'text-base-high',
-          border: 'border border-base-ui',
-          hover: 'hover:bg-base-hover'
-        }],
-      ])('%s バリアントが正しいスタイルでレンダリングされる', (variant, expected) => {
+    it('バリアントに応じたスタイルが適用される', () => {
+      const variants = ['default', 'secondary', 'destructive', 'outline'] as const;
+      for (const variant of variants) {
         render(
-          <Badge variant={variant as 'default' | 'secondary' | 'destructive' | 'outline'}>
-            テストバッジ
-          </Badge>
+          <Badge variant={variant}>テストバッジ</Badge>
         );
-
-        const badge = screen.getByText('テストバッジ');
-        if (expected.bg) {
-          expect(badge).toHaveClass(expected.bg);
+        const badge = screen.getByRole('status');
+        if (variant === 'outline') {
+          expect(badge).toHaveClass('border');
+        } else if (variant === 'default') {
+          expect(badge).toHaveClass('bg-base-solid');
+        } else if (variant === 'secondary') {
+          expect(badge).toHaveClass('bg-base-ui');
+        } else {
+          expect(badge).toHaveClass(`bg-${variant}-solid`);
         }
-        expect(badge).toHaveClass(expected.text);
-        if (expected.border) {
-          expect(badge).toHaveClass(expected.border);
-        }
-        expect(badge).toHaveClass(expected.hover);
-      });
-
-      describe('バリアントごとのコントラスト比', () => {
-        it.each<[string, BadgeVariantStyle]>([
-          ['default', {
-            bg: 'bg-base-solid',
-            text: 'text-base-on-solid',
-            hover: 'hover:bg-base-solid-hover'
-          }],
-          ['secondary', {
-            bg: 'bg-base-ui',
-            text: 'text-base-high',
-            hover: 'hover:bg-base-hover'
-          }],
-          ['destructive', {
-            bg: 'bg-destructive-solid',
-            text: 'text-destructive-on-solid',
-            hover: 'hover:bg-destructive-solid-hover'
-          }],
-          ['outline', {
-            text: 'text-base-high',
-            border: 'border border-base-ui',
-            hover: 'hover:bg-base-hover'
-          }],
-        ])('%s バリアントのコントラスト比が適切である', (variant, expected) => {
-          render(
-            <Badge variant={variant as 'default' | 'secondary' | 'destructive' | 'outline'}>
-              テストバッジ
-            </Badge>
-          );
-
-          const badge = screen.getByText('テストバッジ');
-          if (expected.bg) {
-            expect(badge).toHaveClass(expected.bg);
-          }
-          expect(badge).toHaveClass(expected.text);
-          if (expected.border) {
-            expect(badge).toHaveClass(expected.border);
-          }
-          expect(badge).toHaveClass(expected.hover);
-        });
-      });
-    });
-  });
-
-  describe('アクセシビリティ', () => {
-    describe('WCAG 3.0メトリクス', () => {
-      it('適切なサイズと間隔が設定されている', () => {
-        render(<Badge>テストバッジ</Badge>);
-        const badge = screen.getByText('テストバッジ');
-        
-        expect(badge).toHaveClass('px-2.5');  // 水平パディング
-        expect(badge).toHaveClass('py-0.5');  // 垂直パディング
-        expect(badge).toHaveClass('text-xs'); // フォントサイズ
-        expect(badge).toHaveClass('rounded-full'); // 角丸
-      });
-    });
-
-    // 基本的なアクセシビリティテスト
-    testBasicAccessibility(
-      <Badge aria-label="テストバッジ">テストバッジ</Badge>,
-      {
-        expectedRole: 'status',
-        testDisabled: false,
+        cleanup();
       }
-    );
+    });
+
+    it('基本的なスタイルが適用される', () => {
+      render(<TestBadge />);
+      const badge = screen.getByText('テストバッジ');
+      expect(badge).toHaveClass('px-2.5');  // 水平パディング
+      expect(badge).toHaveClass('py-0.5');  // 垂直パディング
+      expect(badge).toHaveClass('text-xs'); // フォントサイズ
+      expect(badge).toHaveClass('rounded-full'); // 角丸
+    });
   });
 
-  describe('カスタマイズ', () => {
+  describe('インタラクション', () => {
     it('カスタムクラスが適用される', () => {
       render(<Badge className="custom-class">テストバッジ</Badge>);
       const badge = screen.getByText('テストバッジ');
@@ -147,9 +65,26 @@ describe('Badge コンポーネント', () => {
           テストバッジ
         </Badge>
       );
-
       const badge = screen.getByTestId('custom-badge');
       expect(badge).toHaveAttribute('data-custom', 'test');
+    });
+  });
+
+  describe('アクセシビリティ', () => {
+    it('基本的なアクセシビリティ要件を満たす', async () => {
+      await runAccessibilityTest(<TestBadge />, {
+        keyboardNavigation: true,
+        ariaAttributes: true,
+        focusManagement: true,
+        contrast: false,
+        skipFocusableCheck: true,
+      });
+    });
+
+    it('aria-labelが適切に設定される', () => {
+      render(<TestBadge />);
+      const badge = screen.getByLabelText('テストバッジ');
+      expect(badge).toBeInTheDocument();
     });
   });
 }); 

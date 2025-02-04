@@ -1,6 +1,6 @@
 /**
- * @file DropdownMenuコンポーネントのストーリー
- * @description DropdownMenuコンポーネントの様々な状態とバリエーションを表示
+ * @file DropdownMenuのストーリー
+ * @description DropdownMenuの様々な状態とバリエーションを表示
  */
 
 import type { Meta, StoryObj } from '@storybook/react'
@@ -12,8 +12,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuShortcut,
   DropdownMenuTrigger,
-} from '.'
-import { Button } from '../button'
+} from '@/components/ui/dropdown-menu'
+import { Button } from '@/components/ui/button'
 
 const meta = {
   title: 'UI/DropdownMenu',

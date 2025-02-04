@@ -1,6 +1,6 @@
 /**
- * @file Separator コンポーネントの Storybook 設定
- * @description Separator コンポーネントの様々な状態と使用例を表示します。
+ * @file Separatorの Storybook 設定
+ * @description Separatorの様々な状態と使用例を表示します。
  */
 import type { Meta, StoryObj } from '@storybook/react';
 import { Separator } from './';

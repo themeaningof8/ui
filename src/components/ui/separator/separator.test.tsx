@@ -1,12 +1,12 @@
 /**
- * @file Separator コンポーネントのテスト
- * @description Separator コンポーネントの基本的なレンダリングと機能をテストします。
+ * @file Separatorのテスト
+ * @description Separatorの基本的なレンダリングと機能をテストします。
  */
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
 import { Separator } from './';
 
-describe('Separator コンポーネント', () => {
+describe('Separator', () => {
   describe('基本機能', () => {
     it('デフォルト状態でレンダリングされる', () => {
       render(<Separator />);

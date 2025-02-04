@@ -1,5 +1,5 @@
 /**
- * @file Breadcrumb コンポーネント
+ * @file Breadcrumb
  * @description アクセシブルなパンくずリストコンポーネント。現在のページの階層構造を表示し、ナビゲーションを提供します。
  *
  * @example

@@ -1,10 +1,10 @@
 /**
- * @file Sliderコンポーネントのストーリー
- * @description Sliderコンポーネントの様々な状態とバリエーションを表示
+ * @file Sliderのストーリー
+ * @description Sliderの様々な状態とバリエーションを表示
  */
 
 import type { Meta, StoryObj } from '@storybook/react'
-import { Slider } from '.'
+import { Slider } from '@/components/ui/slider'
 
 const meta = {
   title: 'UI/Slider',
