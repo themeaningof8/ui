@@ -289,6 +289,45 @@ const DropdownMenuShortcut = ({
 }
 DropdownMenuShortcut.displayName = 'DropdownMenuShortcut'
 
+/**
+ * @interface DropdownMenuSubTriggerProps
+ * @description ドロップダウンメニューのサブトリガーコンポーネントのプロパティ
+ */
+interface DropdownMenuSubTriggerProps
+  extends React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.SubTrigger> {
+  /**
+   * @property {string} [className] - カスタムクラス名
+   */
+  className?: string
+  /**
+   * @property {boolean} [inset] - インセットの有無
+   */
+  inset?: boolean
+  /**
+   * @property {boolean} [disabled] - 無効化の有無
+   */
+  disabled?: boolean
+}
+
+/**
+ * @component DropdownMenuSubTrigger
+ * @description ドロップダウンメニューのサブトリガーコンポーネント
+ */
+const DropdownMenuSubTrigger = React.forwardRef<
+  React.ElementRef<typeof DropdownMenuPrimitive.SubTrigger>,
+  DropdownMenuSubTriggerProps
+>(({ className, inset, disabled, children, ...props }, ref) => (
+  <DropdownMenuPrimitive.SubTrigger
+    ref={ref}
+    className={dropdownMenuItemVariants({ className })}
+    disabled={disabled}
+    {...props}
+  >
+    {children}
+  </DropdownMenuPrimitive.SubTrigger>
+))
+DropdownMenuSubTrigger.displayName = DropdownMenuPrimitive.SubTrigger.displayName
+
 export {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -301,5 +340,6 @@ export {
   DropdownMenuPortal,
   DropdownMenuSub,
   DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuRadioGroup,
 } 

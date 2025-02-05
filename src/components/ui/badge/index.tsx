@@ -1,5 +1,5 @@
 /**
- * @file Badge コンポーネント
+ * @file Badge
  * @description インタラクティブな要素やステータスを表示するためのバッジコンポーネント
  *
  * @example

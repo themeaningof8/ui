@@ -1,6 +1,5 @@
 /**
- * @file Vitestの設定ファイル
- * @description テスト環境の設定を定義します
+ * @file テスト実行環境の設定を行います
  */
 /// <reference types="vitest" />
 /// <reference types="vite/client" />
@@ -12,17 +11,28 @@ import tsconfigPaths from 'vite-tsconfig-paths'
 export default defineConfig({
   plugins: [react(), tsconfigPaths()],
   test: {
-    globals: true,
     environment: 'jsdom',
+    environmentOptions: {
+      jsdom: {
+        resources: 'usable',
+        url: 'http://localhost/',
+      },
+    },
+    globals: true,
     setupFiles: ['./src/tests/setup.ts'],
-    include: ['src/**/*.{test,spec}.{ts,tsx}'],
+    include: ['src/**/*.test.{ts,tsx}'],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
+      include: ['src/**/*.{ts,tsx}'],
       exclude: [
-        'node_modules/',
-        'src/tests/setup.ts',
+        'src/**/*.test.{ts,tsx}',
+        'src/**/*.stories.{ts,tsx}',
+        'src/tests/**/*',
       ],
+    },
+    deps: {
+      inline: [/@radix-ui\/react-.*/, /class-variance-authority/],
     },
   }
 }) 

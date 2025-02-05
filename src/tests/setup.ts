@@ -3,14 +3,16 @@
  * @description テスト環境のグローバル設定を行います
  */
 
-import "@testing-library/jest-dom";
-import { expect, vi } from "vitest";
+import { afterEach, beforeAll, expect, vi } from "vitest";
 import { configureAxe } from "jest-axe";
 import type { AxeResults } from "axe-core";
+import "@testing-library/jest-dom";
+import { cleanup, configure } from '@testing-library/react'
 import {
 	wcagRequirements,
 	calculateContrast,
 } from "./wcag3/styles";
+
 
 // カスタムマッチャーの型定義
 declare global {
@@ -129,41 +131,67 @@ configureAxe({
 	],
 });
 
-// ResizeObserverのモック
-class ResizeObserverMock {
-	observe = vi.fn();
-	unobserve = vi.fn();
-	disconnect = vi.fn();
-}
+// テスト環境の設定
+configure({
+	testIdAttribute: 'data-testid',
+})
 
-// グローバルにResizeObserverを定義
-global.ResizeObserver = ResizeObserverMock;
+// テスト後のクリーンアップ
+afterEach(() => {
+	cleanup()
+})
 
-// IntersectionObserverのモック
-const mockIntersectionObserver = vi.fn();
-mockIntersectionObserver.mockImplementation((callback, options) => ({
-	root: null,
-	rootMargin: '',
-	thresholds: [],
-	observe: vi.fn(),
-	unobserve: vi.fn(),
-	disconnect: vi.fn(),
-	takeRecords: vi.fn().mockReturnValue([]),
-}));
+// グローバルオブジェクトの設定
+beforeAll(() => {
+	// ResizeObserverのモック
+	const ResizeObserverMock = vi.fn(() => ({
+		observe: vi.fn(),
+		unobserve: vi.fn(),
+		disconnect: vi.fn(),
+	}))
+	
+	// IntersectionObserverのモック
+	const mockIntersectionObserver = vi.fn(() => ({
+		observe: vi.fn(),
+		unobserve: vi.fn(),
+		disconnect: vi.fn(),
+		root: null,
+		rootMargin: '',
+		thresholds: [0],
+		takeRecords: () => [],
+	}))
 
-global.IntersectionObserver = mockIntersectionObserver;
+	// グローバルオブジェクトの定義
+	Object.defineProperties(global, {
+		ResizeObserver: {
+			writable: true,
+			configurable: true,
+			value: ResizeObserverMock,
+		},
+		IntersectionObserver: {
+			writable: true,
+			configurable: true,
+			value: mockIntersectionObserver,
+		},
+	})
 
-// その他のブラウザAPIのモック（必要に応じて）
-Object.defineProperty(window, 'matchMedia', {
-	writable: true,
-	value: vi.fn().mockImplementation(query => ({
-		matches: false,
-		media: query,
-		onchange: null,
-		addListener: vi.fn(),
-		removeListener: vi.fn(),
-		addEventListener: vi.fn(),
-		removeEventListener: vi.fn(),
-		dispatchEvent: vi.fn(),
-	})),
-});
+	// DOMイベントのモック
+	Object.defineProperty(window, 'matchMedia', {
+		writable: true,
+		value: vi.fn().mockImplementation(query => ({
+			matches: false,
+			media: query,
+			onchange: null,
+			addListener: vi.fn(),
+			removeListener: vi.fn(),
+			addEventListener: vi.fn(),
+			removeEventListener: vi.fn(),
+			dispatchEvent: vi.fn(),
+		})),
+	})
+
+	// アニメーションのモック
+	window.HTMLElement.prototype.scrollIntoView = vi.fn()
+	window.HTMLElement.prototype.releasePointerCapture = vi.fn()
+	window.HTMLElement.prototype.hasPointerCapture = vi.fn()
+})
