@@ -184,12 +184,13 @@ export interface BreadcrumbSeparatorProps extends React.ComponentPropsWithoutRef
  * @description BreadcrumbSeparatorコンポーネント
  */
 const BreadcrumbSeparator = React.forwardRef<HTMLSpanElement, BreadcrumbSeparatorProps>(
-  ({ children = <ChevronRight className="h-4 w-4" />, className, ...props }, ref) => {
+  ({ className, children = <ChevronRight className="h-4 w-4" />, ...props }, ref) => {
     return (
       <span
         ref={ref}
-        className={cn('text-base-low', className)}
         aria-hidden="true"
+        className={cn('text-base-low', className)}
+        data-testid="breadcrumb-separator"
         {...props}
       >
         {children}

@@ -6,16 +6,34 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
-
 import { Pagination } from '@/components/ui/pagination'
+import { 
+  runAxeTest,
+  runKeyboardNavigationTest,
+  runAriaAttributesTest,
+  runFocusManagementTest,
+  runContrastTest
+} from '@/tests/wcag3/helpers'
+
+interface TestPaginationProps {
+  currentPage: number;
+  onPageChange: (page: number) => void;
+}
+
+const TestPagination = ({ currentPage, onPageChange }: TestPaginationProps) => (
+  <Pagination
+    total={100}
+    perPage={10}
+    currentPage={currentPage}
+    onPageChange={onPageChange}
+  />
+)
 
 describe('Pagination', () => {
   describe('基本機能', () => {
     it('デフォルト状態でレンダリングされる', () => {
       render(
-        <Pagination
-          total={30}
-          perPage={10}
+        <TestPagination
           currentPage={1}
           onPageChange={() => {}}
         />
@@ -30,9 +48,7 @@ describe('Pagination', () => {
 
     it('アクティブなページが正しく表示される', () => {
       render(
-        <Pagination
-          total={30}
-          perPage={10}
+        <TestPagination
           currentPage={2}
           onPageChange={() => {}}
         />
@@ -44,9 +60,7 @@ describe('Pagination', () => {
 
     it('省略記号が表示される', () => {
       render(
-        <Pagination
-          total={100}
-          perPage={10}
+        <TestPagination
           currentPage={1}
           onPageChange={() => {}}
         />
@@ -57,15 +71,13 @@ describe('Pagination', () => {
     })
   })
 
-  describe('ナビゲーション', () => {
+  describe('インタラクション', () => {
     it('前へ/次へボタンがクリック可能', async () => {
       const user = userEvent.setup()
       const onPageChange = vi.fn()
 
       render(
-        <Pagination
-          total={30}
-          perPage={10}
+        <TestPagination
           currentPage={2}
           onPageChange={onPageChange}
         />
@@ -83,9 +95,7 @@ describe('Pagination', () => {
       const onPageChange = vi.fn()
 
       render(
-        <Pagination
-          total={30}
-          perPage={10}
+        <TestPagination
           currentPage={1}
           onPageChange={onPageChange}
         />
@@ -101,7 +111,7 @@ describe('Pagination', () => {
 
       render(
         <Pagination
-          total={30}
+          total={100}
           perPage={10}
           currentPage={1}
           onPageChange={onPageChange}
@@ -115,12 +125,36 @@ describe('Pagination', () => {
   })
 
   describe('アクセシビリティ', () => {
+    describe('基本的なアクセシビリティ', () => {
+      it('axeによる基本的なアクセシビリティ要件を満たす', async () => {
+        await runAxeTest(<TestPagination currentPage={1} onPageChange={() => {}} />);
+      });
+
+      it('キーボードナビゲーションが適切に機能する', () => {
+        const { container } = render(<TestPagination currentPage={1} onPageChange={() => {}} />);
+        runKeyboardNavigationTest(container);
+      });
+
+      it('ARIA属性が適切に設定されている', () => {
+        const { container } = render(<TestPagination currentPage={1} onPageChange={() => {}} />);
+        runAriaAttributesTest(container);
+      });
+
+      it('フォーカス管理が適切に機能する', () => {
+        const { container } = render(<TestPagination currentPage={1} onPageChange={() => {}} />);
+        runFocusManagementTest(container);
+      });
+
+      it('コントラスト要件を満たす', () => {
+        const { container } = render(<TestPagination currentPage={1} onPageChange={() => {}} />);
+        runContrastTest(container);
+      });
+    });
+
     it('適切なARIA属性が設定されている', () => {
       render(
-        <Pagination
-          total={30}
-          perPage={10}
-          currentPage={2}
+        <TestPagination
+          currentPage={1}
           onPageChange={() => {}}
         />
       )
@@ -128,7 +162,7 @@ describe('Pagination', () => {
       const nav = screen.getByRole('navigation')
       expect(nav).toHaveAttribute('aria-label', 'ページネーション')
 
-      const activeLink = screen.getByText('2').closest('button')
+      const activeLink = screen.getByText('1').closest('button')
       expect(activeLink).toHaveAttribute('aria-current', 'page')
 
       const previousButton = screen.getByText('前へ').closest('button')
@@ -143,9 +177,7 @@ describe('Pagination', () => {
       const onPageChange = vi.fn()
 
       render(
-        <Pagination
-          total={30}
-          perPage={10}
+        <TestPagination
           currentPage={2}
           onPageChange={onPageChange}
         />

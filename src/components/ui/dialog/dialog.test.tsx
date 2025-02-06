@@ -16,7 +16,13 @@ import {
   DialogClose,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { runAccessibilityTest } from '@/tests/wcag3/helpers';
+import { 
+  runAxeTest,
+  runKeyboardNavigationTest,
+  runAriaAttributesTest,
+  runFocusManagementTest,
+  runContrastTest
+} from '@/tests/wcag3/helpers';
 
 const TestDialog = () => (
   <Dialog>
@@ -105,13 +111,29 @@ describe('Dialog', () => {
   });
 
   describe('アクセシビリティ', () => {
-    it('基本的なアクセシビリティ要件を満たす', async () => {
-      await runAccessibilityTest(<TestDialog />, {
-        keyboardNavigation: true,
-        ariaAttributes: true,
-        focusManagement: true,
-        contrast: true,
-        skipFocusableCheck: false,
+    describe('基本的なアクセシビリティ', () => {
+      it('axeによる基本的なアクセシビリティ要件を満たす', async () => {
+        await runAxeTest(<TestDialog />);
+      });
+
+      it('キーボードナビゲーションが適切に機能する', () => {
+        const { container } = render(<TestDialog />);
+        runKeyboardNavigationTest(container);
+      });
+
+      it('ARIA属性が適切に設定されている', () => {
+        const { container } = render(<TestDialog />);
+        runAriaAttributesTest(container);
+      });
+
+      it('フォーカス管理が適切に機能する', () => {
+        const { container } = render(<TestDialog />);
+        runFocusManagementTest(container);
+      });
+
+      it('コントラスト要件を満たす', () => {
+        const { container } = render(<TestDialog />);
+        runContrastTest(container);
       });
     });
 

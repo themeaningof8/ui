@@ -53,7 +53,7 @@ const Modal: React.FC<ModalProps> = ({
 	return (
 		<DialogPrimitive.Root {...props}>
 			<DialogPrimitive.Portal>
-				<DialogPrimitive.Overlay className={modalOverlayVariants()} />
+				<DialogPrimitive.Overlay className={modalOverlayVariants()} data-testid="modal-overlay" />
 				<DialogPrimitive.Content className={modalContentVariants()}>
 					<DialogPrimitive.Title
 						className={cn("text-lg font-bold mb-2", !title && "sr-only")}

@@ -4,7 +4,6 @@
  */
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
-import { runAccessibilityTest } from '@/tests/wcag3/helpers';
 import {
   Card,
   CardHeader,
@@ -13,6 +12,13 @@ import {
   CardContent,
   CardFooter,
 } from './';
+import { 
+  runAxeTest,
+  runKeyboardNavigationTest,
+  runAriaAttributesTest,
+  runFocusManagementTest,
+  runContrastTest
+} from '@/tests/wcag3/helpers';
 
 const TestCard = () => (
   <Card>
@@ -121,52 +127,70 @@ describe('Card', () => {
   });
 
   describe('アクセシビリティ', () => {
-    it('基本的なアクセシビリティ要件を満たす', async () => {
-      await runAccessibilityTest(<TestCard />, {
-        keyboardNavigation: true,
-        ariaAttributes: true,
-        focusManagement: true,
-        contrast: false,
-        skipFocusableCheck: true // カードはフォーカス可能な要素を必要としない
+    describe('基本的なアクセシビリティ', () => {
+      it('axeによる基本的なアクセシビリティ要件を満たす', async () => {
+        await runAxeTest(<TestCard />);
+      });
+
+      it('キーボードナビゲーションが適切に機能する', () => {
+        const { container } = render(<TestCard />);
+        runKeyboardNavigationTest(container);
+      });
+
+      it('ARIA属性が適切に設定されている', () => {
+        const { container } = render(<TestCard />);
+        runAriaAttributesTest(container);
+      });
+
+      it('フォーカス管理が適切に機能する', () => {
+        const { container } = render(<TestCard />);
+        runFocusManagementTest(container);
+      });
+
+      it('コントラスト要件を満たす', () => {
+        const { container } = render(<TestCard />);
+        runContrastTest(container);
       });
     });
 
-    it('適切なHTML要素とARIAロールが使用されている', () => {
-      render(<TestCard />);
-      const card = screen.getByRole('article');
-      expect(card).toBeInTheDocument();
-      expect(screen.getByText('Test Title').tagName).toBe('H3');
-      expect(screen.getByText('Test Description').tagName).toBe('P');
-    });
+    describe('構造とセマンティクス', () => {
+      it('適切なHTML要素とARIAロールが使用されている', () => {
+        render(<TestCard />);
+        const card = screen.getByRole('article');
+        expect(card).toBeInTheDocument();
+        expect(screen.getByText('Test Title').tagName).toBe('H3');
+        expect(screen.getByText('Test Description').tagName).toBe('P');
+      });
 
-    it('コンテンツの階層構造が適切である', () => {
-      render(<TestCard />);
-      const card = screen.getByRole('article');
-      const title = screen.getByText('Test Title');
-      const description = screen.getByText('Test Description');
-      const content = screen.getByText('Test Content');
+      it('コンテンツの階層構造が適切である', () => {
+        render(<TestCard />);
+        const card = screen.getByRole('article');
+        const title = screen.getByText('Test Title');
+        const description = screen.getByText('Test Description');
+        const content = screen.getByText('Test Content');
 
-      expect(title.parentElement).toBe(description.parentElement);
-      expect(content.parentElement?.closest('[role="article"]')).toBe(card);
-    });
+        expect(title.parentElement).toBe(description.parentElement);
+        expect(content.parentElement?.closest('[role="article"]')).toBe(card);
+      });
 
-    it('複数のカードが適切なロールを持つ', () => {
-      render(
-        <div>
-          <Card>
-            <CardTitle>Card 1</CardTitle>
-          </Card>
-          <Card>
-            <CardTitle>Card 2</CardTitle>
-          </Card>
-        </div>
-      );
+      it('複数のカードが適切なロールを持つ', () => {
+        render(
+          <div>
+            <Card>
+              <CardTitle>Card 1</CardTitle>
+            </Card>
+            <Card>
+              <CardTitle>Card 2</CardTitle>
+            </Card>
+          </div>
+        );
 
-      const articles = screen.getAllByRole('article');
-      expect(articles).toHaveLength(2);
-      for (const article of articles) {
-        expect(article).toHaveClass('rounded-lg', 'border', 'shadow-sm');
-      }
+        const articles = screen.getAllByRole('article');
+        expect(articles).toHaveLength(2);
+        for (const article of articles) {
+          expect(article).toHaveClass('rounded-lg', 'border', 'shadow-sm');
+        }
+      });
     });
   });
 }); 

@@ -11,23 +11,15 @@ import { calculateContrast, wcagRequirements } from './styles';
 import './matchers';
 
 /**
- * コンポーネントタイプの定義
- */
-export type ComponentType =
-	| 'accordion'
-	| 'button'
-	| 'dialog'
-	| 'form'
-	| 'input'
-	| 'menu'
-	| 'radix'
-	| 'select'
-	| 'tabs';
-
-/**
  * アクセシビリティテストのオプション
  */
 export interface AccessibilityTestOptions {
+	/**
+	 * axeによるテストを実行するかどうか
+	 * @default true
+	 */
+	axe?: boolean;
+
 	/**
 	 * キーボードナビゲーションのテストを実行するかどうか
 	 * @default true
@@ -48,7 +40,7 @@ export interface AccessibilityTestOptions {
 
 	/**
 	 * コントラストのテストを実行するかどうか
-	 * @default true
+	 * @default false
 	 */
 	contrast?: boolean;
 
@@ -60,79 +52,90 @@ export interface AccessibilityTestOptions {
 }
 
 /**
- * アクセシビリティテストを実行する
- * @param element テスト対象のReactコンポーネント
- * @param options テストオプション
- * @returns テスト結果
+ * エラーメッセージの生成
  */
-export const runAccessibilityTest = async (
-	element: ReactElement,
-	options: AccessibilityTestOptions = {}
-): Promise<RenderResult> => {
+const createErrorMessage = (type: string, details: string) => {
+	return `アクセシビリティテストに失敗しました (${type}): ${details}`;
+};
+
+/**
+ * axeによるアクセシビリティ違反のチェック
+ */
+export const runAxeTest = async (element: ReactElement): Promise<RenderResult> => {
 	const result = render(element);
-	const {
-		keyboardNavigation = true,
-		ariaAttributes = true,
-		focusManagement = true,
-		contrast = true,
-		skipFocusableCheck = false,
-	} = options;
-
-	// axeによるアクセシビリティ違反のチェック
 	const axeResults = await axe(result.container);
-	expect(axeResults).toHaveNoViolations();
-
-	// キーボードナビゲーションのテスト
-	if (keyboardNavigation && !skipFocusableCheck) {
-		const focusableElements = Array.from(
-			result.container.querySelectorAll<HTMLElement>(
-				'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-			)
-		);
-		expect(focusableElements.length).toBeGreaterThan(0);
-	}
-
-	// ARIA属性のテスト
-	if (ariaAttributes) {
-		const allElements = Array.from(result.container.getElementsByTagName('*'));
-		const elementsWithAria = allElements.filter(element => {
-			return Array.from(element.attributes).some(attr => attr.name.startsWith('aria-'));
-		});
-		
-		if (elementsWithAria.length > 0) {
-			for (const element of elementsWithAria) {
-				const ariaAttributes = Array.from(element.attributes)
-					.filter((attr) => attr.name.startsWith('aria-'))
-					.map((attr) => attr.name);
-				expect(ariaAttributes.length).toBeGreaterThan(0);
-			}
-		}
-	}
-
-	// フォーカス管理のテスト
-	if (focusManagement && !skipFocusableCheck) {
-		const focusableElements = Array.from(
-			result.container.querySelectorAll<HTMLElement>(
-				'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-			)
-		);
-		for (const element of focusableElements) {
-			element.focus();
-			expect(document.activeElement).toBe(element);
-		}
-	}
-
-	// コントラストのテスト
-	if (contrast) {
-		const textElements = Array.from(
-			result.container.querySelectorAll<HTMLElement>('p, span, div, h1, h2, h3, h4, h5, h6')
-		);
-		for (const element of textElements) {
-			const styles = window.getComputedStyle(element);
-			const contrastRatio = calculateContrast(styles.color, styles.backgroundColor);
-			expect(contrastRatio).toBeGreaterThanOrEqual(wcagRequirements.contrast.minRatio);
-		}
-	}
-
+	expect(axeResults, createErrorMessage('axe', 'アクセシビリティ違反が検出されました')).toHaveNoViolations();
 	return result;
+};
+
+/**
+ * キーボードナビゲーションのテスト
+ */
+export const runKeyboardNavigationTest = (container: HTMLElement): void => {
+	const focusableElements = Array.from(
+		container.querySelectorAll<HTMLElement>(
+			'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+		)
+	);
+	expect(
+		focusableElements.length,
+		createErrorMessage('キーボードナビゲーション', 'フォーカス可能な要素が見つかりません')
+	).toBeGreaterThan(0);
+};
+
+/**
+ * ARIA属性のテスト
+ */
+export const runAriaAttributesTest = (container: HTMLElement): void => {
+	const allElements = Array.from(container.getElementsByTagName('*'));
+	const elementsWithAria = allElements.filter(element => {
+		return Array.from(element.attributes).some(attr => attr.name.startsWith('aria-'));
+	});
+	
+	if (elementsWithAria.length > 0) {
+		for (const element of elementsWithAria) {
+			const ariaAttributes = Array.from(element.attributes)
+				.filter((attr) => attr.name.startsWith('aria-'))
+				.map((attr) => attr.name);
+			expect(
+				ariaAttributes.length,
+				createErrorMessage('ARIA属性', `要素 ${element.tagName} にARIA属性が設定されていません`)
+			).toBeGreaterThan(0);
+		}
+	}
+};
+
+/**
+ * フォーカス管理のテスト
+ */
+export const runFocusManagementTest = (container: HTMLElement): void => {
+	const focusableElements = Array.from(
+		container.querySelectorAll<HTMLElement>(
+			'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+		)
+	);
+	for (const element of focusableElements) {
+		element.focus();
+		expect(
+			document.activeElement,
+			createErrorMessage('フォーカス管理', `要素 ${element.tagName} にフォーカスが当たりません`)
+		).toBe(element);
+	}
+};
+
+/**
+ * コントラストのテスト
+ */
+export const runContrastTest = (container: HTMLElement): void => {
+	const textElements = Array.from(
+		container.querySelectorAll<HTMLElement>('p, span, div, h1, h2, h3, h4, h5, h6')
+	);
+	for (const element of textElements) {
+		const styles = window.getComputedStyle(element);
+		const contrastRatio = calculateContrast(styles.color, styles.backgroundColor);
+		expect(
+			contrastRatio,
+			createErrorMessage('コントラスト', `要素 ${element.tagName} のAPCAコントラスト比が不十分です: ${contrastRatio}`)
+		).toBeGreaterThanOrEqual(wcagRequirements.contrast.minRatio); // WCAG3.0のAPCA基準値
+	}
 };

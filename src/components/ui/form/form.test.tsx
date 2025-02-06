@@ -9,7 +9,13 @@ import { vi, describe, it, expect } from 'vitest'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
-import { runAccessibilityTest } from '@/tests/wcag3/helpers'
+import { 
+  runAxeTest,
+  runKeyboardNavigationTest,
+  runAriaAttributesTest,
+  runFocusManagementTest,
+  runContrastTest
+} from '@/tests/wcag3/helpers'
 import {
   Form,
   FormControl,
@@ -170,13 +176,29 @@ describe('Form', () => {
   });
 
   describe('アクセシビリティ', () => {
-    it('基本的なアクセシビリティ要件を満たす', async () => {
-      await runAccessibilityTest(<TestForm />, {
-        keyboardNavigation: true,
-        ariaAttributes: true,
-        focusManagement: true,
-        contrast: false,
-        skipFocusableCheck: true,
+    describe('基本的なアクセシビリティ', () => {
+      it('axeによる基本的なアクセシビリティ要件を満たす', async () => {
+        await runAxeTest(<TestForm />);
+      });
+
+      it('キーボードナビゲーションが適切に機能する', () => {
+        const { container } = render(<TestForm />);
+        runKeyboardNavigationTest(container);
+      });
+
+      it('ARIA属性が適切に設定されている', () => {
+        const { container } = render(<TestForm />);
+        runAriaAttributesTest(container);
+      });
+
+      it('フォーカス管理が適切に機能する', () => {
+        const { container } = render(<TestForm />);
+        runFocusManagementTest(container);
+      });
+
+      it('コントラスト要件を満たす', () => {
+        const { container } = render(<TestForm />);
+        runContrastTest(container);
       });
     });
 

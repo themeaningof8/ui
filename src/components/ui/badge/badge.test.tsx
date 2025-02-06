@@ -5,7 +5,13 @@
 import { render, screen, cleanup } from '@testing-library/react';
 import { describe, it, expect, afterEach } from 'vitest';
 import { Badge } from '@/components/ui/badge';
-import { runAccessibilityTest } from '@/tests/wcag3/helpers';
+import { 
+  runAxeTest,
+  runKeyboardNavigationTest,
+  runAriaAttributesTest,
+  runFocusManagementTest,
+  runContrastTest
+} from '@/tests/wcag3/helpers';
 
 const TestBadge = () => (
   <Badge aria-label="テストバッジ">テストバッジ</Badge>
@@ -71,20 +77,30 @@ describe('Badge', () => {
   });
 
   describe('アクセシビリティ', () => {
-    it('基本的なアクセシビリティ要件を満たす', async () => {
-      await runAccessibilityTest(<TestBadge />, {
-        keyboardNavigation: true,
-        ariaAttributes: true,
-        focusManagement: true,
-        contrast: false,
-        skipFocusableCheck: true,
+    describe('基本的なアクセシビリティ', () => {
+      it('axeによる基本的なアクセシビリティ要件を満たす', async () => {
+        await runAxeTest(<TestBadge />);
       });
-    });
 
-    it('aria-labelが適切に設定される', () => {
-      render(<TestBadge />);
-      const badge = screen.getByLabelText('テストバッジ');
-      expect(badge).toBeInTheDocument();
+      it('キーボードナビゲーションが適切に機能する', () => {
+        const { container } = render(<TestBadge />);
+        runKeyboardNavigationTest(container);
+      });
+
+      it('ARIA属性が適切に設定されている', () => {
+        const { container } = render(<TestBadge />);
+        runAriaAttributesTest(container);
+      });
+
+      it('フォーカス管理が適切に機能する', () => {
+        const { container } = render(<TestBadge />);
+        runFocusManagementTest(container);
+      });
+
+      it('コントラスト要件を満たす', () => {
+        const { container } = render(<TestBadge />);
+        runContrastTest(container);
+      });
     });
   });
 }); 

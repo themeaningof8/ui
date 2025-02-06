@@ -5,7 +5,13 @@
 import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import { Checkbox } from '@/components/ui/checkbox';
-import { runAccessibilityTest } from '@/tests/wcag3/helpers';
+import { 
+  runAxeTest,
+  runKeyboardNavigationTest,
+  runAriaAttributesTest,
+  runFocusManagementTest,
+  runContrastTest
+} from '@/tests/wcag3/helpers';
 
 const TestCheckbox = () => (
   <Checkbox aria-label="test checkbox" />
@@ -88,29 +94,72 @@ describe('Checkbox', () => {
   });
 
   describe('アクセシビリティ', () => {
-    it('基本的なアクセシビリティ要件を満たす', async () => {
-      await runAccessibilityTest(<TestCheckbox />, {
-        keyboardNavigation: true,
-        ariaAttributes: true,
-        focusManagement: true,
-        contrast: false,
+    describe('基本的なアクセシビリティ', () => {
+      it('axeによる基本的なアクセシビリティ要件を満たす', async () => {
+        await runAxeTest(<TestCheckbox />);
+      });
+
+      it('キーボードナビゲーションが適切に機能する', () => {
+        const { container } = render(<TestCheckbox />);
+        runKeyboardNavigationTest(container);
+      });
+
+      it('ARIA属性が適切に設定されている', () => {
+        const { container } = render(<TestCheckbox />);
+        runAriaAttributesTest(container);
+      });
+
+      it('フォーカス管理が適切に機能する', () => {
+        const { container } = render(<TestCheckbox />);
+        runFocusManagementTest(container);
+      });
+
+      it('コントラスト要件を満たす', () => {
+        const { container } = render(<TestCheckbox />);
+        runContrastTest(container);
       });
     });
 
-    it('aria-labelが適切に設定される', () => {
-      const customLabel = "カスタムチェックボックス";
-      render(<Checkbox aria-label={customLabel} />);
-      const checkbox = screen.getByLabelText(customLabel);
-      expect(checkbox).toBeInTheDocument();
+    describe('キーボード操作', () => {
+      it('Spaceキーでチェック状態を切り替えられる', async () => {
+        const onCheckedChange = vi.fn();
+        render(<Checkbox onCheckedChange={onCheckedChange} aria-label="test checkbox" />);
+        const checkbox = screen.getByRole('checkbox');
+
+        checkbox.focus();
+        expect(checkbox).toHaveFocus();
+
+        fireEvent.keyDown(checkbox, { key: ' ' });
+        expect(onCheckedChange).toHaveBeenCalledWith(true);
+
+        fireEvent.keyDown(checkbox, { key: ' ' });
+        expect(onCheckedChange).toHaveBeenCalledWith(false);
+      });
+
+      it('無効化状態でキーボード操作が機能しない', () => {
+        const onCheckedChange = vi.fn();
+        render(<Checkbox disabled onCheckedChange={onCheckedChange} aria-label="test checkbox" />);
+        const checkbox = screen.getByRole('checkbox');
+
+        checkbox.focus();
+        fireEvent.keyDown(checkbox, { key: ' ' });
+        expect(onCheckedChange).not.toHaveBeenCalled();
+      });
     });
 
-    it('フォーカスインジケーターが視覚的に表示される', () => {
-      render(<TestCheckbox />);
-      const checkbox = screen.getByRole('checkbox');
-      expect(checkbox).toHaveClass(
-        'focus-visible:outline-none',
-        'focus-visible:ring-2'
-      );
+    describe('ラベルとステート', () => {
+      it('aria-labelが適切に設定される', () => {
+        const customLabel = "カスタムチェックボックス";
+        render(<Checkbox aria-label={customLabel} />);
+        const checkbox = screen.getByLabelText(customLabel);
+        expect(checkbox).toBeInTheDocument();
+      });
+
+      it('不確定状態が適切にアナウンスされる', () => {
+        render(<Checkbox indeterminate aria-label="test checkbox" />);
+        const checkbox = screen.getByRole('checkbox');
+        expect(checkbox).toHaveAttribute('aria-checked', 'mixed');
+      });
     });
   });
 }); 

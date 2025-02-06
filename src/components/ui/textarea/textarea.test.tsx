@@ -1,17 +1,24 @@
 /**
  * @file Textareaのテスト
- * @description Textareaの基本的なレンダリングと機能をテストします。
+ * @description Textareaの機能とアクセシビリティをテスト
  */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi } from 'vitest';
 import { Textarea } from '@/components/ui/textarea';
+import { 
+  runAxeTest,
+  runKeyboardNavigationTest,
+  runAriaAttributesTest,
+  runFocusManagementTest,
+  runContrastTest
+} from '@/tests/wcag3/helpers';
 
 describe('Textarea', () => {
   const user = userEvent.setup();
 
   describe('基本機能', () => {
-    it('デフォルト状態でレンダリングされる', () => {
+    it('コンポーネントが正しくレンダリングされる', () => {
       render(<Textarea />);
       expect(screen.getByRole('textbox')).toBeInTheDocument();
     });
@@ -26,14 +33,19 @@ describe('Textarea', () => {
       expect(screen.getByRole('textbox')).toHaveValue('初期テキスト');
     });
 
-    it('disabled 状態が適用される', () => {
+    it('無効化状態が適用される', () => {
       render(<Textarea disabled />);
       expect(screen.getByRole('textbox')).toBeDisabled();
     });
 
-    it('readonly 状態が適用される', () => {
+    it('読み取り専用状態が適用される', () => {
       render(<Textarea readOnly />);
       expect(screen.getByRole('textbox')).toHaveAttribute('readonly');
+    });
+
+    it('エラー状態のスタイルが適用される', () => {
+      render(<Textarea error />);
+      expect(screen.getByRole('textbox')).toHaveClass('border-error');
     });
   });
 
@@ -57,13 +69,6 @@ describe('Textarea', () => {
       
       expect(textarea).toHaveValue('1行目\n2行目');
     });
-  });
-
-  describe('スタイリング', () => {
-    it('エラー状態のスタイルが適用される', () => {
-      render(<Textarea error />);
-      expect(screen.getByRole('textbox')).toHaveClass('border-error');
-    });
 
     it('カスタムクラスが適用される', () => {
       render(<Textarea className="custom-class" />);
@@ -72,12 +77,38 @@ describe('Textarea', () => {
   });
 
   describe('アクセシビリティ', () => {
-    it('aria-label が設定される', () => {
+    describe('基本的なアクセシビリティ', () => {
+      it('axeによる基本的なアクセシビリティ要件を満たす', async () => {
+        await runAxeTest(<Textarea aria-label="テストテキストエリア" />);
+      });
+
+      it('キーボードナビゲーションが適切に機能する', () => {
+        const { container } = render(<Textarea aria-label="テストテキストエリア" />);
+        runKeyboardNavigationTest(container);
+      });
+
+      it('ARIA属性が適切に設定されている', () => {
+        const { container } = render(<Textarea aria-label="テストテキストエリア" />);
+        runAriaAttributesTest(container);
+      });
+
+      it('フォーカス管理が適切に機能する', () => {
+        const { container } = render(<Textarea aria-label="テストテキストエリア" />);
+        runFocusManagementTest(container);
+      });
+
+      it('コントラスト要件を満たす', () => {
+        const { container } = render(<Textarea aria-label="テストテキストエリア" />);
+        runContrastTest(container);
+      });
+    });
+
+    it('適切なARIA属性が設定される', () => {
       render(<Textarea aria-label="メッセージ入力欄" />);
       expect(screen.getByRole('textbox')).toHaveAttribute('aria-label', 'メッセージ入力欄');
     });
 
-    it('aria-describedby が設定される', () => {
+    it('補助説明文が関連付けられる', () => {
       render(
         <>
           <Textarea aria-describedby="helper-text" />
@@ -85,6 +116,17 @@ describe('Textarea', () => {
         </>
       );
       expect(screen.getByRole('textbox')).toHaveAttribute('aria-describedby', 'helper-text');
+    });
+
+    it('キーボード操作が正しく機能する', async () => {
+      render(<Textarea />);
+      const textarea = screen.getByRole('textbox');
+      
+      await user.tab();
+      expect(textarea).toHaveFocus();
+      
+      await user.keyboard('テスト入力');
+      expect(textarea).toHaveValue('テスト入力');
     });
   });
 }); 

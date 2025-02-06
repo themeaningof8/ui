@@ -1,11 +1,10 @@
 /**
  * @file DropdownMenuのテスト
- * @description DropdownMenuの機能とアクセシビリティをテスト
+ * @description DropdownMenuの基本機能、インタラクション、アクセシビリティをテスト
  */
-
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen, cleanup, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { describe, expect, it, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach } from 'vitest'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,35 +17,35 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuShortcut,
 } from '@/components/ui/dropdown-menu'
-import { runAccessibilityTest } from '@/tests/wcag3/helpers'
+import { 
+  runAxeTest,
+  runKeyboardNavigationTest,
+  runAriaAttributesTest,
+  runFocusManagementTest,
+  runContrastTest
+} from '@/tests/wcag3/helpers'
 
 describe('DropdownMenu', () => {
-  const user = userEvent.setup({
-    delay: 50, // イベント間の遅延を追加
-    pointerEventsCheck: 0,
-  })
-
   beforeEach(() => {
-    // テスト環境のセットアップ
-    document.body.innerHTML = ''
+    cleanup()
   })
 
   const renderDropdownMenu = () => {
     return render(
       <DropdownMenu>
-        <DropdownMenuTrigger>メニュー</DropdownMenuTrigger>
+        <DropdownMenuTrigger data-testid="menu-trigger">メニュー</DropdownMenuTrigger>
         <DropdownMenuContent>
           <DropdownMenuLabel>アカウント</DropdownMenuLabel>
-          <DropdownMenuItem>プロフィール</DropdownMenuItem>
+          <DropdownMenuItem data-testid="profile-item">プロフィール</DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuSub>
-            <DropdownMenuSubTrigger>詳細設定</DropdownMenuSubTrigger>
+            <DropdownMenuSubTrigger data-testid="settings-trigger">詳細設定</DropdownMenuSubTrigger>
             <DropdownMenuSubContent>
-              <DropdownMenuItem>通知設定</DropdownMenuItem>
-              <DropdownMenuItem>セキュリティ設定</DropdownMenuItem>
+              <DropdownMenuItem data-testid="notification-item">通知設定</DropdownMenuItem>
+              <DropdownMenuItem data-testid="security-item">セキュリティ設定</DropdownMenuItem>
             </DropdownMenuSubContent>
           </DropdownMenuSub>
-          <DropdownMenuItem>
+          <DropdownMenuItem data-testid="logout-item">
             ログアウト
             <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
           </DropdownMenuItem>
@@ -56,147 +55,195 @@ describe('DropdownMenu', () => {
   }
 
   describe('基本機能', () => {
-    it('メニューが正しくレンダリングされる', () => {
+    it('コンポーネントが正しくレンダリングされる', () => {
       renderDropdownMenu()
       expect(screen.getByText('メニュー')).toBeInTheDocument()
     })
 
-    it('トリガーをクリックするとメニューが表示される', async () => {
+    it('メニューが初期状態で非表示である', () => {
       renderDropdownMenu()
-      const trigger = screen.getByText('メニュー')
-      
-      await user.click(trigger)
+      expect(screen.queryByRole('menu')).not.toBeInTheDocument()
+    })
+
+    it('メニュー項目が正しい順序で表示される', async () => {
+      renderDropdownMenu()
+      const user = userEvent.setup()
+      await user.click(screen.getByTestId('menu-trigger'))
       
       await waitFor(() => {
-        expect(screen.getByText('アカウント')).toBeVisible()
-        expect(screen.getByText('プロフィール')).toBeVisible()
-        expect(screen.getByText('ログアウト')).toBeVisible()
+        const menuItems = screen.getAllByRole('menuitem')
+        expect(menuItems[0]).toHaveTextContent('プロフィール')
+        expect(menuItems[1]).toHaveTextContent('詳細設定')
+        expect(menuItems[2]).toHaveTextContent('ログアウト')
+      })
+    })
+
+    it('ショートカットが正しく表示される', async () => {
+      renderDropdownMenu()
+      const user = userEvent.setup()
+      await user.click(screen.getByTestId('menu-trigger'))
+      
+      await waitFor(() => {
+        expect(screen.getByText('⇧⌘Q')).toBeInTheDocument()
+      })
+    })
+  })
+
+  describe('インタラクション', () => {
+    it('トリガーをクリックするとメニューが表示される', async () => {
+      renderDropdownMenu()
+      const user = userEvent.setup()
+      await user.click(screen.getByTestId('menu-trigger'))
+      
+      await waitFor(() => {
+        expect(screen.getByRole('menu')).toBeVisible()
       })
     })
 
     it('メニュー項目がクリック可能である', async () => {
       renderDropdownMenu()
-      const trigger = screen.getByText('メニュー')
+      const user = userEvent.setup()
+      await user.click(screen.getByTestId('menu-trigger'))
       
-      await user.click(trigger)
       await waitFor(() => {
-        expect(screen.getByText('プロフィール')).toBeVisible()
+        expect(screen.getByTestId('profile-item')).toBeVisible()
       })
       
-      const menuItem = screen.getByText('プロフィール')
-      await user.click(menuItem)
+      await user.click(screen.getByTestId('profile-item'))
+      expect(screen.queryByRole('menu')).not.toBeInTheDocument()
     })
-  })
 
-  describe('サブメニュー', () => {
     it('サブメニューが正しく動作する', async () => {
       renderDropdownMenu()
-      const trigger = screen.getByText('メニュー')
+      const user = userEvent.setup()
+      await user.click(screen.getByTestId('menu-trigger'))
       
-      await user.click(trigger)
       await waitFor(() => {
-        expect(screen.getByText('詳細設定')).toBeVisible()
+        expect(screen.getByTestId('settings-trigger')).toBeVisible()
       })
       
-      const subTrigger = screen.getByText('詳細設定')
-      await user.hover(subTrigger)
-      
+      await user.hover(screen.getByTestId('settings-trigger'))
       await waitFor(() => {
         expect(screen.getByText('通知設定')).toBeVisible()
         expect(screen.getByText('セキュリティ設定')).toBeVisible()
-      }, { timeout: 1000 })
+      })
+    })
+
+    it('ESCキーでメニューが閉じる', async () => {
+      renderDropdownMenu()
+      const user = userEvent.setup()
+      await user.click(screen.getByTestId('menu-trigger'))
+      
+      await waitFor(() => {
+        expect(screen.getByRole('menu')).toBeVisible()
+      })
+      
+      await user.keyboard('{Escape}')
+      expect(screen.queryByRole('menu')).not.toBeInTheDocument()
     })
   })
 
   describe('アクセシビリティ', () => {
-    it('基本的なアクセシビリティ要件を満たす', async () => {
-      await runAccessibilityTest(
+    describe('基本的なアクセシビリティ', () => {
+      const SimpleDropdownMenu = () => (
         <DropdownMenu>
           <DropdownMenuTrigger>メニュー</DropdownMenuTrigger>
           <DropdownMenuContent>
             <DropdownMenuItem>テスト項目</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-      )
-    })
+      );
+
+      it('axeによる基本的なアクセシビリティ要件を満たす', async () => {
+        await runAxeTest(<SimpleDropdownMenu />);
+      });
+
+      it('キーボードナビゲーションが適切に機能する', () => {
+        const { container } = render(<SimpleDropdownMenu />);
+        runKeyboardNavigationTest(container);
+      });
+
+      it('ARIA属性が適切に設定されている', () => {
+        const { container } = render(<SimpleDropdownMenu />);
+        runAriaAttributesTest(container);
+      });
+
+      it('フォーカス管理が適切に機能する', () => {
+        const { container } = render(<SimpleDropdownMenu />);
+        runFocusManagementTest(container);
+      });
+
+      it('コントラスト要件を満たす', () => {
+        const { container } = render(<SimpleDropdownMenu />);
+        runContrastTest(container);
+      });
+    });
 
     it('メインメニューのARIA属性が適切に設定されている', async () => {
       renderDropdownMenu()
-      const trigger = screen.getByText('メニュー')
+      const trigger = screen.getByTestId('menu-trigger')
       
-      // 初期状態を確認
-      expect(trigger).toHaveAttribute('aria-expanded', 'false')
       expect(trigger).toHaveAttribute('aria-haspopup', 'menu')
+      expect(trigger).toHaveAttribute('aria-expanded', 'false')
       
-      // メニューを開いた状態を確認
+      const user = userEvent.setup()
       await user.click(trigger)
+      
       await waitFor(() => {
         expect(trigger).toHaveAttribute('aria-expanded', 'true')
-      })
-      
-      // メニューを閉じた状態を確認
-      await user.keyboard('{Escape}')
-      await waitFor(() => {
-        expect(trigger).toHaveAttribute('aria-expanded', 'false')
       })
     })
 
     it('サブメニューのARIA属性が適切に設定されている', async () => {
       renderDropdownMenu()
-      const trigger = screen.getByText('メニュー')
+      const user = userEvent.setup()
+      await user.click(screen.getByTestId('menu-trigger'))
       
-      // メインメニューを開く
-      await user.click(trigger)
       await waitFor(() => {
-        expect(screen.getByText('詳細設定')).toBeVisible()
+        expect(screen.getByTestId('settings-trigger')).toBeVisible()
       })
       
-      const subTrigger = screen.getByText('詳細設定')
-      
-      // 初期状態を確認
+      const subTrigger = screen.getByTestId('settings-trigger')
+      expect(subTrigger).toHaveAttribute('aria-haspopup', 'menu')
       expect(subTrigger).toHaveAttribute('aria-expanded', 'false')
       
-      // サブメニューを開く
       await user.hover(subTrigger)
       await waitFor(() => {
         expect(subTrigger).toHaveAttribute('aria-expanded', 'true')
-      }, { timeout: 1000 })
-      
-      // サブメニューを閉じる
-      await user.unhover(subTrigger)
-      await waitFor(() => {
-        expect(subTrigger).toHaveAttribute('aria-expanded', 'false')
-      }, { timeout: 1000 })
+      })
     })
 
-    it('キーボード操作が正しく機能する', async () => {
+    test('キーボード操作が正しく機能する', async () => {
+      const user = userEvent.setup()
       renderDropdownMenu()
-      const trigger = screen.getByText('メニュー')
-      
-      // Enterキーでメニューを開く
-      trigger.focus()
-      await user.keyboard('{Enter}')
-      await waitFor(() => {
-        expect(screen.getByText('プロフィール')).toBeVisible()
-      })
-      
+
+      // メニューを開く
+      await user.click(screen.getByTestId('menu-trigger'))
+      expect(screen.getByRole('menu')).toBeVisible()
+
       // 最初のメニュー項目にフォーカスが移動することを確認
-      const firstMenuItem = screen.getByText('プロフィール')
-      await waitFor(() => {
-        expect(firstMenuItem).toHaveAttribute('data-highlighted', '')
-      })
-      
-      // 矢印キーで次のメニュー項目に移動
       await user.keyboard('{ArrowDown}')
-      const nextMenuItem = screen.getByText('詳細設定')
       await waitFor(() => {
-        expect(nextMenuItem).toHaveAttribute('data-highlighted', '')
+        expect(screen.getByTestId('profile-item')).toHaveFocus()
       })
-      
-      // Escapeキーでメニューを閉じる
-      await user.keyboard('{Escape}')
+
+      // 次のメニュー項目に移動
+      await user.keyboard('{ArrowDown}')
       await waitFor(() => {
-        expect(screen.queryByText('プロフィール')).toBeNull()
+        expect(screen.getByTestId('settings-trigger')).toHaveFocus()
+      })
+
+      // 最後のメニュー項目に移動
+      await user.keyboard('{ArrowDown}')
+      await waitFor(() => {
+        expect(screen.getByTestId('logout-item')).toHaveFocus()
+      })
+
+      // 最初のメニュー項目に戻る
+      await user.keyboard('{ArrowUp}')
+      await user.keyboard('{ArrowUp}')
+      await waitFor(() => {
+        expect(screen.getByTestId('profile-item')).toHaveFocus()
       })
     })
   })

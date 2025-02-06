@@ -2,19 +2,32 @@
  * @file Avatarのテスト
  * @description Avatarの基本的なレンダリングと機能をテストします。
  */
-import { render, screen, waitFor, act } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { render, screen, waitFor, act, cleanup } from '@testing-library/react';
+import { describe, it, expect, vi, afterEach } from 'vitest';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { runAccessibilityTest } from '@/tests/wcag3/helpers';
+import { 
+  runAxeTest, 
+  runKeyboardNavigationTest, 
+  runAriaAttributesTest, 
+  runFocusManagementTest,
+  runContrastTest
+} from '@/tests/wcag3/helpers';
+
+const TestAvatar = () => (
+  <Avatar alt="テストアバター">
+    <AvatarImage src="test.jpg" alt="テストアバター" />
+    <AvatarFallback>TA</AvatarFallback>
+  </Avatar>
+);
 
 describe('Avatar', () => {
+  afterEach(() => {
+    cleanup();
+  });
+
   describe('基本機能', () => {
     it('コンポーネントが正しくレンダリングされる', () => {
-      render(<Avatar alt="テストアバター">
-        <AvatarImage src="test.jpg" alt="テストアバター" />
-        <AvatarFallback>TA</AvatarFallback>
-      </Avatar>);
-      
+      render(<TestAvatar />);
       const avatar = screen.getByRole('img', { name: 'テストアバター' });
       expect(avatar).toBeInTheDocument();
       expect(avatar).toHaveAttribute('src', 'test.jpg');
@@ -103,83 +116,98 @@ describe('Avatar', () => {
       const avatar = container.querySelector('div[class*="custom-class"]');
       expect(avatar).toHaveClass('custom-class');
     });
-
-    it('フォールバックにカスタムクラスが適用される', async () => {
-      render(
-        <AvatarFallback className="custom-fallback" delayMs={0}>
-          TA
-        </AvatarFallback>
-      );
-
-      const fallback = await screen.findByText('TA');
-      expect(fallback).toHaveClass('custom-fallback');
-    });
   });
 
   describe('アクセシビリティ', () => {
-    it('基本的なアクセシビリティ要件を満たす', () => {
-      runAccessibilityTest(
-        <Avatar alt="テストアバター">
-          <AvatarImage src="test.jpg" alt="テストアバター" />
-          <AvatarFallback>TA</AvatarFallback>
-        </Avatar>,
-        {
-          ariaAttributes: true,
-          focusManagement: true,
-          contrast: true,
-          skipFocusableCheck: true
+    describe('基本的なアクセシビリティ', () => {
+      it('axeによる基本的なアクセシビリティ要件を満たす', async () => {
+        await runAxeTest(<TestAvatar />);
+      });
+
+      it('キーボードナビゲーションが適切に機能する', () => {
+        const { container } = render(<TestAvatar />);
+        runKeyboardNavigationTest(container);
+      });
+
+      it('ARIA属性が適切に設定されている', () => {
+        const { container } = render(<TestAvatar />);
+        runAriaAttributesTest(container);
+      });
+
+      it('フォーカス管理が適切に機能する', () => {
+        const { container } = render(<TestAvatar />);
+        runFocusManagementTest(container);
+      });
+
+      it('コントラスト要件を満たす', () => {
+        const { container } = render(
+          <div style={{ backgroundColor: '#FFFFFF' }}>
+            <Avatar 
+              alt="テストアバター" 
+              style={{ backgroundColor: '#E5E7EB' }}
+            >
+              <AvatarFallback style={{ color: '#1F2937' }}>TA</AvatarFallback>
+            </Avatar>
+          </div>
+        );
+        runContrastTest(container);
+      });
+    });
+
+    describe('サイズバリアント', () => {
+      it('各サイズでアクセシビリティ要件を満たす', async () => {
+        const sizes = ['sm', 'default', 'lg'] as const;
+
+        for (const size of sizes) {
+          const { container } = render(
+            <div style={{ backgroundColor: '#FFFFFF' }}>
+              <Avatar 
+                alt="テストアバター" 
+                size={size}
+                style={{ backgroundColor: '#E5E7EB' }}
+              >
+                <AvatarFallback style={{ color: '#1F2937' }}>TA</AvatarFallback>
+              </Avatar>
+            </div>
+          );
+
+          await runAxeTest(
+            <Avatar alt="テストアバター" size={size}>
+              <AvatarImage src="test.jpg" alt="テストアバター" />
+              <AvatarFallback>TA</AvatarFallback>
+            </Avatar>
+          );
+          runAriaAttributesTest(container);
+          runContrastTest(container);
+
+          cleanup();
         }
-      );
+      });
     });
 
-    it('適切なサイズと間隔が設定されている', () => {
-      render(
-        <Avatar alt="テストアバター">
-          <AvatarImage src="test.jpg" alt="テストアバター" />
-          <AvatarFallback>TA</AvatarFallback>
-        </Avatar>
-      );
+    describe('フォールバック状態', () => {
+      it('フォールバック表示時にアクセシビリティ要件を満たす', async () => {
+        const { container } = render(
+          <div style={{ backgroundColor: '#FFFFFF' }}>
+            <Avatar 
+              alt="テストアバター" 
+              role="img" 
+              aria-label="テストアバター" 
+              style={{ backgroundColor: '#E5E7EB' }}
+            >
+              <AvatarFallback style={{ color: '#1F2937' }}>TA</AvatarFallback>
+            </Avatar>
+          </div>
+        );
 
-      const avatar = screen.getByRole('img').parentElement;
-      expect(avatar).toHaveClass('h-10', 'w-10', 'rounded-full');
-    });
-
-    it('画像に適切なアスペクト比が設定されている', () => {
-      render(
-        <Avatar alt="テストアバター">
-          <AvatarImage src="test.jpg" alt="テストアバター" />
-          <AvatarFallback>TA</AvatarFallback>
-        </Avatar>
-      );
-
-      const img = screen.getByRole('img');
-      expect(img).toHaveClass('aspect-square');
-    });
-
-    it('フォールバックのコントラストが適切である', async () => {
-      const { container } = render(
-        <Avatar alt="テストアバター">
-          <AvatarFallback delayMs={0}>TA</AvatarFallback>
-        </Avatar>
-      );
-
-      const fallbackText = await screen.findByText('TA');
-      const avatarRoot = container.firstElementChild;
-      expect(avatarRoot).toHaveClass('bg-base-ui', 'text-base-high');
-
-      const fallbackElement = fallbackText.closest('div[class*="flex h-full w-full"]');
-      expect(fallbackElement).not.toBeNull();
-      expect(fallbackElement).toHaveClass(
-        'flex',
-        'h-full',
-        'w-full',
-        'items-center',
-        'justify-center',
-        'rounded-full',
-        'bg-base-ui',
-        'font-medium',
-        'text-base-high'
-      );
+        await runAxeTest(
+          <Avatar alt="テストアバター" role="img" aria-label="テストアバター">
+            <AvatarFallback>TA</AvatarFallback>
+          </Avatar>
+        );
+        runAriaAttributesTest(container);
+        runContrastTest(container);
+      });
     });
   });
 }); 

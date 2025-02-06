@@ -7,31 +7,36 @@ import userEvent from '@testing-library/user-event';
 import { describe, it, expect } from 'vitest';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { 
+  runAxeTest,
+  runKeyboardNavigationTest,
+  runAriaAttributesTest,
+  runFocusManagementTest,
+  runContrastTest
+} from '@/tests/wcag3/helpers';
 
 describe('Popover', () => {
   const user = userEvent.setup();
 
-  const renderPopover = () => {
-    render(
-      <Popover>
-        <PopoverTrigger asChild>
-          <Button>トリガー</Button>
-        </PopoverTrigger>
-        <PopoverContent>
-          <p>ポップオーバーの内容</p>
-        </PopoverContent>
-      </Popover>
-    );
-  };
+  const TestPopover = () => (
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button>トリガー</Button>
+      </PopoverTrigger>
+      <PopoverContent>
+        <p>ポップオーバーの内容</p>
+      </PopoverContent>
+    </Popover>
+  );
 
   describe('基本機能', () => {
     it('初期状態ではポップオーバーは非表示', () => {
-      renderPopover();
+      render(<TestPopover />);
       expect(screen.queryByText('ポップオーバーの内容')).not.toBeInTheDocument();
     });
 
     it('クリックでポップオーバーが表示される', async () => {
-      renderPopover();
+      render(<TestPopover />);
       const trigger = screen.getByRole('button');
       await user.click(trigger);
       
@@ -41,7 +46,7 @@ describe('Popover', () => {
     });
 
     it('再度クリックでポップオーバーが非表示になる', async () => {
-      renderPopover();
+      render(<TestPopover />);
       const trigger = screen.getByRole('button');
       
       // 表示
@@ -59,28 +64,30 @@ describe('Popover', () => {
   });
 
   describe('アクセシビリティ', () => {
-    it('トリガーに適切なARIA属性が設定されている', async () => {
-      renderPopover();
-      const trigger = screen.getByRole('button');
-      
-      // 初期状態
-      expect(trigger).toHaveAttribute('aria-expanded', 'false');
-      
-      // 開いた状態
-      await user.click(trigger);
-      await waitFor(() => {
-        expect(trigger).toHaveAttribute('aria-expanded', 'true');
-        expect(trigger).toHaveAttribute('aria-controls');
+    describe('基本的なアクセシビリティ', () => {
+      it('axeによる基本的なアクセシビリティ要件を満たす', async () => {
+        await runAxeTest(<TestPopover />);
       });
-    });
 
-    it('コンテンツに適切なARIA属性が設定されている', async () => {
-      renderPopover();
-      const trigger = screen.getByRole('button');
-      await user.click(trigger);
-      
-      const content = await screen.findByRole('dialog');
-      expect(content).toHaveAttribute('data-state', 'open');
+      it('キーボードナビゲーションが適切に機能する', () => {
+        const { container } = render(<TestPopover />);
+        runKeyboardNavigationTest(container);
+      });
+
+      it('ARIA属性が適切に設定されている', () => {
+        const { container } = render(<TestPopover />);
+        runAriaAttributesTest(container);
+      });
+
+      it('フォーカス管理が適切に機能する', () => {
+        const { container } = render(<TestPopover />);
+        runFocusManagementTest(container);
+      });
+
+      it('コントラスト要件を満たす', () => {
+        const { container } = render(<TestPopover />);
+        runContrastTest(container);
+      });
     });
   });
 

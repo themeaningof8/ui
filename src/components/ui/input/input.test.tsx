@@ -6,7 +6,13 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, it, expect } from 'vitest'
 import { Input } from '@/components/ui/input'
-import { runAccessibilityTest } from '@/tests/wcag3/helpers'
+import { 
+  runAxeTest,
+  runKeyboardNavigationTest,
+  runAriaAttributesTest,
+  runFocusManagementTest,
+  runContrastTest
+} from '@/tests/wcag3/helpers'
 
 const TestInput = (props: React.ComponentProps<typeof Input>) => (
   <div>
@@ -90,30 +96,64 @@ describe('Input', () => {
   })
 
   describe('アクセシビリティ', () => {
-    it('基本的なアクセシビリティ要件を満たす', async () => {
-      await runAccessibilityTest(<TestInput />, {
-        keyboardNavigation: true,
-        ariaAttributes: true,
-        focusManagement: true,
-        contrast: false
+    describe('基本的なアクセシビリティ', () => {
+      it('axeによる基本的なアクセシビリティ要件を満たす', async () => {
+        await runAxeTest(<TestInput />);
+      });
+
+      it('キーボードナビゲーションが適切に機能する', () => {
+        const { container } = render(<TestInput />);
+        runKeyboardNavigationTest(container);
+      });
+
+      it('ARIA属性が適切に設定されている', () => {
+        const { container } = render(<TestInput />);
+        runAriaAttributesTest(container);
+      });
+
+      it('フォーカス管理が適切に機能する', () => {
+        const { container } = render(<TestInput />);
+        runFocusManagementTest(container);
+      });
+
+      it('コントラスト要件を満たす', () => {
+        const { container } = render(<TestInput />);
+        runContrastTest(container);
       });
     });
 
-    it('各状態でアクセシビリティ要件を満たす', async () => {
+    describe('各状態でのアクセシビリティ', () => {
       const states = [
-        { name: 'デフォルト', props: {} },
         { name: 'エラー', props: { error: true } },
         { name: '必須', props: { required: true } },
         { name: '無効', props: { disabled: true } },
       ];
 
       for (const { name, props } of states) {
-        await runAccessibilityTest(<TestInput {...props} />, {
-          keyboardNavigation: true,
-          ariaAttributes: true,
-          focusManagement: true,
-          contrast: false,
-          skipFocusableCheck: name === '無効'
+        describe(`${name}状態`, () => {
+          it('axeによる基本的なアクセシビリティ要件を満たす', async () => {
+            await runAxeTest(<TestInput {...props} />);
+          });
+
+          it('キーボードナビゲーションが適切に機能する', () => {
+            const { container } = render(<TestInput {...props} />);
+            runKeyboardNavigationTest(container);
+          });
+
+          it('ARIA属性が適切に設定されている', () => {
+            const { container } = render(<TestInput {...props} />);
+            runAriaAttributesTest(container);
+          });
+
+          it('フォーカス管理が適切に機能する', () => {
+            const { container } = render(<TestInput {...props} />);
+            runFocusManagementTest(container);
+          });
+
+          it('コントラスト要件を満たす', () => {
+            const { container } = render(<TestInput {...props} />);
+            runContrastTest(container);
+          });
         });
       }
     });
@@ -129,5 +169,5 @@ describe('Input', () => {
       await user.keyboard('テスト')
       expect(input).toHaveValue('テスト')
     });
-  })
-}) 
+  });
+}); 

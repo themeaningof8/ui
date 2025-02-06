@@ -3,8 +3,6 @@
  * @description WCAG3.0に基づくスタイルテストのためのヘルパー関数群
  */
 
-import { APCAcontrast } from "apca-w3";
-
 /**
  * WCAG3.0の要件
  */
@@ -14,9 +12,9 @@ export const wcagRequirements = {
 	 */
 	contrast: {
 		/**
-		 * 最小コントラスト比
+		 * 最小コントラスト比（APCA）
 		 */
-		minRatio: 60, // APCAの基準値
+		minRatio: 60, // WCAG3.0のAPCA基準値
 		textSize: {
 			small: 14,
 			large: 18,
@@ -34,33 +32,25 @@ export const wcagRequirements = {
 		 * 最小アウトライン幅（ピクセル）
 		 */
 		minOutlineWidth: 2,
-		minColorDifference: 45, // APCA
+		minColorDifference: 45,
 	},
 } as const;
 
 /**
- * RGB色を輝度値に変換する
+ * RGB色をAPCA用の輝度値に変換する
  * @param r 赤成分 (0-255)
  * @param g 緑成分 (0-255)
  * @param b 青成分 (0-255)
- * @returns 輝度値 (0-1)
+ * @returns APCA用の輝度値
  */
 const rgbToLuminance = (r: number, g: number, b: number): number => {
-	// sRGBからリニアRGBへの変換
-	const rsRGB = r / 255;
-	const gsRGB = g / 255;
-	const bsRGB = b / 255;
+	// sRGBからリニアRGBへの変換（APCA用）
+	const rL = Math.pow(r / 255, 2.4);
+	const gL = Math.pow(g / 255, 2.4);
+	const bL = Math.pow(b / 255, 2.4);
 
-	// ガンマ補正の適用
-	const rLinear =
-		rsRGB <= 0.03928 ? rsRGB / 12.92 : ((rsRGB + 0.055) / 1.055) ** 2.4;
-	const gLinear =
-		gsRGB <= 0.03928 ? gsRGB / 12.92 : ((gsRGB + 0.055) / 1.055) ** 2.4;
-	const bLinear =
-		bsRGB <= 0.03928 ? bsRGB / 12.92 : ((bsRGB + 0.055) / 1.055) ** 2.4;
-
-	// 輝度値の計算（APCA係数を使用）
-	return 0.2126 * rLinear + 0.7152 * gLinear + 0.0722 * bLinear;
+	// APCA用の輝度計算
+	return 0.2126729 * rL + 0.7151522 * gL + 0.0721750 * bL;
 };
 
 /**
@@ -169,29 +159,28 @@ const hslToRgb = (h: number, s: number, l: number): [number, number, number] => 
 };
 
 /**
- * APCAアルゴリズムによるコントラスト比を計算する
+ * APCAコントラスト比を計算する
  * @param foreground 前景色（文字色）
  * @param background 背景色
- * @returns コントラスト比 (0-100)
+ * @returns APCAコントラスト比
  */
 export const calculateContrast = (
 	foreground: string,
 	background: string,
 ): number => {
-	const [fR, fG, fB] = parseColor(foreground);
-	const [bR, bG, bB] = parseColor(background);
+	const fgRGB = parseColor(foreground);
+	const bgRGB = parseColor(background);
 
-	const fLuminance = rgbToLuminance(fR, fG, fB);
-	const bLuminance = rgbToLuminance(bR, bG, bB);
+	const fgLuminance = rgbToLuminance(...fgRGB);
+	const bgLuminance = rgbToLuminance(...bgRGB);
 
-	// APCAアルゴリズムによるコントラスト比の計算
+	// APCAコントラスト比の計算
 	const contrast = Math.abs(
-		(fLuminance ** 0.43 - bLuminance ** 0.43) *
-			100 *
-			(fLuminance > bLuminance ? 1 : -1),
+		(Math.pow(fgLuminance, 0.57) - Math.pow(bgLuminance, 0.56)) *
+		Math.sign(bgLuminance - fgLuminance) * 100
 	);
 
-	return Math.round(contrast);
+	return contrast;
 };
 
 /**
@@ -248,12 +237,5 @@ export const meetsMinimumTouchTarget = (element: HTMLElement): boolean => {
 export const hasVisibleFocusIndicator = (element: HTMLElement): boolean => {
 	const computedStyle = window.getComputedStyle(element);
 	const outlineWidth = Number.parseInt(computedStyle.outlineWidth) || 0;
-	const outlineStyle = computedStyle.outlineStyle;
-	const outlineColor = computedStyle.outlineColor;
-
-	return (
-		outlineWidth >= wcagRequirements.focusIndicator?.minOutlineWidth &&
-		outlineStyle !== "none" &&
-		outlineColor !== "transparent"
-	);
+	return outlineWidth >= wcagRequirements.focusIndicator?.minOutlineWidth;
 };

@@ -7,7 +7,13 @@ import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Link, MemoryRouter } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { runAccessibilityTest } from '@/tests/wcag3/helpers';
+import { 
+  runAxeTest, 
+  runKeyboardNavigationTest, 
+  runAriaAttributesTest, 
+  runFocusManagementTest,
+  runContrastTest
+} from '@/tests/wcag3/helpers';
 
 const TestButton = () => (
   <Button>テストボタン</Button>
@@ -115,60 +121,159 @@ describe('Button', () => {
   });
 
   describe('アクセシビリティ', () => {
-    it('基本的なアクセシビリティ要件を満たす', async () => {
-      await runAccessibilityTest(<TestButton />, {
-        keyboardNavigation: true,
-        ariaAttributes: true,
-        focusManagement: true,
-        contrast: true
+    describe('コントラスト', () => {
+      it('基本的なコントラスト要件を満たす', () => {
+        const { container } = render(<TestButton />);
+        runContrastTest(container);
+      });
+
+      it('各バリアントでコントラスト要件を満たす', () => {
+        const variants = [
+          'default',
+          'destructive',
+          'outline',
+          'secondary',
+          'ghost',
+          'link'
+        ] as const;
+
+        for (const variant of variants) {
+          const { container } = render(
+            <Button variant={variant}>テストボタン</Button>
+          );
+          runContrastTest(container);
+          cleanup();
+        }
+      });
+
+      it('無効化状態でコントラスト要件を満たす', () => {
+        const { container } = render(
+          <Button disabled>テストボタン</Button>
+        );
+        runContrastTest(container);
+      });
+
+      it('ホバー状態でコントラスト要件を満たす', () => {
+        const { container } = render(<TestButton />);
+        const button = screen.getByRole('button');
+        button.classList.add('hover:bg-base-solid-hover');
+        runContrastTest(container);
       });
     });
 
-    it('キーボード操作が正しく機能する', async () => {
-      const handleClick = vi.fn();
-      render(<Button onClick={handleClick} data-testid="button-keyboard">テストボタン</Button>);
-      const button = screen.getByTestId('button-keyboard');
-      
-      await userEvent.tab();
-      expect(button).toHaveFocus();
-      
-      await userEvent.keyboard('{Enter}');
-      expect(handleClick).toHaveBeenCalledTimes(1);
-      
-      await userEvent.keyboard(' ');
-      expect(handleClick).toHaveBeenCalledTimes(2);
+    describe('基本的なアクセシビリティ', () => {
+      it('axeによる基本的なアクセシビリティ要件を満たす', async () => {
+        await runAxeTest(<TestButton />);
+      });
+
+      it('キーボードナビゲーションが適切に機能する', async () => {
+        const { container } = render(<TestButton />);
+        runKeyboardNavigationTest(container);
+
+        // キーボード操作による具体的な動作確認
+        const handleClick = vi.fn();
+        render(<Button onClick={handleClick}>テストボタン</Button>);
+        const button = screen.getByRole('button');
+        
+        await userEvent.tab();
+        expect(button).toHaveFocus();
+        
+        await userEvent.keyboard('{Enter}');
+        expect(handleClick).toHaveBeenCalledTimes(1);
+        
+        await userEvent.keyboard(' ');
+        expect(handleClick).toHaveBeenCalledTimes(2);
+      });
+
+      it('ARIA属性が適切に設定されている', () => {
+        const { container } = render(<TestButton />);
+        runAriaAttributesTest(container);
+      });
+
+      it('フォーカス管理が適切に機能する', () => {
+        const { container } = render(<TestButton />);
+        runFocusManagementTest(container);
+      });
     });
 
-    it('無効化状態で適切なARIA属性が設定される', () => {
-      render(<Button disabled data-testid="button-aria">テストボタン</Button>);
-      const button = screen.getByTestId('button-aria');
-      
-      expect(button).toBeDisabled();
-      expect(button).toHaveAttribute('aria-disabled', 'true');
+    describe('バリアントとサイズ', () => {
+      it('各バリアントでアクセシビリティ要件を満たす', async () => {
+        const variants = [
+          'default',
+          'destructive',
+          'outline',
+          'secondary',
+          'ghost',
+          'link'
+        ] as const;
+
+        for (const variant of variants) {
+          const { container } = render(
+            <Button variant={variant}>テストボタン</Button>
+          );
+
+          await runAxeTest(<Button variant={variant}>テストボタン</Button>);
+          runKeyboardNavigationTest(container);
+          runAriaAttributesTest(container);
+          runFocusManagementTest(container);
+
+          cleanup();
+        }
+      });
+
+      it('サイズバリアントでアクセシビリティ要件を満たす', async () => {
+        const sizes = ['default', 'sm', 'lg', 'icon'] as const;
+
+        for (const size of sizes) {
+          const { container } = render(
+            <Button size={size}>テストボタン</Button>
+          );
+
+          await runAxeTest(<Button size={size}>テストボタン</Button>);
+          runKeyboardNavigationTest(container);
+          runAriaAttributesTest(container);
+          runFocusManagementTest(container);
+
+          cleanup();
+        }
+      });
     });
 
-    it('各バリアントでコントラスト要件を満たす', async () => {
-      const variants = [
-        'default',
-        'destructive',
-        'outline',
-        'secondary',
-        'ghost',
-        'link'
-      ] as const;
-
-      for (const variant of variants) {
-        cleanup();
-        await runAccessibilityTest(
-          <Button variant={variant} data-testid={`button-contrast-${variant}`}>テストボタン</Button>,
-          {
-            keyboardNavigation: true,
-            ariaAttributes: true,
-            focusManagement: true,
-            contrast: true
-          }
+    describe('特殊な状態', () => {
+      it('無効化状態でアクセシビリティ要件を満たす', async () => {
+        const { container } = render(
+          <Button disabled>テストボタン</Button>
         );
-      }
+
+        await runAxeTest(<Button disabled>テストボタン</Button>);
+        runAriaAttributesTest(container);
+
+        const button = screen.getByRole('button');
+        expect(button).toBeDisabled();
+        expect(button).toHaveAttribute('aria-disabled', 'true');
+      });
+
+      it('Linkとしての使用時にアクセシビリティ要件を満たす', async () => {
+        const { container } = render(
+          <MemoryRouter>
+            <Button asChild>
+              <Link to="/test">リンクボタン</Link>
+            </Button>
+          </MemoryRouter>
+        );
+
+        await runAxeTest(
+          <MemoryRouter>
+            <Button asChild>
+              <Link to="/test">リンクボタン</Link>
+            </Button>
+          </MemoryRouter>
+        );
+
+        runKeyboardNavigationTest(container);
+        runAriaAttributesTest(container);
+        runFocusManagementTest(container);
+      });
     });
   });
 });

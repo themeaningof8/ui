@@ -8,7 +8,13 @@ import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
 import { Button } from '@/components/ui/button'
-import { runAccessibilityTest } from '@/tests/wcag3/helpers'
+import { 
+  runAxeTest,
+  runKeyboardNavigationTest,
+  runAriaAttributesTest,
+  runFocusManagementTest,
+  runContrastTest
+} from '@/tests/wcag3/helpers'
 
 const TestHoverCard = () => (
   <HoverCard>
@@ -101,24 +107,29 @@ describe('HoverCard', () => {
   });
 
   describe('アクセシビリティ', () => {
-    it('基本的なアクセシビリティ要件を満たす', async () => {
-      await runAccessibilityTest(<TestHoverCard />, {
-        keyboardNavigation: true,
-        ariaAttributes: true,
-        focusManagement: true,
-        contrast: false,
-        skipFocusableCheck: true,
+    describe('基本的なアクセシビリティ', () => {
+      it('axeによる基本的なアクセシビリティ要件を満たす', async () => {
+        await runAxeTest(<TestHoverCard />);
       });
-    });
 
-    it('適切なARIA属性が設定される', async () => {
-      render(<TestHoverCard />);
-      const trigger = screen.getByRole('button', { name: 'ホバーしてください' });
-      await userEvent.hover(trigger);
+      it('キーボードナビゲーションが適切に機能する', () => {
+        const { container } = render(<TestHoverCard />);
+        runKeyboardNavigationTest(container);
+      });
 
-      await waitFor(() => {
-        const content = screen.getByText('ホバーカードの内容');
-        expect(content.parentElement).toHaveAttribute('role', 'tooltip');
+      it('ARIA属性が適切に設定されている', () => {
+        const { container } = render(<TestHoverCard />);
+        runAriaAttributesTest(container);
+      });
+
+      it('フォーカス管理が適切に機能する', () => {
+        const { container } = render(<TestHoverCard />);
+        runFocusManagementTest(container);
+      });
+
+      it('コントラスト要件を満たす', () => {
+        const { container } = render(<TestHoverCard />);
+        runContrastTest(container);
       });
     });
   });

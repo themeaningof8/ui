@@ -7,7 +7,13 @@ import { render, screen } from '@testing-library/react'
 import { describe, it, expect } from 'vitest'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
-import { runAccessibilityTest } from '@/tests/wcag3/helpers'
+import { 
+  runAxeTest,
+  runKeyboardNavigationTest,
+  runAriaAttributesTest,
+  runFocusManagementTest,
+  runContrastTest
+} from '@/tests/wcag3/helpers'
 
 describe('Label', () => {
   describe('基本機能', () => {
@@ -59,19 +65,55 @@ describe('Label', () => {
   })
 
   describe('アクセシビリティ', () => {
-    it('基本的なアクセシビリティ要件を満たす', async () => {
-      await runAccessibilityTest(
-        <>
-          <Label htmlFor="test-input">テストラベル</Label>
-          <Input id="test-input" />
-        </>, 
-        {
-          keyboardNavigation: true,
-          ariaAttributes: true,
-          focusManagement: true,
-          contrast: false
-        }
-      );
+    describe('基本的なアクセシビリティ', () => {
+      it('axeによる基本的なアクセシビリティ要件を満たす', async () => {
+        await runAxeTest(
+          <>
+            <Label htmlFor="test-input">テストラベル</Label>
+            <Input id="test-input" />
+          </>
+        );
+      });
+
+      it('キーボードナビゲーションが適切に機能する', () => {
+        const { container } = render(
+          <>
+            <Label htmlFor="test-input">テストラベル</Label>
+            <Input id="test-input" />
+          </>
+        );
+        runKeyboardNavigationTest(container);
+      });
+
+      it('ARIA属性が適切に設定されている', () => {
+        const { container } = render(
+          <>
+            <Label htmlFor="test-input">テストラベル</Label>
+            <Input id="test-input" />
+          </>
+        );
+        runAriaAttributesTest(container);
+      });
+
+      it('フォーカス管理が適切に機能する', () => {
+        const { container } = render(
+          <>
+            <Label htmlFor="test-input">テストラベル</Label>
+            <Input id="test-input" />
+          </>
+        );
+        runFocusManagementTest(container);
+      });
+
+      it('コントラスト要件を満たす', () => {
+        const { container } = render(
+          <>
+            <Label htmlFor="test-input">テストラベル</Label>
+            <Input id="test-input" />
+          </>
+        );
+        runContrastTest(container);
+      });
     });
 
     it('必須項目のマークアップが適切に設定される', () => {

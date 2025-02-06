@@ -5,6 +5,13 @@
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
 import { Separator } from './';
+import { 
+  runAxeTest,
+  runKeyboardNavigationTest,
+  runAriaAttributesTest,
+  runFocusManagementTest,
+  runContrastTest
+} from '@/tests/wcag3/helpers';
 
 describe('Separator', () => {
   describe('基本機能', () => {
@@ -50,6 +57,40 @@ describe('Separator', () => {
       render(<Separator decorative={false} />);
       const separator = screen.getByRole('separator');
       expect(separator).toBeInTheDocument();
+    });
+  });
+
+  describe('アクセシビリティ', () => {
+    describe('基本的なアクセシビリティ', () => {
+      it('axeによる基本的なアクセシビリティ要件を満たす', async () => {
+        await runAxeTest(<Separator />);
+      });
+
+      it('キーボードナビゲーションが適切に機能する', () => {
+        const { container } = render(<Separator />);
+        runKeyboardNavigationTest(container);
+      });
+
+      it('ARIA属性が適切に設定されている', () => {
+        const { container } = render(<Separator />);
+        runAriaAttributesTest(container);
+      });
+
+      it('フォーカス管理が適切に機能する', () => {
+        const { container } = render(<Separator />);
+        runFocusManagementTest(container);
+      });
+
+      it('コントラスト要件を満たす', () => {
+        const { container } = render(<Separator />);
+        runContrastTest(container);
+      });
+    });
+
+    it('装飾的セパレーターが適切なロールを持つ', () => {
+      render(<Separator decorative />);
+      const separator = screen.getByRole('none');
+      expect(separator).toHaveAttribute('aria-hidden', 'true');
     });
   });
 }); 

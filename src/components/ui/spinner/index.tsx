@@ -14,7 +14,7 @@ import { tv } from "tailwind-variants";
  * @description Spinnerのスタイルバリアント
  */
 const spinnerVariants = tv({
-	base: "inline-block animate-spin rounded-full border-t-2 border-solid border-current",
+	base: "inline-block animate-spin rounded-full border-t-2 border-solid border-current motion-reduce:animate-none",
 	variants: {
 		size: {
 			sm: "w-4 h-4",
@@ -42,6 +42,8 @@ export type SpinnerProps = React.HTMLAttributes<HTMLDivElement> & {
 const Spinner: React.FC<SpinnerProps> = ({ size, className, ...rest }) => {
 	return (
 		<div
+			role="status"
+			aria-label="ローディング"
 			className={cn(spinnerVariants({ size }), className)}
 			{...rest}
 		>

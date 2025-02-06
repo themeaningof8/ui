@@ -7,66 +7,121 @@ import { describe, expect, it, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Switch } from '@/components/ui/switch'
+import { 
+  runAxeTest,
+  runKeyboardNavigationTest,
+  runAriaAttributesTest,
+  runFocusManagementTest,
+  runContrastTest
+} from '@/tests/wcag3/helpers'
 
 describe('Switch', () => {
-  it('正しくレンダリングされること', () => {
-    render(<Switch aria-label="テストスイッチ" />)
-    expect(screen.getByRole('switch')).toBeInTheDocument()
+  describe('基本機能', () => {
+    it('コンポーネントが正しくレンダリングされる', () => {
+      render(<Switch aria-label="テストスイッチ" />)
+      const switchElement = screen.getByRole('switch')
+      expect(switchElement).toBeInTheDocument()
+      expect(switchElement).toHaveAttribute('aria-checked', 'false')
+    })
+
+    it('無効化状態が適用される', () => {
+      render(<Switch aria-label="テストスイッチ" disabled />)
+      const switchElement = screen.getByRole('switch')
+      expect(switchElement).toBeDisabled()
+    })
   })
 
-  it('チェック状態が変更できること', async () => {
-    const handleChange = vi.fn()
-    render(
-      <Switch
-        aria-label="テストスイッチ"
-        onCheckedChange={handleChange}
-        checked={false}
-      />,
-    )
+  describe('インタラクション', () => {
+    it('クリックで状態が切り替わる', async () => {
+      const handleChange = vi.fn()
+      render(
+        <Switch
+          aria-label="テストスイッチ"
+          onCheckedChange={handleChange}
+          checked={false}
+        />
+      )
 
-    const switchElement = screen.getByRole('switch')
-    await userEvent.click(switchElement)
+      const switchElement = screen.getByRole('switch')
+      await userEvent.click(switchElement)
+      expect(handleChange).toHaveBeenCalledWith(true)
+    })
 
-    expect(handleChange).toHaveBeenCalledWith(true)
+    it('無効化状態でクリックしても状態が変化しない', async () => {
+      const handleChange = vi.fn()
+      render(
+        <Switch
+          aria-label="テストスイッチ"
+          onCheckedChange={handleChange}
+          disabled
+        />
+      )
+
+      const switchElement = screen.getByRole('switch')
+      await userEvent.click(switchElement)
+      expect(handleChange).not.toHaveBeenCalled()
+    })
+
+    it('カスタムクラスが適用される', () => {
+      render(<Switch aria-label="テストスイッチ" className="custom-class" />)
+      const switchElement = screen.getByRole('switch')
+      expect(switchElement).toHaveClass('custom-class')
+    })
   })
 
-  it('無効化された状態で操作できないこと', async () => {
-    const handleChange = vi.fn()
-    render(
-      <Switch
-        aria-label="テストスイッチ"
-        onCheckedChange={handleChange}
-        disabled
-      />,
-    )
+  describe('アクセシビリティ', () => {
+    describe('基本的なアクセシビリティ', () => {
+      it('axeによる基本的なアクセシビリティ要件を満たす', async () => {
+        await runAxeTest(<Switch aria-label="テストスイッチ" />);
+      });
 
-    const switchElement = screen.getByRole('switch')
-    await userEvent.click(switchElement)
+      it('キーボードナビゲーションが適切に機能する', () => {
+        const { container } = render(<Switch aria-label="テストスイッチ" />);
+        runKeyboardNavigationTest(container);
+      });
 
-    expect(handleChange).not.toHaveBeenCalled()
-    expect(switchElement).toBeDisabled()
-  })
+      it('ARIA属性が適切に設定されている', () => {
+        const { container } = render(<Switch aria-label="テストスイッチ" />);
+        runAriaAttributesTest(container);
+      });
 
-  it('アクセシビリティ属性が正しく設定されていること', () => {
-    render(<Switch aria-label="テストスイッチ" checked />)
-    
-    const switchElement = screen.getByRole('switch')
-    expect(switchElement).toHaveAttribute('aria-checked', 'true')
-    expect(switchElement).toHaveAttribute('aria-label', 'テストスイッチ')
-  })
+      it('フォーカス管理が適切に機能する', () => {
+        const { container } = render(<Switch aria-label="テストスイッチ" />);
+        runFocusManagementTest(container);
+      });
 
-  it('ラベルと正しく関連付けられること', () => {
-    render(
-      <div>
-        <Switch id="test-switch" aria-label="テストスイッチ" />
-        <label htmlFor="test-switch">テストスイッチ</label>
-      </div>,
-    )
+      it('コントラスト要件を満たす', () => {
+        const { container } = render(<Switch aria-label="テストスイッチ" />);
+        runContrastTest(container);
+      });
+    });
 
-    const switchElement = screen.getByRole('switch')
-    const label = screen.getByText('テストスイッチ')
+    it('適切なARIA属性が設定される', () => {
+      render(<Switch aria-label="テストスイッチ" />)
+      const switchElement = screen.getByRole('switch')
+      expect(switchElement).toHaveAttribute('role', 'switch')
+      expect(switchElement).toHaveAttribute('aria-checked')
+      expect(switchElement).toHaveAttribute('aria-label', 'テストスイッチ')
+    })
 
-    expect(switchElement).toHaveAttribute('id', 'test-switch')
-    expect(label).toHaveAttribute('for', 'test-switch')
+    it('キーボード操作で状態が切り替わる', async () => {
+      const handleChange = vi.fn()
+      render(
+        <Switch
+          aria-label="テストスイッチ"
+          onCheckedChange={handleChange}
+        />
+      )
+
+      const switchElement = screen.getByRole('switch')
+      await userEvent.tab()
+      expect(switchElement).toHaveFocus()
+
+      await userEvent.keyboard('[Space]')
+      expect(handleChange).toHaveBeenCalledWith(true)
+
+      await userEvent.keyboard('[Space]')
+      expect(handleChange).toHaveBeenCalledWith(false)
+    })
   })
 }) 

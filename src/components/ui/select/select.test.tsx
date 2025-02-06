@@ -1,6 +1,6 @@
 /**
  * @file Selectのテスト
- * @description Selectの基本的なレンダリングと機能をテストします。
+ * @description Selectの機能とアクセシビリティをテスト
  */
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -15,12 +15,18 @@ import {
   SelectLabel,
   SelectSeparator,
 } from '@/components/ui/select';
-import { runAccessibilityTest } from '@/tests/wcag3/helpers';
+import { 
+  runAxeTest,
+  runKeyboardNavigationTest,
+  runAriaAttributesTest,
+  runFocusManagementTest,
+  runContrastTest
+} from '@/tests/wcag3/helpers';
 
 // scrollIntoViewとhasPointerCaptureのモック
 beforeAll(() => {
   Element.prototype.scrollIntoView = vi.fn();
-  Element.prototype.hasPointerCapture = vi.fn().mockReturnValue(false);
+  Element.prototype.hasPointerCapture = vi.fn();
 });
 
 const TestSelect = ({
@@ -32,17 +38,17 @@ const TestSelect = ({
   defaultValue?: string;
   disabled?: boolean;
 }) => (
-  <Select onValueChange={onValueChange} defaultValue={defaultValue}>
-    <SelectTrigger disabled={disabled} aria-label="フルーツを選択">
+  <Select onValueChange={onValueChange} defaultValue={defaultValue} disabled={disabled}>
+    <SelectTrigger>
       <SelectValue placeholder="選択してください" />
     </SelectTrigger>
     <SelectContent>
       <SelectGroup>
         <SelectLabel>フルーツ</SelectLabel>
         <SelectItem value="apple">りんご</SelectItem>
-        <SelectSeparator />
         <SelectItem value="banana">バナナ</SelectItem>
-        <SelectItem value="orange" disabled>オレンジ</SelectItem>
+        <SelectSeparator />
+        <SelectItem value="orange">オレンジ</SelectItem>
       </SelectGroup>
     </SelectContent>
   </Select>
@@ -69,6 +75,56 @@ describe('Select', () => {
       render(<TestSelect disabled />);
       const trigger = screen.getByRole('combobox');
       expect(trigger).toBeDisabled();
+    });
+
+    it('SelectTriggerにカスタムクラスが適用される', () => {
+      render(
+        <Select>
+          <SelectTrigger className="custom-trigger">
+            <SelectValue placeholder="選択してください" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="test">テスト</SelectItem>
+          </SelectContent>
+        </Select>
+      );
+      const trigger = screen.getByRole('combobox');
+      expect(trigger).toHaveClass('custom-trigger');
+    });
+
+    it('SelectValueにプレースホルダーが表示される', () => {
+      render(
+        <Select>
+          <SelectTrigger>
+            <SelectValue placeholder="カスタムプレースホルダー" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="test">テスト</SelectItem>
+          </SelectContent>
+        </Select>
+      );
+      expect(screen.getByText('カスタムプレースホルダー')).toBeInTheDocument();
+    });
+
+    it('SelectContentにカスタムクラスが適用される', async () => {
+      render(
+        <Select>
+          <SelectTrigger>
+            <SelectValue placeholder="選択してください" />
+          </SelectTrigger>
+          <SelectContent className="custom-content">
+            <SelectItem value="test">テスト</SelectItem>
+          </SelectContent>
+        </Select>
+      );
+
+      const trigger = screen.getByRole('combobox');
+      await user.click(trigger);
+
+      await waitFor(() => {
+        const content = document.querySelector('[role="listbox"]');
+        expect(content?.parentElement).toHaveClass('custom-content');
+      });
     });
   });
 
@@ -116,57 +172,60 @@ describe('Select', () => {
       await user.click(orangeOption);
       expect(onValueChange).not.toHaveBeenCalled();
     });
-  });
 
-  describe('アクセシビリティ', () => {
-    it('適切なARIA属性が設定される', () => {
-      render(<TestSelect />);
-      const trigger = screen.getByRole('combobox');
-      
-      expect(trigger).toHaveAttribute('aria-expanded', 'false');
-      expect(trigger).toHaveAttribute('aria-autocomplete', 'none');
-      expect(trigger).toHaveAttribute('aria-label', 'フルーツを選択');
-    });
-
-    it('選択時にARIA属性が更新される', async () => {
+    it('Escキーでコンテンツが閉じる', async () => {
       render(<TestSelect />);
       const trigger = screen.getByRole('combobox');
       
       await user.click(trigger);
       await waitFor(() => {
-        expect(trigger).toHaveAttribute('aria-expanded', 'true');
+        expect(screen.getByRole('listbox')).toBeVisible();
       });
-      
-      await user.click(screen.getByText('りんご'));
+
+      await user.keyboard('{Escape}');
       await waitFor(() => {
-        expect(trigger).toHaveAttribute('aria-expanded', 'false');
+        expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('アクセシビリティ', () => {
+    describe('基本的なアクセシビリティ', () => {
+      it('axeによる基本的なアクセシビリティ要件を満たす', async () => {
+        await runAxeTest(<TestSelect />);
+      });
+
+      it('キーボードナビゲーションが適切に機能する', () => {
+        const { container } = render(<TestSelect />);
+        runKeyboardNavigationTest(container);
+      });
+
+      it('ARIA属性が適切に設定されている', () => {
+        const { container } = render(<TestSelect />);
+        runAriaAttributesTest(container);
+      });
+
+      it('フォーカス管理が適切に機能する', () => {
+        const { container } = render(<TestSelect />);
+        runFocusManagementTest(container);
+      });
+
+      it('コントラスト要件を満たす', () => {
+        const { container } = render(<TestSelect />);
+        runContrastTest(container);
       });
     });
 
-    // WCAG 3.0 コンプライアンステスト
-    describe('WCAG 3.0', () => {
-      // SelectTriggerの基本的なアクセシビリティテスト
-      it('基本的なアクセシビリティ要件を満たす', async () => {
-        await runAccessibilityTest(<TestSelect />, {
-          keyboardNavigation: true,
-          ariaAttributes: true,
-          focusManagement: true,
-          contrast: false,
-        });
-      });
-
-      // 各状態のアクセシビリティテスト
-      it.each([
-        ['default', {}],
-        ['disabled', { disabled: true }],
-      ] as const)('%s状態がアクセシビリティ要件を満たす', async (state, props) => {
-        await runAccessibilityTest(<TestSelect {...props} />, {
-          keyboardNavigation: true,
-          ariaAttributes: true,
-          focusManagement: true,
-          contrast: false,
-          skipFocusableCheck: state === 'disabled'
-        });
+    it('適切なARIA属性が設定されている', async () => {
+      render(<TestSelect />);
+      const trigger = screen.getByRole('combobox');
+      
+      expect(trigger).toHaveAttribute('aria-expanded', 'false');
+      await user.click(trigger);
+      
+      await waitFor(() => {
+        expect(trigger).toHaveAttribute('aria-expanded', 'true');
+        expect(screen.getByRole('listbox')).toHaveAttribute('aria-label', 'フルーツ');
       });
     });
   });

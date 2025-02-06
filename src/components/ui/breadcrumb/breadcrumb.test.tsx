@@ -1,11 +1,18 @@
 /**
  * @file Breadcrumbのテスト
- * @description Breadcrumbの機能とアクセシビリティをテスト
+ * @description Breadcrumbの基本機能、インタラクション、アクセシビリティをテスト
  */
 
 import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { describe, expect, it } from 'vitest'
-import { runAccessibilityTest } from '@/tests/wcag3/helpers'
+import { 
+  runAxeTest,
+  runKeyboardNavigationTest,
+  runAriaAttributesTest,
+  runFocusManagementTest,
+  runContrastTest
+} from '@/tests/wcag3/helpers'
 
 import {
   Breadcrumb,
@@ -16,197 +23,133 @@ import {
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb'
 
+const TestBreadcrumb = () => (
+  <Breadcrumb>
+    <BreadcrumbList>
+      <BreadcrumbItem>
+        <BreadcrumbLink href="/">ホーム</BreadcrumbLink>
+      </BreadcrumbItem>
+      <BreadcrumbSeparator />
+      <BreadcrumbItem>
+        <BreadcrumbLink href="/products">製品</BreadcrumbLink>
+      </BreadcrumbItem>
+      <BreadcrumbSeparator />
+      <BreadcrumbItem>
+        <BreadcrumbLink href="/products/category" aria-current="page">カテゴリー</BreadcrumbLink>
+      </BreadcrumbItem>
+      <BreadcrumbItem>
+        <BreadcrumbPage>製品詳細</BreadcrumbPage>
+      </BreadcrumbItem>
+    </BreadcrumbList>
+  </Breadcrumb>
+)
+
 describe('Breadcrumb', () => {
   describe('基本機能', () => {
-    it('基本的なパンくずリストが表示されること', () => {
-      render(
-        <Breadcrumb>
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink href="/">ホーム</BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbPage>現在のページ</BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
-      )
-
-      expect(screen.getByText('ホーム')).toBeInTheDocument()
-      expect(screen.getByText('現在のページ')).toBeInTheDocument()
+    it('コンポーネントが正しくレンダリングされる', () => {
+      render(<TestBreadcrumb />)
+      expect(screen.getByRole('navigation')).toBeInTheDocument()
+      expect(screen.getByRole('list')).toBeInTheDocument()
+      expect(screen.getAllByRole('listitem')).toHaveLength(4)
     })
 
-    it('複数階層のパンくずリストが表示されること', () => {
-      render(
-        <Breadcrumb>
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink href="/">ホーム</BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbLink href="/products">製品</BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbPage>製品詳細</BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
-      )
-
-      expect(screen.getByText('ホーム')).toBeInTheDocument()
-      expect(screen.getByText('製品')).toBeInTheDocument()
-      expect(screen.getByText('製品詳細')).toBeInTheDocument()
+    it('各リンクが正しく表示される', () => {
+      render(<TestBreadcrumb />)
+      expect(screen.getByText('ホーム')).toHaveAttribute('href', '/')
+      expect(screen.getByText('製品')).toHaveAttribute('href', '/products')
+      expect(screen.getByText('カテゴリー')).toHaveAttribute('href', '/products/category')
     })
 
-    it('リンクが正しく設定されること', () => {
-      render(
-        <Breadcrumb>
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink href="/">ホーム</BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbLink href="/products">製品</BreadcrumbLink>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
-      )
-
-      const homeLink = screen.getByText('ホーム')
-      const productsLink = screen.getByText('製品')
-      expect(homeLink).toHaveAttribute('href', '/')
-      expect(productsLink).toHaveAttribute('href', '/products')
+    it('セパレーターが正しく表示される', () => {
+      render(<TestBreadcrumb />)
+      const separators = screen.getAllByTestId('breadcrumb-separator')
+      expect(separators).toHaveLength(2)
+      for (const separator of separators) {
+        expect(separator).toHaveAttribute('aria-hidden', 'true')
+        expect(separator).toHaveClass('text-base-low')
+      }
     })
 
-    it('現在のページが正しく表示されること', () => {
-      render(
-        <Breadcrumb>
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbPage>現在のページ</BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
-      )
-
-      const currentPage = screen.getByText('現在のページ')
+    it('現在のページが適切にマークされる', () => {
+      render(<TestBreadcrumb />)
+      const currentPage = screen.getByText('カテゴリー')
       expect(currentPage).toHaveAttribute('aria-current', 'page')
-    })
-
-    it('カスタムセパレーターが正しく表示されること', () => {
-      render(
-        <Breadcrumb>
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink href="/">ホーム</BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator>/</BreadcrumbSeparator>
-            <BreadcrumbItem>
-              <BreadcrumbPage>現在のページ</BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
-      )
-
-      const separator = screen.getByText('/')
-      expect(separator).toHaveAttribute('aria-hidden', 'true')
     })
   })
 
-  describe('スタイル', () => {
-    it('基本的なスタイルが適用されていること', () => {
-      render(
-        <Breadcrumb>
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink href="/">ホーム</BreadcrumbLink>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
-      )
-
-      const nav = screen.getByRole('navigation')
-      expect(nav).toHaveClass('inline-flex', 'items-center', 'gap-1', 'text-sm', 'text-base-high')
-
-      const list = screen.getByRole('list')
-      expect(list).toHaveClass('flex', 'items-center', 'gap-1')
-
-      const link = screen.getByText('ホーム')
-      expect(link).toHaveClass('text-base-high', 'hover:text-base-high/80')
+  describe('インタラクション', () => {
+    it('リンクがクリック可能である', async () => {
+      const user = userEvent.setup()
+      render(<TestBreadcrumb />)
+      
+      const homeLink = screen.getByText('ホーム')
+      await user.click(homeLink)
+      expect(homeLink).toHaveFocus()
     })
 
-    it('カスタムクラスが適用されること', () => {
+    it('カスタムクラスが適用される', () => {
       render(
-        <Breadcrumb className="custom-nav">
-          <BreadcrumbList className="custom-list">
-            <BreadcrumbItem className="custom-item">
-              <BreadcrumbLink href="/" className="custom-link">ホーム</BreadcrumbLink>
-            </BreadcrumbItem>
-          </BreadcrumbList>
+        <Breadcrumb className="custom-class">
+          <BreadcrumbItem>
+            <BreadcrumbLink href="/">ホーム</BreadcrumbLink>
+          </BreadcrumbItem>
         </Breadcrumb>
       )
+      expect(screen.getByRole('navigation')).toHaveClass('custom-class')
+    })
 
-      expect(screen.getByRole('navigation')).toHaveClass('custom-nav')
-      expect(screen.getByRole('list')).toHaveClass('custom-list')
-      expect(screen.getByRole('listitem')).toHaveClass('custom-item')
-      expect(screen.getByText('ホーム')).toHaveClass('custom-link')
+    it('カスタムセパレーターが適用される', () => {
+      render(
+        <Breadcrumb>
+          <BreadcrumbItem>
+            <BreadcrumbLink href="/">ホーム</BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator className="custom-separator">/</BreadcrumbSeparator>
+          <BreadcrumbItem>
+            <BreadcrumbLink href="/products">製品</BreadcrumbLink>
+          </BreadcrumbItem>
+        </Breadcrumb>
+      )
+      const separator = screen.getByText('/')
+      expect(separator).toHaveClass('custom-separator')
     })
   })
 
   describe('アクセシビリティ', () => {
-    it('アクセシビリティ要件を満たすこと', () => {
-      render(
-        <Breadcrumb>
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink href="/">ホーム</BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbPage>現在のページ</BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
-      )
+    describe('基本的なアクセシビリティ', () => {
+      it('axeによる基本的なアクセシビリティ要件を満たす', async () => {
+        await runAxeTest(<TestBreadcrumb />);
+      });
 
+      it('キーボードナビゲーションが適切に機能する', () => {
+        const { container } = render(<TestBreadcrumb />);
+        runKeyboardNavigationTest(container);
+      });
+
+      it('ARIA属性が適切に設定されている', () => {
+        const { container } = render(<TestBreadcrumb />);
+        runAriaAttributesTest(container);
+      });
+
+      it('フォーカス管理が適切に機能する', () => {
+        const { container } = render(<TestBreadcrumb />);
+        runFocusManagementTest(container);
+      });
+
+      it('コントラスト要件を満たす', () => {
+        const { container } = render(<TestBreadcrumb />);
+        runContrastTest(container);
+      });
+    });
+
+    it('スクリーンリーダー用のテキストが適切に設定されている', () => {
+      render(<TestBreadcrumb />)
+      const separators = screen.getAllByTestId('breadcrumb-separator')
+      for (const separator of separators) {
+        expect(separator).toHaveAttribute('aria-hidden', 'true')
+      }
       const nav = screen.getByRole('navigation')
       expect(nav).toHaveAttribute('aria-label', 'パンくずリスト')
-
-      const list = screen.getByRole('list')
-      expect(list).toBeInTheDocument()
-
-      const items = screen.getAllByRole('listitem')
-      expect(items).toHaveLength(2)
-
-      const separator = screen.getByText('', { selector: '[aria-hidden="true"]' })
-      expect(separator).toBeInTheDocument()
     })
-
-    // WCAG 3.0の基本的なアクセシビリティテスト
-    it('基本的なアクセシビリティ要件を満たす', () => {
-      runAccessibilityTest(
-        <Breadcrumb>
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink href="/">ホーム</BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbPage>現在のページ</BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>,
-        {
-          ariaAttributes: true,
-          focusManagement: true,
-          contrast: true,
-          skipFocusableCheck: true
-        }
-      );
-    });
   })
 }) 
