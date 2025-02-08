@@ -3,7 +3,9 @@
  * @description Separatorの様々な状態と使用例を表示します。
  */
 import type { Meta, StoryObj } from '@storybook/react';
-import { Separator } from './';
+import { Separator } from '@/components/ui/separator';
+import { within } from '@storybook/testing-library';
+import { expect } from '@storybook/jest';
 
 const meta = {
   title: 'UI/Separator',
@@ -12,51 +14,84 @@ const meta = {
     layout: 'centered',
   },
   tags: ['autodocs'],
+  argTypes: {
+    decorative: {
+      control: 'boolean',
+    },
+    orientation: {
+      control: 'select',
+      options: ['horizontal', 'vertical'],
+    },
+  },
 } satisfies Meta<typeof Separator>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
 /**
- * デフォルトの水平セパレーター
+ * @description デフォルトの水平方向のセパレーター
  */
-export const Default: Story = {
-  render: () => (
-    <div className="w-[300px] space-y-4">
-      <div>Content Above</div>
-      <Separator />
-      <div>Content Below</div>
-    </div>
-  ),
+export const Horizontal: Story = {
+  render: () => <Separator />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const separator = canvas.getByRole('separator');
+
+    expect(separator).toBeInTheDocument();
+    expect(separator).toHaveAttribute('data-orientation', 'horizontal');
+    expect(separator).toHaveClass('h-[1px]');
+  },
 };
 
 /**
- * 垂直セパレーター
+ * @description 垂直方向のセパレーター
  */
 export const Vertical: Story = {
-  render: () => (
-    <div className="flex h-[100px] items-center space-x-4">
-      <div>Left</div>
-      <Separator orientation="vertical" />
-      <div>Right</div>
-    </div>
-  ),
+  render: () => <Separator orientation="vertical" className="h-10" />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const separator = canvas.getByRole('separator');
+
+    expect(separator).toBeInTheDocument();
+    expect(separator).toHaveAttribute('data-orientation', 'vertical');
+    expect(separator).toHaveClass('w-[1px]');
+  },
 };
 
 /**
- * 装飾的セパレーター
+ * @description 装飾的なセパレーター（`aria-hidden`属性を持つ）
  */
 export const Decorative: Story = {
-  args: {
-    decorative: true,
+  render: () => <Separator decorative />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const separator = canvas.getByRole('none');
+
+    expect(separator).toBeInTheDocument();
+    expect(separator).toHaveAttribute('aria-hidden', 'true');
   },
-  render: (args) => (
-    <div className="w-[300px] space-y-4">
-      <div>Content Above</div>
-      <Separator {...args} />
-      <div>Content Below</div>
-    </div>
+};
+
+/**
+ * @description カスタムスタイルを適用したセパレーター
+ */
+export const CustomStyles: Story = {
+  render: () => (
+    <Separator
+      className="bg-primary h-1 w-24"
+      style={{
+        backgroundImage:
+          'linear-gradient(to right, transparent, currentColor, transparent)',
+      }}
+    />
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const separator = canvas.getByRole('separator');
+
+    expect(separator).toBeInTheDocument();
+    expect(separator).toHaveClass('bg-primary', 'h-1', 'w-24');
+  },
 };
 
 /**

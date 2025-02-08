@@ -12,6 +12,8 @@ import {
   NavigationMenuContent,
   NavigationMenuLink,
 } from '@/components/ui/navigation-menu'
+import { within, userEvent } from '@storybook/testing-library'
+import { expect } from '@storybook/jest'
 
 const meta = {
   title: 'UI/NavigationMenu',
@@ -105,6 +107,44 @@ export const Default: Story = {
       </NavigationMenuList>
     </NavigationMenu>
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    
+    // メニュートリガーの確認
+    const triggers = canvas.getAllByRole('button')
+    expect(triggers).toHaveLength(3)
+    expect(triggers[0]).toHaveTextContent('製品')
+    expect(triggers[1]).toHaveTextContent('会社情報')
+    expect(triggers[2]).toHaveTextContent('準備中')
+    
+    // 製品メニューの操作テスト
+    await userEvent.click(triggers[0])
+    const productContent = document.querySelector('[role="region"]')
+    expect(productContent).toBeInTheDocument()
+    
+    // 製品メニューの内容確認
+    const productLinks = within(productContent as HTMLElement).getAllByRole('link')
+    expect(productLinks).toHaveLength(4)
+    expect(productLinks[0]).toHaveTextContent('製品の特徴')
+    expect(productLinks[1]).toHaveTextContent('製品A')
+    expect(productLinks[2]).toHaveTextContent('製品B')
+    expect(productLinks[3]).toHaveTextContent('製品C')
+    
+    // 会社情報メニューの操作テスト
+    await userEvent.click(triggers[1])
+    const companyContent = document.querySelector('[role="region"]')
+    expect(companyContent).toBeInTheDocument()
+    
+    // 会社情報メニューの内容確認
+    const companyLinks = within(companyContent as HTMLElement).getAllByRole('link')
+    expect(companyLinks).toHaveLength(3)
+    expect(companyLinks[0]).toHaveTextContent('会社概要')
+    expect(companyLinks[1]).toHaveTextContent('採用情報')
+    expect(companyLinks[2]).toHaveTextContent('お問い合わせ')
+    
+    // 無効化されたメニューの確認
+    expect(triggers[2]).toBeDisabled()
+  },
 }
 
 /**
@@ -146,4 +186,44 @@ export const Simple: Story = {
       </NavigationMenuList>
     </NavigationMenu>
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    
+    // メニュートリガーの確認
+    const triggers = canvas.getAllByRole('button')
+    expect(triggers).toHaveLength(2)
+    expect(triggers[0]).toHaveTextContent('メニュー1')
+    expect(triggers[1]).toHaveTextContent('メニュー2')
+    
+    // メニュー1の操作テスト
+    await userEvent.click(triggers[0])
+    const menu1Content = document.querySelector('[role="region"]')
+    expect(menu1Content).toBeInTheDocument()
+    
+    // メニュー1の内容確認
+    const menu1Links = within(menu1Content as HTMLElement).getAllByRole('link')
+    expect(menu1Links).toHaveLength(3)
+    expect(menu1Links[0]).toHaveTextContent('リンク1')
+    expect(menu1Links[1]).toHaveTextContent('リンク2')
+    expect(menu1Links[2]).toHaveTextContent('リンク3')
+    
+    // メニュー2の操作テスト
+    await userEvent.click(triggers[1])
+    const menu2Content = document.querySelector('[role="region"]')
+    expect(menu2Content).toBeInTheDocument()
+    
+    // メニュー2の内容確認
+    const menu2Links = within(menu2Content as HTMLElement).getAllByRole('link')
+    expect(menu2Links).toHaveLength(2)
+    expect(menu2Links[0]).toHaveTextContent('リンク4')
+    expect(menu2Links[1]).toHaveTextContent('リンク5')
+    
+    // キーボード操作のテスト
+    await userEvent.tab() // 最初のトリガーにフォーカス
+    expect(triggers[0]).toHaveFocus()
+    
+    await userEvent.keyboard('{Enter}') // メニューを開く
+    const menu1LinksAfterKeyboard = within(menu1Content as HTMLElement).getAllByRole('link')
+    expect(menu1LinksAfterKeyboard[0]).toBeVisible()
+  },
 } 

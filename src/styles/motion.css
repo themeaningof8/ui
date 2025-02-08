@@ -5,7 +5,7 @@
  */
 
 /* アコーディオンアニメーション */
-animate-accordion-down {
+.animate-accordion-down {
 	animation: accordion-down 0.2s ease-out forwards;
 }
 .animate-accordion-up {

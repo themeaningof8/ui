@@ -5,6 +5,8 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { within, userEvent } from '@storybook/testing-library';
+import { expect } from '@storybook/jest';
 
 /**
  * @description Tooltipコンポーネントのメタデータ
@@ -29,19 +31,37 @@ export default meta;
 type Story = StoryObj<typeof Tooltip>;
 
 /**
- * @description 基本的な使用例
+ * @description Tooltipの基本的な表示
  */
 export const Default: Story = {
   render: () => (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <Button variant="outline">ホバーしてください</Button>
-      </TooltipTrigger>
-      <TooltipContent>
-        <p>ツールチップの内容</p>
-      </TooltipContent>
-    </Tooltip>
+    <div className="flex items-center justify-center h-[200px]">
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button variant="outline">ホバーしてください</Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>ツールチップが表示されました</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    </div>
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const trigger = canvas.getByRole('button', { name: /ホバーしてください/ });
+
+    // トリガーにホバーする
+    await userEvent.hover(trigger);
+
+    // ツールチップが表示されることを確認
+    const tooltipContent = await canvas.findByText('ツールチップが表示されました');
+    expect(tooltipContent).toBeVisible();
+
+    // トリガーからマウスを離す
+    await userEvent.unhover(trigger);
+  },
 };
 
 /**
@@ -112,4 +132,23 @@ export const CustomDelay: Story = {
       </TooltipContent>
     </Tooltip>
   ),
+  play: async ({ canvasElement, step }) => {
+    const canvas = within(canvasElement);
+    const trigger = canvas.getByRole('button', { name: /1秒後に表示/ });
+
+    // トリガーにホバーする
+    await userEvent.hover(trigger);
+
+    // 1秒待つ (delayDuration={1000})
+    await step('Wait for 1 second', async () => {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+    });
+
+    // ツールチップが表示されることを確認
+    const tooltipContent = await canvas.findByText('1秒後に表示されます');
+    expect(tooltipContent).toBeVisible();
+
+    // トリガーからマウスを離す
+    await userEvent.unhover(trigger);
+  }
 }; 

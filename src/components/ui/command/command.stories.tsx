@@ -213,17 +213,38 @@ export const Grouped: Story = {
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
-
-    // コマンド入力欄の存在を確認
+    
+    // 検索入力欄の確認
     const input = canvas.getByPlaceholderText('コマンドを検索...')
-    expect(input).toBeVisible()
-
-    // グループ見出し "ファイル"、"コミュニケーション"、"設定" が表示されているか確認
-    const fileGroup = await canvas.findByText('ファイル')
-    const commGroup = await canvas.findByText('コミュニケーション')
-    const settingGroup = await canvas.findByText('設定')
-    expect(fileGroup).toBeVisible()
-    expect(commGroup).toBeVisible()
-    expect(settingGroup).toBeVisible()
+    expect(input).toBeInTheDocument()
+    
+    // グループヘッダーの確認
+    const groups = ['ファイル', 'コミュニケーション', '設定']
+    for (const heading of groups) {
+      expect(canvas.getByText(heading)).toBeVisible()
+    }
+    
+    // ファイルグループのアイテムを確認
+    expect(canvas.getByText('新規ドキュメント')).toBeVisible()
+    expect(canvas.getByText('新規プロジェクト')).toBeVisible()
+    expect(canvas.getByText('⌘N')).toBeVisible()
+    expect(canvas.getByText('⌘P')).toBeVisible()
+    
+    // コミュニケーショングループのアイテムを確認
+    expect(canvas.getByText('メール')).toBeVisible()
+    expect(canvas.getByText('メッセージ')).toBeVisible()
+    
+    // 設定グループのアイテムを確認
+    expect(canvas.getByText('プロフィール')).toBeVisible()
+    expect(canvas.getByText('請求設定')).toBeVisible()
+    
+    // 検索機能のテスト
+    await userEvent.type(input, 'プロフィール')
+    expect(canvas.getByText('プロフィール')).toBeVisible()
+    expect(canvas.queryByText('メール')).not.toBeVisible()
+    
+    // 検索をクリア
+    await userEvent.clear(input)
+    expect(canvas.getByText('メール')).toBeVisible()
   },
 } 

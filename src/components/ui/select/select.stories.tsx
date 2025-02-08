@@ -13,6 +13,8 @@ import {
   SelectLabel,
   SelectSeparator,
 } from '@/components/ui/select';
+import { within, userEvent } from '@storybook/testing-library';
+import { expect } from '@storybook/jest';
 
 const meta = {
   title: 'UI/Select',
@@ -75,7 +77,7 @@ export const WithGroups: Story = {
 /**
  * 無効化された Select の表示例です。
  */
-export const Disabled: Story = {
+export const DisabledExample: Story = {
   render: () => (
     <div className="flex flex-col gap-4">
       <Select disabled>
@@ -166,4 +168,163 @@ export const FormExample: Story = {
       </div>
     </form>
   ),
+};
+
+/**
+ * 基本的なSelectコンポーネントの使用例
+ */
+export const Basic: Story = {
+  render: () => (
+    <Select>
+      <SelectTrigger className="w-[180px]">
+        <SelectValue placeholder="Select a fruit" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="apple">Apple</SelectItem>
+        <SelectItem value="banana">Banana</SelectItem>
+        <SelectItem value="blueberry">Blueberry</SelectItem>
+        <SelectItem value="grapes">Grapes</SelectItem>
+        <SelectItem value="pineapple">Pineapple</SelectItem>
+      </SelectContent>
+    </Select>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const trigger = canvas.getByRole('combobox');
+
+    // トリガーが正しく表示されているか確認
+    expect(trigger).toBeInTheDocument();
+    expect(trigger).toHaveTextContent('Select a fruit');
+
+    // トリガーをクリックしてオプションを表示
+    await userEvent.click(trigger);
+
+    // オプションが表示されているか確認
+    const options = canvas.getAllByRole('option');
+    expect(options).toHaveLength(5);
+
+    // 各オプションのテキストを確認
+    expect(options[0]).toHaveTextContent('Apple');
+    expect(options[1]).toHaveTextContent('Banana');
+    expect(options[2]).toHaveTextContent('Blueberry');
+    expect(options[3]).toHaveTextContent('Grapes');
+    expect(options[4]).toHaveTextContent('Pineapple');
+
+    // Bananaを選択
+    await userEvent.click(options[1]);
+
+    // トリガーのテキストがBananaに変わったことを確認
+    expect(trigger).toHaveTextContent('Banana');
+  },
+};
+
+/**
+ * グループ化されたSelectコンポーネントの使用例
+ */
+export const Grouped: Story = {
+  render: () => (
+    <Select>
+      <SelectTrigger className="w-[180px]">
+        <SelectValue placeholder="Select a framework" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectGroup>
+          <SelectLabel>Frameworks</SelectLabel>
+          <SelectItem value="next">Next.js</SelectItem>
+          <SelectItem value="sveltekit">SvelteKit</SelectItem>
+          <SelectItem value="remix">Remix</SelectItem>
+          <SelectItem value="astro">Astro</SelectItem>
+        </SelectGroup>
+        <SelectSeparator />
+        <SelectGroup>
+          <SelectLabel>Libraries</SelectLabel>
+          <SelectItem value="react">React</SelectItem>
+          <SelectItem value="vue">Vue</SelectItem>
+          <SelectItem value="svelte">Svelte</SelectItem>
+        </SelectGroup>
+      </SelectContent>
+    </Select>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const trigger = canvas.getByRole('combobox');
+
+    // トリガーをクリック
+    await userEvent.click(trigger);
+
+    // ラベルが表示されていることを確認
+    expect(canvas.getByText('Frameworks')).toBeVisible();
+    expect(canvas.getByText('Libraries')).toBeVisible();
+
+    // 各グループのアイテム数を確認
+    const frameworkOptions = canvas.getAllByText(/Next\.js|SvelteKit|Remix|Astro/);
+    const libraryOptions = canvas.getAllByText(/React|Vue|Svelte/);
+    expect(frameworkOptions).toHaveLength(4);
+    expect(libraryOptions).toHaveLength(3);
+  },
+};
+
+/**
+ * 無効化されたSelectコンポーネントの使用例
+ */
+export const Disabled: Story = {
+  render: () => (
+    <Select disabled>
+      <SelectTrigger className="w-[180px]">
+        <SelectValue placeholder="Select a color" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="red">Red</SelectItem>
+        <SelectItem value="green">Green</SelectItem>
+        <SelectItem value="blue">Blue</SelectItem>
+      </SelectContent>
+    </Select>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const trigger = canvas.getByRole('combobox');
+
+    // Selectがdisabled状態であることを確認
+    expect(trigger).toBeDisabled();
+  },
+};
+
+/**
+ * カスタムスタイルのSelectコンポーネントの使用例
+ */
+export const CustomStyle: Story = {
+  render: () => (
+    <Select>
+      <SelectTrigger className="w-[180px] border-2 border-dashed border-primary">
+        <SelectValue placeholder="Select a programming language" />
+      </SelectTrigger>
+      <SelectContent className="bg-popover border-primary">
+        <SelectItem value="javascript" className="hover:bg-accent hover:text-accent-foreground">
+          JavaScript
+        </SelectItem>
+        <SelectItem value="typescript" className="hover:bg-accent hover:text-accent-foreground">
+          TypeScript
+        </SelectItem>
+        <SelectItem value="python" className="hover:bg-accent hover:text-accent-foreground">
+          Python
+        </SelectItem>
+      </SelectContent>
+    </Select>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const trigger = canvas.getByRole('combobox');
+
+    // カスタムスタイルが適用されていることを確認
+    expect(trigger).toHaveClass('border-2', 'border-dashed', 'border-primary');
+
+    // トリガーをクリックしてオプションを表示
+    await userEvent.click(trigger);
+
+    // オプションのカスタムスタイルを確認
+    const options = canvas.getAllByRole('option');
+    for (const option of options) {
+      expect(option).toHaveClass('hover:bg-accent', 'hover:text-accent-foreground');
+    }
+  },
 }; 

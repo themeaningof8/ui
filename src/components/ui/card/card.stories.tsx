@@ -12,6 +12,8 @@ import {
   CardFooter,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { within } from '@storybook/testing-library';
+import { expect } from '@storybook/jest';
 
 const meta = {
   title: 'UI/Card',
@@ -43,6 +45,21 @@ export const Default: Story = {
       </CardFooter>
     </Card>
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    
+    // タイトルと説明文の確認
+    const title = canvas.getByText('カードタイトル');
+    const description = canvas.getByText('カードの説明文をここに記載します。');
+    expect(title).toBeInTheDocument();
+    expect(description).toBeInTheDocument();
+    
+    // コンテンツとフッターの確認
+    const content = canvas.getByText('カードのメインコンテンツ部分です。');
+    const footer = canvas.getByText('フッター部分です。');
+    expect(content).toBeInTheDocument();
+    expect(footer).toBeInTheDocument();
+  },
 };
 
 /**
@@ -73,6 +90,32 @@ export const WithActions: Story = {
       </CardFooter>
     </Card>
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    
+    // ヘッダー部分の確認
+    const title = canvas.getByText('アカウント設定');
+    const description = canvas.getByText('プロフィールや通知設定を変更できます。');
+    expect(title).toBeInTheDocument();
+    expect(description).toBeInTheDocument();
+    
+    // コンテンツ部分の確認
+    const emailLabel = canvas.getByText('メールアドレス');
+    const emailValue = canvas.getByText('example@example.com');
+    const notificationLabel = canvas.getByText('通知設定');
+    const notificationValue = canvas.getByText('すべての通知を受け取る');
+    expect(emailLabel).toBeInTheDocument();
+    expect(emailValue).toBeInTheDocument();
+    expect(notificationLabel).toBeInTheDocument();
+    expect(notificationValue).toBeInTheDocument();
+    
+    // ボタンの確認
+    const cancelButton = canvas.getByText('キャンセル');
+    const saveButton = canvas.getByText('保存');
+    expect(cancelButton).toBeInTheDocument();
+    expect(saveButton).toBeInTheDocument();
+    expect(cancelButton).toHaveClass('variant-outline');
+  },
 };
 
 /**
@@ -102,6 +145,28 @@ export const WithImage: Story = {
       </CardFooter>
     </Card>
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    
+    // 画像の確認
+    const image = canvas.getByRole('img');
+    expect(image).toBeInTheDocument();
+    expect(image).toHaveAttribute('alt', 'カードの画像');
+    expect(image).toHaveClass('w-full', 'h-[175px]', 'object-cover');
+    
+    // テキストコンテンツの確認
+    const title = canvas.getByText('美しい風景');
+    const description = canvas.getByText('自然の素晴らしさを感じる一枚');
+    const content = canvas.getByText('山々の雄大な景色が広がる素晴らしい風景写真です。');
+    expect(title).toBeInTheDocument();
+    expect(description).toBeInTheDocument();
+    expect(content).toBeInTheDocument();
+    
+    // ボタンの確認
+    const button = canvas.getByText('詳細を見る');
+    expect(button).toBeInTheDocument();
+    expect(button).toHaveClass('w-full');
+  },
 };
 
 /**
@@ -126,4 +191,23 @@ export const Grid: Story = {
       </Card>
     </div>
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    
+    // グリッドコンテナの確認
+    const container = canvas.getByRole('generic');
+    expect(container).toHaveClass('grid', 'grid-cols-2', 'gap-4');
+    
+    // 各カードの確認
+    const titles = canvas.getAllByRole('heading');
+    expect(titles).toHaveLength(2);
+    expect(titles[0]).toHaveTextContent('カード1');
+    expect(titles[1]).toHaveTextContent('カード2');
+    
+    const descriptions = canvas.getAllByText(/説明[12]/);
+    expect(descriptions).toHaveLength(2);
+    
+    const contents = canvas.getAllByText(/コンテンツ[12]/);
+    expect(contents).toHaveLength(2);
+  },
 }; 

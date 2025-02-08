@@ -4,6 +4,8 @@
  */
 import type { Meta, StoryObj } from '@storybook/react';
 import { Textarea } from './';
+import { within, userEvent } from '@storybook/testing-library';
+import { expect } from '@storybook/jest';
 
 const meta = {
   title: 'UI/Textarea',
@@ -27,6 +29,18 @@ export const Default: Story = {
       className="w-[300px]"
     />
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const textarea = canvas.getByRole('textbox');
+    
+    // テキストエリアの存在確認
+    expect(textarea).toBeInTheDocument();
+    expect(textarea).toHaveAttribute('placeholder', 'メッセージを入力してください');
+    
+    // テキスト入力のテスト
+    await userEvent.type(textarea, 'こんにちは、世界！');
+    expect(textarea).toHaveValue('こんにちは、世界！');
+  },
 };
 
 /**
@@ -39,6 +53,17 @@ export const WithValue: Story = {
       className="w-[300px]"
     />
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const textarea = canvas.getByRole('textbox');
+    
+    // 初期値の確認
+    expect(textarea).toHaveValue('これは初期値として設定されたテキストです。');
+    
+    // テキストの追加
+    await userEvent.type(textarea, '追加のテキスト');
+    expect(textarea).toHaveValue('これは初期値として設定されたテキストです。追加のテキスト');
+  },
 };
 
 /**
@@ -52,6 +77,18 @@ export const Disabled: Story = {
       className="w-[300px]"
     />
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const textarea = canvas.getByRole('textbox');
+    
+    // 無効化状態の確認
+    expect(textarea).toBeDisabled();
+    expect(textarea).toHaveClass('cursor-not-allowed');
+    
+    // 入力が無効化されていることを確認
+    await userEvent.type(textarea, 'テスト');
+    expect(textarea).toHaveValue('');
+  },
 };
 
 /**
@@ -65,6 +102,17 @@ export const ReadOnly: Story = {
       className="w-[300px]"
     />
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const textarea = canvas.getByRole('textbox');
+    
+    // 読み取り専用属性の確認
+    expect(textarea).toHaveAttribute('readonly');
+    
+    // 初期値が変更できないことを確認
+    await userEvent.type(textarea, 'テスト');
+    expect(textarea).toHaveValue('この入力欄は読み取り専用です。');
+  },
 };
 
 /**
@@ -73,11 +121,23 @@ export const ReadOnly: Story = {
 export const WithError: Story = {
   render: () => (
     <Textarea
-      error
+      aria-invalid="true"
+      className="w-[300px] border-destructive"
       defaultValue="エラーがある入力内容"
-      className="w-[300px]"
     />
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const textarea = canvas.getByRole('textbox');
+    
+    // エラー状態のスタイルを確認
+    expect(textarea).toHaveAttribute('aria-invalid', 'true');
+    expect(textarea).toHaveClass('border-destructive');
+    
+    // エラー状態でも入力可能なことを確認
+    await userEvent.type(textarea, '追加テキスト');
+    expect(textarea).toHaveValue('エラーがある入力内容追加テキスト');
+  },
 };
 
 /**
@@ -104,4 +164,28 @@ export const FormExample: Story = {
       </div>
     </form>
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    
+    // フォーム要素の確認
+    const form = canvas.getByRole('form');
+    expect(form).toBeInTheDocument();
+    
+    // ラベルとテキストエリアの関連付けを確認
+    const label = canvas.getByText('メッセージ');
+    const textarea = canvas.getByRole('textbox');
+    expect(textarea).toHaveAttribute('id', 'message');
+    expect(label).toHaveAttribute('for', 'message');
+    
+    // 必須属性の確認
+    expect(textarea).toBeRequired();
+    
+    // ヘルプテキストの確認
+    const helpText = canvas.getByText('ご要望やご質問を詳しく記入してください。');
+    expect(helpText).toBeInTheDocument();
+    
+    // フォーム入力のテスト
+    await userEvent.type(textarea, 'テストメッセージ');
+    expect(textarea).toHaveValue('テストメッセージ');
+  },
 }; 

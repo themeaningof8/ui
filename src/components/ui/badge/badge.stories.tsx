@@ -1,9 +1,11 @@
 /**
- * @file BadgeのStorybook 設定
- * @description Badgeの様々な状態とバリアントを表示します。
+ * @file Badgeのストーリー
+ * @description Badgeの使用例とバリエーションを表示
  */
-import type { Meta, StoryObj } from '@storybook/react';
-import { Badge } from '@/components/ui/badge';
+import type { Meta, StoryObj } from '@storybook/react'
+import { Badge } from '@/components/ui/badge'
+import { within } from '@storybook/testing-library'
+import { expect } from '@storybook/jest'
 
 const meta = {
   title: 'UI/Badge',
@@ -12,60 +14,106 @@ const meta = {
     layout: 'centered',
   },
   tags: ['autodocs'],
-} satisfies Meta<typeof Badge>;
+} satisfies Meta<typeof Badge>
 
-export default meta;
-type Story = StoryObj<typeof meta>;
+export default meta
+type Story = StoryObj<typeof meta>
 
 /**
- * デフォルトのバッジ表示
+ * @description デフォルトのバッジ
  */
 export const Default: Story = {
-  args: {
-    children: 'Badge',
+  render: () => <Badge>バッジ</Badge>,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const badge = canvas.getByText('バッジ')
+    
+    expect(badge).toBeInTheDocument()
+    expect(badge).toHaveClass('bg-primary', 'text-primary-foreground')
   },
-};
+}
 
 /**
- * セカンダリバリアントのバッジ
+ * @description セカンダリバッジ
  */
 export const Secondary: Story = {
-  args: {
-    variant: 'secondary',
-    children: 'Secondary',
+  render: () => <Badge variant="secondary">セカンダリ</Badge>,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const badge = canvas.getByText('セカンダリ')
+    
+    expect(badge).toBeInTheDocument()
+    expect(badge).toHaveClass('bg-secondary', 'text-secondary-foreground')
   },
-};
+}
 
 /**
- * デストラクティブバリアントのバッジ
+ * @description デストラクティブバッジ
  */
 export const Destructive: Story = {
-  args: {
-    variant: 'destructive',
-    children: 'Destructive',
+  render: () => <Badge variant="destructive">エラー</Badge>,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const badge = canvas.getByText('エラー')
+    
+    expect(badge).toBeInTheDocument()
+    expect(badge).toHaveClass('bg-destructive', 'text-destructive-foreground')
   },
-};
+}
 
 /**
- * アウトラインバリアントのバッジ
+ * @description アウトラインバッジ
  */
 export const Outline: Story = {
-  args: {
-    variant: 'outline',
-    children: 'Outline',
+  render: () => <Badge variant="outline">アウトライン</Badge>,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const badge = canvas.getByText('アウトライン')
+    
+    expect(badge).toBeInTheDocument()
+    expect(badge).toHaveClass('text-foreground')
   },
-};
+}
 
 /**
- * 様々なバッジの使用例
+ * @description カスタムスタイルを適用したバッジ
  */
-export const Examples: Story = {
+export const CustomStyles: Story = {
   render: () => (
-    <div className="flex gap-4 items-center">
-      <Badge>New</Badge>
-      <Badge variant="secondary">Updated</Badge>
-      <Badge variant="destructive">Error</Badge>
-      <Badge variant="outline">Draft</Badge>
+    <Badge className="bg-blue-500 text-white hover:bg-blue-600">
+      カスタム
+    </Badge>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const badge = canvas.getByText('カスタム')
+    
+    expect(badge).toBeInTheDocument()
+    expect(badge).toHaveClass('bg-blue-500', 'text-white', 'hover:bg-blue-600')
+  },
+}
+
+/**
+ * @description 複数のバッジを組み合わせた例
+ */
+export const Combined: Story = {
+  render: () => (
+    <div className="flex gap-2">
+      <Badge>新着</Badge>
+      <Badge variant="secondary">カテゴリ</Badge>
+      <Badge variant="outline">タグ</Badge>
     </div>
   ),
-}; 
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const badges = canvas.getAllByRole('div')
+    
+    expect(badges).toHaveLength(4) // コンテナdivを含む
+    
+    const [container, badge1, badge2, badge3] = badges
+    expect(container).toHaveClass('flex', 'gap-2')
+    expect(badge1).toHaveTextContent('新着')
+    expect(badge2).toHaveTextContent('カテゴリ')
+    expect(badge3).toHaveTextContent('タグ')
+  },
+} 

@@ -5,6 +5,8 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { within, userEvent } from '@storybook/testing-library';
+import { expect } from '@storybook/jest';
 
 const meta = {
   title: 'UI/Popover',
@@ -39,6 +41,29 @@ export const Default: Story = {
       </PopoverContent>
     </Popover>
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const trigger = canvas.getByRole('button');
+    
+    // トリガーボタンの確認
+    expect(trigger).toBeInTheDocument();
+    expect(trigger).toHaveTextContent('ポップオーバーを開く');
+    
+    // ポップオーバーを開く
+    await userEvent.click(trigger);
+    
+    // ポップオーバーの内容を確認
+    const popover = document.querySelector('[role="dialog"]');
+    expect(popover).toBeInTheDocument();
+    
+    const popoverContent = within(popover as HTMLElement);
+    expect(popoverContent.getByText('設定')).toBeVisible();
+    expect(popoverContent.getByText('ポップオーバーの内容をここに表示します。')).toBeVisible();
+    
+    // ポップオーバーを閉じる
+    await userEvent.keyboard('{Escape}');
+    expect(popover).not.toBeVisible();
+  },
 };
 
 /**
@@ -84,6 +109,32 @@ export const Positioned: Story = {
       </Popover>
     </div>
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const buttons = canvas.getAllByRole('button');
+    
+    // 4つのボタンが存在することを確認
+    expect(buttons).toHaveLength(4);
+    
+    // 各方向のポップオーバーをテスト
+    for (const [index, button] of buttons.entries()) {
+      await userEvent.click(button);
+      const popover = document.querySelector('[role="dialog"]');
+      expect(popover).toBeInTheDocument();
+      
+      // 位置属性の確認
+      const sides = ['top', 'right', 'bottom', 'left'];
+      expect(popover).toHaveAttribute('data-side', sides[index]);
+      
+      // 内容の確認
+      const content = within(popover as HTMLElement);
+      expect(content.getByText(`${sides[index]}側に表示されるポップオーバー`)).toBeVisible();
+      
+      // 閉じる
+      await userEvent.keyboard('{Escape}');
+      expect(popover).not.toBeVisible();
+    }
+  },
 };
 
 /**
@@ -120,6 +171,32 @@ export const Aligned: Story = {
       </Popover>
     </div>
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const buttons = canvas.getAllByRole('button');
+    
+    // 3つのボタンが存在することを確認
+    expect(buttons).toHaveLength(3);
+    
+    // 各配置のポップオーバーをテスト
+    for (const [index, button] of buttons.entries()) {
+      await userEvent.click(button);
+      const popover = document.querySelector('[role="dialog"]');
+      expect(popover).toBeInTheDocument();
+      
+      // 配置属性の確認
+      const alignments = ['start', 'center', 'end'];
+      expect(popover).toHaveAttribute('data-align', alignments[index]);
+      
+      // 内容の確認
+      const content = within(popover as HTMLElement);
+      expect(content.getByText(`${alignments[index]}位置に揃えたポップオーバー`)).toBeVisible();
+      
+      // 閉じる
+      await userEvent.keyboard('{Escape}');
+      expect(popover).not.toBeVisible();
+    }
+  },
 };
 
 /**
@@ -143,4 +220,29 @@ export const CustomStyles: Story = {
       </PopoverContent>
     </Popover>
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const trigger = canvas.getByRole('button');
+    
+    // トリガーボタンの確認
+    expect(trigger).toBeInTheDocument();
+    expect(trigger).toHaveTextContent('カスタムスタイル');
+    
+    // ポップオーバーを開く
+    await userEvent.click(trigger);
+    
+    // カスタムスタイルの確認
+    const popover = document.querySelector('[role="dialog"]');
+    expect(popover).toBeInTheDocument();
+    expect(popover).toHaveClass('w-96', 'bg-base-subtle', 'p-6');
+    
+    // 内容の確認
+    const content = within(popover as HTMLElement);
+    expect(content.getByText('カスタマイズ例')).toBeVisible();
+    expect(content.getByText('幅を広げ、背景色を変更し、パディングを大きくしたポップオーバーです。')).toBeVisible();
+    
+    // ポップオーバーを閉じる
+    await userEvent.keyboard('{Escape}');
+    expect(popover).not.toBeVisible();
+  },
 }; 

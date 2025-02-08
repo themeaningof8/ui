@@ -4,7 +4,8 @@
  */
 import type { Meta, StoryObj } from '@storybook/react';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
-import { screen } from '@storybook/testing-library';
+import { Terminal, AlertCircle, Info } from 'lucide-react';
+import { within } from '@storybook/testing-library';
 import { expect } from '@storybook/jest';
 
 const meta = {
@@ -20,146 +21,144 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 /**
- * @description デフォルトの Alert
+ * @description デフォルトのアラート
  */
 export const Default: Story = {
-  args: {
-    children: (
-      <>
-        <AlertTitle>デフォルトアラート</AlertTitle>
-        <AlertDescription>
-          これはデフォルトのアラートメッセージです。一般的な情報を表示する際に使用します。
-        </AlertDescription>
-      </>
-    ),
-  },
-  play: async () => {
-    const title = screen.getByText('デフォルトアラート');
-    const description = screen.getByText('これはデフォルトのアラートメッセージです。一般的な情報を表示する際に使用します。');
+  render: () => (
+    <Alert>
+      <Terminal className="h-4 w-4" />
+      <AlertTitle>デフォルトアラート</AlertTitle>
+      <AlertDescription>
+        これはデフォルトのアラートメッセージです。一般的な情報を表示する際に使用します。
+      </AlertDescription>
+    </Alert>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const alert = canvas.getByRole('alert');
+    const title = canvas.getByText('デフォルトアラート');
+    const description = canvas.getByText('これはデフォルトのアラートメッセージです。一般的な情報を表示する際に使用します。');
+
+    expect(alert).toBeInTheDocument();
     expect(title).toBeVisible();
     expect(description).toBeVisible();
-  }
+  },
 };
 
 /**
- * @description デストラクティブ（エラー）の Alert
+ * @description デストラクティブ（エラー）のアラート
  */
 export const Destructive: Story = {
-  args: {
-    variant: 'destructive',
-    children: (
-      <>
-        <AlertTitle>エラー</AlertTitle>
-        <AlertDescription>
-          エラーが発生しました。入力内容を確認してください。
-        </AlertDescription>
-      </>
-    ),
-  },
-  play: async () => {
-    const title = screen.getByText('エラー');
-    const description = screen.getByText('エラーが発生しました。入力内容を確認してください。');
-    const alertElement = screen.getByRole('alert');
+  render: () => (
+    <Alert variant="destructive">
+      <AlertCircle className="h-4 w-4" />
+      <AlertTitle>エラー</AlertTitle>
+      <AlertDescription>
+        エラーが発生しました。入力内容を確認してください。
+      </AlertDescription>
+    </Alert>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const alert = canvas.getByRole('alert');
+    const title = canvas.getByText('エラー');
+    const description = canvas.getByText('エラーが発生しました。入力内容を確認してください。');
+
+    expect(alert).toBeInTheDocument();
+    expect(alert).toHaveClass('border-destructive/50');
     expect(title).toBeVisible();
     expect(description).toBeVisible();
-    // destructive variant が適用されているか確認 (クラス名に 'destructive' が含まれるか)
-    expect(alertElement.className).toContain('destructive');
-  }
+  },
 };
 
 /**
- * @description 成功を示す Alert
+ * @description アイコンなしのアラート
  */
-export const Success: Story = {
-  args: {
-    variant: 'success',
-    children: (
-      <>
-        <AlertTitle>成功</AlertTitle>
-        <AlertDescription>
-          操作が正常に完了しました。
-        </AlertDescription>
-      </>
-    ),
-  },
-  play: async () => {
-    const title = screen.getByText('成功');
-    const description = screen.getByText('操作が正常に完了しました。');
+export const WithoutIcon: Story = {
+  render: () => (
+    <Alert>
+      <AlertTitle>アイコンなしアラート</AlertTitle>
+      <AlertDescription>
+        アイコンを使用しないシンプルなアラートメッセージです。
+      </AlertDescription>
+    </Alert>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const alert = canvas.getByRole('alert');
+    const title = canvas.getByText('アイコンなしアラート');
+    const description = canvas.getByText('アイコンを使用しないシンプルなアラートメッセージです。');
+
+    expect(alert).toBeInTheDocument();
     expect(title).toBeVisible();
     expect(description).toBeVisible();
-  }
+  },
 };
 
 /**
- * @description 警告を示す Alert
- */
-export const Warning: Story = {
-  args: {
-    variant: 'warning',
-    children: (
-      <>
-        <AlertTitle>警告</AlertTitle>
-        <AlertDescription>
-          この操作は取り消すことができません。注意して実行してください。
-        </AlertDescription>
-      </>
-    ),
-  },
-  play: async () => {
-    const title = screen.getByText('警告');
-    const description = screen.getByText('この操作は取り消すことができません。注意して実行してください。');
-    expect(title).toBeVisible();
-    expect(description).toBeVisible();
-  }
-};
-
-/**
- * @description タイトルのみの Alert
+ * @description タイトルのみのアラート
  */
 export const TitleOnly: Story = {
-  args: {
-    children: <AlertTitle>タイトルのみのアラート</AlertTitle>,
-  },
-  play: async () => {
-    const title = screen.getByText('タイトルのみのアラート');
+  render: () => (
+    <Alert>
+      <Info className="h-4 w-4" />
+      <AlertTitle>タイトルのみのアラート</AlertTitle>
+    </Alert>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const alert = canvas.getByRole('alert');
+    const title = canvas.getByText('タイトルのみのアラート');
+
+    expect(alert).toBeInTheDocument();
     expect(title).toBeVisible();
-  }
+  },
 };
 
 /**
- * @description 説明文のみの Alert
+ * @description 説明文のみのアラート
  */
 export const DescriptionOnly: Story = {
-  args: {
-    children: <AlertDescription>説明文のみのアラートメッセージです。</AlertDescription>,
-  },
-  play: async () => {
-    const description = screen.getByText('説明文のみのアラートメッセージです。');
+  render: () => (
+    <Alert>
+      <Info className="h-4 w-4" />
+      <AlertDescription>
+        説明文のみのアラートメッセージです。
+      </AlertDescription>
+    </Alert>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const alert = canvas.getByRole('alert');
+    const description = canvas.getByText('説明文のみのアラートメッセージです。');
+
+    expect(alert).toBeInTheDocument();
     expect(description).toBeVisible();
-  }
+  },
 };
 
 /**
- * @description カスタムスタイルを適用した Alert
+ * @description カスタムスタイルを適用したアラート
  */
 export const CustomStyles: Story = {
-  args: {
-    className: 'max-w-[400px]',
-    children: (
-      <>
-        <AlertTitle>カスタムスタイル</AlertTitle>
-        <AlertDescription>
-          このアラートには最大幅が設定されています。
-        </AlertDescription>
-      </>
-    ),
-  },
-  play: async () => {
-    const title = screen.getByText('カスタムスタイル');
-    const description = screen.getByText('このアラートには最大幅が設定されています。');
-    const alertElement = screen.getByRole('alert');
+  render: () => (
+    <Alert className="max-w-[400px] border-primary">
+      <Info className="h-4 w-4 text-primary" />
+      <AlertTitle>カスタムスタイル</AlertTitle>
+      <AlertDescription>
+        このアラートにはカスタムスタイルが適用されています。
+      </AlertDescription>
+    </Alert>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const alert = canvas.getByRole('alert');
+    const title = canvas.getByText('カスタムスタイル');
+    const description = canvas.getByText('このアラートにはカスタムスタイルが適用されています。');
+
+    expect(alert).toBeInTheDocument();
+    expect(alert).toHaveClass('max-w-[400px]', 'border-primary');
     expect(title).toBeVisible();
     expect(description).toBeVisible();
-    expect(alertElement.className).toContain('max-w-[400px]');
-  }
+  },
 }; 

@@ -5,6 +5,8 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Toggle } from '@/components/ui/toggle';
 import { Label } from '@components/ui/label';
+import { within, userEvent } from '@storybook/testing-library';
+import { expect } from '@storybook/jest';
 
 /**
  * @description Toggleコンポーネントのメタデータ
@@ -31,6 +33,26 @@ export const Default: Story = {
       <Label htmlFor="toggle">トグルスイッチ</Label>
     </div>
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    
+    // トグルとラベルの存在確認
+    const toggle = canvas.getByRole('button');
+    const label = canvas.getByText('トグルスイッチ');
+    expect(toggle).toBeInTheDocument();
+    expect(label).toBeInTheDocument();
+    
+    // 初期状態の確認
+    expect(toggle).toHaveAttribute('aria-pressed', 'false');
+    
+    // クリックしてトグル状態を変更
+    await userEvent.click(toggle);
+    expect(toggle).toHaveAttribute('aria-pressed', 'true');
+    
+    // もう一度クリックして元に戻す
+    await userEvent.click(toggle);
+    expect(toggle).toHaveAttribute('aria-pressed', 'false');
+  },
 };
 
 /**
@@ -53,6 +75,25 @@ export const Sizes: Story = {
       </div>
     </div>
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    
+    // 各サイズのトグルを取得
+    const toggles = canvas.getAllByRole('button');
+    expect(toggles).toHaveLength(3);
+    
+    // サイズクラスの確認
+    const [small, defaultSize, large] = toggles;
+    expect(small).toHaveClass('h-8', 'w-8');
+    expect(defaultSize).toHaveClass('h-9', 'w-9');
+    expect(large).toHaveClass('h-10', 'w-10');
+    
+    // 各トグルの動作確認
+    for (const toggle of toggles) {
+      await userEvent.click(toggle);
+      expect(toggle).toHaveAttribute('aria-pressed', 'true');
+    }
+  },
 };
 
 /**
@@ -65,4 +106,16 @@ export const Disabled: Story = {
       <Label htmlFor="toggle-disabled">無効状態</Label>
     </div>
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    
+    // 無効化されたトグルの確認
+    const toggle = canvas.getByRole('button');
+    expect(toggle).toBeDisabled();
+    expect(toggle).toHaveClass('cursor-not-allowed', 'opacity-50');
+    
+    // クリックしても状態が変化しないことを確認
+    await userEvent.click(toggle);
+    expect(toggle).toHaveAttribute('aria-pressed', 'false');
+  },
 }; 

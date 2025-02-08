@@ -11,7 +11,11 @@ import { expect } from '@storybook/jest';
 const meta: Meta<typeof Accordion> = {
   title: 'UI/Accordion',
   component: Accordion,
-  tags: ['autodocs'],
+  parameters: {
+    docs: {
+      autodocs: true,
+    }
+  },
 }
 
 export default meta

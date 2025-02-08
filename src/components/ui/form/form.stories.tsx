@@ -17,6 +17,8 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { within, userEvent } from '@storybook/testing-library'
+import { expect } from '@storybook/jest'
 
 const formSchema = z.object({
   username: z.string().min(2, {
@@ -104,6 +106,38 @@ export const Basic: Story = {
         </form>
       </Form>
     )
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    
+    // フォームの存在確認
+    const form = canvas.getByRole('form')
+    expect(form).toBeInTheDocument()
+    
+    // 入力フィールドの確認
+    const usernameInput = canvas.getByPlaceholderText('ユーザー名を入力')
+    const emailInput = canvas.getByPlaceholderText('example@example.com')
+    expect(usernameInput).toBeInTheDocument()
+    expect(emailInput).toBeInTheDocument()
+    
+    // ラベルの確認
+    const usernameLabel = canvas.getByText('ユーザー名')
+    const emailLabel = canvas.getByText('メールアドレス')
+    expect(usernameLabel).toBeInTheDocument()
+    expect(emailLabel).toBeInTheDocument()
+    
+    // 説明文の確認
+    const usernameDescription = canvas.getByText('あなたの表示名です。')
+    const emailDescription = canvas.getByText('連絡先として使用されます。')
+    expect(usernameDescription).toBeInTheDocument()
+    expect(emailDescription).toBeInTheDocument()
+    
+    // フォームの入力テスト
+    await userEvent.type(usernameInput, 'testuser')
+    await userEvent.type(emailInput, 'test@example.com')
+    
+    expect(usernameInput).toHaveValue('testuser')
+    expect(emailInput).toHaveValue('test@example.com')
   }
 }
 
@@ -134,7 +168,7 @@ export const WithErrors: Story = {
               <FormItem>
                 <FormLabel>ユーザー名</FormLabel>
                 <FormControl>
-                  <Input error {...field} />
+                  <Input aria-invalid="true" className="border-destructive" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -147,7 +181,7 @@ export const WithErrors: Story = {
               <FormItem>
                 <FormLabel>メールアドレス</FormLabel>
                 <FormControl>
-                  <Input type="email" error {...field} />
+                  <Input type="email" aria-invalid="true" className="border-destructive" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -162,6 +196,30 @@ export const WithErrors: Story = {
         </form>
       </Form>
     )
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    
+    // エラー状態の入力フィールドの確認
+    const usernameInput = canvas.getByDisplayValue('a')
+    const emailInput = canvas.getByDisplayValue('invalid-email')
+    expect(usernameInput).toBeInTheDocument()
+    expect(emailInput).toBeInTheDocument()
+    
+    // エラー状態のクラスを確認
+    expect(usernameInput).toHaveAttribute('aria-invalid', 'true')
+    expect(emailInput).toHaveAttribute('aria-invalid', 'true')
+    expect(usernameInput).toHaveClass('border-destructive')
+    expect(emailInput).toHaveClass('border-destructive')
+    
+    // エラーメッセージの確認
+    const submitButton = canvas.getByRole('button', { name: '送信' })
+    await userEvent.click(submitButton)
+    
+    const usernameError = await canvas.findByText('ユーザー名は2文字以上である必要があります。')
+    const emailError = await canvas.findByText('有効なメールアドレスを入力してください。')
+    expect(usernameError).toBeInTheDocument()
+    expect(emailError).toBeInTheDocument()
   }
 }
 
@@ -225,5 +283,30 @@ export const WithDisabledFields: Story = {
         </form>
       </Form>
     )
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    
+    // 無効状態の入力フィールドの確認
+    const usernameInput = canvas.getByDisplayValue('readonly-user')
+    const emailInput = canvas.getByDisplayValue('readonly@example.com')
+    expect(usernameInput).toBeInTheDocument()
+    expect(emailInput).toBeInTheDocument()
+    
+    // 無効状態の属性を確認
+    expect(usernameInput).toBeDisabled()
+    expect(emailInput).toBeDisabled()
+    
+    // 説明文の確認
+    const descriptions = canvas.getAllByText('このフィールドは編集できません。')
+    expect(descriptions).toHaveLength(2)
+    for (const description of descriptions) {
+      expect(description).toBeInTheDocument()
+    }
+    
+    // 送信ボタンの無効状態を確認
+    const submitButton = canvas.getByRole('button', { name: '送信' })
+    expect(submitButton).toBeDisabled()
+    expect(submitButton).toHaveClass('disabled:opacity-50', 'disabled:cursor-not-allowed')
   }
 } 

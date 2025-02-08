@@ -5,6 +5,8 @@
 
 import type { Meta, StoryObj } from '@storybook/react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { within, userEvent } from '@storybook/testing-library'
+import { expect } from '@storybook/jest'
 
 const meta = {
   title: 'UI/Tabs',
@@ -52,6 +54,31 @@ export const Default: Story = {
       </TabsContent>
     </Tabs>
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    
+    // タブトリガーの確認
+    const accountTab = canvas.getByRole('tab', { name: 'Account' })
+    const passwordTab = canvas.getByRole('tab', { name: 'Password' })
+    const settingsTab = canvas.getByRole('tab', { name: 'Settings' })
+    
+    // デフォルトでAccountタブが選択されていることを確認
+    expect(accountTab).toHaveAttribute('aria-selected', 'true')
+    expect(canvas.getByText('Account Settings')).toBeVisible()
+    
+    // Passwordタブに切り替え
+    await userEvent.click(passwordTab)
+    expect(passwordTab).toHaveAttribute('aria-selected', 'true')
+    expect(accountTab).toHaveAttribute('aria-selected', 'false')
+    expect(canvas.getByText('Password Settings')).toBeVisible()
+    expect(canvas.queryByText('Account Settings')).not.toBeVisible()
+    
+    // Settingsタブに切り替え
+    await userEvent.click(settingsTab)
+    expect(settingsTab).toHaveAttribute('aria-selected', 'true')
+    expect(canvas.getByText('General Settings')).toBeVisible()
+    expect(canvas.queryByText('Password Settings')).not.toBeVisible()
+  },
 }
 
 export const WithDisabledTab: Story = {
@@ -75,4 +102,32 @@ export const WithDisabledTab: Story = {
       </TabsContent>
     </Tabs>
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    
+    // 無効化されたタブの確認
+    const disabledTab = canvas.getByRole('tab', { name: 'Disabled' })
+    expect(disabledTab).toBeDisabled()
+    
+    // アクティブなタブの確認
+    const activeTab = canvas.getByRole('tab', { name: 'Active' })
+    expect(activeTab).toHaveAttribute('aria-selected', 'true')
+    
+    // アクティブなタブのコンテンツを確認
+    const activeContent = canvas.getByText('Active tab content')
+    expect(activeContent).toBeVisible()
+    
+    // 無効化されたタブをクリックしても状態が変わらないことを確認
+    await userEvent.click(disabledTab)
+    expect(activeTab).toHaveAttribute('aria-selected', 'true')
+    expect(activeContent).toBeVisible()
+    
+    // 有効なタブへの切り替えを確認
+    const pendingTab = canvas.getByRole('tab', { name: 'Pending' })
+    await userEvent.click(pendingTab)
+    expect(pendingTab).toHaveAttribute('aria-selected', 'true')
+    
+    const pendingContent = canvas.getByText('Pending tab content')
+    expect(pendingContent).toBeVisible()
+  },
 } 

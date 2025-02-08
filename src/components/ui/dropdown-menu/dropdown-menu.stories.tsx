@@ -14,6 +14,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Button } from '@/components/ui/button'
+import { within, userEvent } from '@storybook/testing-library'
+import { expect } from '@storybook/jest'
 
 const meta = {
   title: 'UI/DropdownMenu',
@@ -72,6 +74,35 @@ export const Default: Story = {
       </DropdownMenuContent>
     </DropdownMenu>
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    
+    // トリガーボタンの確認
+    const triggerButton = canvas.getByRole('button', { name: 'メニューを開く' })
+    expect(triggerButton).toBeInTheDocument()
+    
+    // メニューを開く
+    await userEvent.click(triggerButton)
+    
+    // メニューラベルの確認
+    const label = document.querySelector('[role="menuitem"]')
+    expect(label).toHaveTextContent('マイアカウント')
+    
+    // メニューアイテムの確認
+    const menuItems = document.querySelectorAll('[role="menuitem"]')
+    expect(menuItems.length).toBeGreaterThan(0)
+    
+    // 無効化されたアイテムの確認
+    const disabledItem = Array.from(menuItems).find(item => 
+      item.textContent?.includes('API キー')
+    )
+    expect(disabledItem).toHaveAttribute('aria-disabled', 'true')
+    
+    // ショートカットの確認
+    const shortcuts = document.querySelectorAll('[class*="DropdownMenuShortcut"]')
+    expect(shortcuts.length).toBeGreaterThan(0)
+    expect(shortcuts[0]).toHaveTextContent('⇧⌘P')
+  },
 }
 
 /**
@@ -99,6 +130,32 @@ export const WithDisabledItems: Story = {
       </DropdownMenuContent>
     </DropdownMenu>
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    
+    // トリガーボタンの確認
+    const triggerButton = canvas.getByRole('button', { name: '編集' })
+    expect(triggerButton).toBeInTheDocument()
+    
+    // メニューを開く
+    await userEvent.click(triggerButton)
+    
+    // メニューアイテムの確認
+    const menuItems = document.querySelectorAll('[role="menuitem"]')
+    expect(menuItems).toHaveLength(3)
+    
+    // 無効化されたアイテムの確認
+    const disabledItem = Array.from(menuItems).find(item => 
+      item.textContent?.includes('切り取り')
+    )
+    expect(disabledItem).toHaveAttribute('aria-disabled', 'true')
+    
+    // 有効なアイテムの確認
+    const enabledItems = Array.from(menuItems).filter(item => 
+      !item.hasAttribute('aria-disabled')
+    )
+    expect(enabledItems).toHaveLength(2)
+  },
 }
 
 /**
@@ -134,4 +191,32 @@ export const WithLabelsAndSeparators: Story = {
       </DropdownMenuContent>
     </DropdownMenu>
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    
+    // トリガーボタンの確認
+    const triggerButton = canvas.getByRole('button', { name: '表示' })
+    expect(triggerButton).toBeInTheDocument()
+    
+    // メニューを開く
+    await userEvent.click(triggerButton)
+    
+    // ラベルの確認
+    const labels = document.querySelectorAll('[role="menuitem"]')
+    expect(labels[0]).toHaveTextContent('表示オプション')
+    
+    // セパレータの確認
+    const separators = document.querySelectorAll('[role="separator"]')
+    expect(separators).toHaveLength(2)
+    
+    // メニューアイテムの確認
+    const menuItems = document.querySelectorAll('[role="menuitem"]')
+    expect(menuItems.length).toBeGreaterThan(0)
+    
+    // ショートカットの確認
+    const shortcuts = document.querySelectorAll('[class*="DropdownMenuShortcut"]')
+    expect(shortcuts).toHaveLength(4)
+    expect(shortcuts[0]).toHaveTextContent('⌘+')
+    expect(shortcuts[1]).toHaveTextContent('⌘-')
+  },
 } 
