@@ -1,7 +1,4 @@
-/**
- * @file フォーム
- * @description react-hook-formとzodを使用した型安全なフォーム
- */
+"use client";
 
 import * as React from "react";
 import type * as LabelPrimitive from "@radix-ui/react-label";
@@ -14,25 +11,9 @@ import {
 	FormProvider,
 	useFormContext,
 } from "react-hook-form";
-import { tv } from "tailwind-variants";
-import { Label } from "@/components/ui/label";
+
 import { cn } from "@/lib/cn";
-
-const formItemVariants = tv({
-	base: "space-y-2",
-});
-
-const formLabelVariants = tv({
-	base: "text-sm font-medium text-base-high",
-});
-
-const formDescriptionVariants = tv({
-	base: "text-sm text-base-low",
-});
-
-const formMessageVariants = tv({
-	base: "text-sm font-medium text-destructive-high",
-});
+import { Label } from "@/components/ui/label";
 
 const Form = FormProvider;
 
@@ -99,7 +80,7 @@ const FormItem = React.forwardRef<
 
 	return (
 		<FormItemContext.Provider value={{ id }}>
-			<div ref={ref} className={cn(formItemVariants(), className)} {...props} />
+			<div ref={ref} className={cn("space-y-2", className)} {...props} />
 		</FormItemContext.Provider>
 	);
 });
@@ -114,11 +95,7 @@ const FormLabel = React.forwardRef<
 	return (
 		<Label
 			ref={ref}
-			className={cn(
-				formLabelVariants(),
-				error && "text-destructive-high",
-				className,
-			)}
+			className={cn(error && "text-destructive", className)}
 			htmlFor={formItemId}
 			{...props}
 		/>
@@ -159,7 +136,7 @@ const FormDescription = React.forwardRef<
 		<p
 			ref={ref}
 			id={formDescriptionId}
-			className={cn(formDescriptionVariants(), className)}
+			className={cn("text-[0.8rem] text-muted-foreground", className)}
 			{...props}
 		/>
 	);
@@ -181,9 +158,7 @@ const FormMessage = React.forwardRef<
 		<p
 			ref={ref}
 			id={formMessageId}
-			className={cn(formMessageVariants(), className)}
-			role="alert"
-			aria-live="polite"
+			className={cn("text-[0.8rem] font-medium text-destructive", className)}
 			{...props}
 		>
 			{body}

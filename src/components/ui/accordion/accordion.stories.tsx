@@ -4,6 +4,9 @@
  */
 import type { Meta, StoryObj } from '@storybook/react'
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion'
+import userEvent from '@testing-library/user-event';
+import { screen, waitFor } from '@storybook/testing-library';
+import { expect } from '@storybook/jest';
 
 const meta: Meta<typeof Accordion> = {
   title: 'UI/Accordion',
@@ -24,6 +27,12 @@ export const Primary: Story = {
           回答内容がここに入ります。コンポーネントの動作確認用テキストです。
         </AccordionContent>
       </AccordionItem>
+      <AccordionItem value="item-2">
+        <AccordionTrigger>質問2</AccordionTrigger>
+        <AccordionContent>
+          回答内容2
+        </AccordionContent>
+      </AccordionItem>
     </Accordion>
   ),
   args: {
@@ -37,4 +46,24 @@ export const Primary: Story = {
       },
     },
   },
+  play: async () => {
+    const trigger1 = screen.getByText('よくある質問');
+    const trigger2 = screen.getByText('質問2');
+
+    await userEvent.click(trigger1);
+    const content1 = await screen.findByText('回答内容がここに入ります。コンポーネントの動作確認用テキストです。');
+    await expect(content1).toBeVisible();
+
+    await userEvent.click(trigger2);
+    await waitFor(() => {
+      expect(content1).not.toBeVisible();
+    });
+    const content2 = await screen.findByText('回答内容2');
+    await expect(content2).toBeVisible();
+
+    await userEvent.click(trigger2);
+    await waitFor(() => {
+      expect(content2).not.toBeVisible();
+    });
+  }
 } 

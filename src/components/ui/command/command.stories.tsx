@@ -1,6 +1,7 @@
 /**
  * @file Commandのストーリー
  * @description Commandの様々な状態とバリエーションを表示
+ * 各ストーリーに Play Function を用いて、ユーザーインタラクションとその結果を検証するテストコードを記述しています。
  */
 
 import * as React from 'react'
@@ -28,6 +29,8 @@ import {
   CommandSeparator,
 } from '@/components/ui/command'
 import { Button } from '@/components/ui/button'
+import { userEvent, within } from '@storybook/testing-library'
+import { expect } from '@storybook/jest'
 
 const meta = {
   title: 'UI/Command',
@@ -43,6 +46,7 @@ type Story = StoryObj<typeof meta>
 
 /**
  * @description 基本的なコマンドパレットの表示
+ * Play Function 内で、検索文字列の入力と該当項目の表示、選択が動作するかを検証
  */
 export const Default: Story = {
   render: () => (
@@ -69,10 +73,28 @@ export const Default: Story = {
       </CommandList>
     </Command>
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+
+    // 入力欄へフォーカスするためクリック
+    const input = canvas.getByPlaceholderText('コマンドを検索...')
+    await userEvent.click(input)
+
+    // "検索" と入力
+    await userEvent.type(input, '検索')
+
+    // "検索" の項目が表示されることを検証
+    const searchItem = await canvas.findByText('検索')
+    expect(searchItem).toBeVisible()
+
+    // Enter キーを押して "検索" を選択
+    await userEvent.type(input, '{enter}')
+  },
 }
 
 /**
  * @description ダイアログとして表示されるコマンドパレット
+ * Play Function 内で、ダイアログのトリガーボタンをクリックし、コマンド入力欄が表示された後の入力動作を検証します。
  */
 export const Dialog: Story = {
   render: () => {
@@ -91,9 +113,7 @@ export const Dialog: Story = {
 
     return (
       <>
-        <Button
-          onClick={() => setOpen(true)}
-        >
+        <Button onClick={() => setOpen(true)}>
           <Search className="mr-2 h-4 w-4" />
           コマンドを検索
           <CommandShortcut className="ml-2">⌘K</CommandShortcut>
@@ -123,10 +143,30 @@ export const Dialog: Story = {
       </>
     )
   },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+
+    // ボタンをクリックしてダイアログを開く
+    const button = canvas.getByRole('button', { name: /コマンドを検索/i })
+    await userEvent.click(button)
+
+    // ダイアログ内にコマンド入力が表示されるのを待機
+    const input = await canvas.findByPlaceholderText('コマンドを検索...')
+    expect(input).toBeVisible()
+
+    // 入力欄へ "設定" と入力し、項目が見えるかを検証
+    await userEvent.type(input, '設定')
+    const settingsItem = await canvas.findByText('設定')
+    expect(settingsItem).toBeVisible()
+
+    // Enter キーでアイテム選択をシミュレート
+    await userEvent.type(input, '{enter}')
+  },
 }
 
 /**
  * @description グループ化されたコマンドパレット
+ * Play Function 内で、各グループの見出しが正しく表示されるかを検証します。
  */
 export const Grouped: Story = {
   render: () => (
@@ -171,4 +211,19 @@ export const Grouped: Story = {
       </CommandList>
     </Command>
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+
+    // コマンド入力欄の存在を確認
+    const input = canvas.getByPlaceholderText('コマンドを検索...')
+    expect(input).toBeVisible()
+
+    // グループ見出し "ファイル"、"コミュニケーション"、"設定" が表示されているか確認
+    const fileGroup = await canvas.findByText('ファイル')
+    const commGroup = await canvas.findByText('コミュニケーション')
+    const settingGroup = await canvas.findByText('設定')
+    expect(fileGroup).toBeVisible()
+    expect(commGroup).toBeVisible()
+    expect(settingGroup).toBeVisible()
+  },
 } 

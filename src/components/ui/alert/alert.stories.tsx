@@ -4,6 +4,8 @@
  */
 import type { Meta, StoryObj } from '@storybook/react';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
+import { screen } from '@storybook/testing-library';
+import { expect } from '@storybook/jest';
 
 const meta = {
   title: 'UI/Alert',
@@ -31,6 +33,12 @@ export const Default: Story = {
       </>
     ),
   },
+  play: async () => {
+    const title = screen.getByText('デフォルトアラート');
+    const description = screen.getByText('これはデフォルトのアラートメッセージです。一般的な情報を表示する際に使用します。');
+    expect(title).toBeVisible();
+    expect(description).toBeVisible();
+  }
 };
 
 /**
@@ -48,6 +56,15 @@ export const Destructive: Story = {
       </>
     ),
   },
+  play: async () => {
+    const title = screen.getByText('エラー');
+    const description = screen.getByText('エラーが発生しました。入力内容を確認してください。');
+    const alertElement = screen.getByRole('alert');
+    expect(title).toBeVisible();
+    expect(description).toBeVisible();
+    // destructive variant が適用されているか確認 (クラス名に 'destructive' が含まれるか)
+    expect(alertElement.className).toContain('destructive');
+  }
 };
 
 /**
@@ -65,6 +82,12 @@ export const Success: Story = {
       </>
     ),
   },
+  play: async () => {
+    const title = screen.getByText('成功');
+    const description = screen.getByText('操作が正常に完了しました。');
+    expect(title).toBeVisible();
+    expect(description).toBeVisible();
+  }
 };
 
 /**
@@ -82,6 +105,12 @@ export const Warning: Story = {
       </>
     ),
   },
+  play: async () => {
+    const title = screen.getByText('警告');
+    const description = screen.getByText('この操作は取り消すことができません。注意して実行してください。');
+    expect(title).toBeVisible();
+    expect(description).toBeVisible();
+  }
 };
 
 /**
@@ -91,6 +120,10 @@ export const TitleOnly: Story = {
   args: {
     children: <AlertTitle>タイトルのみのアラート</AlertTitle>,
   },
+  play: async () => {
+    const title = screen.getByText('タイトルのみのアラート');
+    expect(title).toBeVisible();
+  }
 };
 
 /**
@@ -100,6 +133,10 @@ export const DescriptionOnly: Story = {
   args: {
     children: <AlertDescription>説明文のみのアラートメッセージです。</AlertDescription>,
   },
+  play: async () => {
+    const description = screen.getByText('説明文のみのアラートメッセージです。');
+    expect(description).toBeVisible();
+  }
 };
 
 /**
@@ -117,4 +154,12 @@ export const CustomStyles: Story = {
       </>
     ),
   },
+  play: async () => {
+    const title = screen.getByText('カスタムスタイル');
+    const description = screen.getByText('このアラートには最大幅が設定されています。');
+    const alertElement = screen.getByRole('alert');
+    expect(title).toBeVisible();
+    expect(description).toBeVisible();
+    expect(alertElement.className).toContain('max-w-[400px]');
+  }
 }; 

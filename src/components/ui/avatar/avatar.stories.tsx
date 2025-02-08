@@ -4,6 +4,8 @@
  */
 import type { Meta, StoryObj } from '@storybook/react';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { screen } from '@storybook/testing-library';
+import { expect } from '@storybook/jest';
 
 const meta = {
   title: 'UI/Avatar',
@@ -21,15 +23,38 @@ type Story = StoryObj<typeof meta>;
  * デフォルトのアバター表示
  */
 export const Default: Story = {
-  render: () => (
+  args: {
+    src: "https://github.com/shadcn.png",
+    alt: "@shadcn",
+  },
+  render: (args) => (
     <Avatar>
-      <AvatarImage
-        src="https://github.com/shadcn.png"
+      <AvatarImage {...args} />
+      <AvatarFallback>CN</AvatarFallback>
+    </Avatar>
+  ),
+  play: async () => {
+    const avatarImage = screen.getByRole('img', { name: '@shadcn' });
+    expect(avatarImage).toBeVisible();
+
+    // Fallbackが表示されていないことを確認
+    const fallback = screen.queryByText('CN');
+    expect(fallback).not.toBeVisible();
+  }
+}; 
         alt="@shadcn"
       />
       <AvatarFallback>CN</AvatarFallback>
     </Avatar>
   ),
+  play: async () => {
+    const avatarImage = screen.getByRole('img', { name: '@shadcn' });
+    expect(avatarImage).toBeVisible();
+
+    // Fallbackが表示されていないことを確認
+    const fallback = screen.queryByText('CN');
+    expect(fallback).not.toBeVisible();
+  }
 };
 
 /**
@@ -42,6 +67,11 @@ export const WithFallback: Story = {
       <AvatarFallback>JD</AvatarFallback>
     </Avatar>
   ),
+  play: async () => {
+      // waitForを使って、Fallbackが表示されるのを待つ
+      const fallback = await screen.findByText('JD');
+      expect(fallback).toBeVisible();
+  }
 };
 
 /**
@@ -73,6 +103,16 @@ export const Sizes: Story = {
       </Avatar>
     </div>
   ),
+    play: async () => {
+      // サイズ sm, default, lg の Avatar がそれぞれ存在することを確認
+      const smallAvatar = screen.getAllByRole('img', { name: '@shadcn' })[0];
+      const defaultAvatar = screen.getAllByRole('img', { name: '@shadcn' })[1];
+      const largeAvatar = screen.getAllByRole('img', { name: '@shadcn' })[2];
+
+      expect(smallAvatar.parentElement).toHaveClass('h-8 w-8'); // sm
+      expect(defaultAvatar.parentElement).toHaveClass('h-10 w-10'); // default
+      expect(largeAvatar.parentElement).toHaveClass('h-16 w-16'); // lg
+    }
 };
 
 /**

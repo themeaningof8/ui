@@ -1,204 +1,108 @@
-/**
- * @file Breadcrumb
- * @description アクセシブルなパンくずリストコンポーネント。現在のページの階層構造を表示し、ナビゲーションを提供します。
- *
- * @example
- * <Breadcrumb>
- *   <BreadcrumbList>
- *     <BreadcrumbItem>
- *       <BreadcrumbLink href="/">ホーム</BreadcrumbLink>
- *     </BreadcrumbItem>
- *     <BreadcrumbSeparator />
- *     <BreadcrumbItem>
- *       <BreadcrumbLink href="/products">製品</BreadcrumbLink>
- *     </BreadcrumbItem>
- *     <BreadcrumbSeparator />
- *     <BreadcrumbItem>
- *       <BreadcrumbPage>製品詳細</BreadcrumbPage>
- *     </BreadcrumbItem>
- *   </BreadcrumbList>
- * </Breadcrumb>
- */
+import * as React from "react"
+import { Slot } from "@radix-ui/react-slot"
+import { ChevronRight, MoreHorizontal } from "lucide-react"
 
-import * as React from 'react'
-import { ChevronRight } from 'lucide-react'
-import { cn } from '@/lib/cn'
-import { tv } from 'tailwind-variants'
+import { cn } from "@/lib/cn"
 
-/**
- * @description Breadcrumbのスタイルバリアント
- */
-const breadcrumbVariants = tv({
-  base: 'inline-flex items-center gap-1 text-sm text-base-high'
+const Breadcrumb = React.forwardRef<
+  HTMLElement,
+  React.ComponentPropsWithoutRef<"nav"> & {
+    separator?: React.ReactNode
+  }
+>(({ ...props }, ref) => <nav ref={ref} aria-label="breadcrumb" {...props} />)
+Breadcrumb.displayName = "Breadcrumb"
+
+const BreadcrumbList = React.forwardRef<
+  HTMLOListElement,
+  React.ComponentPropsWithoutRef<"ol">
+>(({ className, ...props }, ref) => (
+  <ol
+    ref={ref}
+    className={cn(
+      "flex flex-wrap items-center gap-1.5 break-words text-sm text-muted-foreground sm:gap-2.5",
+      className
+    )}
+    {...props}
+  />
+))
+BreadcrumbList.displayName = "BreadcrumbList"
+
+const BreadcrumbItem = React.forwardRef<
+  HTMLLIElement,
+  React.ComponentPropsWithoutRef<"li">
+>(({ className, ...props }, ref) => (
+  <li
+    ref={ref}
+    className={cn("inline-flex items-center gap-1.5", className)}
+    {...props}
+  />
+))
+BreadcrumbItem.displayName = "BreadcrumbItem"
+
+const BreadcrumbLink = React.forwardRef<
+  HTMLAnchorElement,
+  React.ComponentPropsWithoutRef<"a"> & {
+    asChild?: boolean
+  }
+>(({ asChild, className, ...props }, ref) => {
+  const Comp = asChild ? Slot : "a"
+
+  return (
+    <Comp
+      ref={ref}
+      className={cn("transition-colors hover:text-foreground", className)}
+      {...props}
+    />
+  )
 })
+BreadcrumbLink.displayName = "BreadcrumbLink"
 
-/**
- * @description Breadcrumbのプロパティ型
- */
-export interface BreadcrumbProps extends React.ComponentPropsWithoutRef<'nav'> {
-  /**
-   * @description Breadcrumbの子要素
-   */
-  children: React.ReactNode
-}
+const BreadcrumbPage = React.forwardRef<
+  HTMLSpanElement,
+  React.ComponentPropsWithoutRef<"span">
+>(({ className, ...props }, ref) => (
+  <span
+    ref={ref}
+    role="link"
+    aria-disabled="true"
+    aria-current="page"
+    className={cn("font-normal text-foreground", className)}
+    {...props}
+  />
+))
+BreadcrumbPage.displayName = "BreadcrumbPage"
 
-/**
- * @description Breadcrumbコンポーネント
- */
-const Breadcrumb = React.forwardRef<HTMLElement, BreadcrumbProps>(
-  ({ children, className, ...props }, ref) => {
-    return (
-      <nav
-        ref={ref}
-        aria-label="パンくずリスト"
-        className={cn(breadcrumbVariants(), className)}
-        {...props}
-      >
-        {children}
-      </nav>
-    )
-  }
+const BreadcrumbSeparator = ({
+  children,
+  className,
+  ...props
+}: React.ComponentProps<"li">) => (
+  <li
+    role="presentation"
+    aria-hidden="true"
+    className={cn("[&>svg]:w-3.5 [&>svg]:h-3.5", className)}
+    {...props}
+  >
+    {children ?? <ChevronRight />}
+  </li>
 )
-Breadcrumb.displayName = 'Breadcrumb'
+BreadcrumbSeparator.displayName = "BreadcrumbSeparator"
 
-/**
- * @description BreadcrumbListのプロパティ型
- */
-export interface BreadcrumbListProps extends React.ComponentPropsWithoutRef<'ol'> {
-  /**
-   * @description BreadcrumbListの子要素
-   */
-  children: React.ReactNode
-}
-
-/**
- * @description BreadcrumbListコンポーネント
- */
-const BreadcrumbList = React.forwardRef<HTMLOListElement, BreadcrumbListProps>(
-  ({ children, className, ...props }, ref) => {
-    return (
-      <ol ref={ref} className={cn('flex items-center gap-1', className)} {...props}>
-        {children}
-      </ol>
-    )
-  }
+const BreadcrumbEllipsis = ({
+  className,
+  ...props
+}: React.ComponentProps<"span">) => (
+  <span
+    role="presentation"
+    aria-hidden="true"
+    className={cn("flex h-9 w-9 items-center justify-center", className)}
+    {...props}
+  >
+    <MoreHorizontal className="h-4 w-4" />
+    <span className="sr-only">More</span>
+  </span>
 )
-BreadcrumbList.displayName = 'BreadcrumbList'
-
-/**
- * @description BreadcrumbItemのプロパティ型
- */
-export interface BreadcrumbItemProps extends React.ComponentPropsWithoutRef<'li'> {
-  /**
-   * @description BreadcrumbItemの子要素
-   */
-  children: React.ReactNode
-}
-
-/**
- * @description BreadcrumbItemコンポーネント
- */
-const BreadcrumbItem = React.forwardRef<HTMLLIElement, BreadcrumbItemProps>(
-  ({ children, className, ...props }, ref) => {
-    return (
-      <li ref={ref} className={cn('inline-flex items-center gap-1', className)} {...props}>
-        {children}
-      </li>
-    )
-  }
-)
-BreadcrumbItem.displayName = 'BreadcrumbItem'
-
-/**
- * @description BreadcrumbLinkのプロパティ型
- */
-export interface BreadcrumbLinkProps extends React.ComponentPropsWithoutRef<'a'> {
-  /**
-   * @description リンクのテキスト
-   */
-  children: React.ReactNode
-  /**
-   * @description リンク先のURL
-   */
-  href: string
-}
-
-/**
- * @description BreadcrumbLinkコンポーネント
- */
-const BreadcrumbLink = React.forwardRef<HTMLAnchorElement, BreadcrumbLinkProps>(
-  ({ children, className, ...props }, ref) => {
-    return (
-      <a
-        ref={ref}
-        className={cn('text-base-high hover:text-base-high/80', className)}
-        {...props}
-      >
-        {children}
-      </a>
-    )
-  }
-)
-BreadcrumbLink.displayName = 'BreadcrumbLink'
-
-/**
- * @description BreadcrumbPageのプロパティ型
- */
-export interface BreadcrumbPageProps extends React.ComponentPropsWithoutRef<'span'> {
-  /**
-   * @description 現在のページ名
-   */
-  children: React.ReactNode
-}
-
-/**
- * @description BreadcrumbPageコンポーネント
- */
-const BreadcrumbPage = React.forwardRef<HTMLSpanElement, BreadcrumbPageProps>(
-  ({ children, className, ...props }, ref) => {
-    return (
-      <span
-        ref={ref}
-        className={cn('text-base-low cursor-default', className)}
-        aria-current="page"
-        {...props}
-      >
-        {children}
-      </span>
-    )
-  }
-)
-BreadcrumbPage.displayName = 'BreadcrumbPage'
-
-/**
- * @description BreadcrumbSeparatorのプロパティ型
- */
-export interface BreadcrumbSeparatorProps extends React.ComponentPropsWithoutRef<'span'> {
-  /**
-   * @description セパレーターとして表示する要素（デフォルトは ChevronRight アイコン）
-   */
-  children?: React.ReactNode
-}
-
-/**
- * @description BreadcrumbSeparatorコンポーネント
- */
-const BreadcrumbSeparator = React.forwardRef<HTMLSpanElement, BreadcrumbSeparatorProps>(
-  ({ className, children = <ChevronRight className="h-4 w-4" />, ...props }, ref) => {
-    return (
-      <span
-        ref={ref}
-        aria-hidden="true"
-        className={cn('text-base-low', className)}
-        data-testid="breadcrumb-separator"
-        {...props}
-      >
-        {children}
-      </span>
-    )
-  }
-)
-BreadcrumbSeparator.displayName = 'BreadcrumbSeparator'
+BreadcrumbEllipsis.displayName = "BreadcrumbElipssis"
 
 export {
   Breadcrumb,
@@ -206,5 +110,6 @@ export {
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbPage,
-  BreadcrumbSeparator
-} 
+  BreadcrumbSeparator,
+  BreadcrumbEllipsis,
+}

@@ -27,31 +27,31 @@
 @theme {
 	/* ベースカラー - ライトモード */
 	--color-base-app-bg: oklch(99.2% 0.0025 278);
-	--color-base-subtle-bg: oklch(98.1% 0.0047 278);
-	--color-base-ui-bg: oklch(95.9% 0.011 278);
-	--color-base-ui-hover: oklch(93.4% 0.0162 278);
-	--color-base-ui-active: oklch(90.6% 0.0212 278);
-	--color-base-subtle-border: oklch(87.2% 0.0262 278);
-	--color-base-ui-border: oklch(82.5% 0.0327 278);
-	--color-base-ui-border-hover: oklch(75.5% 0.0439 278);
+	--color-base-subtle-bg: oklch(97.8% 0.0047 278);
+	--color-base-ui-bg: oklch(95.2% 0.011 278);
+	--color-base-ui-hover: oklch(92.1% 0.0162 278);
+	--color-base-ui-active: oklch(85.4% 0.0212 278);
+	--color-base-subtle-border: oklch(82.8% 0.0262 278);
+	--color-base-ui-border: oklch(78.5% 0.0327 278);
+	--color-base-ui-border-hover: oklch(72.5% 0.0439 278);
 	--color-base-solid: oklch(41.8% 0.0486 278);
 	--color-base-solid-hover: oklch(36% 0.0272 278);
-	--color-base-low-contrast-text: oklch(51.6% 0.0486 278);
-	--color-base-high-contrast-text: oklch(30.7% 0.0272 278);
+	--color-base-low-contrast-text: oklch(45.6% 0.0486 278);
+	--color-base-high-contrast-text: oklch(25.7% 0.0272 278);
 
 	/* アクセントカラー - ライトモード */
 	--color-accent-app-bg: oklch(99.2% 0.0025 266.8);
-	--color-accent-subtle-bg: oklch(98.1% 0.0047 266.8);
-	--color-accent-ui-bg: oklch(95.9% 0.011 266.8);
-	--color-accent-ui-hover: oklch(93.4% 0.0162 266.8);
-	--color-accent-ui-active: oklch(90.6% 0.0212 266.8);
-	--color-accent-subtle-border: oklch(87.2% 0.0262 266.8);
-	--color-accent-ui-border: oklch(82.5% 0.0327 266.8);
-	--color-accent-ui-border-hover: oklch(75.5% 0.0439 266.8);
+	--color-accent-subtle-bg: oklch(97.8% 0.0047 266.8);
+	--color-accent-ui-bg: oklch(95.2% 0.011 266.8);
+	--color-accent-ui-hover: oklch(92.1% 0.0162 266.8);
+	--color-accent-ui-active: oklch(85.4% 0.0212 266.8);
+	--color-accent-subtle-border: oklch(82.8% 0.0262 266.8);
+	--color-accent-ui-border: oklch(78.5% 0.0327 266.8);
+	--color-accent-ui-border-hover: oklch(72.5% 0.0439 266.8);
 	--color-accent-solid: oklch(54.3% 0.1913 266.8);
 	--color-accent-solid-hover: oklch(49.7% 0.1373 266.8);
-	--color-accent-low-contrast-text: oklch(77.7% 0.1234 266.8);
-	--color-accent-high-contrast-text: oklch(91.1% 0.0428 266.8);
+	--color-accent-low-contrast-text: oklch(45.6% 0.1234 266.8);
+	--color-accent-high-contrast-text: oklch(25.7% 0.0428 266.8);
 
 	/* システムカラー */
 	--color-surface: oklch(98.1% 0.0047 278 / 0.8);
@@ -61,17 +61,17 @@
 
 	/* デストラクティブカラー - ライトモード */
 	--color-destructive-app-bg: oklch(99.2% 0.0025 25);
-	--color-destructive-subtle-bg: oklch(98.1% 0.0047 25);
-	--color-destructive-ui-bg: oklch(95.9% 0.011 25);
-	--color-destructive-ui-hover: oklch(93.4% 0.0162 25);
-	--color-destructive-ui-active: oklch(90.6% 0.0212 25);
-	--color-destructive-subtle-border: oklch(87.2% 0.0262 25);
-	--color-destructive-ui-border: oklch(82.5% 0.0327 25);
-	--color-destructive-ui-border-hover: oklch(75.5% 0.0439 25);
+	--color-destructive-subtle-bg: oklch(97.8% 0.0047 25);
+	--color-destructive-ui-bg: oklch(95.2% 0.011 25);
+	--color-destructive-ui-hover: oklch(92.1% 0.0162 25);
+	--color-destructive-ui-active: oklch(85.4% 0.0212 25);
+	--color-destructive-subtle-border: oklch(82.8% 0.0262 25);
+	--color-destructive-ui-border: oklch(78.5% 0.0327 25);
+	--color-destructive-ui-border-hover: oklch(72.5% 0.0439 25);
 	--color-destructive-solid: oklch(54.3% 0.1913 25);
 	--color-destructive-solid-hover: oklch(49.7% 0.1373 25);
-	--color-destructive-low-contrast-text: oklch(77.7% 0.1234 25);
-	--color-destructive-high-contrast-text: oklch(91.1% 0.0428 25);
+	--color-destructive-low-contrast-text: oklch(45.6% 0.1234 25);
+	--color-destructive-high-contrast-text: oklch(25.7% 0.0428 25);
 
 	/* ソリッドカラー上のテキストカラー - ライトモード */
 	--color-base-on-solid: oklch(98.1% 0.0047 278);
@@ -84,36 +84,34 @@
 
 [data-theme="dark"] {
 	/* ベースカラー - ダークモード */
-	--color-base-app-bg: oklch(17.8% 0.0247 266.8);
-	--color-base-subtle-bg: oklch(20.7% 0.0302 266.8);
-	--color-base-ui-bg: oklch(27.1% 0.0694 266.8);
-	--color-base-ui-hover: oklch(31.8% 0.0933 266.8);
-	--color-base-ui-active: oklch(36.1% 0.1046 266.8);
-	--color-base-subtle-border: oklch(40.4% 0.1106 266.8);
-	--color-base-ui-border: oklch(45% 0.1203 266.8);
-	--color-base-ui-border-hover: oklch(50.3% 0.1373 266.8);
-	--color-base-solid: oklch(54.3% 0.1913 266.8);
-	--color-base-solid-hover: oklch(49.7% 0.1373 266.8);
-	--color-base-on-solid: oklch(98.1% 0.0047 278);
-	--color-base-on-solid-hover: oklch(99.2% 0.0025 278);
-	--color-base-low-contrast-text: oklch(77.7% 0.1234 266.8);
-	--color-base-high-contrast-text: oklch(91.1% 0.0428 266.8);
+	--color-base-app-bg: oklch(15.8% 0.0247 266.8);
+	--color-base-subtle-bg: oklch(18.7% 0.0302 266.8);
+	--color-base-ui-bg: oklch(25.1% 0.0694 266.8);
+	--color-base-ui-hover: oklch(29.8% 0.0933 266.8);
+	--color-base-ui-active: oklch(42.1% 0.1046 266.8);
+	--color-base-subtle-border: oklch(45.4% 0.1106 266.8);
+	--color-base-ui-border: oklch(49% 0.1203 266.8);
+	--color-base-ui-border-hover: oklch(54.3% 0.1373 266.8);
+	--color-base-solid: oklch(85.4% 0.1913 266.8);
+	--color-base-solid-hover: oklch(82.7% 0.1373 266.8);
+	--color-base-low-contrast-text: oklch(65.7% 0.1234 266.8);
+	--color-base-high-contrast-text: oklch(95.1% 0.0428 266.8);
 
 	/* アクセントカラー - ダークモード */
-	--color-accent-app-bg: oklch(17.8% 0.0247 266.8);
-	--color-accent-subtle-bg: oklch(20.7% 0.0302 266.8);
-	--color-accent-ui-bg: oklch(27.1% 0.0694 266.8);
-	--color-accent-ui-hover: oklch(31.8% 0.0933 266.8);
-	--color-accent-ui-active: oklch(36.1% 0.1046 266.8);
-	--color-accent-subtle-border: oklch(40.4% 0.1106 266.8);
-	--color-accent-ui-border: oklch(45% 0.1203 266.8);
-	--color-accent-ui-border-hover: oklch(50.3% 0.1373 266.8);
-	--color-accent-solid: oklch(54.3% 0.1913 266.8);
-	--color-accent-solid-hover: oklch(49.7% 0.1373 266.8);
+	--color-accent-app-bg: oklch(15.8% 0.0247 266.8);
+	--color-accent-subtle-bg: oklch(18.7% 0.0302 266.8);
+	--color-accent-ui-bg: oklch(25.1% 0.0694 266.8);
+	--color-accent-ui-hover: oklch(29.8% 0.0933 266.8);
+	--color-accent-ui-active: oklch(42.1% 0.1046 266.8);
+	--color-accent-subtle-border: oklch(45.4% 0.1106 266.8);
+	--color-accent-ui-border: oklch(49% 0.1203 266.8);
+	--color-accent-ui-border-hover: oklch(54.3% 0.1373 266.8);
+	--color-accent-solid: oklch(85.4% 0.1913 266.8);
+	--color-accent-solid-hover: oklch(82.7% 0.1373 266.8);
 	--color-accent-on-solid: oklch(98.1% 0.0047 266.8);
 	--color-accent-on-solid-hover: oklch(99.2% 0.0025 266.8);
-	--color-accent-low-contrast-text: oklch(77.7% 0.1234 266.8);
-	--color-accent-high-contrast-text: oklch(91.1% 0.0428 266.8);
+	--color-accent-low-contrast-text: oklch(65.7% 0.1234 266.8);
+	--color-accent-high-contrast-text: oklch(95.1% 0.0428 266.8);
 
 	/* システムカラー */
 	--color-surface: oklch(17.8% 0.0247 266.8 / 0.8);
@@ -122,20 +120,20 @@
 	--color-card: oklch(20.7% 0.0302 266.8);
 
 	/* デストラクティブカラー - ダークモード */
-	--color-destructive-app-bg: oklch(17.8% 0.0247 25);
-	--color-destructive-subtle-bg: oklch(20.7% 0.0302 25);
-	--color-destructive-ui-bg: oklch(27.1% 0.0694 25);
-	--color-destructive-ui-hover: oklch(31.8% 0.0933 25);
-	--color-destructive-ui-active: oklch(36.1% 0.1046 25);
-	--color-destructive-subtle-border: oklch(40.4% 0.1106 25);
-	--color-destructive-ui-border: oklch(45% 0.1203 25);
-	--color-destructive-ui-border-hover: oklch(50.3% 0.1373 25);
-	--color-destructive-solid: oklch(54.3% 0.1913 25);
-	--color-destructive-solid-hover: oklch(49.7% 0.1373 25);
+	--color-destructive-app-bg: oklch(15.8% 0.0247 25);
+	--color-destructive-subtle-bg: oklch(18.7% 0.0302 25);
+	--color-destructive-ui-bg: oklch(25.1% 0.0694 25);
+	--color-destructive-ui-hover: oklch(29.8% 0.0933 25);
+	--color-destructive-ui-active: oklch(42.1% 0.1046 25);
+	--color-destructive-subtle-border: oklch(45.4% 0.1106 25);
+	--color-destructive-ui-border: oklch(49% 0.1203 25);
+	--color-destructive-ui-border-hover: oklch(54.3% 0.1373 25);
+	--color-destructive-solid: oklch(85.4% 0.1913 25);
+	--color-destructive-solid-hover: oklch(82.7% 0.1373 25);
 	--color-destructive-on-solid: oklch(98.1% 0.0047 25);
 	--color-destructive-on-solid-hover: oklch(99.2% 0.0025 25);
-	--color-destructive-low-contrast-text: oklch(77.7% 0.1234 25);
-	--color-destructive-high-contrast-text: oklch(91.1% 0.0428 25);
+	--color-destructive-low-contrast-text: oklch(65.7% 0.1234 25);
+	--color-destructive-high-contrast-text: oklch(95.1% 0.0428 25);
 }
 
 /* 背景色ユーティリティ */

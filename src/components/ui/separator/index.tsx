@@ -1,66 +1,31 @@
-/**
- * @file Separator
- * @description コンテンツを視覚的に分離するためのセパレーター
- *
- * @example
- * ```tsx
- * <Separator />
- * <Separator orientation="vertical" />
- * <Separator decorative />
- * ```
- */
+"use client"
 
-import type * as React from "react";
-import { tv } from "tailwind-variants";
-import { cn } from "@/lib/cn";
+import * as React from "react"
+import * as SeparatorPrimitive from "@radix-ui/react-separator"
 
-/**
- * Separator のプロパティを定義
- */
-export interface SeparatorProps extends React.HTMLAttributes<HTMLDivElement> {
-	/**
-	 * セパレーターの向き
-	 * @default "horizontal"
-	 */
-	orientation?: "horizontal" | "vertical";
-	/**
-	 * 装飾的なセパレーターかどうか
-	 * @description 装飾的な場合、スクリーンリーダーで読み上げられません
-	 * @default false
-	 */
-	decorative?: boolean;
-}
+import { cn } from "@/lib/cn"
 
-const separatorVariants = tv({
-	base: "shrink-0 bg-base-ui",
-	variants: {
-		orientation: {
-			horizontal: "h-[1px] w-full",
-			vertical: "h-full w-[1px]",
-		},
-	},
-	defaultVariants: {
-		orientation: "horizontal",
-	},
-});
+const Separator = React.forwardRef<
+  React.ElementRef<typeof SeparatorPrimitive.Root>,
+  React.ComponentPropsWithoutRef<typeof SeparatorPrimitive.Root>
+>(
+  (
+    { className, orientation = "horizontal", decorative = true, ...props },
+    ref
+  ) => (
+    <SeparatorPrimitive.Root
+      ref={ref}
+      decorative={decorative}
+      orientation={orientation}
+      className={cn(
+        "shrink-0 bg-border",
+        orientation === "horizontal" ? "h-[1px] w-full" : "h-full w-[1px]",
+        className
+      )}
+      {...props}
+    />
+  )
+)
+Separator.displayName = SeparatorPrimitive.Root.displayName
 
-/**
- * Separator コンポーネント
- * @param props - コンポーネントのプロパティ
- * @returns Separator コンポーネント
- */
-export function Separator({
-	className,
-	orientation = "horizontal",
-	decorative = false,
-	...props
-}: SeparatorProps) {
-	return (
-		<div
-			role={decorative ? "none" : "separator"}
-			aria-orientation={orientation === "vertical" ? "vertical" : undefined}
-			className={cn(separatorVariants({ orientation }), className)}
-			{...props}
-		/>
-	);
-}
+export { Separator }
