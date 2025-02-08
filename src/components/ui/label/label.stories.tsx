@@ -18,7 +18,14 @@ const meta = {
       description: {
         component: 'フォーム要素のラベルを提供するコンポーネント'
       }
-    }
+    },
+    onLoad: () => {
+      const consoleError = console.error;
+      console.error = (...args) => {
+        consoleError(...args);
+        throw new Error(args.join(' '));
+      };
+    },
   },
   tags: ['autodocs']
 } satisfies Meta<typeof Label>

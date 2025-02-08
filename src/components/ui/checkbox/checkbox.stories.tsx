@@ -13,6 +13,14 @@ const meta = {
   component: Checkbox,
   parameters: {
     layout: 'centered',
+    // Add error handling
+    onLoad: () => {
+      const consoleError = console.error;
+      console.error = (...args) => {
+        consoleError(...args);
+        throw new Error(args.join(' '));
+      };
+    },
   },
   tags: ['autodocs'],
 } satisfies Meta<typeof Checkbox>

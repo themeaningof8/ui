@@ -19,7 +19,7 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
-import { within } from '@storybook/testing-library'
+import { within, waitFor } from '@storybook/testing-library'
 import { expect } from '@storybook/jest'
 
 const meta = {
@@ -27,6 +27,13 @@ const meta = {
   component: ChartContainer,
   parameters: {
     layout: 'centered',
+    onLoad: () => {
+      const consoleError = console.error;
+      console.error = (...args) => {
+        consoleError(...args);
+        throw new Error(args.join(' '));
+      };
+    },
   },
   tags: ['autodocs'],
 } satisfies Meta<typeof ChartContainer>
@@ -89,7 +96,7 @@ export const LineChartExample: Story = {
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
-    const chart = canvas.getByRole('region')
+    const chart = await waitFor(() => canvas.getByRole('region'))
     
     expect(chart).toBeInTheDocument()
     expect(chart).toHaveClass('aspect-video')

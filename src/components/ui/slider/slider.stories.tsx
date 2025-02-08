@@ -7,12 +7,20 @@ import type { Meta, StoryObj } from '@storybook/react'
 import { Slider } from '@/components/ui/slider'
 import { within, userEvent } from '@storybook/testing-library'
 import { expect } from '@storybook/jest'
+import { Label } from '@/components/ui/label'
 
 const meta = {
   title: 'UI/Slider',
   component: Slider,
   parameters: {
     layout: 'centered',
+    onLoad: () => {
+      const consoleError = console.error;
+      console.error = (...args) => {
+        consoleError(...args);
+        throw new Error(args.join(' '));
+      };
+    },
   },
   tags: ['autodocs'],
 } satisfies Meta<typeof Slider>
@@ -191,5 +199,26 @@ export const MultipleSliders: Story = {
     await userEvent.click(contrastSlider)
     await userEvent.keyboard('[ArrowRight][ArrowRight]')
     expect(contrastSlider).toHaveAttribute('aria-valuenow', '27')
+  },
+}
+
+export const DisabledSlider: Story = {
+  render: () => (
+    <>
+      <Label htmlFor="disabled-slider">音量</Label>
+      <Slider id="disabled-slider" defaultValue={[50]} max={100} disabled />
+    </>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const slider = canvas.getByRole('slider')
+    
+    // 無効化状態の確認
+    expect(slider).toBeDisabled()
+    expect(slider).toHaveClass('cursor-not-allowed')
+    
+    // キーボード操作が無効化されていることを確認
+    await userEvent.keyboard('[ArrowRight]')
+    expect(slider).toHaveAttribute('aria-valuenow', '50')
   },
 } 

@@ -12,9 +12,20 @@ const meta: Meta<typeof Accordion> = {
   title: 'UI/Accordion',
   component: Accordion,
   parameters: {
+    layout: 'centered',
+    onLoad: () => {
+      const consoleError = console.error;
+      console.error = (...args) => {
+        consoleError(...args);
+        throw new Error(args.join(' '));
+      };
+    },
     docs: {
       autodocs: true,
     }
+  },
+  tags: ['autodocs'],
+  argTypes: {
   },
 }
 

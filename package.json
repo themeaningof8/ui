@@ -95,7 +95,7 @@
     "precommit": "bun run analyze:ci",
     "storybook": "storybook dev -p 6006 --no-version-updates",
     "build-storybook": "storybook build --no-version-updates",
-    "test-storybook": "bun run storybook && test-storybook",
+    "test-storybook": "test-storybook",
     "test-storybook:coverage": "test-storybook --coverage"
   }
 }

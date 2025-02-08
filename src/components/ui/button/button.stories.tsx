@@ -13,6 +13,13 @@ const meta = {
   component: Button,
   parameters: {
     layout: 'centered',
+    onLoad: () => {
+      const consoleError = console.error;
+      console.error = (...args) => {
+        consoleError(...args);
+        throw new Error(args.join(' '));
+      };
+    },
   },
   tags: ['autodocs'],
   argTypes: {
@@ -172,13 +179,13 @@ export const WithIcon: Story = {
 export const Loading: Story = {
   render: () => (
     <div className="flex gap-4">
-      <Button disabled>
+      <Button isLoading>
         <Loader2 className="mr-2 animate-spin" />
         読み込み中...
       </Button>
-      <Button disabled variant="secondary">
+      <Button isLoading variant="outline">
         <Loader2 className="mr-2 animate-spin" />
-        処理中...
+        読み込み中...
       </Button>
     </div>
   ),

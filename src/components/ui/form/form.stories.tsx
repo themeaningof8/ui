@@ -31,8 +31,16 @@ const formSchema = z.object({
 
 const meta = {
   title: 'UI/Form',
+  component: Form,
   parameters: {
     layout: 'centered',
+    onLoad: () => {
+      const consoleError = console.error;
+      console.error = (...args) => {
+        consoleError(...args);
+        throw new Error(args.join(' '));
+      };
+    },
     docs: {
       description: {
         component: 'react-hook-formとzodを使用した型安全なフォーム'
@@ -40,7 +48,7 @@ const meta = {
     }
   },
   tags: ['autodocs']
-} satisfies Meta
+} satisfies Meta<typeof Form>
 
 export default meta
 type Story = StoryObj<typeof meta>

@@ -20,6 +20,13 @@ const meta = {
   component: Breadcrumb,
   parameters: {
     layout: 'centered',
+    onLoad: () => {
+      const consoleError = console.error;
+      console.error = (...args) => {
+        consoleError(...args);
+        throw new Error(args.join(' '));
+      };
+    },
   },
   tags: ['autodocs'],
 } satisfies Meta<typeof Breadcrumb>
@@ -75,15 +82,15 @@ export const WithEllipsis: Story = {
         <BreadcrumbItem>
           <BreadcrumbLink href="/">ホーム</BreadcrumbLink>
         </BreadcrumbItem>
-        <BreadcrumbSeparator />
+        <BreadcrumbSeparator>→</BreadcrumbSeparator>
         <BreadcrumbItem>
           <BreadcrumbEllipsis />
         </BreadcrumbItem>
-        <BreadcrumbSeparator />
+        <BreadcrumbSeparator>→</BreadcrumbSeparator>
         <BreadcrumbItem>
           <BreadcrumbLink href="/products">製品</BreadcrumbLink>
         </BreadcrumbItem>
-        <BreadcrumbSeparator />
+        <BreadcrumbSeparator>→</BreadcrumbSeparator>
         <BreadcrumbItem>
           <BreadcrumbPage>詳細</BreadcrumbPage>
         </BreadcrumbItem>

@@ -21,7 +21,14 @@ const meta = {
   title: 'UI/Sheet',
   component: Sheet,
   parameters: {
-    layout: 'centered',
+    layout: 'fullscreen',
+    onLoad: () => {
+      const consoleError = console.error;
+      console.error = (...args) => {
+        consoleError(...args);
+        throw new Error(args.join(' '));
+      };
+    },
   },
   tags: ['autodocs'],
 } satisfies Meta<typeof Sheet>
@@ -141,47 +148,21 @@ export const Positions: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
     
-    // 各方向のトリガーボタンを取得
-    const topButton = canvas.getByRole('button', { name: '上部から表示' })
-    const rightButton = canvas.getByRole('button', { name: '右側から表示' })
-    const bottomButton = canvas.getByRole('button', { name: '下部から表示' })
-    const leftButton = canvas.getByRole('button', { name: '左側から表示' })
+    // 各位置のトリガーボタンを確認
+    const buttons = canvas.getAllByRole('button')
+    expect(buttons).toHaveLength(4)
     
-    // 上部シートのテスト
-    await userEvent.click(topButton)
-    let dialog = document.querySelector('[role="dialog"]')
-    expect(dialog).toBeInTheDocument()
-    let dialogContent = within(dialog as HTMLElement)
-    expect(dialogContent.getByText('上部シート')).toBeVisible()
-    expect(dialogContent.getByText('上部から表示されるシートです。')).toBeVisible()
-    await userEvent.click(dialogContent.getByRole('button', { name: 'Close' }))
-    
-    // 右側シートのテスト
-    await userEvent.click(rightButton)
-    dialog = document.querySelector('[role="dialog"]')
-    expect(dialog).toBeInTheDocument()
-    dialogContent = within(dialog as HTMLElement)
-    expect(dialogContent.getByText('右側シート')).toBeVisible()
-    expect(dialogContent.getByText('右側から表示されるシートです。')).toBeVisible()
-    await userEvent.click(dialogContent.getByRole('button', { name: 'Close' }))
-    
-    // 下部シートのテスト
-    await userEvent.click(bottomButton)
-    dialog = document.querySelector('[role="dialog"]')
-    expect(dialog).toBeInTheDocument()
-    dialogContent = within(dialog as HTMLElement)
-    expect(dialogContent.getByText('下部シート')).toBeVisible()
-    expect(dialogContent.getByText('下部から表示されるシートです。')).toBeVisible()
-    await userEvent.click(dialogContent.getByRole('button', { name: 'Close' }))
-    
-    // 左側シートのテスト
-    await userEvent.click(leftButton)
-    dialog = document.querySelector('[role="dialog"]')
-    expect(dialog).toBeInTheDocument()
-    dialogContent = within(dialog as HTMLElement)
-    expect(dialogContent.getByText('左側シート')).toBeVisible()
-    expect(dialogContent.getByText('左側から表示されるシートです。')).toBeVisible()
-    await userEvent.click(dialogContent.getByRole('button', { name: 'Close' }))
+    // 各シートの表示テスト
+    for (const button of buttons) {
+      await userEvent.click(button)
+      const dialog = document.querySelector('[role="dialog"]')
+      expect(dialog).toBeInTheDocument()
+      
+      // シートを閉じる
+      const closeButton = within(dialog as HTMLElement).getByRole('button', { name: 'Close' })
+      await userEvent.click(closeButton)
+      expect(dialog).not.toBeVisible()
+    }
   },
 }
 

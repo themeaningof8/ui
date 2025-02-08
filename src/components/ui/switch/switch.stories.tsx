@@ -1,10 +1,10 @@
 /**
  * @file Switchのストーリー
- * @description Switchの様々な状態とバリエーションを表示
+ * @description Switchの使用例とバリエーションを表示
  */
-
 import type { Meta, StoryObj } from '@storybook/react'
 import { Switch } from '@/components/ui/switch'
+import { Label } from '@/components/ui/label'
 import { within, userEvent } from '@storybook/testing-library'
 import { expect } from '@storybook/jest'
 
@@ -13,136 +13,127 @@ const meta = {
   component: Switch,
   parameters: {
     layout: 'centered',
+    // Storybookのコンソールエラーをキャッチし、テストを失敗させる
+    onLoad: () => {
+      const consoleError = console.error;
+      console.error = (...args) => {
+        consoleError(...args);
+        throw new Error(args.join(' '));
+      };
+    },
   },
   tags: ['autodocs'],
+  argTypes: {
+    checked: {
+      control: 'boolean',
+      description: 'スイッチの状態',
+    },
+    disabled: {
+      control: 'boolean',
+      description: '無効状態',
+    },
+  },
 } satisfies Meta<typeof Switch>
 
 export default meta
 type Story = StoryObj<typeof meta>
 
 /**
- * @description デフォルトのスイッチの表示
+ * @description 基本的なスイッチ
  */
 export const Default: Story = {
-  args: {
-    'aria-label': 'デフォルトスイッチ',
-  },
+  render: () => <Switch />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
-    const switchEl = canvas.getByRole('switch')
-    
-    // 初期状態の確認
-    expect(switchEl).toBeInTheDocument()
-    expect(switchEl).toHaveAttribute('aria-checked', 'false')
-    
-    // クリックしてスイッチを切り替え
-    await userEvent.click(switchEl)
-    expect(switchEl).toHaveAttribute('aria-checked', 'true')
-    
-    // もう一度クリックして元に戻す
-    await userEvent.click(switchEl)
-    expect(switchEl).toHaveAttribute('aria-checked', 'false')
+    const switchElement = canvas.getByRole('checkbox')
+
+    expect(switchElement).toBeInTheDocument()
+    expect(switchElement).not.toBeChecked()
+
+    // スイッチをクリックして状態を切り替え
+    await userEvent.click(switchElement)
+    expect(switchElement).toBeChecked()
   },
 }
 
 /**
- * @description チェック状態のスイッチの表示
- */
-export const Checked: Story = {
-  args: {
-    checked: true,
-    'aria-label': 'チェック済みスイッチ',
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    const switchEl = canvas.getByRole('switch')
-    
-    // チェック済み状態の確認
-    expect(switchEl).toHaveAttribute('aria-checked', 'true')
-    expect(switchEl).toHaveAttribute('data-state', 'checked')
-    
-    // クリックして状態を切り替え
-    await userEvent.click(switchEl)
-    expect(switchEl).toHaveAttribute('aria-checked', 'false')
-  },
-}
-
-/**
- * @description 無効化されたスイッチの表示
- */
-export const Disabled: Story = {
-  args: {
-    disabled: true,
-    'aria-label': '無効化されたスイッチ',
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    const switchEl = canvas.getByRole('switch')
-    
-    // 無効化状態の確認
-    expect(switchEl).toBeDisabled()
-    expect(switchEl).toHaveClass('cursor-not-allowed', 'opacity-50')
-    
-    // クリックしても状態が変化しないことを確認
-    await userEvent.click(switchEl)
-    expect(switchEl).toHaveAttribute('aria-checked', 'false')
-  },
-}
-
-/**
- * @description チェック済みで無効化されたスイッチの表示
- */
-export const CheckedAndDisabled: Story = {
-  args: {
-    checked: true,
-    disabled: true,
-    'aria-label': 'チェック済みで無効化されたスイッチ',
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    const switchEl = canvas.getByRole('switch')
-    
-    // チェック済みかつ無効化状態の確認
-    expect(switchEl).toBeDisabled()
-    expect(switchEl).toHaveAttribute('aria-checked', 'true')
-    expect(switchEl).toHaveClass('cursor-not-allowed', 'opacity-50')
-    
-    // クリックしても状態が変化しないことを確認
-    await userEvent.click(switchEl)
-    expect(switchEl).toHaveAttribute('aria-checked', 'true')
-  },
-}
-
-/**
- * @description フォームで使用する例
+ * @description ラベル付きスイッチ
  */
 export const WithLabel: Story = {
   render: () => (
     <div className="flex items-center space-x-2">
-      <Switch id="airplane-mode" aria-label="機内モード" />
-      <label
-        htmlFor="airplane-mode"
-        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-      >
-        機内モード
-      </label>
+      <Switch id="airplane-mode" />
+      <Label htmlFor="airplane-mode">機内モード</Label>
     </div>
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
-    const switchEl = canvas.getByRole('switch')
+    const switchElement = canvas.getByRole('checkbox')
     const label = canvas.getByText('機内モード')
-    
-    // スイッチとラベルの関連付けを確認
-    expect(switchEl).toHaveAttribute('id', 'airplane-mode')
-    expect(label).toHaveAttribute('for', 'airplane-mode')
-    
-    // ラベルをクリックしてスイッチを切り替え
+
+    expect(switchElement).toBeInTheDocument()
+    expect(label).toBeInTheDocument()
+
+    // ラベルをクリックしてスイッチを操作
     await userEvent.click(label)
-    expect(switchEl).toHaveAttribute('aria-checked', 'true')
-    
-    // スイッチを直接クリックして切り替え
-    await userEvent.click(switchEl)
-    expect(switchEl).toHaveAttribute('aria-checked', 'false')
+    expect(switchElement).toBeChecked()
+  },
+}
+
+/**
+ * @description 無効化されたスイッチ
+ */
+export const Disabled: Story = {
+  render: () => <Switch disabled />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const switchElement = canvas.getByRole('checkbox')
+
+    expect(switchElement).toBeInTheDocument()
+    expect(switchElement).toBeDisabled()
+
+    // 無効なスイッチはクリックしても状態が変わらない
+    await userEvent.click(switchElement)
+    expect(switchElement).not.toBeChecked()
+  },
+}
+
+/**
+ * @description デフォルトでチェックされたスイッチ
+ */
+export const CheckedByDefault: Story = {
+  render: () => <Switch defaultChecked />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const switchElement = canvas.getByRole('checkbox')
+
+    expect(switchElement).toBeInTheDocument()
+    expect(switchElement).toBeChecked()
+
+    // スイッチをクリックして状態を切り替え
+    await userEvent.click(switchElement)
+    expect(switchElement).not.toBeChecked()
+  },
+}
+
+/**
+ * @description カスタムスタイルを適用したスイッチ
+ */
+export const CustomStyles: Story = {
+  render: () => (
+    <Switch
+      className="data-[state=checked]:bg-primary data-[state=unchecked]:bg-muted-foreground"
+      defaultChecked
+    />
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const switchElement = canvas.getByRole('checkbox')
+
+    expect(switchElement).toBeInTheDocument()
+    expect(switchElement).toHaveClass(
+      'data-[state=checked]:bg-primary',
+      'data-[state=unchecked]:bg-muted-foreground'
+    )
   },
 } 

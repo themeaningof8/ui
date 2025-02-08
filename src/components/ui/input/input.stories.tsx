@@ -21,7 +21,14 @@ const meta = {
       description: {
         component: 'シンプルで使いやすい入力フィールドコンポーネント。フォーム要素として広く使用できます。'
       }
-    }
+    },
+    onLoad: () => {
+      const consoleError = console.error;
+      console.error = (...args) => {
+        consoleError(...args);
+        throw new Error(args.join(' '));
+      };
+    },
   },
   argTypes: {
     type: {

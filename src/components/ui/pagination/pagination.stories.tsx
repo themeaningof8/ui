@@ -20,6 +20,16 @@ import {
 const meta = {
 	title: 'UI/Pagination',
 	component: Pagination,
+	parameters: {
+		layout: 'centered',
+		onLoad: () => {
+			const consoleError = console.error;
+			console.error = (...args) => {
+				consoleError(...args);
+				throw new Error(args.join(' '));
+			};
+		},
+	},
 	argTypes: {
 		className: {
 			control: 'text',

@@ -14,6 +14,13 @@ const meta = {
   component: RadioGroup,
   parameters: {
     layout: 'centered',
+    onLoad: () => {
+      const consoleError = console.error;
+      console.error = (...args) => {
+        consoleError(...args);
+        throw new Error(args.join(' '));
+      };
+    },
   },
   tags: ['autodocs'],
 } satisfies Meta<typeof RadioGroup>
@@ -96,7 +103,7 @@ export const WithDisabledOption: Story = {
     expect(radioButtons[1]).toBeDisabled()
     expect(radioButtons[1]).toHaveClass('cursor-not-allowed', 'opacity-50')
     
-    // 無効化されたオプションをクリックしても状態が変化しないことを確認
+    // 無効化されたオプションはクリックしてもチェックされないことを確認
     await userEvent.click(radioButtons[1])
     expect(radioButtons[0]).toBeChecked()
     expect(radioButtons[1]).not.toBeChecked()

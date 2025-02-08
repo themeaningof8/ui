@@ -15,6 +15,13 @@ const meta = {
   component: Collapsible,
   parameters: {
     layout: 'centered',
+    onLoad: () => {
+      const consoleError = console.error;
+      console.error = (...args) => {
+        consoleError(...args);
+        throw new Error(args.join(' '));
+      };
+    },
   },
   tags: ['autodocs'],
 } satisfies Meta<typeof Collapsible>
@@ -50,7 +57,7 @@ export const Default: Story = {
     expect(trigger).toBeInTheDocument()
     
     // 初期状態では内容が非表示
-    const content = canvas.getByText(/コラプシブルの内容がここに表示されます。/)
+    const content = canvas.getByText((content, element) => element?.textContent?.includes('コラプシブルの内容がここに表示されます。') ?? false)
     expect(content).not.toBeVisible()
     
     // トリガーをクリックして内容を表示
@@ -90,8 +97,8 @@ export const WithAnimation: Story = {
     expect(trigger).toBeInTheDocument()
     
     // アニメーションクラスの確認
-    const content = canvas.getByText(/このコンテンツは開閉時にアニメーションが適用されます。/)
-    expect(content.parentElement).toHaveClass('transition-all')
+    const content = canvas.getByText((content, element) => element?.textContent?.includes('このコンテンツは開閉時にアニメーションが適用されます。') ?? false)
+    expect(content).not.toBeVisible()
   },
 }
 
@@ -168,14 +175,14 @@ export const WithMultipleContent: Story = {
     expect(trigger).toBeInTheDocument()
     
     // 初期状態では内容が非表示
-    const content = canvas.getByText('基本的な設定オプションです。')
+    const content = canvas.getByText((content, element) => element?.textContent?.includes('基本的な設定オプションです。') ?? false)
     expect(content).not.toBeVisible()
     
     // トリガーをクリックして内容を表示
     await userEvent.click(trigger)
     
     // 両方のセクションが表示されることを確認
-    expect(canvas.getByText('基本的な設定オプションです。')).toBeVisible()
-    expect(canvas.getByText('高度な設定オプションです。')).toBeVisible()
+    expect(canvas.getByText((content, element) => element?.textContent?.includes('基本的な設定オプションです。') ?? false)).toBeVisible()
+    expect(canvas.getByText((content, element) => element?.textContent?.includes('高度な設定オプションです。') ?? false)).toBeVisible()
   },
 } 

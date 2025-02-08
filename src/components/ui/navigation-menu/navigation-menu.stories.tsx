@@ -20,6 +20,13 @@ const meta = {
   component: NavigationMenu,
   parameters: {
     layout: 'centered',
+    onLoad: () => {
+      const consoleError = console.error;
+      console.error = (...args) => {
+        consoleError(...args);
+        throw new Error(args.join(' '));
+      };
+    },
   },
   tags: ['autodocs'],
 } satisfies Meta<typeof NavigationMenu>
@@ -209,7 +216,9 @@ export const Simple: Story = {
     
     // メニュー2の操作テスト
     await userEvent.click(triggers[1])
-    const menu2Content = document.querySelector('[role="region"]')
+    const menu2Content = document.querySelector(
+      '[data-testid="menu-content-2"]'
+    )
     expect(menu2Content).toBeInTheDocument()
     
     // メニュー2の内容確認
