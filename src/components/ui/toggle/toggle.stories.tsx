@@ -119,7 +119,11 @@ export const Disabled: Story = {
     // 無効化されたトグルの確認
     const toggle = canvas.getByRole('button');
     expect(toggle).toBeDisabled();
-    expect(toggle).toHaveClass('cursor-not-allowed', 'opacity-50');
+    
+    // disabled状態のスタイリングを確認
+    const computedStyle = window.getComputedStyle(toggle);
+    expect(computedStyle.pointerEvents).toBe('none');
+    expect(computedStyle.opacity).toBe('0.5');
     
     // クリックしても状態が変化しないことを確認
     await userEvent.click(toggle);

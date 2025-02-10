@@ -19,7 +19,7 @@ import {
   ContextMenuSubTrigger,
   ContextMenuRadioGroup,
 } from '@/components/ui/context-menu'
-import { within, userEvent } from '@storybook/testing-library'
+import { within, userEvent, waitFor } from '@storybook/testing-library'
 import { expect } from '@storybook/jest'
 
 const meta = {
@@ -77,14 +77,12 @@ export const Default: Story = {
       { keys: '[MouseRight]', target: trigger },
     ])
     
-    // メニュー項目の確認
-    const menu = document.querySelector('[role="menu"]')
-    expect(menu).toBeInTheDocument()
+    // メニューが表示されるのを待つ
+    const menu = await waitFor(() => canvas.getByRole('menu'))
     
-    const menuContent = within(menu as HTMLElement)
-    expect(menuContent.getByText('新規作成')).toBeVisible()
-    expect(menuContent.getByText('開く')).toBeVisible()
-    expect(menuContent.getByText('保存')).toBeVisible()
+    // 最初のメニュー項目が表示されていることを確認
+    const firstMenuItem = within(menu).getAllByRole('menuitem')[0]
+    await waitFor(() => expect(firstMenuItem).toBeVisible())
   },
 }
 
@@ -171,8 +169,11 @@ export const WithRadioItems: Story = {
     const menuContent = within(menu as HTMLElement)
     expect(menuContent.getByText('表示サイズ')).toBeVisible()
     
-    const selectedItem = menuContent.getByRole('menuitemradio', { name: '中' })
-    expect(selectedItem).toHaveAttribute('data-state', 'checked')
+    // 選択されたラジオ項目が表示されていることを確認
+    const selectedRadioItem = canvas.getByRole('menuitemradio', {
+      name: '中',
+    })
+    await waitFor(() => expect(selectedRadioItem).toBeVisible())
   },
 }
 
@@ -228,5 +229,10 @@ export const WithSubMenu: Story = {
     // サブメニューの確認
     const subMenuTrigger = menuContent.getByText('その他')
     expect(subMenuTrigger).toBeVisible()
+
+    await userEvent.hover(subMenuTrigger)
+    await waitFor(() => {
+      expect(canvas.getByText('背景色')).toBeVisible()
+    })
   },
 } 

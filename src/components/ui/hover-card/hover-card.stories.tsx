@@ -6,7 +6,7 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
 import { Button } from '@/components/ui/button'
-import { within, userEvent } from '@storybook/testing-library'
+import { within, userEvent, waitFor } from '@storybook/testing-library'
 import { expect } from '@storybook/jest'
 
 const meta = {
@@ -32,48 +32,53 @@ type Story = StoryObj<typeof meta>
  * @description 基本的なHoverCardの表示
  */
 export const Default: Story = {
-  render: () => (
-    <HoverCard>
-      <HoverCardTrigger asChild>
-        <Button variant="outline">ホバーしてください</Button>
-      </HoverCardTrigger>
-      <HoverCardContent>
-        <div className="space-y-2">
-          <h4 className="text-sm font-semibold">ホバーカードのタイトル</h4>
-          <p className="text-sm">
-            ホバーカードの説明文をここに記述します。
-            ユーザーに対して補足情報を提供します。
-          </p>
-        </div>
-      </HoverCardContent>
-    </HoverCard>
-  ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    
-    // トリガーボタンの確認
-    const triggerButton = canvas.getByRole('button', { name: 'ホバーしてください' })
-    expect(triggerButton).toBeInTheDocument()
-    
-    // ホバー操作
-    await userEvent.hover(triggerButton)
-    
-    // ホバーカードの内容確認
-    const hoverCard = document.querySelector('[role="dialog"]') as HTMLElement
-    expect(hoverCard).toBeInTheDocument()
-    
-    // タイトルと説明文の確認
-    const hoverContent = within(hoverCard)
-    const title = hoverContent.getByText('ホバーカードのタイトル')
-    const description = hoverContent.getByText(/ホバーカードの説明文をここに記述します。/)
-    expect(title).toBeInTheDocument()
-    expect(description).toBeInTheDocument()
-    
-    // ホバー解除
-    await userEvent.unhover(triggerButton)
-    expect(hoverCard).not.toBeVisible()
-  }
-}
+		render: () => (
+			<HoverCard>
+				<HoverCardTrigger asChild>
+					<Button variant="link" aria-label="@nextjs">ホバーしてください</Button>
+				</HoverCardTrigger>
+				<HoverCardContent>
+					<div className="space-y-2">
+						<h4 className="text-sm font-semibold">ホバーカードのタイトル</h4>
+						<p className="text-sm">
+							ホバーカードの説明文をここに記述します。
+							ユーザーに対して補足情報を提供します。
+						</p>
+					</div>
+				</HoverCardContent>
+			</HoverCard>
+		),
+		// 例: Default ストーリー
+		play: async ({ canvasElement }) => {
+			const canvas = within(canvasElement);
+			const trigger = canvas.getByRole("button", { name: "@nextjs" });
+			await userEvent.hover(trigger);
+
+			// HoverCard が表示されるのを待つ
+			await waitFor(() => {
+				expect(
+					canvas.getByText(
+						(content, element) =>
+							element?.textContent?.includes(
+								"The React Framework for the Web",
+							) ?? false,
+					),
+				).toBeVisible();
+			});
+			await userEvent.unhover(trigger);
+			// HoverCard が非表示になるのを待つ
+			await waitFor(() => {
+				expect(
+					canvas.queryByText(
+						(content, element) =>
+							element?.textContent?.includes(
+								"The React Framework for the Web",
+							) ?? false,
+					),
+				).not.toBeVisible();
+			});
+		},
+	}
 
 /**
  * @description 異なる配置のHoverCardの表示
@@ -131,23 +136,29 @@ export const DifferentAlignments: Story = {
     
     // 左寄せホバーカードのテスト
     await userEvent.hover(leftButton)
-    const leftCard = document.querySelector('[role="dialog"]') as HTMLElement
+    const leftCard = await waitFor(() =>
+      document.querySelector('[role="dialog"]') as HTMLElement,
+    )
     expect(leftCard).toBeInTheDocument()
-    expect(within(leftCard).getByText('左寄せの例')).toBeInTheDocument()
+    expect(leftCard.textContent).toContain("左寄せ")
     await userEvent.unhover(leftButton)
     
     // 中央寄せホバーカードのテスト
     await userEvent.hover(centerButton)
-    const centerCard = document.querySelector('[role="dialog"]') as HTMLElement
+    const centerCard = await waitFor(() =>
+      document.querySelector('[role="dialog"]') as HTMLElement,
+    )
     expect(centerCard).toBeInTheDocument()
-    expect(within(centerCard).getByText('中央寄せの例')).toBeInTheDocument()
+    expect(centerCard.textContent).toContain("中央寄せ")
     await userEvent.unhover(centerButton)
     
     // 右寄せホバーカードのテスト
     await userEvent.hover(rightButton)
-    const rightCard = document.querySelector('[role="dialog"]') as HTMLElement
+    const rightCard = await waitFor(() =>
+      document.querySelector('[role="dialog"]') as HTMLElement,
+    )
     expect(rightCard).toBeInTheDocument()
-    expect(within(rightCard).getByText('右寄せの例')).toBeInTheDocument()
+    expect(rightCard.textContent).toContain("右寄せ")
     await userEvent.unhover(rightButton)
   }
 }

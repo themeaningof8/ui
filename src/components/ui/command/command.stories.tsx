@@ -29,7 +29,7 @@ import {
   CommandSeparator,
 } from '@/components/ui/command'
 import { Button } from '@/components/ui/button'
-import { userEvent, within } from '@storybook/testing-library'
+import { userEvent, within, waitFor } from '@storybook/testing-library'
 import { expect } from '@storybook/jest'
 
 const meta = {
@@ -89,6 +89,13 @@ export const Default: Story = {
 
     // Enter キーを押して "検索" を選択
     await userEvent.type(input, '{enter}')
+
+    // CommandDialog が開くのを待つ
+    const dialog = await waitFor(() => canvas.getByRole('dialog'))
+
+    // CommandEmpty が表示されるのを待つ
+    const empty = await waitFor(() => within(dialog).getByRole('presentation', { name: '結果なし' }))
+    expect(empty).toBeVisible()
   },
 }
 

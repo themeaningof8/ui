@@ -139,7 +139,7 @@ export const CheckboxGroup: Story = {
     // 各チェックボックスを順番にクリック
     for (const checkbox of checkboxes) {
       await userEvent.click(checkbox)
-      expect(checkbox).toBeChecked()
+      expect(checkbox).toHaveAttribute('aria-checked', 'true')
     }
   },
 }

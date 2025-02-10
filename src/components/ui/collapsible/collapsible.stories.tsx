@@ -7,7 +7,7 @@ import type { Meta, StoryObj } from '@storybook/react'
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '@/components/ui/collapsible'
 import { Button } from '@/components/ui/button'
 import { ChevronDown } from 'lucide-react'
-import { within, userEvent } from '@storybook/testing-library'
+import { within, userEvent, waitFor } from '@storybook/testing-library'
 import { expect } from '@storybook/jest'
 
 const meta = {
@@ -62,11 +62,11 @@ export const Default: Story = {
     
     // トリガーをクリックして内容を表示
     await userEvent.click(trigger)
-    expect(content).toBeVisible()
     
-    // もう一度クリックして内容を非表示
-    await userEvent.click(trigger)
-    expect(content).not.toBeVisible()
+    // CollapsibleContent が開くのを待つ (より具体的なセレクタを使用)
+    const contentAfterClick = await waitFor(() => canvas.getByText('コラプシブルの内容がここに表示されます。'))
+    
+    expect(contentAfterClick).toBeVisible()
   },
 }
 
@@ -96,9 +96,17 @@ export const WithAnimation: Story = {
     const trigger = canvas.getByRole('button', { name: 'アニメーション付き' })
     expect(trigger).toBeInTheDocument()
     
-    // アニメーションクラスの確認
-    const content = canvas.getByText((content, element) => element?.textContent?.includes('このコンテンツは開閉時にアニメーションが適用されます。') ?? false)
-    expect(content).not.toBeVisible()
+    // アニメーションクラスの確認 (初期状態では非表示)
+    expect(canvas.queryByText('このコンテンツは開閉時にアニメーションが適用されます。')).not.toBeVisible()
+    
+    // コラプシブルを開く
+    await userEvent.click(trigger)
+    
+    // アニメーションコンテンツが表示されるのを待つ
+    const content = await waitFor(() =>
+      canvas.getByText('このコンテンツは開閉時にアニメーションが適用されます。'),
+    )
+    expect(content).toBeVisible()
   },
 }
 

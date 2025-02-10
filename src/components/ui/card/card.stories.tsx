@@ -122,6 +122,17 @@ export const WithActions: Story = {
     expect(cancelButton).toBeInTheDocument();
     expect(saveButton).toBeInTheDocument();
     expect(cancelButton).toHaveClass('variant-outline');
+
+    // 「詳細を見る」を含む要素を特定 (例: ボタン)
+    const viewDetailsButton = canvas.getByText((content, element) => {
+      return element?.textContent?.includes('詳細を見る') ?? false;
+    });
+    expect(viewDetailsButton).toBeVisible();
+
+    // 例: WithActions ストーリー (修正が必要な場合)
+    // variant="outline" に対応するクラスが適用されているか確認
+    const buttons = canvas.getAllByRole('button');
+    expect(buttons[0]).toHaveClass('variant-outline'); // 修正が必要な場合
   },
 };
 
@@ -200,6 +211,7 @@ export const Grid: Story = {
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+    const cards = canvas.getAllByRole('article');
     
     // グリッドコンテナの確認
     const container = canvas.getByRole('generic');

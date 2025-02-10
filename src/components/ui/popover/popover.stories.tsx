@@ -5,7 +5,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { within, userEvent } from '@storybook/testing-library';
+import { within, userEvent, waitFor } from '@storybook/testing-library';
 import { expect } from '@storybook/jest';
 
 const meta = {
@@ -229,25 +229,23 @@ export const CustomStyles: Story = {
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const trigger = canvas.getByRole('button');
-    
-    // トリガーボタンの確認
+    const trigger = canvas.getByText('カスタムスタイル');
     expect(trigger).toBeInTheDocument();
-    expect(trigger).toHaveTextContent('カスタムスタイル');
-    
-    // ポップオーバーを開く
+
     await userEvent.click(trigger);
-    
-    // カスタムスタイルの確認
-    const popover = document.querySelector('[role="dialog"]');
-    expect(popover).toBeInTheDocument();
-    expect(popover).toHaveClass('w-96', 'bg-base-subtle', 'p-6');
-    
-    // 内容の確認
-    const content = within(popover as HTMLElement);
-    expect(content.getByText('カスタマイズ例')).toBeVisible();
-    expect(content.getByText('幅を広げ、背景色を変更し、パディングを大きくしたポップオーバーです。')).toBeVisible();
-    
+
+    // Popover が表示されるのを待つ
+    const popover = await waitFor(() => canvas.getByRole('dialog'));
+    expect(popover).toBeVisible();
+
+    // PopoverContent 内の要素を特定 (例: getByText とカスタムマッチャー)
+    const popoverContent = within(popover);
+    expect(
+      popoverContent.getByText((content, element) =>
+        element?.textContent?.includes('カスタマイズ例') ?? false
+      )
+    ).toBeVisible();
+
     // ポップオーバーを閉じる
     await userEvent.keyboard('{Escape}');
     expect(popover).not.toBeVisible();

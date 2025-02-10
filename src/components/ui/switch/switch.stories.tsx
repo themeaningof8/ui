@@ -45,7 +45,7 @@ export const Default: Story = {
   render: () => <Switch />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
-    const switchElement = canvas.getByRole('checkbox')
+    const switchElement = canvas.getByRole('switch')
 
     expect(switchElement).toBeInTheDocument()
     expect(switchElement).not.toBeChecked()
@@ -68,7 +68,7 @@ export const WithLabel: Story = {
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
-    const switchElement = canvas.getByRole('checkbox')
+    const switchElement = canvas.getByRole('switch')
     const label = canvas.getByText('機内モード')
 
     expect(switchElement).toBeInTheDocument()
@@ -87,7 +87,7 @@ export const Disabled: Story = {
   render: () => <Switch disabled />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
-    const switchElement = canvas.getByRole('checkbox')
+    const switchElement = canvas.getByRole('switch')
 
     expect(switchElement).toBeInTheDocument()
     expect(switchElement).toBeDisabled()
@@ -105,7 +105,7 @@ export const CheckedByDefault: Story = {
   render: () => <Switch defaultChecked />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
-    const switchElement = canvas.getByRole('checkbox')
+    const switchElement = canvas.getByRole('switch')
 
     expect(switchElement).toBeInTheDocument()
     expect(switchElement).toBeChecked()
@@ -128,7 +128,7 @@ export const CustomStyles: Story = {
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
-    const switchElement = canvas.getByRole('checkbox')
+    const switchElement = canvas.getByRole('switch')
 
     expect(switchElement).toBeInTheDocument()
     expect(switchElement).toHaveClass(

@@ -14,7 +14,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Button } from '@/components/ui/button'
-import { within, userEvent } from '@storybook/testing-library'
+import { within, userEvent, waitFor } from '@storybook/testing-library'
 import { expect } from '@storybook/jest'
 
 const meta = {
@@ -91,9 +91,20 @@ export const Default: Story = {
     // メニューを開く
     await userEvent.click(triggerButton)
     
-    // メニューラベルの確認
-    const label = document.querySelector('[role="menuitem"]')
-    expect(label).toHaveTextContent('マイアカウント')
+    // メニューが表示されるのを待つ
+    const menu = await waitFor(() => canvas.getByRole('menu'))
+    expect(menu).toBeVisible()
+    
+    // メニュー項目のテキストを検証 (例: getByText とカスタムマッチャー)
+    expect(
+      within(menu).getByText((content, element) =>
+        element?.textContent?.includes('プロフィール') ?? false
+      )
+    ).toBeVisible()
+    
+    // セパレータの数を検証 (例: queryAllByRole を使用)
+    const separators = within(menu).queryAllByRole('separator')
+    expect(separators.length).toBe(2)
     
     // メニューアイテムの確認
     const menuItems = document.querySelectorAll('[role="menuitem"]')
@@ -208,13 +219,20 @@ export const WithLabelsAndSeparators: Story = {
     // メニューを開く
     await userEvent.click(triggerButton)
     
-    // ラベルの確認
-    const labels = document.querySelectorAll('[role="menuitem"]')
-    expect(labels[0]).toHaveTextContent('表示オプション')
+    // メニューが表示されるのを待つ
+    const menu = await waitFor(() => canvas.getByRole('menu'))
+    expect(menu).toBeVisible()
     
-    // セパレータの確認
-    const separators = document.querySelectorAll('[role="separator"]')
-    expect(separators).toHaveLength(2)
+    // メニュー項目のテキストを検証 (例: getByText とカスタムマッチャー)
+    expect(
+      within(menu).getByText((content, element) =>
+        element?.textContent?.includes('表示オプション') ?? false
+      )
+    ).toBeVisible()
+    
+    // セパレータの数を検証 (例: queryAllByRole を使用)
+    const separators = within(menu).queryAllByRole('separator')
+    expect(separators.length).toBe(2)
     
     // メニューアイテムの確認
     const menuItems = document.querySelectorAll('[role="menuitem"]')

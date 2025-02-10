@@ -72,7 +72,7 @@ export const Destructive: Story = {
     const description = canvas.getByText('エラーが発生しました。入力内容を確認してください。');
 
     expect(alert).toBeInTheDocument();
-    expect(alert).toHaveClass('border-destructive/50');
+    expect(alert).toHaveClass('border-destructive-ui-border');
     expect(title).toBeVisible();
     expect(description).toBeVisible();
   },

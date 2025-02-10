@@ -3,18 +3,22 @@ import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "@/lib/cn";
 
+/**
+ * @description バッジコンポーネントのスタイルバリエーション定義
+ * @param variant - バッジの見た目のバリエーション
+ */
 const badgeVariants = cva(
-	"inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+	"inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-base-ui-border focus:ring-offset-2",
 	{
 		variants: {
 			variant: {
 				default:
-					"border-transparent bg-primary text-primary-foreground shadow hover:bg-primary/80",
+					"border-transparent bg-base-solid text-base-on-solid shadow hover:bg-base-solid-hover",
 				secondary:
-					"border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80",
+					"border-transparent bg-base-solid text-base-on-solid hover:bg-base-solid-hover",
 				destructive:
-					"border-transparent bg-destructive text-destructive-foreground shadow hover:bg-destructive/80",
-				outline: "text-foreground",
+					"border-transparent bg-destructive-solid text-destructive-on-solid shadow hover:bg-destructive-solid-hover",
+				outline: "border-base-ui-border text-base-high-contrast-text",
 			},
 		},
 		defaultVariants: {

@@ -4,6 +4,10 @@ import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { type ButtonProps, buttonVariants } from "@/components/ui/button";
 
+/**
+ * @description ページネーションコンポーネントの基本コンポーネント群
+ */
+
 const Pagination = ({ className, ...props }: React.ComponentProps<"nav">) => (
 	<nav
 		aria-label="pagination"
@@ -65,7 +69,7 @@ const PaginationPrevious = ({
 	<PaginationLink
 		aria-label="Go to previous page"
 		size="default"
-		className={cn("gap-1 pl-2.5", className)}
+		className={cn("gap-1 pl-2.5 text-base-high-contrast-text", className)}
 		{...props}
 	>
 		<ChevronLeft className="h-4 w-4" />
@@ -81,7 +85,7 @@ const PaginationNext = ({
 	<PaginationLink
 		aria-label="Go to next page"
 		size="default"
-		className={cn("gap-1 pr-2.5", className)}
+		className={cn("gap-1 pr-2.5 text-base-high-contrast-text", className)}
 		{...props}
 	>
 		<span>Next</span>
@@ -96,7 +100,7 @@ const PaginationEllipsis = ({
 }: React.ComponentProps<"span">) => (
 	<span
 		aria-hidden
-		className={cn("flex h-9 w-9 items-center justify-center", className)}
+		className={cn("flex h-9 w-9 items-center justify-center text-base-low-contrast-text", className)}
 		{...props}
 	>
 		<MoreHorizontal className="h-4 w-4" />

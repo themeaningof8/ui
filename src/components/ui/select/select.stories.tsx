@@ -306,13 +306,13 @@ export const CustomStyle: Story = {
         <SelectValue placeholder="Select a programming language" />
       </SelectTrigger>
       <SelectContent className="bg-popover border-primary">
-        <SelectItem value="javascript" className="hover:bg-accent hover:text-accent-foreground">
+        <SelectItem value="javascript" className="hover:bg-accent hover:text-base-foreground">
           JavaScript
         </SelectItem>
-        <SelectItem value="typescript" className="hover:bg-accent hover:text-accent-foreground">
+        <SelectItem value="typescript" className="hover:bg-accent hover:text-base-foreground">
           TypeScript
         </SelectItem>
-        <SelectItem value="python" className="hover:bg-accent hover:text-accent-foreground">
+        <SelectItem value="python" className="hover:bg-accent hover:text-base-foreground">
           Python
         </SelectItem>
       </SelectContent>
@@ -331,7 +331,7 @@ export const CustomStyle: Story = {
     // オプションのカスタムスタイルを確認
     const options = canvas.getAllByRole('option');
     for (const option of options) {
-      expect(option).toHaveClass('hover:bg-accent', 'hover:text-accent-foreground');
+      expect(option).toHaveClass('hover:bg-accent', 'hover:text-base-foreground');
     }
   },
 }; 

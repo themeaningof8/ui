@@ -40,7 +40,7 @@ export const Default: Story = {
     expect(skeleton).toBeInTheDocument()
     
     // スタイルの確認
-    expect(skeleton).toHaveClass('h-4', 'w-[250px]')
+    expect(skeleton).toHaveClass('h-4', 'w-[250px]', 'animate-pulse')
     expect(skeleton).toHaveStyle({
       height: '1rem',
       width: '250px',
@@ -61,7 +61,7 @@ export const Circle: Story = {
     expect(skeleton).toBeInTheDocument()
     
     // 円形スタイルの確認
-    expect(skeleton).toHaveClass('h-12', 'w-12', 'rounded-full')
+    expect(skeleton).toHaveClass('h-12', 'w-12', 'rounded-full', 'animate-pulse')
     expect(skeleton).toHaveStyle({
       height: '3rem',
       width: '3rem',
@@ -90,9 +90,9 @@ export const Card: Story = {
     // 各スケルトンのスタイルを確認
     const [image, title, description] = skeletons
     
-    expect(image).toHaveClass('h-[200px]', 'w-full', 'rounded-xl')
-    expect(title).toHaveClass('h-4', 'w-[250px]')
-    expect(description).toHaveClass('h-4', 'w-[200px]')
+    expect(image).toHaveClass('h-[200px]', 'w-full', 'rounded-xl', 'animate-pulse')
+    expect(title).toHaveClass('h-4', 'w-[250px]', 'animate-pulse')
+    expect(description).toHaveClass('h-4', 'w-[200px]', 'animate-pulse')
   },
 }
 
@@ -131,6 +131,11 @@ export const List: Story = {
       !skeleton.classList.contains('rounded-full')
     )
     expect(textSkeletons).toHaveLength(10)
+    
+    // 各スケルトンのスタイルを確認
+    for (const skeleton of skeletons) {
+      expect(skeleton).toHaveClass('animate-pulse')
+    }
     
     // 各アバタースケルトンのスタイルを確認
     for (const avatar of avatarSkeletons) {

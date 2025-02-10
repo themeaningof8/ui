@@ -38,7 +38,7 @@ export const Default: Story = {
       <TabsContent value="account">
         <div className="space-y-4 p-4">
           <h4 className="text-sm font-medium">Account Settings</h4>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-base-low-contrast-text">
             Update your account settings. Set your preferred language and timezone.
           </p>
         </div>
@@ -46,7 +46,7 @@ export const Default: Story = {
       <TabsContent value="password">
         <div className="space-y-4 p-4">
           <h4 className="text-sm font-medium">Password Settings</h4>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-base-low-contrast-text">
             Change your password here. After saving, you'll be logged out.
           </p>
         </div>
@@ -54,7 +54,7 @@ export const Default: Story = {
       <TabsContent value="settings">
         <div className="space-y-4 p-4">
           <h4 className="text-sm font-medium">General Settings</h4>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-base-low-contrast-text">
             Configure your general application settings here.
           </p>
         </div>
@@ -71,20 +71,26 @@ export const Default: Story = {
     
     // デフォルトでAccountタブが選択されていることを確認
     expect(accountTab).toHaveAttribute('aria-selected', 'true')
-    expect(canvas.getByText('Account Settings')).toBeVisible()
+    const accountContent = canvas.getByRole('tabpanel', { name: 'Account' })
+    expect(accountContent).toBeVisible()
     
     // Passwordタブに切り替え
     await userEvent.click(passwordTab)
     expect(passwordTab).toHaveAttribute('aria-selected', 'true')
     expect(accountTab).toHaveAttribute('aria-selected', 'false')
-    expect(canvas.getByText('Password Settings')).toBeVisible()
-    expect(canvas.queryByText('Account Settings')).not.toBeVisible()
+    const passwordContent = canvas.getByRole('tabpanel', { name: 'Password' })
+    expect(passwordContent).toBeVisible()
+    expect(accountContent).not.toBeVisible()
     
     // Settingsタブに切り替え
     await userEvent.click(settingsTab)
     expect(settingsTab).toHaveAttribute('aria-selected', 'true')
-    expect(canvas.getByText('General Settings')).toBeVisible()
-    expect(canvas.queryByText('Password Settings')).not.toBeVisible()
+    const settingsContent = canvas.getByRole('tabpanel', { name: 'Settings' })
+    expect(settingsContent).toBeVisible()
+    expect(passwordContent).not.toBeVisible()
+
+    // タブの内容が非表示であることを確認
+    expect(canvas.queryByText('タブ1の内容')).not.toBeVisible()
   },
 }
 
@@ -115,13 +121,14 @@ export const WithDisabledTab: Story = {
     // 無効化されたタブの確認
     const disabledTab = canvas.getByRole('tab', { name: 'Disabled' })
     expect(disabledTab).toBeDisabled()
+    expect(disabledTab).toHaveAttribute('aria-disabled', 'true')
     
     // アクティブなタブの確認
     const activeTab = canvas.getByRole('tab', { name: 'Active' })
     expect(activeTab).toHaveAttribute('aria-selected', 'true')
     
     // アクティブなタブのコンテンツを確認
-    const activeContent = canvas.getByText('Active tab content')
+    const activeContent = canvas.getByRole('tabpanel', { name: 'Active' })
     expect(activeContent).toBeVisible()
     
     // 無効化されたタブをクリックしても状態が変わらないことを確認
@@ -134,7 +141,8 @@ export const WithDisabledTab: Story = {
     await userEvent.click(pendingTab)
     expect(pendingTab).toHaveAttribute('aria-selected', 'true')
     
-    const pendingContent = canvas.getByText('Pending tab content')
+    const pendingContent = canvas.getByRole('tabpanel', { name: 'Pending' })
     expect(pendingContent).toBeVisible()
+    expect(activeContent).not.toBeVisible()
   },
 } 

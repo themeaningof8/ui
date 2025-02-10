@@ -42,6 +42,7 @@ const ToggleGroupItem = React.forwardRef<
 	return (
 		<ToggleGroupPrimitive.Item
 			ref={ref}
+			role="radio"
 			className={cn(
 				toggleVariants({
 					variant: context.variant || variant,

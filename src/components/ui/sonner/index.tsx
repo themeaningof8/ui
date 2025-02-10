@@ -2,6 +2,10 @@
 
 import { Toaster as Sonner } from "sonner"
 
+/**
+ * @description トースト通知コンポーネント
+ */
+
 type ToasterProps = React.ComponentProps<typeof Sonner>
 
 const Toaster = ({ ...props }: ToasterProps) => {
@@ -11,12 +15,12 @@ const Toaster = ({ ...props }: ToasterProps) => {
       toastOptions={{
         classNames: {
           toast:
-            "group toast group-[.toaster]:bg-background group-[.toaster]:text-foreground group-[.toaster]:border-border group-[.toaster]:shadow-lg",
-          description: "group-[.toast]:text-muted-foreground",
+            "group toast group-[.toaster]:bg-base-app-bg group-[.toaster]:text-base-high-contrast-text group-[.toaster]:border-base-ui-border group-[.toaster]:shadow-lg",
+          description: "group-[.toast]:text-base-low-contrast-text",
           actionButton:
-            "group-[.toast]:bg-primary group-[.toast]:text-primary-foreground",
+            "group-[.toast]:bg-base-solid group-[.toast]:text-base-on-solid",
           cancelButton:
-            "group-[.toast]:bg-muted group-[.toast]:text-muted-foreground",
+            "group-[.toast]:bg-base-ui-bg group-[.toast]:text-base-high-contrast-text",
         },
       }}
       {...props}

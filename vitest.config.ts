@@ -30,6 +30,12 @@ export default defineConfig({
         'src/**/*.stories.{ts,tsx}',
         'src/tests/**/*',
       ],
+      thresholds: {
+        lines: 80,
+        branches: 70,
+        functions: 75,
+        statements: 80,
+      },
     },
     deps: {
       inline: [/@radix-ui\/react-.*/, /class-variance-authority/],

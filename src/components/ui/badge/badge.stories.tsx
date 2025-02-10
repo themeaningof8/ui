@@ -31,12 +31,13 @@ type Story = StoryObj<typeof meta>
  */
 export const Default: Story = {
   render: () => <Badge>バッジ</Badge>,
-  play: async ({ canvasElement }) => {
+  play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement)
     const badge = canvas.getByText('バッジ')
     
-    expect(badge).toBeInTheDocument()
-    expect(badge).toHaveClass('bg-primary', 'text-primary-foreground')
+    await step("デフォルトバッジの表示確認", async () => {
+      expect(badge).toHaveClass('bg-base-solid text-base-on-solid shadow')
+    })
   },
 }
 

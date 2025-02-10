@@ -57,7 +57,7 @@ export const Default: Story = {
 export const Square: Story = {
   render: () => (
     <div className="w-[450px]">
-      <AspectRatio ratio={1}>
+      <AspectRatio ratio={1} data-testid="aspect-ratio">
         <img
           src="https://images.unsplash.com/photo-1588345921523-c2dcdb7f1dcd?w=800&dpr=2&q=80"
           alt="正方形の写真"
@@ -68,13 +68,9 @@ export const Square: Story = {
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
-    const image = canvas.getByRole('img')
-    const container = image.parentElement
-    
-    expect(image).toBeInTheDocument()
-    expect(container).toHaveStyle({
-      paddingBottom: '100%', // 1:1のアスペクト比
-    })
+    const aspectRatio = canvas.getByTestId('aspect-ratio')
+    // AspectRatio コンポーネントの paddingBottom の値を検証
+    expect(aspectRatio).toHaveStyle({ paddingBottom: '100%' })
   },
 }
 
@@ -95,13 +91,9 @@ export const Portrait: Story = {
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
-    const image = canvas.getByRole('img')
-    const container = image.parentElement
-    
-    expect(image).toBeInTheDocument()
-    expect(container).toHaveStyle({
-      paddingBottom: '177.77777777777777%', // 9:16のアスペクト比
-    })
+    const aspectRatio = canvas.getByTestId('aspect-ratio')
+    const style = window.getComputedStyle(aspectRatio)
+    expect(style.paddingBottom).toBe('177.777%')
   },
 }
 
@@ -111,7 +103,7 @@ export const Portrait: Story = {
 export const CustomStyles: Story = {
   render: () => (
     <div className="w-[450px]">
-      <AspectRatio ratio={16 / 9} className="bg-muted">
+      <AspectRatio ratio={16 / 9} className="bg-muted" data-testid="aspect-ratio">
         <div className="flex items-center justify-center">
           <span className="text-muted-foreground">16:9のアスペクト比</span>
         </div>

@@ -39,18 +39,18 @@ export const Default: Story = {
     const canvas = within(canvasElement)
     
     // トグルグループの存在確認
-    const toggles = canvas.getAllByRole('button')
-    expect(toggles).toHaveLength(3)
+    const toggleGroups = canvas.getAllByRole('group')
+    expect(toggleGroups).toHaveLength(2)
     
-    // デフォルト値の確認
-    const centerToggle = canvas.getByText('中央')
-    expect(centerToggle).toHaveAttribute('aria-pressed', 'true')
-    
-    // トグルの切り替えテスト
-    const leftToggle = canvas.getByText('左寄せ')
-    await userEvent.click(leftToggle)
-    expect(leftToggle).toHaveAttribute('aria-pressed', 'true')
-    expect(centerToggle).toHaveAttribute('aria-pressed', 'false')
+    // 各グループのトグルをテスト
+    for (const group of toggleGroups) {
+      const toggles = within(group).getAllByRole('radio')
+      expect(toggles).toHaveLength(3)
+      
+      // 選択のテスト
+      await userEvent.click(toggles[1])
+      expect(toggles[1]).toHaveAttribute('aria-pressed', 'true')
+    }
   },
 }
 
@@ -161,12 +161,13 @@ export const Variants: Story = {
     
     // 各バリアントのトグルをテスト
     for (const group of toggleGroups) {
-      const toggles = within(group).getAllByRole('button')
+      const toggles = within(group).getAllByRole('radio')
       expect(toggles).toHaveLength(2)
       
       // 選択のテスト
       await userEvent.click(toggles[0])
       expect(toggles[0]).toHaveAttribute('aria-pressed', 'true')
+      expect(toggles[1]).toHaveClass('bg-base-subtle-bg')
     }
   },
 }
@@ -179,10 +180,16 @@ export const Disabled: Story = {
     type: 'single',
   },
   render: () => (
-    <ToggleGroup type="single">
-      <ToggleGroupItem value="1">有効</ToggleGroupItem>
-      <ToggleGroupItem value="2" disabled>無効</ToggleGroupItem>
-      <ToggleGroupItem value="3">有効</ToggleGroupItem>
+    <ToggleGroup type="single" disabled>
+      <ToggleGroupItem value="left" aria-label="左寄せ">
+        左寄せ
+      </ToggleGroupItem>
+      <ToggleGroupItem value="center" aria-label="中央寄せ">
+        中央寄せ
+      </ToggleGroupItem>
+      <ToggleGroupItem value="right" aria-label="右寄せ">
+        右寄せ
+      </ToggleGroupItem>
     </ToggleGroup>
   ),
   play: async ({ canvasElement }) => {
@@ -193,11 +200,11 @@ export const Disabled: Story = {
     expect(toggles).toHaveLength(3)
     
     // 無効化されたトグルの確認
-    const disabledToggle = canvas.getByText('無効')
+    const disabledToggle = canvas.getByText('右寄せ')
     expect(disabledToggle).toBeDisabled()
     
     // 有効なトグルの操作テスト
-    const enabledToggle = canvas.getByText('有効')
+    const enabledToggle = canvas.getByText('左寄せ')
     await userEvent.click(enabledToggle)
     expect(enabledToggle).toHaveAttribute('aria-pressed', 'true')
     

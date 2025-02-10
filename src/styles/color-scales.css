@@ -2,6 +2,7 @@
  * @file color-scales.css
  * @description Tailwind CSS v4向けのカラースケール定義
  * カラーパレットはRadix Colorsの命名規則に基づき、アプリケーション全体で統一的に使用
+ * @see https://www.radix-ui.com/colors/docs/palette-composition/understanding-the-scale
  *
  * 各ステップの使用用途:
  * 1: アプリケーションの背景
@@ -17,15 +18,21 @@
  * 11: 低コントラストのテキスト
  * 12: 高コントラストのテキスト
  *
- * 用途別クラス:
- * bg-{scale}-{step}: 背景色 (app-bg, subtle-bg, ui-bg, ui-hover, ui-active, solid, solid-hover)
- * text-{scale}-{step}: テキスト色 (low-contrast-text, high-contrast-text)
- * border-{scale}-{step}: ボーダー色 (subtle-border, ui-border, ui-border-hover)
- * ring-{scale}-{step}: フォーカスリング (ui-border)
+ * 色の選択に関するガイドライン:
+ * - **ベースカラー**: アプリケーションの基本色。UIのベースとなる色合い。
+ * - **アクセントカラー**: UIの特定部分を強調するための色。インタラクションや重要な情報に利用。
+ * - **デストラクティブカラー**: 削除やエラーなど、注意を引く必要がある場合に使用。
+ *
+ * コントラストに関する注意:
+ * - ステップ6の背景色とステップ11のテキスト色の組み合わせで、APCA（Advanced Perceptual Contrast Algorithm）スコアが60以上になるように設計されています。
+ * - WCAG 3.0（APCA）を基準に、十分なコントラストを確保してください。
+ *
+ * ライトモードとダークモード:
+ * - 各カラースケールは、ライトモードとダークモードの両方で最適に見えるように調整されています。
+ * - ダークモードでは、全体的に明るめの色を使用し、視認性を高めています。
  */
 
 @theme {
-	/* ベースカラー - ライトモード */
 	--color-base-app-bg: oklch(99.2% 0.0025 278);
 	--color-base-subtle-bg: oklch(97.8% 0.0047 278);
 	--color-base-ui-bg: oklch(95.2% 0.011 278);
@@ -38,26 +45,6 @@
 	--color-base-solid-hover: oklch(36% 0.0272 278);
 	--color-base-low-contrast-text: oklch(45.6% 0.0486 278);
 	--color-base-high-contrast-text: oklch(25.7% 0.0272 278);
-
-	/* アクセントカラー - ライトモード */
-	--color-accent-app-bg: oklch(99.2% 0.0025 266.8);
-	--color-accent-subtle-bg: oklch(97.8% 0.0047 266.8);
-	--color-accent-ui-bg: oklch(95.2% 0.011 266.8);
-	--color-accent-ui-hover: oklch(92.1% 0.0162 266.8);
-	--color-accent-ui-active: oklch(85.4% 0.0212 266.8);
-	--color-accent-subtle-border: oklch(82.8% 0.0262 266.8);
-	--color-accent-ui-border: oklch(78.5% 0.0327 266.8);
-	--color-accent-ui-border-hover: oklch(72.5% 0.0439 266.8);
-	--color-accent-solid: oklch(54.3% 0.1913 266.8);
-	--color-accent-solid-hover: oklch(49.7% 0.1373 266.8);
-	--color-accent-low-contrast-text: oklch(45.6% 0.1234 266.8);
-	--color-accent-high-contrast-text: oklch(25.7% 0.0428 266.8);
-
-	/* システムカラー */
-	--color-surface: oklch(98.1% 0.0047 278 / 0.8);
-	--color-overlay: oklch(98.1% 0.0047 278 / 0.9);
-	--color-panel: oklch(99.2% 0.0025 278);
-	--color-card: oklch(99.2% 0.0025 278);
 
 	/* デストラクティブカラー - ライトモード */
 	--color-destructive-app-bg: oklch(99.2% 0.0025 25);
@@ -76,8 +63,8 @@
 	/* ソリッドカラー上のテキストカラー - ライトモード */
 	--color-base-on-solid: oklch(98.1% 0.0047 278);
 	--color-base-on-solid-hover: oklch(99.2% 0.0025 278);
-	--color-accent-on-solid: oklch(98.1% 0.0047 266.8);
-	--color-accent-on-solid-hover: oklch(99.2% 0.0025 266.8);
+	--color-base-on-solid: oklch(98.1% 0.0047 266.8);
+	--color-base-on-solid-hover: oklch(99.2% 0.0025 266.8);
 	--color-destructive-on-solid: oklch(98.1% 0.0047 25);
 	--color-destructive-on-solid-hover: oklch(99.2% 0.0025 25);
 }
@@ -97,28 +84,6 @@
 	--color-base-low-contrast-text: oklch(65.7% 0.1234 266.8);
 	--color-base-high-contrast-text: oklch(95.1% 0.0428 266.8);
 
-	/* アクセントカラー - ダークモード */
-	--color-accent-app-bg: oklch(15.8% 0.0247 266.8);
-	--color-accent-subtle-bg: oklch(18.7% 0.0302 266.8);
-	--color-accent-ui-bg: oklch(25.1% 0.0694 266.8);
-	--color-accent-ui-hover: oklch(29.8% 0.0933 266.8);
-	--color-accent-ui-active: oklch(42.1% 0.1046 266.8);
-	--color-accent-subtle-border: oklch(45.4% 0.1106 266.8);
-	--color-accent-ui-border: oklch(49% 0.1203 266.8);
-	--color-accent-ui-border-hover: oklch(54.3% 0.1373 266.8);
-	--color-accent-solid: oklch(85.4% 0.1913 266.8);
-	--color-accent-solid-hover: oklch(82.7% 0.1373 266.8);
-	--color-accent-on-solid: oklch(98.1% 0.0047 266.8);
-	--color-accent-on-solid-hover: oklch(99.2% 0.0025 266.8);
-	--color-accent-low-contrast-text: oklch(65.7% 0.1234 266.8);
-	--color-accent-high-contrast-text: oklch(95.1% 0.0428 266.8);
-
-	/* システムカラー */
-	--color-surface: oklch(17.8% 0.0247 266.8 / 0.8);
-	--color-overlay: oklch(17.8% 0.0247 266.8 / 0.9);
-	--color-panel: oklch(20.7% 0.0302 266.8);
-	--color-card: oklch(20.7% 0.0302 266.8);
-
 	/* デストラクティブカラー - ダークモード */
 	--color-destructive-app-bg: oklch(15.8% 0.0247 25);
 	--color-destructive-subtle-bg: oklch(18.7% 0.0302 25);
@@ -134,151 +99,4 @@
 	--color-destructive-on-solid-hover: oklch(99.2% 0.0025 25);
 	--color-destructive-low-contrast-text: oklch(65.7% 0.1234 25);
 	--color-destructive-high-contrast-text: oklch(95.1% 0.0428 25);
-}
-
-/* 背景色ユーティリティ */
-@utility bg-base-app {
-	background-color: var(--color-base-app-bg);
-}
-@utility bg-base-subtle {
-	background-color: var(--color-base-subtle-bg);
-}
-@utility bg-base-ui {
-	background-color: var(--color-base-ui-bg);
-}
-@utility bg-base-hover {
-	background-color: var(--color-base-ui-hover);
-}
-@utility bg-base-active {
-	background-color: var(--color-base-ui-active);
-}
-@utility bg-base-solid {
-	background-color: var(--color-base-solid);
-}
-@utility bg-base-solid-hover {
-	background-color: var(--color-base-solid-hover);
-}
-
-@utility bg-accent-app {
-	background-color: var(--color-accent-app-bg);
-}
-@utility bg-accent-subtle {
-	background-color: var(--color-accent-subtle-bg);
-}
-@utility bg-accent-ui {
-	background-color: var(--color-accent-ui-bg);
-}
-@utility bg-accent-hover {
-	background-color: var(--color-accent-ui-hover);
-}
-@utility bg-accent-active {
-	background-color: var(--color-accent-ui-active);
-}
-@utility bg-accent-solid {
-	background-color: var(--color-accent-solid);
-}
-@utility bg-accent-solid-hover {
-	background-color: var(--color-accent-solid-hover);
-}
-
-@utility bg-destructive-app {
-	background-color: var(--color-destructive-app-bg);
-}
-@utility bg-destructive-subtle {
-	background-color: var(--color-destructive-subtle-bg);
-}
-@utility bg-destructive-ui {
-	background-color: var(--color-destructive-ui-bg);
-}
-@utility bg-destructive-hover {
-	background-color: var(--color-destructive-ui-hover);
-}
-@utility bg-destructive-active {
-	background-color: var(--color-destructive-ui-active);
-}
-@utility bg-destructive-solid {
-	background-color: var(--color-destructive-solid);
-}
-@utility bg-destructive-solid-hover {
-	background-color: var(--color-destructive-solid-hover);
-}
-
-/* テキスト色ユーティリティ */
-@utility text-base-low {
-	color: var(--color-base-low-contrast-text);
-}
-@utility text-base-high {
-	color: var(--color-base-high-contrast-text);
-}
-@utility text-accent-low {
-	color: var(--color-accent-low-contrast-text);
-}
-@utility text-accent-high {
-	color: var(--color-accent-high-contrast-text);
-}
-@utility text-destructive-low {
-	color: var(--color-destructive-low-contrast-text);
-}
-@utility text-destructive-high {
-	color: var(--color-destructive-high-contrast-text);
-}
-
-/* ソリッドカラー上のテキストカラー */
-@utility text-base-on-solid {
-	color: var(--color-base-on-solid);
-}
-@utility text-base-on-solid-hover {
-	color: var(--color-base-on-solid-hover);
-}
-@utility text-accent-on-solid {
-	color: var(--color-accent-on-solid);
-}
-@utility text-accent-on-solid-hover {
-	color: var(--color-accent-on-solid-hover);
-}
-@utility text-destructive-on-solid {
-	color: var(--color-destructive-on-solid);
-}
-@utility text-destructive-on-solid-hover {
-	color: var(--color-destructive-on-solid-hover);
-}
-
-/* ボーダー色ユーティリティ */
-@utility border-base-subtle {
-	border-color: var(--color-base-subtle-border);
-}
-@utility border-base-ui {
-	border-color: var(--color-base-ui-border);
-}
-@utility border-base-hover {
-	border-color: var(--color-base-ui-border-hover);
-}
-@utility border-accent-subtle {
-	border-color: var(--color-accent-subtle-border);
-}
-@utility border-accent-ui {
-	border-color: var(--color-accent-ui-border);
-}
-@utility border-accent-hover {
-	border-color: var(--color-accent-ui-border-hover);
-}
-@utility border-destructive-subtle {
-	border-color: var(--color-destructive-subtle-border);
-}
-@utility border-destructive-ui {
-	border-color: var(--color-destructive-ui-border);
-}
-@utility border-destructive-hover {
-	border-color: var(--color-destructive-ui-border-hover);
-}
-
-/* フォーカスリングユーティリティ */
-@utility ring-base-ui {
-	--tw-ring-color: var(--color-base-ui-border);
-}
-@utility ring-accent-ui {
-	--tw-ring-color: var(--color-accent-ui-border);
-}
-@utility ring-destructive-ui {
-	--tw-ring-color: var(--color-destructive-ui-border);
 }

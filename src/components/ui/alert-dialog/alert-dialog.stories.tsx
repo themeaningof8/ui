@@ -16,7 +16,7 @@ import {
   AlertDialogAction,
 } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
-import { within, userEvent } from '@storybook/testing-library'
+import { within, userEvent, waitFor } from '@storybook/testing-library'
 import { expect } from '@storybook/jest'
 
 const meta = {
@@ -71,8 +71,8 @@ export const Default: Story = {
     // ダイアログを開く
     await userEvent.click(triggerButton)
     
-    // ダイアログの内容を確認
-    const dialog = canvas.getByRole('alertdialog')
+    // ダイアログが開くのを待つ
+    const dialog = await waitFor(() => canvas.getByRole('alertdialog'))
     expect(dialog).toBeInTheDocument()
     
     // タイトルと説明の確認

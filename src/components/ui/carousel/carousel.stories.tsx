@@ -189,4 +189,4 @@ export const CustomStyles: Story = {
       expect(button).toHaveClass('border-2', 'border-primary', 'text-primary')
     }
   },
-} 
+}

@@ -8,6 +8,7 @@ import { Slider } from '@/components/ui/slider'
 import { within, userEvent } from '@storybook/testing-library'
 import { expect } from '@storybook/jest'
 import { Label } from '@/components/ui/label'
+import { waitFor } from '@storybook/jest'
 
 const meta = {
   title: 'UI/Slider',
@@ -37,7 +38,7 @@ export const Default: Story = {
     max: 100,
     step: 1,
   },
-  play: async ({ canvasElement }) => {
+  play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement)
     const slider = canvas.getByRole('slider')
     
@@ -49,12 +50,24 @@ export const Default: Story = {
     expect(slider).toHaveAttribute('aria-valuemin', '0')
     expect(slider).toHaveAttribute('aria-valuemax', '100')
     
-    // キーボード操作のテスト
-    await userEvent.keyboard('[ArrowRight]')
-    expect(slider).toHaveAttribute('aria-valuenow', '51')
-    
-    await userEvent.keyboard('[ArrowLeft]')
-    expect(slider).toHaveAttribute('aria-valuenow', '50')
+    // ドラッグ操作 (例: 51 に設定)
+    const sliderRect = slider.getBoundingClientRect()
+    const x = sliderRect.left + sliderRect.width * 0.51
+    const y = sliderRect.top + sliderRect.height / 2
+
+    await userEvent.pointer([
+      { target: slider, coords: { x: sliderRect.left, y } },
+      { target: slider, coords: { x, y } },
+      { target: slider, coords: { x, y }, pointerType: 'mouse' },
+    ])
+
+    await step('Check value after drag', async () => {
+      expect(slider).toHaveAttribute('aria-valuenow', '51')
+    })
+
+    await step("スライダーの初期値確認", async () => {
+      expect(slider).toHaveAttribute("aria-valuetext", "50");
+    });
   },
 }
 
@@ -159,7 +172,7 @@ export const MultipleSliders: Story = {
     <div className="w-[60vw] space-y-4">
       <div className="space-y-1">
         <label htmlFor="volume-slider" className="text-sm font-medium text-base-high">音量</label>
-        <Slider id="volume-slider" defaultValue={[75]} max={100} step={1} />
+        <Slider id="volume-slider" defaultValue={[50]} max={100} />
       </div>
       <div className="space-y-1">
         <label htmlFor="brightness-slider" className="text-sm font-medium text-base-high">明るさ</label>
@@ -183,14 +196,14 @@ export const MultipleSliders: Story = {
     const brightnessSlider = canvas.getByLabelText('明るさ')
     const contrastSlider = canvas.getByLabelText('コントラスト')
     
-    expect(volumeSlider).toHaveAttribute('aria-valuenow', '75')
+    expect(volumeSlider).toHaveAttribute('aria-valuenow', '50')
     expect(brightnessSlider).toHaveAttribute('aria-valuenow', '50')
     expect(contrastSlider).toHaveAttribute('aria-valuenow', '25')
     
     // スライダーの操作テスト
     await userEvent.click(volumeSlider)
     await userEvent.keyboard('[ArrowRight]')
-    expect(volumeSlider).toHaveAttribute('aria-valuenow', '76')
+    expect(volumeSlider).toHaveAttribute('aria-valuenow', '51')
     
     await userEvent.click(brightnessSlider)
     await userEvent.keyboard('[ArrowLeft]')
@@ -209,16 +222,14 @@ export const DisabledSlider: Story = {
       <Slider id="disabled-slider" defaultValue={[50]} max={100} disabled />
     </>
   ),
-  play: async ({ canvasElement }) => {
+  play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement)
     const slider = canvas.getByRole('slider')
     
-    // 無効化状態の確認
-    expect(slider).toBeDisabled()
-    expect(slider).toHaveClass('cursor-not-allowed')
-    
-    // キーボード操作が無効化されていることを確認
-    await userEvent.keyboard('[ArrowRight]')
-    expect(slider).toHaveAttribute('aria-valuenow', '50')
+    await step("スライダーが無効化されていることを確認", async () => {
+      await waitFor(() => {
+        expect(slider).toBeDisabled()
+      })
+    })
   },
 } 

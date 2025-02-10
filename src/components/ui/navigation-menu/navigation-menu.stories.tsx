@@ -12,7 +12,7 @@ import {
   NavigationMenuContent,
   NavigationMenuLink,
 } from '@/components/ui/navigation-menu'
-import { within, userEvent } from '@storybook/testing-library'
+import { within, userEvent, waitFor } from '@storybook/testing-library'
 import { expect } from '@storybook/jest'
 
 const meta = {
@@ -204,11 +204,13 @@ export const Simple: Story = {
     
     // メニュー1の操作テスト
     await userEvent.click(triggers[0])
-    const menu1Content = document.querySelector('[role="region"]')
+    const menu1Content = await waitFor(() =>
+      document.querySelector('[data-testid="menu-content-1"]')
+    )
     expect(menu1Content).toBeInTheDocument()
     
     // メニュー1の内容確認
-    const menu1Links = within(menu1Content as HTMLElement).getAllByRole('link')
+    const menu1Links = within(menu1Content).getAllByRole('link')
     expect(menu1Links).toHaveLength(3)
     expect(menu1Links[0]).toHaveTextContent('リンク1')
     expect(menu1Links[1]).toHaveTextContent('リンク2')
@@ -216,13 +218,13 @@ export const Simple: Story = {
     
     // メニュー2の操作テスト
     await userEvent.click(triggers[1])
-    const menu2Content = document.querySelector(
-      '[data-testid="menu-content-2"]'
+    const menu2Content = await waitFor(() =>
+      document.querySelector('[data-testid="menu-content-2"]')
     )
     expect(menu2Content).toBeInTheDocument()
     
     // メニュー2の内容確認
-    const menu2Links = within(menu2Content as HTMLElement).getAllByRole('link')
+    const menu2Links = within(menu2Content).getAllByRole('link')
     expect(menu2Links).toHaveLength(2)
     expect(menu2Links[0]).toHaveTextContent('リンク4')
     expect(menu2Links[1]).toHaveTextContent('リンク5')
@@ -232,7 +234,7 @@ export const Simple: Story = {
     expect(triggers[0]).toHaveFocus()
     
     await userEvent.keyboard('{Enter}') // メニューを開く
-    const menu1LinksAfterKeyboard = within(menu1Content as HTMLElement).getAllByRole('link')
+    const menu1LinksAfterKeyboard = within(menu1Content).getAllByRole('link')
     expect(menu1LinksAfterKeyboard[0]).toBeVisible()
   },
 } 

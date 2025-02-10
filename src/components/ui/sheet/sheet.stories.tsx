@@ -14,7 +14,7 @@ import {
   SheetDescription,
 } from '@/components/ui/sheet'
 import { Button } from '@/components/ui/button'
-import { within, userEvent } from '@storybook/testing-library'
+import { within, userEvent, waitFor } from '@storybook/testing-library'
 import { expect } from '@storybook/jest'
 
 const meta = {
@@ -68,25 +68,28 @@ export const Default: Story = {
     const triggerButton = canvas.getByText('シートを開く')
     expect(triggerButton).toBeInTheDocument()
     
+    // 初期状態でシートが非表示であることを確認
+    expect(canvas.queryByRole('dialog')).not.toBeVisible()
+    
     // シートを開く
     await userEvent.click(triggerButton)
     
-    // シートの内容を確認
-    const dialog = document.querySelector('[role="dialog"]')
-    expect(dialog).toBeInTheDocument()
+    // Sheet が表示されるのを待つ
+    const sheet = await waitFor(() => canvas.getByRole('dialog'))
+    expect(sheet).toBeVisible()
     
-    const dialogContent = within(dialog as HTMLElement)
-    expect(dialogContent.getByText('シートのタイトル')).toBeVisible()
-    expect(dialogContent.getByText('シートの説明文をここに記述します。')).toBeVisible()
-    expect(dialogContent.getByText('シートのメインコンテンツをここに配置します。')).toBeVisible()
+    const sheetContent = within(sheet as HTMLElement)
+    expect(sheetContent.getByText('シートのタイトル')).toBeVisible()
+    expect(sheetContent.getByText('シートの説明文をここに記述します。')).toBeVisible()
+    expect(sheetContent.getByText('シートのメインコンテンツをここに配置します。')).toBeVisible()
     
     // 閉じるボタンの確認
-    const closeButton = dialogContent.getByRole('button', { name: 'Close' })
+    const closeButton = sheetContent.getByRole('button', { name: 'Close' })
     expect(closeButton).toBeVisible()
     
     // シートを閉じる
     await userEvent.click(closeButton)
-    expect(dialog).not.toBeVisible()
+    expect(sheet).not.toBeVisible()
   },
 }
 
@@ -203,19 +206,17 @@ export const WithCustomContent: Story = {
       </SheetContent>
     </Sheet>
   ),
-  play: async ({ canvasElement }) => {
+  play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement)
     
-    // トリガーボタンの確認
-    const trigger = canvas.getByRole('button', { name: '設定を開く' })
-    expect(trigger).toBeInTheDocument()
+    await step("サイドバーを開く", async () => {
+      const trigger = canvas.getByRole("button", { name: "設定を開く" })
+      await userEvent.click(trigger)
+    })
     
-    // シートを開く
-    await userEvent.click(trigger)
-    
-    // シートの内容を確認
-    const sheet = document.querySelector('[role="dialog"]')
-    expect(sheet).toBeInTheDocument()
+    // Sheet が表示されるのを待つ
+    const sheet = await waitFor(() => canvas.getByRole('dialog'))
+    expect(sheet).toBeVisible()
     
     const sheetContent = within(sheet as HTMLElement)
     
@@ -239,9 +240,16 @@ export const WithCustomContent: Story = {
     expect(footerButtons[0]).toHaveTextContent('キャンセル')
     expect(footerButtons[1]).toHaveTextContent('変更を保存')
     
-    // シートを閉じる
-    const closeButton = sheetContent.getByRole('button', { name: 'Close' })
-    await userEvent.click(closeButton)
-    expect(sheet).not.toBeVisible()
+    await step("サイドバーを閉じる", async () => {
+      const closeButton = sheetContent.getByRole('button', { name: 'Close' })
+      await userEvent.click(closeButton)
+    })
+
+    await step("サイドバーが閉じたことを確認", async () => {
+      // 要素が存在しないことを確認 (queryBy... を使用)
+      expect(
+        canvas.queryByText('設定'),
+      ).not.toBeInTheDocument()
+    })
   },
 } 

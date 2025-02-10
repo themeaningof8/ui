@@ -165,8 +165,8 @@ export const WithCheckboxItems: Story = {
     expect(checkboxItems[2]).toHaveAttribute('aria-checked', 'false')
     
     // チェックボックスの操作テスト
-    await userEvent.click(checkboxItems[1])
-    expect(checkboxItems[1]).toHaveAttribute('aria-checked', 'true')
+    await userEvent.click(checkboxItems[0])
+    expect(checkboxItems[0]).toHaveAttribute('aria-checked', 'true')
   },
 }
 WithCheckboxItems.parameters = {

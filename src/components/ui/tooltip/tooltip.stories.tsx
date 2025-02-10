@@ -5,7 +5,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { within, userEvent } from '@storybook/testing-library';
+import { within, userEvent, waitFor } from '@storybook/testing-library';
 import { expect } from '@storybook/jest';
 
 /**
@@ -55,19 +55,32 @@ export const Default: Story = {
       </TooltipProvider>
     </div>
   ),
-  play: async ({ canvasElement }) => {
+  play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
-    const trigger = canvas.getByRole('button', { name: /ホバーしてください/ });
+    const button = canvas.getByRole("button", { name: "ホバーしてください" });
 
-    // トリガーにホバーする
-    await userEvent.hover(trigger);
+    await step("ホバー", async () => {
+      await userEvent.hover(button);
+    });
 
-    // ツールチップが表示されることを確認
-    const tooltipContent = await canvas.findByText('ツールチップが表示されました');
-    expect(tooltipContent).toBeVisible();
+    // ツールチップが表示されるのを待つ
+    await step("ツールチップ表示確認", async () => {
+      await waitFor(() => {
+        expect(canvas.getByText("ツールチップが表示されました.")).toBeVisible();
+      });
+    });
 
-    // トリガーからマウスを離す
-    await userEvent.unhover(trigger);
+    await step("アンホバー", async () => {
+      await userEvent.unhover(button);
+    });
+
+    await step("ツールチップ非表示確認", async () => {
+      await waitFor(() => {
+        expect(
+          canvas.queryByText("ツールチップが表示されました."),
+        ).not.toBeVisible();
+      });
+    });
   },
 };
 

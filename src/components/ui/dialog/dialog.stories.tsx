@@ -116,7 +116,7 @@ export const Confirmation: Story = {
   render: () => (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="destructive">削除</Button>
+        <Button variant="outline">Responsive Dialog</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
@@ -154,10 +154,10 @@ export const Confirmation: Story = {
     expect(dialogContent.getByText('この操作は取り消すことができません。削除後、このデータは完全に失われます。')).toBeInTheDocument()
     
     // ボタンの確認
-    const cancelButton = dialogContent.getByText('キャンセル')
-    const confirmButton = dialogContent.getByText('削除する')
-    expect(cancelButton).toBeInTheDocument()
-    expect(confirmButton).toBeInTheDocument()
+    const cancelButton = dialogContent.getByRole('button', { name: 'キャンセル' })
+    const confirmButton = dialogContent.getByRole('button', { name: '削除する' })
+    expect(cancelButton).toBeVisible()
+    expect(confirmButton).toBeVisible()
     expect(confirmButton).toHaveClass('destructive')
   },
 }
@@ -266,7 +266,7 @@ export const WithCustomStyles: Story = {
           <div className="py-6">
             <p>Content with custom styling</p>
           </div>
-          <DialogFooter className="border-t pt-4">
+          <DialogFooter role="footer">
             <Button variant="outline" type="button">Cancel</Button>
             <Button type="submit">Continue</Button>
           </DialogFooter>

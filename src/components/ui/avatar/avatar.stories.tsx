@@ -4,7 +4,7 @@
  */
 import type { Meta, StoryObj } from '@storybook/react'
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
-import { within } from '@storybook/testing-library'
+import { within, waitFor } from '@storybook/testing-library'
 import { expect } from '@storybook/jest'
 
 const meta = {
@@ -41,10 +41,12 @@ export const Default: Story = {
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
-    const image = canvas.getByRole('img')
-    expect(image).toBeInTheDocument()
-    expect(image).toHaveAttribute('alt', '@shadcn')
-    expect(image).toHaveAttribute('src', 'https://github.com/shadcn.png')
+    // AvatarImage コンポーネントに role="img" が設定されているか確認
+    await waitFor(() => {
+      expect(canvas.getByRole('img')).toBeInTheDocument()
+    })
+    expect(canvas.getByRole('img')).toHaveAttribute('alt', '@shadcn')
+    expect(canvas.getByRole('img')).toHaveAttribute('src', 'https://github.com/shadcn.png')
   },
 }
 
@@ -97,6 +99,13 @@ export const CustomSize: Story = {
     expect(small).toHaveClass('h-8', 'w-8')
     expect(medium).toHaveClass('h-16', 'w-16')
     expect(large).toHaveClass('h-24', 'w-24')
+
+    // width と height スタイルが適用されているか確認
+    const avatar = canvas.getByRole('img')
+    expect(avatar).toHaveStyle({
+      width: '80px',
+      height: '80px',
+    })
   },
 }
 

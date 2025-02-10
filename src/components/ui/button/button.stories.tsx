@@ -84,12 +84,12 @@ export const Variants: Story = {
     
     // 各バリアントのスタイルを確認
     const [defaultBtn, destructive, outline, secondary, ghost, link] = buttons
-    expect(defaultBtn).toHaveClass('bg-primary')
-    expect(destructive).toHaveClass('bg-destructive')
-    expect(outline).toHaveClass('border-input')
-    expect(secondary).toHaveClass('bg-secondary')
-    expect(ghost).toHaveClass('hover:bg-accent')
-    expect(link).toHaveClass('text-primary')
+    expect(defaultBtn).toHaveClass('bg-base-solid')
+    expect(destructive).toHaveClass('bg-destructive-solid')
+    expect(outline).toHaveClass('border-base-ui-border')
+    expect(secondary).toHaveClass('bg-base-subtle-bg')
+    expect(ghost).toHaveClass('hover:bg-base-ui-hover')
+    expect(link).toHaveClass('text-base-solid')
   },
 }
 
@@ -179,11 +179,11 @@ export const WithIcon: Story = {
 export const Loading: Story = {
   render: () => (
     <div className="flex gap-4">
-      <Button isLoading>
+      <Button>
         <Loader2 className="mr-2 animate-spin" />
         読み込み中...
       </Button>
-      <Button isLoading variant="outline">
+      <Button variant="outline">
         <Loader2 className="mr-2 animate-spin" />
         読み込み中...
       </Button>

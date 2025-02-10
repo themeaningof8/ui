@@ -5,7 +5,7 @@
 
 import type { Meta, StoryObj } from '@storybook/react'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { within } from '@storybook/testing-library'
+import { within, waitFor } from '@storybook/testing-library'
 import { expect } from '@storybook/jest'
 
 const meta = {
@@ -50,15 +50,16 @@ export const Default: Story = {
     const canvas = within(canvasElement)
     
     // スクロールエリアの存在確認
-    const scrollArea = canvas.getByRole('region')
-    expect(scrollArea).toBeInTheDocument()
+    await waitFor(() => {
+      expect(canvas.getByRole('region')).toBeInTheDocument()
+    })
     
     // コンテンツの確認
     const items = canvas.getAllByText(/項目 \d+：/)
     expect(items).toHaveLength(10)
     
     // スクロールバーの確認
-    const scrollbar = scrollArea.querySelector('[role="scrollbar"]')
+    const scrollbar = canvas.getByRole('scrollbar')
     expect(scrollbar).toBeInTheDocument()
   },
 }
@@ -71,13 +72,13 @@ export const LongContent: Story = {
     <ScrollArea className="h-[300px] w-[350px] rounded-md border p-4">
       <div className="space-y-4">
         <h4 className="text-sm font-medium leading-none">長いコンテンツ</h4>
-        <p className="text-sm text-base-low">
+        <p className="text-sm text-base-low-contrast-text">
           以下のコンテンツは長いテキストを含み、垂直方向にスクロール可能です。
         </p>
         {Array.from({ length: 20 }, (_, i) => (
           <div key={generateId('long-content', i)} className="rounded-md border p-4">
             <h5 className="mb-2 text-sm font-medium">セクション {i + 1}</h5>
-            <p className="text-sm text-base-low">
+            <p className="text-sm text-base-low-contrast-text">
               これは長いコンテンツの例です。スクロールエリアを使用することで、
               限られたスペースでも多くのコンテンツを表示できます。
             </p>
@@ -90,15 +91,16 @@ export const LongContent: Story = {
     const canvas = within(canvasElement)
     
     // スクロールエリアの存在確認
-    const scrollArea = canvas.getByRole('region')
-    expect(scrollArea).toBeInTheDocument()
+    await waitFor(() => {
+      expect(canvas.getByRole('region')).toBeInTheDocument()
+    })
     
     // セクションの確認
     const sections = canvas.getAllByText(/セクション \d+/)
     expect(sections).toHaveLength(20)
     
     // スクロールバーの確認
-    const scrollbar = scrollArea.querySelector('[role="scrollbar"]')
+    const scrollbar = canvas.getByRole('scrollbar')
     expect(scrollbar).toBeInTheDocument()
     expect(scrollbar).toHaveAttribute('data-orientation', 'vertical')
   },
@@ -117,7 +119,7 @@ export const HorizontalScroll: Story = {
             className="h-32 w-32 flex-shrink-0 rounded-md border p-4"
           >
             <h5 className="mb-2 text-sm font-medium">カード {i + 1}</h5>
-            <p className="text-sm text-base-low">
+            <p className="text-sm text-base-low-contrast-text">
               水平スクロール可能なカードの例です。
             </p>
           </div>
@@ -129,16 +131,18 @@ export const HorizontalScroll: Story = {
     const canvas = within(canvasElement)
     
     // スクロールエリアの存在確認
-    const scrollArea = canvas.getByRole('region')
-    expect(scrollArea).toBeInTheDocument()
+    await waitFor(() => {
+      expect(canvas.getByRole('region')).toBeInTheDocument()
+    })
     
     // カードの確認
     const cards = canvas.getAllByText(/カード \d+/)
     expect(cards).toHaveLength(10)
     
     // 水平スクロールバーの確認
-    const scrollbar = scrollArea.querySelector('[role="scrollbar"][data-orientation="horizontal"]')
+    const scrollbar = canvas.getByRole('scrollbar')
     expect(scrollbar).toBeInTheDocument()
+    expect(scrollbar).toHaveAttribute('data-orientation', 'horizontal')
   },
 }
 
@@ -147,18 +151,18 @@ export const HorizontalScroll: Story = {
  */
 export const CustomStyles: Story = {
   render: () => (
-    <ScrollArea className="h-[200px] w-[350px] rounded-md bg-base-ui p-4">
+    <ScrollArea className="h-[200px] w-[350px] rounded-md bg-base-ui-bg p-4">
       <div className="space-y-4">
-        <h4 className="text-sm font-medium leading-none text-base-high">
+        <h4 className="text-sm font-medium leading-none text-base-high-contrast-text">
           カスタムスタイル
         </h4>
         {Array.from({ length: 10 }, (_, i) => (
           <div
             key={generateId('custom-item', i)}
-            className="rounded-md bg-background p-4 shadow-sm"
+            className="rounded-md bg-base-app-bg p-4 shadow-sm"
           >
             <h5 className="mb-2 text-sm font-medium">項目 {i + 1}</h5>
-            <p className="text-sm text-base-low">
+            <p className="text-sm text-base-low-contrast-text">
               カスタムスタイルを適用したコンテンツの例です。
             </p>
           </div>
@@ -170,9 +174,10 @@ export const CustomStyles: Story = {
     const canvas = within(canvasElement)
     
     // スクロールエリアの存在確認
-    const scrollArea = canvas.getByRole('region')
-    expect(scrollArea).toBeInTheDocument()
-    expect(scrollArea).toHaveClass('bg-base-ui')
+    await waitFor(() => {
+      expect(canvas.getByRole('region')).toBeInTheDocument()
+    })
+    expect(canvas.getByRole('region')).toHaveClass('bg-base-ui-bg')
     
     // コンテンツの確認
     const items = canvas.getAllByText(/項目 \d+/)
@@ -181,7 +186,7 @@ export const CustomStyles: Story = {
     // スタイルの確認
     const contentItems = canvas.getAllByText(/カスタムスタイルを適用したコンテンツの例です。/)
     for (const item of contentItems) {
-      expect(item.parentElement).toHaveClass('bg-background', 'shadow-sm')
+      expect(item.parentElement).toHaveClass('bg-base-app-bg', 'shadow-sm')
     }
   },
 } 

@@ -3,3 +3,7 @@
 @import "./motion.css";
 
 @plugin "tailwindcss-animate";
+
+* {
+	@apply border-base-subtle-border ring-base-subtle-border;
+}
