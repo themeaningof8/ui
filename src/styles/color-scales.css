@@ -67,6 +67,8 @@
 	--color-base-on-solid-hover: oklch(99.2% 0.0025 266.8);
 	--color-destructive-on-solid: oklch(98.1% 0.0047 25);
 	--color-destructive-on-solid-hover: oklch(99.2% 0.0025 25);
+
+	--color-ring: oklch(98.1% 0.0047 278);
 }
 
 [data-theme="dark"] {
@@ -99,4 +101,12 @@
 	--color-destructive-on-solid-hover: oklch(99.2% 0.0025 25);
 	--color-destructive-low-contrast-text: oklch(65.7% 0.1234 25);
 	--color-destructive-high-contrast-text: oklch(95.1% 0.0428 25);
+
+	/* ソリッドカラー上のテキストカラー - ライトモード */
+	--color-base-on-solid: oklch(98.1% 0.0047 278);
+	--color-base-on-solid-hover: oklch(99.2% 0.0025 278);
+	--color-base-on-solid: oklch(98.1% 0.0047 266.8);
+	--color-base-on-solid-hover: oklch(99.2% 0.0025 266.8);
+	--color-destructive-on-solid: oklch(98.1% 0.0047 25);
+	--color-destructive-on-solid-hover: oklch(99.2% 0.0025 25);
 }

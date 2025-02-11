@@ -6,7 +6,7 @@ import useEmblaCarousel, {
 } from "embla-carousel-react"
 import { ArrowLeft, ArrowRight } from "lucide-react"
 
-import { cn } from "@/lib/cn"
+import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 
 /**
@@ -143,6 +143,7 @@ const Carousel = React.forwardRef<
           onKeyDownCapture={handleKeyDown}
           className={cn("relative", className)}
           aria-roledescription="carousel"
+          data-testid="carousel"
           {...props}
         >
           {children}

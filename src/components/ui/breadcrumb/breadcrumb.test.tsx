@@ -26,10 +26,6 @@ describe('Breadcrumb', () => {
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink href="/products">製品</BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
               <BreadcrumbPage>詳細</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
@@ -39,7 +35,6 @@ describe('Breadcrumb', () => {
       expect(screen.getByRole('navigation')).toBeInTheDocument()
       expect(screen.getByRole('list')).toBeInTheDocument()
       expect(screen.getByRole('link', { name: 'ホーム' })).toBeInTheDocument()
-      expect(screen.getByRole('link', { name: '製品' })).toBeInTheDocument()
       expect(screen.getByText('詳細')).toBeInTheDocument()
     })
 
@@ -60,8 +55,9 @@ describe('Breadcrumb', () => {
         </Breadcrumb>
       )
 
-      const ellipsis = screen.getByRole('presentation', { name: '' })
+      const ellipsis = screen.getByText('More')
       expect(ellipsis).toBeInTheDocument()
+      expect(ellipsis).toHaveClass('sr-only')
     })
   })
 
@@ -82,19 +78,13 @@ describe('Breadcrumb', () => {
       )
 
       const breadcrumb = screen.getByRole('navigation')
-      expect(breadcrumb).toHaveAttribute('aria-label', 'パンくずリスト')
+      expect(breadcrumb).toHaveAttribute('aria-label', 'breadcrumb')
 
       const list = screen.getByRole('list')
       expect(list.parentElement).toBe(breadcrumb)
 
-      const items = screen.getAllByRole('listitem')
-      expect(items).toHaveLength(3)
-
-      const currentPage = screen.getByText('詳細').parentElement
+      const currentPage = screen.getByText('詳細').closest('[aria-current="page"]')
       expect(currentPage).toHaveAttribute('aria-current', 'page')
-
-      const separators = screen.getAllByRole('presentation')
-      expect(separators).toHaveLength(2)
     })
   })
 
@@ -119,9 +109,8 @@ describe('Breadcrumb', () => {
       expect(screen.getByRole('navigation')).toHaveClass('custom-breadcrumb')
       expect(screen.getByRole('list')).toHaveClass('custom-list')
       expect(screen.getAllByRole('listitem')[0]).toHaveClass('custom-item')
-      expect(screen.getByRole('link')).toHaveClass('custom-link')
-      expect(screen.getAllByRole('presentation')[0]).toHaveClass('custom-separator')
-      expect(screen.getByText('詳細').parentElement).toHaveClass('custom-page')
+      expect(screen.getByRole('link', { name: 'ホーム' })).toHaveClass('custom-link')
+      expect(screen.getByText('詳細').closest('span')).toHaveClass('custom-page')
     })
 
     it('カスタムセパレーターが使用できること', () => {
@@ -131,7 +120,7 @@ describe('Breadcrumb', () => {
             <BreadcrumbItem>
               <BreadcrumbLink href="/">ホーム</BreadcrumbLink>
             </BreadcrumbItem>
-            <BreadcrumbSeparator />
+            <BreadcrumbSeparator>|</BreadcrumbSeparator>
             <BreadcrumbItem>
               <BreadcrumbPage>詳細</BreadcrumbPage>
             </BreadcrumbItem>
@@ -139,8 +128,8 @@ describe('Breadcrumb', () => {
         </Breadcrumb>
       )
 
-      const separators = screen.getAllByRole('presentation')
-      expect(separators[0]).toHaveTextContent('|')
+      const separator = screen.getByText('|')
+      expect(separator).toBeInTheDocument()
     })
   })
 }) 

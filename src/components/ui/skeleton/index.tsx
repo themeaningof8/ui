@@ -2,7 +2,7 @@
  * @file スケルトンUIコンポーネント
  * @description コンテンツの読み込み中に表示されるスケルトンUIを提供します
  */
-import { cn } from '@/lib/cn'
+import { cn } from '@/lib/utils'
 
 /**
  * Skeletonコンポーネント

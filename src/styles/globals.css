@@ -2,8 +2,19 @@
 @import "./color-scales.css";
 @import "./motion.css";
 
+@custom-variant dark (&:is(.dark *));
+
 @plugin "tailwindcss-animate";
 
 * {
 	@apply border-base-subtle-border ring-base-subtle-border;
+}
+
+@layer base {
+	* {
+		@apply border-base-subtle-border ring-ring;
+	}
+	body {
+		@apply bg-base-app-bg text-base-high-contrast-text;
+	}
 }

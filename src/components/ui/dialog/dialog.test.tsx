@@ -21,9 +21,7 @@ describe('Dialog', () => {
     it('すべてのコンポーネントが正しくレンダリングされること', () => {
       render(
         <Dialog>
-          <DialogTrigger>
-            <button>ダイアログを開く</button>
-          </DialogTrigger>
+          <DialogTrigger>ダイアログを開く</DialogTrigger>
           <DialogContent>
             <DialogHeader>
               <DialogTitle>ダイアログのタイトル</DialogTitle>
@@ -31,9 +29,7 @@ describe('Dialog', () => {
             </DialogHeader>
             <div>ダイアログのコンテンツ</div>
             <DialogFooter>
-              <DialogClose>
-                <button>閉じる</button>
-              </DialogClose>
+              <DialogClose>閉じる</DialogClose>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -58,9 +54,7 @@ describe('Dialog', () => {
       const onOpenChange = vi.fn()
       render(
         < Dialog onOpenChange={onOpenChange} >
-          <DialogTrigger>
-            <button>ダイアログを開く</button>
-          </DialogTrigger>
+          <DialogTrigger>ダイアログを開く</DialogTrigger>
           <DialogContent>
             <DialogHeader>
               <DialogTitle>ダイアログのタイトル</DialogTitle>
@@ -78,17 +72,13 @@ describe('Dialog', () => {
       const onOpenChange = vi.fn()
       render(
         < Dialog onOpenChange={onOpenChange} >
-          <DialogTrigger>
-            <button>ダイアログを開く</button>
-          </DialogTrigger>
+          <DialogTrigger>ダイアログを開く</DialogTrigger>
           <DialogContent>
             <DialogHeader>
               <DialogTitle>ダイアログのタイトル</DialogTitle>
             </DialogHeader>
             <DialogFooter>
-              <DialogClose>
-                <button>閉じる</button>
-              </DialogClose>
+              <DialogClose>閉じる</DialogClose>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -105,10 +95,8 @@ describe('Dialog', () => {
     it('エスケープキーを押すとダイアログが閉じること', () => {
       const onOpenChange = vi.fn()
       render(
-        < Dialog onOpenChange={onOpenChange} >
-          <DialogTrigger>
-            <button>ダイアログを開く</button>
-          </DialogTrigger>
+        <Dialog onOpenChange={onOpenChange} >
+          <DialogTrigger>ダイアログを開く</DialogTrigger>
           <DialogContent>
             <DialogHeader>
               <DialogTitle>ダイアログのタイトル</DialogTitle>
@@ -128,9 +116,7 @@ describe('Dialog', () => {
       const onOpenChange = vi.fn()
       render(
         < Dialog onOpenChange={onOpenChange} >
-          <DialogTrigger>
-            <button>ダイアログを開く</button>
-          </DialogTrigger>
+          <DialogTrigger>ダイアログを開く</DialogTrigger>
           <DialogContent>
             <DialogHeader>
               <DialogTitle>ダイアログのタイトル</DialogTitle>
@@ -151,9 +137,7 @@ describe('Dialog', () => {
     it('DialogContent に role="dialog" が設定されていること', () => {
       render(
         <Dialog>
-          <DialogTrigger>
-            <button>ダイアログを開く</button>
-          </DialogTrigger>
+          <DialogTrigger>ダイアログを開く</DialogTrigger>
           <DialogContent>
             <DialogHeader>
               <DialogTitle>ダイアログのタイトル</DialogTitle>
@@ -171,9 +155,7 @@ describe('Dialog', () => {
     it('DialogTitle に id が設定され、DialogContent の aria-labelledby で参照されていること', () => {
       render(
         <Dialog>
-          <DialogTrigger>
-            <button>ダイアログを開く</button>
-          </DialogTrigger>
+          <DialogTrigger>ダイアログを開く</DialogTrigger>
           <DialogContent>
             <DialogHeader>
               <DialogTitle>ダイアログのタイトル</DialogTitle>
@@ -194,9 +176,7 @@ describe('Dialog', () => {
     it('DialogDescription に id が設定され、DialogContent の aria-describedby で参照されていること', () => {
       render(
         <Dialog>
-          <DialogTrigger>
-            <button>ダイアログを開く</button>
-          </DialogTrigger>
+          <DialogTrigger>ダイアログを開く</DialogTrigger>
           <DialogContent>
             <DialogHeader>
               <DialogTitle>ダイアログのタイトル</DialogTitle>

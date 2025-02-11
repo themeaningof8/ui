@@ -6,7 +6,7 @@
 import { describe, it, expect } from 'vitest'
 import { render, screen } from '@/tests/test-utils'
 import { Alert, AlertTitle, AlertDescription, alertVariants } from '.'
-import { cn } from '@/lib/cn'
+import { cn } from '@/lib/utils'
 
 describe('Alert', () => {
   describe('基本レンダリングテスト', () => {
