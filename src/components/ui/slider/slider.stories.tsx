@@ -1,235 +1,145 @@
-/**
- * @file Sliderのストーリー
- * @description Sliderの様々な状態とバリエーションを表示
- */
-
 import type { Meta, StoryObj } from '@storybook/react'
-import { Slider } from '@/components/ui/slider'
-import { within, userEvent } from '@storybook/testing-library'
-import { expect } from '@storybook/jest'
-import { Label } from '@/components/ui/label'
-import { waitFor } from '@storybook/jest'
+import { Label } from '../label'
+import { Slider } from '.'
 
+/**
+ * `Slider`は、数値範囲から値を選択するためのコンポーネントです。
+ * Radix UIのSliderプリミティブをベースに、アクセシビリティと一貫したスタイリングを提供します。
+ */
 const meta = {
   title: 'UI/Slider',
   component: Slider,
   parameters: {
     layout: 'centered',
-    onLoad: () => {
-      const consoleError = console.error;
-      console.error = (...args) => {
-        consoleError(...args);
-        throw new Error(args.join(' '));
-      };
-    },
   },
   tags: ['autodocs'],
 } satisfies Meta<typeof Slider>
 
 export default meta
-type Story = StoryObj<typeof meta>
+type Story = StoryObj<typeof Slider>
 
 /**
- * @description 基本的なスライダーの表示
+ * 基本的な使用例です。
  */
 export const Default: Story = {
-  args: {
-    defaultValue: [50],
-    max: 100,
-    step: 1,
-  },
-  play: async ({ canvasElement, step }) => {
-    const canvas = within(canvasElement)
-    const slider = canvas.getByRole('slider')
-    
-    // スライダーの存在確認
-    expect(slider).toBeInTheDocument()
-    
-    // 初期値の確認
-    expect(slider).toHaveAttribute('aria-valuenow', '50')
-    expect(slider).toHaveAttribute('aria-valuemin', '0')
-    expect(slider).toHaveAttribute('aria-valuemax', '100')
-    
-    // ドラッグ操作 (例: 51 に設定)
-    const sliderRect = slider.getBoundingClientRect()
-    const x = sliderRect.left + sliderRect.width * 0.51
-    const y = sliderRect.top + sliderRect.height / 2
-
-    await userEvent.pointer([
-      { target: slider, coords: { x: sliderRect.left, y } },
-      { target: slider, coords: { x, y } },
-      { target: slider, coords: { x, y }, pointerType: 'mouse' },
-    ])
-
-    await step('Check value after drag', async () => {
-      expect(slider).toHaveAttribute('aria-valuenow', '51')
-    })
-
-    await step("スライダーの初期値確認", async () => {
-      expect(slider).toHaveAttribute("aria-valuetext", "50");
-    });
-  },
-}
-
-/**
- * @description 小さいサイズのスライダー
- */
-export const Small: Story = {
-  args: {
-    defaultValue: [50],
-    max: 100,
-    step: 1,
-    className: 'h-4',
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    const slider = canvas.getByRole('slider')
-    
-    // スライダーの存在確認
-    expect(slider).toBeInTheDocument()
-    
-    // サイズクラスの確認
-    expect(slider.closest('[role="slider"]')).toHaveClass('h-4')
-  },
-}
-
-/**
- * @description 大きいサイズのスライダー
- */
-export const Large: Story = {
-  args: {
-    defaultValue: [50],
-    max: 100,
-    step: 1,
-    className: 'h-6',
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    const slider = canvas.getByRole('slider')
-    
-    // スライダーの存在確認
-    expect(slider).toBeInTheDocument()
-    
-    // サイズクラスの確認
-    expect(slider.closest('[role="slider"]')).toHaveClass('h-6')
-  },
-}
-
-/**
- * @description 無効化されたスライダー
- */
-export const Disabled: Story = {
-  args: {
-    defaultValue: [50],
-    max: 100,
-    step: 1,
-    disabled: true,
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    const slider = canvas.getByRole('slider')
-    
-    // 無効化状態の確認
-    expect(slider).toBeDisabled()
-    expect(slider).toHaveClass('cursor-not-allowed')
-    
-    // キーボード操作が無効化されていることを確認
-    await userEvent.keyboard('[ArrowRight]')
-    expect(slider).toHaveAttribute('aria-valuenow', '50')
-  },
-}
-
-/**
- * @description ステップ値が設定されたスライダー
- */
-export const WithSteps: Story = {
-  args: {
-    defaultValue: [0],
-    max: 100,
-    step: 10,
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    const slider = canvas.getByRole('slider')
-    
-    // 初期値の確認
-    expect(slider).toHaveAttribute('aria-valuenow', '0')
-    
-    // ステップ値でのキーボード操作をテスト
-    await userEvent.keyboard('[ArrowRight]')
-    expect(slider).toHaveAttribute('aria-valuenow', '10')
-    
-    await userEvent.keyboard('[ArrowRight]')
-    expect(slider).toHaveAttribute('aria-valuenow', '20')
-  },
-}
-
-/**
- * @description 複数のスライダーの表示
- */
-export const MultipleSliders: Story = {
   render: () => (
-    <div className="w-[60vw] space-y-4">
-      <div className="space-y-1">
-        <label htmlFor="volume-slider" className="text-sm font-medium text-base-high">音量</label>
-        <Slider id="volume-slider" defaultValue={[50]} max={100} />
-      </div>
-      <div className="space-y-1">
-        <label htmlFor="brightness-slider" className="text-sm font-medium text-base-high">明るさ</label>
-        <Slider id="brightness-slider" defaultValue={[50]} max={100} step={1} />
-      </div>
-      <div className="space-y-1">
-        <label htmlFor="contrast-slider" className="text-sm font-medium text-base-high">コントラスト</label>
-        <Slider id="contrast-slider" defaultValue={[25]} max={100} step={1} />
+    <Slider
+      defaultValue={[50]}
+      max={100}
+      step={1}
+      className="w-[60vw] max-w-[400px]"
+    />
+  ),
+}
+
+/**
+ * ラベル付きの例です。
+ */
+export const WithLabel: Story = {
+  render: () => (
+    <div className="grid w-full max-w-sm items-center gap-1.5">
+      <Label htmlFor="volume">Volume</Label>
+      <Slider
+        id="volume"
+        defaultValue={[50]}
+        max={100}
+        step={1}
+        className="w-[60vw] max-w-[400px]"
+      />
+      <div className="text-sm text-muted-foreground">
+        Adjust the volume level
       </div>
     </div>
   ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    
-    // 各スライダーの存在確認
-    const sliders = canvas.getAllByRole('slider')
-    expect(sliders).toHaveLength(3)
-    
-    // 各スライダーのラベルと初期値を確認
-    const volumeSlider = canvas.getByLabelText('音量')
-    const brightnessSlider = canvas.getByLabelText('明るさ')
-    const contrastSlider = canvas.getByLabelText('コントラスト')
-    
-    expect(volumeSlider).toHaveAttribute('aria-valuenow', '50')
-    expect(brightnessSlider).toHaveAttribute('aria-valuenow', '50')
-    expect(contrastSlider).toHaveAttribute('aria-valuenow', '25')
-    
-    // スライダーの操作テスト
-    await userEvent.click(volumeSlider)
-    await userEvent.keyboard('[ArrowRight]')
-    expect(volumeSlider).toHaveAttribute('aria-valuenow', '51')
-    
-    await userEvent.click(brightnessSlider)
-    await userEvent.keyboard('[ArrowLeft]')
-    expect(brightnessSlider).toHaveAttribute('aria-valuenow', '49')
-    
-    await userEvent.click(contrastSlider)
-    await userEvent.keyboard('[ArrowRight][ArrowRight]')
-    expect(contrastSlider).toHaveAttribute('aria-valuenow', '27')
-  },
 }
 
-export const DisabledSlider: Story = {
+/**
+ * 複数のつまみを持つ例です。
+ */
+export const MultipleThumb: Story = {
   render: () => (
-    <>
-      <Label htmlFor="disabled-slider">音量</Label>
-      <Slider id="disabled-slider" defaultValue={[50]} max={100} disabled />
-    </>
+    <div className="grid w-full max-w-sm items-center gap-1.5">
+      <Label htmlFor="range">Price Range</Label>
+      <Slider
+        id="range"
+        defaultValue={[25, 75]}
+        max={100}
+        step={1}
+        className="w-[60vw] max-w-[400px]"
+      />
+      <div className="flex justify-between text-sm text-muted-foreground">
+        <span>$0</span>
+        <span>$100</span>
+      </div>
+    </div>
   ),
-  play: async ({ canvasElement, step }) => {
-    const canvas = within(canvasElement)
-    const slider = canvas.getByRole('slider')
-    
-    await step("スライダーが無効化されていることを確認", async () => {
-      await waitFor(() => {
-        expect(slider).toBeDisabled()
-      })
-    })
-  },
+}
+
+/**
+ * ステップ値を持つ例です。
+ */
+export const WithSteps: Story = {
+  render: () => (
+    <div className="grid w-full max-w-sm items-center gap-1.5">
+      <Label htmlFor="steps">Size</Label>
+      <Slider
+        id="steps"
+        defaultValue={[40]}
+        max={100}
+        step={20}
+        className="w-[60vw] max-w-[400px]"
+      />
+      <div className="flex justify-between text-sm text-muted-foreground">
+        <span>XS</span>
+        <span>S</span>
+        <span>M</span>
+        <span>L</span>
+        <span>XL</span>
+      </div>
+    </div>
+  ),
+}
+
+/**
+ * 無効化された状態の例です。
+ */
+export const Disabled: Story = {
+  render: () => (
+    <div className="grid w-full max-w-sm items-center gap-1.5">
+      <Label htmlFor="disabled">Brightness</Label>
+      <Slider
+        id="disabled"
+        defaultValue={[50]}
+        max={100}
+        step={1}
+        disabled
+        className="w-[60vw] max-w-[400px]"
+      />
+      <div className="text-sm text-muted-foreground">
+        This slider is disabled
+      </div>
+    </div>
+  ),
+}
+
+/**
+ * カスタムスタイルを適用した例です。
+ */
+export const CustomStyle: Story = {
+  render: () => (
+    <div className="grid w-full max-w-sm items-center gap-1.5">
+      <Label htmlFor="custom">Temperature</Label>
+      <Slider
+        id="custom"
+        defaultValue={[30]}
+        max={100}
+        step={1}
+        className="w-[60vw] max-w-[400px] [&_[role=slider]]:bg-blue-500 [&_[role=slider]]:border-blue-500 [&_[class*=bg-primary]]:bg-blue-500"
+      />
+      <div className="flex justify-between text-sm text-muted-foreground">
+        <span>Cold</span>
+        <span>Hot</span>
+      </div>
+    </div>
+  ),
 } 

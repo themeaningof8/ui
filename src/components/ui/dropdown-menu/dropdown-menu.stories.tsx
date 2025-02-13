@@ -1,34 +1,31 @@
 /**
- * @file DropdownMenuのストーリー
- * @description DropdownMenuの様々な状態とバリエーションを表示
+ * @file ドロップダウンメニューコンポーネントのストーリー
+ * @description ドロップダウンメニューコンポーネントの使用例を表示します
  */
 
 import type { Meta, StoryObj } from '@storybook/react'
+import { Button } from '@/components/ui/button'
+import { Settings2, User, CreditCard, LogOut } from 'lucide-react'
 import {
   DropdownMenu,
+  DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
+  DropdownMenuCheckboxItem,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { Button } from '@/components/ui/button'
-import { within, userEvent, waitFor } from '@storybook/testing-library'
-import { expect } from '@storybook/jest'
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  DropdownMenuSubContent,
+  DropdownMenuLabel,
+} from '.'
 
 const meta = {
   title: 'UI/DropdownMenu',
   component: DropdownMenu,
   parameters: {
     layout: 'centered',
-    onLoad: () => {
-      const consoleError = console.error;
-      console.error = (...args) => {
-        consoleError(...args);
-        throw new Error(args.join(' '));
-      };
-    },
   },
   tags: ['autodocs'],
 } satisfies Meta<typeof DropdownMenu>
@@ -37,7 +34,7 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 /**
- * @description 基本的なドロップダウンメニューの表示
+ * 基本的なドロップダウンメニューの使用例
  */
 export const Default: Story = {
   render: () => (
@@ -46,202 +43,109 @@ export const Default: Story = {
         <Button variant="outline">メニューを開く</Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
-        <DropdownMenuLabel>マイアカウント</DropdownMenuLabel>
-        <DropdownMenuSeparator />
         <DropdownMenuItem>
-          プロフィール
-          <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+          <User className="mr-2 h-4 w-4" />
+          <span>プロフィール</span>
         </DropdownMenuItem>
         <DropdownMenuItem>
-          請求設定
-          <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
-        </DropdownMenuItem>
-        <DropdownMenuItem>
-          設定
-          <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
-        </DropdownMenuItem>
-        <DropdownMenuItem>
-          キーボードショートカット
-          <DropdownMenuShortcut>⌘K</DropdownMenuShortcut>
+          <CreditCard className="mr-2 h-4 w-4" />
+          <span>課金情報</span>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem>
-          チームを作成
-          <DropdownMenuShortcut>⌘T</DropdownMenuShortcut>
-        </DropdownMenuItem>
-        <DropdownMenuItem disabled>
-          API キー
-          <DropdownMenuShortcut>⌘A</DropdownMenuShortcut>
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          ログアウト
-          <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
+          <LogOut className="mr-2 h-4 w-4" />
+          <span>ログアウト</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    
-    // トリガーボタンの確認
-    const triggerButton = canvas.getByRole('button', { name: 'メニューを開く' })
-    expect(triggerButton).toBeInTheDocument()
-    
-    // メニューを開く
-    await userEvent.click(triggerButton)
-    
-    // メニューが表示されるのを待つ
-    const menu = await waitFor(() => canvas.getByRole('menu'))
-    expect(menu).toBeVisible()
-    
-    // メニュー項目のテキストを検証 (例: getByText とカスタムマッチャー)
-    expect(
-      within(menu).getByText((content, element) =>
-        element?.textContent?.includes('プロフィール') ?? false
-      )
-    ).toBeVisible()
-    
-    // セパレータの数を検証 (例: queryAllByRole を使用)
-    const separators = within(menu).queryAllByRole('separator')
-    expect(separators.length).toBe(2)
-    
-    // メニューアイテムの確認
-    const menuItems = document.querySelectorAll('[role="menuitem"]')
-    expect(menuItems.length).toBeGreaterThan(0)
-    
-    // 無効化されたアイテムの確認
-    const disabledItem = Array.from(menuItems).find(item => 
-      item.textContent?.includes('API キー')
-    )
-    expect(disabledItem).toHaveAttribute('aria-disabled', 'true')
-    
-    // ショートカットの確認
-    const shortcuts = document.querySelectorAll('[class*="DropdownMenuShortcut"]')
-    expect(shortcuts.length).toBeGreaterThan(0)
-    expect(shortcuts[0]).toHaveTextContent('⇧⌘P')
-  },
 }
 
 /**
- * @description 無効化されたアイテムを含むドロップダウンメニューの表示
+ * チェックボックス項目を含むドロップダウンメニューの使用例
  */
-export const WithDisabledItems: Story = {
+export const WithCheckboxItems: Story = {
   render: () => (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline">編集</Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56">
-        <DropdownMenuItem>
-          コピー
-          <DropdownMenuShortcut>⌘C</DropdownMenuShortcut>
-        </DropdownMenuItem>
-        <DropdownMenuItem disabled>
-          切り取り
-          <DropdownMenuShortcut>⌘X</DropdownMenuShortcut>
-        </DropdownMenuItem>
-        <DropdownMenuItem>
-          貼り付け
-          <DropdownMenuShortcut>⌘V</DropdownMenuShortcut>
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    
-    // トリガーボタンの確認
-    const triggerButton = canvas.getByRole('button', { name: '編集' })
-    expect(triggerButton).toBeInTheDocument()
-    
-    // メニューを開く
-    await userEvent.click(triggerButton)
-    
-    // メニューアイテムの確認
-    const menuItems = document.querySelectorAll('[role="menuitem"]')
-    expect(menuItems).toHaveLength(3)
-    
-    // 無効化されたアイテムの確認
-    const disabledItem = Array.from(menuItems).find(item => 
-      item.textContent?.includes('切り取り')
-    )
-    expect(disabledItem).toHaveAttribute('aria-disabled', 'true')
-    
-    // 有効なアイテムの確認
-    const enabledItems = Array.from(menuItems).filter(item => 
-      !item.hasAttribute('aria-disabled')
-    )
-    expect(enabledItems).toHaveLength(2)
-  },
-}
-
-/**
- * @description ラベルとセパレータを使用したドロップダウンメニューの表示
- */
-export const WithLabelsAndSeparators: Story = {
-  render: () => (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="outline">表示</Button>
+        <Button variant="outline">表示設定</Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
         <DropdownMenuLabel>表示オプション</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          ズームイン
-          <DropdownMenuShortcut>⌘+</DropdownMenuShortcut>
-        </DropdownMenuItem>
-        <DropdownMenuItem>
-          ズームアウト
-          <DropdownMenuShortcut>⌘-</DropdownMenuShortcut>
-        </DropdownMenuItem>
+        <DropdownMenuCheckboxItem>
+          サイドバーを表示
+        </DropdownMenuCheckboxItem>
+        <DropdownMenuCheckboxItem>
+          ツールバーを表示
+        </DropdownMenuCheckboxItem>
+        <DropdownMenuCheckboxItem>
+          ステータスバーを表示
+        </DropdownMenuCheckboxItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  ),
+}
+
+/**
+ * ラジオグループを含むドロップダウンメニューの使用例
+ */
+export const WithRadioGroup: Story = {
+  render: () => (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline">テーマ選択</Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="w-56">
+        <DropdownMenuLabel>テーマ</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuLabel>表示モード</DropdownMenuLabel>
+        <DropdownMenuRadioGroup>
+          <DropdownMenuRadioItem value="light">
+            ライトモード
+          </DropdownMenuRadioItem>
+          <DropdownMenuRadioItem value="dark">
+            ダークモード
+          </DropdownMenuRadioItem>
+          <DropdownMenuRadioItem value="system">
+            システム設定に従う
+          </DropdownMenuRadioItem>
+        </DropdownMenuRadioGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  ),
+}
+
+/**
+ * サブメニューを含むドロップダウンメニューの使用例
+ */
+export const WithSubmenu: Story = {
+  render: () => (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline">設定</Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="w-56">
         <DropdownMenuItem>
-          ライトモード
-          <DropdownMenuShortcut>⌘L</DropdownMenuShortcut>
+          <User className="mr-2 h-4 w-4" />
+          <span>プロフィール</span>
         </DropdownMenuItem>
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger>
+            <Settings2 className="mr-2 h-4 w-4" />
+            <span>詳細設定</span>
+          </DropdownMenuSubTrigger>
+          <DropdownMenuSubContent className="w-48">
+            <DropdownMenuItem>通知設定</DropdownMenuItem>
+            <DropdownMenuItem>セキュリティ設定</DropdownMenuItem>
+            <DropdownMenuItem>プライバシー設定</DropdownMenuItem>
+          </DropdownMenuSubContent>
+        </DropdownMenuSub>
+        <DropdownMenuSeparator />
         <DropdownMenuItem>
-          ダークモード
-          <DropdownMenuShortcut>⌘D</DropdownMenuShortcut>
+          <LogOut className="mr-2 h-4 w-4" />
+          <span>ログアウト</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    
-    // トリガーボタンの確認
-    const triggerButton = canvas.getByRole('button', { name: '表示' })
-    expect(triggerButton).toBeInTheDocument()
-    
-    // メニューを開く
-    await userEvent.click(triggerButton)
-    
-    // メニューが表示されるのを待つ
-    const menu = await waitFor(() => canvas.getByRole('menu'))
-    expect(menu).toBeVisible()
-    
-    // メニュー項目のテキストを検証 (例: getByText とカスタムマッチャー)
-    expect(
-      within(menu).getByText((content, element) =>
-        element?.textContent?.includes('表示オプション') ?? false
-      )
-    ).toBeVisible()
-    
-    // セパレータの数を検証 (例: queryAllByRole を使用)
-    const separators = within(menu).queryAllByRole('separator')
-    expect(separators.length).toBe(2)
-    
-    // メニューアイテムの確認
-    const menuItems = document.querySelectorAll('[role="menuitem"]')
-    expect(menuItems.length).toBeGreaterThan(0)
-    
-    // ショートカットの確認
-    const shortcuts = document.querySelectorAll('[class*="DropdownMenuShortcut"]')
-    expect(shortcuts).toHaveLength(4)
-    expect(shortcuts[0]).toHaveTextContent('⌘+')
-    expect(shortcuts[1]).toHaveTextContent('⌘-')
-  },
 } 

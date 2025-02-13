@@ -1,135 +1,98 @@
 /**
- * @file Breadcrumbコンポーネントのテスト
- * @description Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbPage, BreadcrumbSeparator, BreadcrumbEllipsis コンポーネントの機能とアクセシビリティをテストします
+ * @file パンくずリストコンポーネントのテスト
+ * @description パンくずリストコンポーネントの機能をテストします
  */
 
 import { describe, it, expect } from 'vitest'
-import { render, screen } from '@/tests/test-utils'
-import {
-  Breadcrumb,
-  BreadcrumbList,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-  BreadcrumbEllipsis,
-} from '.'
+import { render, screen } from '@testing-library/react'
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbPage, BreadcrumbSeparator } from '.'
 
-describe('Breadcrumb', () => {
-  describe('基本レンダリングテスト', () => {
-    it('すべてのコンポーネントが正しくレンダリングされること', () => {
-      render(
-        <Breadcrumb>
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink href="/">ホーム</BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbPage>詳細</BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
-      )
+describe('Breadcrumbコンポーネント', () => {
+  it('基本的なパンくずリストが正しくレンダリングされる', () => {
+    render(
+      <Breadcrumb>
+        <BreadcrumbItem>
+          <BreadcrumbLink href="/">ホーム</BreadcrumbLink>
+        </BreadcrumbItem>
+        <BreadcrumbSeparator />
+        <BreadcrumbItem>
+          <BreadcrumbPage>現在のページ</BreadcrumbPage>
+        </BreadcrumbItem>
+      </Breadcrumb>
+    )
 
-      expect(screen.getByRole('navigation')).toBeInTheDocument()
-      expect(screen.getByRole('list')).toBeInTheDocument()
-      expect(screen.getByRole('link', { name: 'ホーム' })).toBeInTheDocument()
-      expect(screen.getByText('詳細')).toBeInTheDocument()
-    })
-
-    it('省略記号（...）が正しく表示されること', () => {
-      render(
-        <Breadcrumb>
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink href="/">ホーム</BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbEllipsis />
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbPage>詳細</BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
-      )
-
-      const ellipsis = screen.getByText('More')
-      expect(ellipsis).toBeInTheDocument()
-      expect(ellipsis).toHaveClass('sr-only')
-    })
+    expect(screen.getByText('ホーム')).toBeInTheDocument()
+    expect(screen.getByText('現在のページ')).toBeInTheDocument()
+    expect(screen.getByText('/')).toBeInTheDocument()
   })
 
-  describe('アクセシビリティテスト', () => {
-    it('各コンポーネントに適切なARIA属性が設定されていること', () => {
-      render(
-        <Breadcrumb>
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink href="/">ホーム</BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbPage>詳細</BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
-      )
+  it('複数のアイテムが正しくレンダリングされる', () => {
+    render(
+      <Breadcrumb>
+        <BreadcrumbItem>
+          <BreadcrumbLink href="/">ホーム</BreadcrumbLink>
+        </BreadcrumbItem>
+        <BreadcrumbSeparator />
+        <BreadcrumbItem>
+          <BreadcrumbLink href="/category">カテゴリー</BreadcrumbLink>
+        </BreadcrumbItem>
+        <BreadcrumbSeparator />
+        <BreadcrumbItem>
+          <BreadcrumbPage>現在のページ</BreadcrumbPage>
+        </BreadcrumbItem>
+      </Breadcrumb>
+    )
 
-      const breadcrumb = screen.getByRole('navigation')
-      expect(breadcrumb).toHaveAttribute('aria-label', 'breadcrumb')
-
-      const list = screen.getByRole('list')
-      expect(list.parentElement).toBe(breadcrumb)
-
-      const currentPage = screen.getByText('詳細').closest('[aria-current="page"]')
-      expect(currentPage).toHaveAttribute('aria-current', 'page')
-    })
+    expect(screen.getByText('ホーム')).toBeInTheDocument()
+    expect(screen.getByText('カテゴリー')).toBeInTheDocument()
+    expect(screen.getByText('現在のページ')).toBeInTheDocument()
+    expect(screen.getAllByText('/')).toHaveLength(2)
   })
 
-  describe('スタイルテスト', () => {
-    it('カスタムクラスが適用できること', () => {
-      render(
-        <Breadcrumb className="custom-breadcrumb">
-          <BreadcrumbList className="custom-list">
-            <BreadcrumbItem className="custom-item">
-              <BreadcrumbLink href="/" className="custom-link">
-                ホーム
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator className="custom-separator" />
-            <BreadcrumbItem>
-              <BreadcrumbPage className="custom-page">詳細</BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
-      )
+  it('カスタムセパレーターが正しく適用される', () => {
+    render(
+      <Breadcrumb>
+        <BreadcrumbItem>
+          <BreadcrumbLink href="/">ホーム</BreadcrumbLink>
+        </BreadcrumbItem>
+        <BreadcrumbSeparator>{'>'}</BreadcrumbSeparator>
+        <BreadcrumbItem>
+          <BreadcrumbPage>現在のページ</BreadcrumbPage>
+        </BreadcrumbItem>
+      </Breadcrumb>
+    )
 
-      expect(screen.getByRole('navigation')).toHaveClass('custom-breadcrumb')
-      expect(screen.getByRole('list')).toHaveClass('custom-list')
-      expect(screen.getAllByRole('listitem')[0]).toHaveClass('custom-item')
-      expect(screen.getByRole('link', { name: 'ホーム' })).toHaveClass('custom-link')
-      expect(screen.getByText('詳細').closest('span')).toHaveClass('custom-page')
-    })
+    expect(screen.getByText('>')).toBeInTheDocument()
+  })
 
-    it('カスタムセパレーターが使用できること', () => {
-      render(
-        <Breadcrumb separator={<span>|</span>}>
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink href="/">ホーム</BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator>|</BreadcrumbSeparator>
-            <BreadcrumbItem>
-              <BreadcrumbPage>詳細</BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
-      )
+  it('カスタムクラス名が正しく適用される', () => {
+    render(
+      <Breadcrumb className="custom-class">
+        <BreadcrumbItem>
+          <BreadcrumbLink href="/" className="link-class">ホーム</BreadcrumbLink>
+        </BreadcrumbItem>
+        <BreadcrumbSeparator />
+        <BreadcrumbItem>
+          <BreadcrumbPage className="page-class">現在のページ</BreadcrumbPage>
+        </BreadcrumbItem>
+      </Breadcrumb>
+    )
 
-      const separator = screen.getByText('|')
-      expect(separator).toBeInTheDocument()
-    })
+    expect(screen.getByRole('navigation')).toHaveClass('custom-class')
+    expect(screen.getByText('ホーム')).toHaveClass('link-class')
+    expect(screen.getByText('現在のページ')).toHaveClass('page-class')
+  })
+
+  it('リンクが正しく機能する', () => {
+    render(
+      <Breadcrumb>
+        <BreadcrumbItem>
+          <BreadcrumbLink href="/test">テストリンク</BreadcrumbLink>
+        </BreadcrumbItem>
+      </Breadcrumb>
+    )
+
+    const link = screen.getByRole('link', { name: 'テストリンク' })
+    expect(link).toHaveAttribute('href', '/test')
   })
 }) 

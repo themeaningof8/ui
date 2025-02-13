@@ -1,13 +1,34 @@
 /**
- * @file Cardコンポーネント
- * @description Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter コンポーネントを提供します
+ * @file カードコンポーネント
+ * @description コンテンツをグループ化して表示するためのカードコンポーネントです
+ * 
+ * @example
+ * ```tsx
+ * // 基本的な使用例
+ * <Card>
+ *   <CardHeader>
+ *     <CardTitle>タイトル</CardTitle>
+ *     <CardDescription>説明文</CardDescription>
+ *   </CardHeader>
+ *   <CardContent>
+ *     メインコンテンツ
+ *   </CardContent>
+ *   <CardFooter>
+ *     フッターコンテンツ
+ *   </CardFooter>
+ * </Card>
+ * ```
  */
+
 import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
 /**
- * @description カードの基本コンポーネント
+ * @interface CardProps
+ * @description カードのルートコンポーネントのプロパティ
+ * @property {string} [className] - カスタムクラス名
+ * @property {React.ReactNode} [children] - カードの内容
  */
 const Card = React.forwardRef<
   HTMLDivElement,
@@ -15,18 +36,21 @@ const Card = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    role="article"
     className={cn(
-      "rounded-lg border border-base-ui-border bg-base-app-bg text-base-high-contrast-text shadow-sm",
+      "rounded-lg border bg-card text-card-foreground shadow-sm",
       className
     )}
+    data-testid="card"
     {...props}
   />
 ))
 Card.displayName = "Card"
 
 /**
- * @description カードヘッダー
+ * @interface CardHeaderProps
+ * @description カードのヘッダー部分のプロパティ
+ * @property {string} [className] - カスタムクラス名
+ * @property {React.ReactNode} [children] - ヘッダーの内容
  */
 const CardHeader = React.forwardRef<
   HTMLDivElement,
@@ -35,13 +59,17 @@ const CardHeader = React.forwardRef<
   <div
     ref={ref}
     className={cn("flex flex-col space-y-1.5 p-6", className)}
+    data-testid="card-header"
     {...props}
   />
 ))
 CardHeader.displayName = "CardHeader"
 
 /**
- * @description カードタイトル
+ * @interface CardTitleProps
+ * @description カードのタイトル部分のプロパティ
+ * @property {string} [className] - カスタムクラス名
+ * @property {React.ReactNode} [children] - タイトルの内容
  */
 const CardTitle = React.forwardRef<
   HTMLParagraphElement,
@@ -50,7 +78,7 @@ const CardTitle = React.forwardRef<
   <h3
     ref={ref}
     className={cn(
-      "text-lg font-semibold leading-none tracking-tight",
+      "text-2xl font-semibold leading-none tracking-tight",
       className
     )}
     {...props}
@@ -59,7 +87,10 @@ const CardTitle = React.forwardRef<
 CardTitle.displayName = "CardTitle"
 
 /**
- * @description カードの説明
+ * @interface CardDescriptionProps
+ * @description カードの説明部分のプロパティ
+ * @property {string} [className] - カスタムクラス名
+ * @property {React.ReactNode} [children] - 説明の内容
  */
 const CardDescription = React.forwardRef<
   HTMLParagraphElement,
@@ -67,25 +98,37 @@ const CardDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <p
     ref={ref}
-    className={cn("text-sm text-base-low-contrast-text", className)}
+    className={cn("text-sm text-muted-foreground", className)}
+    aria-description="true"
     {...props}
   />
 ))
 CardDescription.displayName = "CardDescription"
 
 /**
- * @description カードのコンテンツ
+ * @interface CardContentProps
+ * @description カードのメインコンテンツ部分のプロパティ
+ * @property {string} [className] - カスタムクラス名
+ * @property {React.ReactNode} [children] - メインコンテンツの内容
  */
 const CardContent = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn("p-6 pt-0", className)} {...props} />
+  <div
+    ref={ref}
+    className={cn("p-6 pt-0", className)}
+    data-testid="card-content"
+    {...props}
+  />
 ))
 CardContent.displayName = "CardContent"
 
 /**
- * @description カードのフッター
+ * @interface CardFooterProps
+ * @description カードのフッター部分のプロパティ
+ * @property {string} [className] - カスタムクラス名
+ * @property {React.ReactNode} [children] - フッターの内容
  */
 const CardFooter = React.forwardRef<
   HTMLDivElement,
@@ -94,6 +137,7 @@ const CardFooter = React.forwardRef<
   <div
     ref={ref}
     className={cn("flex items-center p-6 pt-0", className)}
+    data-testid="card-footer"
     {...props}
   />
 ))
@@ -102,8 +146,8 @@ CardFooter.displayName = "CardFooter"
 export {
   Card,
   CardHeader,
+  CardFooter,
   CardTitle,
   CardDescription,
   CardContent,
-  CardFooter,
-}
+} 

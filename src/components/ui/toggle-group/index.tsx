@@ -5,57 +5,71 @@ import * as ToggleGroupPrimitive from "@radix-ui/react-toggle-group";
 import type { VariantProps } from "class-variance-authority";
 
 import { cn } from "@/lib/utils";
-import { toggleVariants } from "@/components/ui/toggle";
+import { toggleVariants } from "../toggle";
 
-const ToggleGroupContext = React.createContext<
-	VariantProps<typeof toggleVariants>
->({
-	size: "default",
-	variant: "default",
-});
-
+/**
+ * トグルグループのルートコンポーネントです。
+ * 複数のトグルボタンをグループ化し、単一選択または複数選択を管理します。
+ *
+ * @component
+ * @param {object} props - コンポーネントのプロパティ
+ * @param {string} [props.className] - 追加のCSSクラス名
+ * @param {string} [props.type] - 選択タイプ（"single" | "multiple"）
+ * @param {string} [props.value] - 選択された値（単一選択の場合）
+ * @param {string[]} [props.value] - 選択された値の配列（複数選択の場合）
+ * @param {(value: string) => void} [props.onValueChange] - 値が変更された時のコールバック（単一選択の場合）
+ * @param {(value: string[]) => void} [props.onValueChange] - 値が変更された時のコールバック（複数選択の場合）
+ * @param {React.ReactNode} props.children - 子要素
+ * @param {React.Ref<HTMLDivElement>} ref - 転送されるref
+ *
+ * @example
+ * ```tsx
+ * <ToggleGroup type="single" value={value} onValueChange={setValue}>
+ *   <ToggleGroupItem value="a">A</ToggleGroupItem>
+ *   <ToggleGroupItem value="b">B</ToggleGroupItem>
+ * </ToggleGroup>
+ * ```
+ */
 const ToggleGroup = React.forwardRef<
-	React.ElementRef<typeof ToggleGroupPrimitive.Root>,
-	React.ComponentPropsWithoutRef<typeof ToggleGroupPrimitive.Root> &
-		VariantProps<typeof toggleVariants>
->(({ className, variant, size, children, ...props }, ref) => (
+	React.ComponentRef<typeof ToggleGroupPrimitive.Root>,
+	React.ComponentPropsWithoutRef<typeof ToggleGroupPrimitive.Root> & {
+		className?: string;
+	}
+>(({ className, ...props }, ref) => (
 	<ToggleGroupPrimitive.Root
 		ref={ref}
 		className={cn("flex items-center justify-center gap-1", className)}
 		{...props}
-	>
-		<ToggleGroupContext.Provider value={{ variant, size }}>
-			{children}
-		</ToggleGroupContext.Provider>
-	</ToggleGroupPrimitive.Root>
+	/>
 ));
 
 ToggleGroup.displayName = ToggleGroupPrimitive.Root.displayName;
 
+/**
+ * トグルグループの個々のアイテムコンポーネントです。
+ * グループ内の選択可能な個別のトグルボタンとして機能します。
+ *
+ * @component
+ * @param {object} props - コンポーネントのプロパティ
+ * @param {string} [props.className] - 追加のCSSクラス名
+ * @param {string} props.value - アイテムの値
+ * @param {string} [props.variant] - トグルのバリアント（"default" | "outline"）
+ * @param {string} [props.size] - トグルのサイズ（"default" | "sm" | "lg"）
+ * @param {boolean} [props.disabled] - 無効化状態
+ * @param {React.ReactNode} props.children - 子要素
+ * @param {React.Ref<HTMLButtonElement>} ref - 転送されるref
+ */
 const ToggleGroupItem = React.forwardRef<
-	React.ElementRef<typeof ToggleGroupPrimitive.Item>,
+	React.ComponentRef<typeof ToggleGroupPrimitive.Item>,
 	React.ComponentPropsWithoutRef<typeof ToggleGroupPrimitive.Item> &
 		VariantProps<typeof toggleVariants>
->(({ className, children, variant, size, ...props }, ref) => {
-	const context = React.useContext(ToggleGroupContext);
-
-	return (
-		<ToggleGroupPrimitive.Item
-			ref={ref}
-			role="radio"
-			className={cn(
-				toggleVariants({
-					variant: context.variant || variant,
-					size: context.size || size,
-				}),
-				className,
-			)}
-			{...props}
-		>
-			{children}
-		</ToggleGroupPrimitive.Item>
-	);
-});
+>(({ className, variant, size, ...props }, ref) => (
+	<ToggleGroupPrimitive.Item
+		ref={ref}
+		className={cn(toggleVariants({ variant, size, className }))}
+		{...props}
+	/>
+));
 
 ToggleGroupItem.displayName = ToggleGroupPrimitive.Item.displayName;
 

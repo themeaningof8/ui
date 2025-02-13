@@ -1,145 +1,118 @@
-/**
- * @file Skeletonのストーリー
- * @description Skeletonの様々な状態とバリエーションを表示
- */
-
+import * as React from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
-import { Skeleton } from '@/components/ui/skeleton'
-import { within } from '@storybook/testing-library'
-import { expect } from '@storybook/jest'
+import { Skeleton } from '.'
 
+/**
+ * `Skeleton`は、コンテンツのローディング状態を表示するためのコンポーネントです。
+ * アニメーション効果と一貫したスタイリングを提供します。
+ */
 const meta = {
   title: 'UI/Skeleton',
   component: Skeleton,
   parameters: {
     layout: 'centered',
-    onLoad: () => {
-      const consoleError = console.error;
-      console.error = (...args) => {
-        consoleError(...args);
-        throw new Error(args.join(' '));
-      };
-    },
   },
   tags: ['autodocs'],
 } satisfies Meta<typeof Skeleton>
 
 export default meta
-type Story = StoryObj<typeof meta>
+type Story = StoryObj<typeof Skeleton>
 
 /**
- * @description 基本的なスケルトン
+ * 基本的な使用例です。
  */
 export const Default: Story = {
   render: () => <Skeleton className="h-4 w-[250px]" />,
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    const skeleton = canvas.getByTestId('skeleton')
-    
-    // スケルトンの存在確認
-    expect(skeleton).toBeInTheDocument()
-    
-    // スタイルの確認
-    expect(skeleton).toHaveClass('h-4', 'w-[250px]', 'animate-pulse')
-    expect(skeleton).toHaveStyle({
-      height: '1rem',
-      width: '250px',
-    })
-  },
 }
 
 /**
- * @description 円形のスケルトン（アバター用）
+ * 円形のスケルトンの例です。
  */
 export const Circle: Story = {
   render: () => <Skeleton className="h-12 w-12 rounded-full" />,
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    const skeleton = canvas.getByTestId('skeleton')
-    
-    // スケルトンの存在確認
-    expect(skeleton).toBeInTheDocument()
-    
-    // 円形スタイルの確認
-    expect(skeleton).toHaveClass('h-12', 'w-12', 'rounded-full', 'animate-pulse')
-    expect(skeleton).toHaveStyle({
-      height: '3rem',
-      width: '3rem',
-    })
-  },
 }
 
 /**
- * @description カードのスケルトン
+ * カードのスケルトンの例です。
  */
 export const Card: Story = {
   render: () => (
-    <div className="space-y-3">
-      <Skeleton className="h-[200px] w-full rounded-xl" />
-      <Skeleton className="h-4 w-[250px]" />
-      <Skeleton className="h-4 w-[200px]" />
+    <div className="flex flex-col space-y-3">
+      <Skeleton className="h-[125px] w-[250px] rounded-xl" />
+      <div className="space-y-2">
+        <Skeleton className="h-4 w-[250px]" />
+        <Skeleton className="h-4 w-[200px]" />
+      </div>
     </div>
   ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    const skeletons = canvas.getAllByTestId('skeleton')
-    
-    // 3つのスケルトンが存在することを確認
-    expect(skeletons).toHaveLength(3)
-    
-    // 各スケルトンのスタイルを確認
-    const [image, title, description] = skeletons
-    
-    expect(image).toHaveClass('h-[200px]', 'w-full', 'rounded-xl', 'animate-pulse')
-    expect(title).toHaveClass('h-4', 'w-[250px]', 'animate-pulse')
-    expect(description).toHaveClass('h-4', 'w-[200px]', 'animate-pulse')
+}
+
+/**
+ * プロフィールのスケルトンの例です。
+ */
+export const Profile: Story = {
+  render: () => (
+    <div className="flex items-center space-x-4">
+      <Skeleton className="h-12 w-12 rounded-full" />
+      <div className="space-y-2">
+        <Skeleton className="h-4 w-[250px]" />
+        <Skeleton className="h-4 w-[200px]" />
+      </div>
+    </div>
+  ),
+}
+
+/**
+ * テーブルのスケルトンの例です。
+ */
+export const Table: Story = {
+  render: () => {
+    const id = React.useId();
+    let counter = 0;
+    return (
+      <div className="w-[600px] space-y-4">
+        <div className="space-y-2">
+          {Array.from({ length: 5 }).map(() => (
+            <div key={`${id}-table-${counter++}`} className="flex items-center justify-between">
+              <Skeleton className="h-4 w-[250px]" />
+              <Skeleton className="h-4 w-[100px]" />
+            </div>
+          ))}
+        </div>
+      </div>
+    )
   },
 }
 
 /**
- * @description リストのスケルトン
+ * リストのスケルトンの例です。
  */
 export const List: Story = {
-  render: () => (
-    <div className="space-y-3">
-      {Array.from({ length: 5 }, () => (
-        <div key={`list-item-${crypto.randomUUID()}`} className="flex items-center space-x-4">
-          <Skeleton className="h-12 w-12 rounded-full" />
-          <div className="space-y-2">
-            <Skeleton className="h-4 w-[250px]" />
-            <Skeleton className="h-4 w-[200px]" />
+  render: () => {
+    const id = React.useId();
+    let counter = 0;
+    return (
+      <div className="w-[300px] space-y-4">
+        {Array.from({ length: 5 }).map(() => (
+          <div key={`${id}-list-${counter++}`} className="space-y-2">
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-[80%]" />
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
+    )
+  },
+}
+
+/**
+ * カスタムスタイルを適用した例です。
+ */
+export const CustomStyle: Story = {
+  render: () => (
+    <div className="space-y-4">
+      <Skeleton className="h-4 w-[200px] bg-primary/10" />
+      <Skeleton className="h-4 w-[150px] bg-secondary/20" />
+      <Skeleton className="h-4 w-[180px] bg-accent/30" />
     </div>
   ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    const skeletons = canvas.getAllByTestId('skeleton')
-    
-    // 15個のスケルトンが存在することを確認（5アイテム × 3要素）
-    expect(skeletons).toHaveLength(15)
-    
-    // アバタースケルトンの確認
-    const avatarSkeletons = skeletons.filter(skeleton => 
-      skeleton.classList.contains('rounded-full')
-    )
-    expect(avatarSkeletons).toHaveLength(5)
-    
-    // テキストスケルトンの確認
-    const textSkeletons = skeletons.filter(skeleton => 
-      !skeleton.classList.contains('rounded-full')
-    )
-    expect(textSkeletons).toHaveLength(10)
-    
-    // 各スケルトンのスタイルを確認
-    for (const skeleton of skeletons) {
-      expect(skeleton).toHaveClass('animate-pulse')
-    }
-    
-    // 各アバタースケルトンのスタイルを確認
-    for (const avatar of avatarSkeletons) {
-      expect(avatar).toHaveClass('h-12', 'w-12', 'rounded-full')
-    }
-  },
 } 

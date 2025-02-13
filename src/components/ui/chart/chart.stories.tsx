@@ -1,279 +1,182 @@
 /**
- * @file Chartのストーリー
- * @description Chartの使用例とバリエーションを表示
+ * @file チャートコンポーネントのストーリー
+ * @description チャートコンポーネントの使用例を表示します
  */
-import type { Meta } from '@storybook/react'
-import type { ReactElement } from 'react'
-import { ChartContainer } from '@/components/ui/chart'
-import {
-  Area,
-  AreaChart,
-  Bar,
-  BarChart,
-  Cell,
-  Line,
-  LineChart,
-  Pie,
-  PieChart,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from 'recharts'
-import { within, waitFor } from '@storybook/testing-library'
-import { expect } from '@storybook/jest'
+
+import type { Meta, StoryObj } from '@storybook/react'
+import { Chart } from '.'
 
 const meta = {
   title: 'UI/Chart',
-  component: ChartContainer,
+  component: Chart,
   parameters: {
     layout: 'centered',
-    onLoad: () => {
-      const consoleError = console.error;
-      console.error = (...args) => {
-        consoleError(...args);
-        throw new Error(args.join(' '));
-      };
-    },
   },
   tags: ['autodocs'],
-} satisfies Meta<typeof ChartContainer>
+} satisfies Meta<typeof Chart>
 
 export default meta
-type Story = {
-  render: () => ReactElement
-  play?: ({ canvasElement }: { canvasElement: HTMLElement }) => Promise<void>
-}
-
-// サンプルデータ
-const lineData = [
-  { month: '1月', value: 100 },
-  { month: '2月', value: 300 },
-  { month: '3月', value: 200 },
-  { month: '4月', value: 500 },
-  { month: '5月', value: 400 },
-  { month: '6月', value: 600 },
-]
-
-const barData = [
-  { category: 'A', value: 400 },
-  { category: 'B', value: 300 },
-  { category: 'C', value: 500 },
-  { category: 'D', value: 200 },
-]
-
-const pieData = [
-  { name: '製品A', value: 400 },
-  { name: '製品B', value: 300 },
-  { name: '製品C', value: 200 },
-]
+type Story = StoryObj<typeof meta>
 
 /**
- * @description 基本的な折れ線グラフ
+ * 折れ線グラフの使用例
  */
-export const LineChartExample: Story = {
-  render: () => (
-    <ChartContainer
-      className="w-full max-w-lg"
-      config={{
-        line: {
-          color: '#2563eb',
-        },
-      }}
-    >
-      <LineChart data={lineData}>
-        <XAxis dataKey="month" />
-        <YAxis />
-        <Tooltip />
-        <Line
-          type="monotone"
-          dataKey="value"
-          name="line"
-          strokeWidth={2}
-          dot={{ strokeWidth: 2 }}
-        />
-      </LineChart>
-    </ChartContainer>
-  ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    const chart = await waitFor(() => canvas.getByRole('region'))
-    
-    expect(chart).toBeInTheDocument()
-    expect(chart).toHaveClass('aspect-video')
-  },
-}
-
-/**
- * @description エリアチャート
- */
-export const AreaChartExample: Story = {
-  render: () => (
-    <ChartContainer
-      className="w-full max-w-lg"
-      config={{
-        area: {
-          theme: {
-            light: '#3b82f6',
-            dark: '#60a5fa',
-          },
-        },
-      }}
-    >
-      <AreaChart data={lineData}>
-        <XAxis dataKey="month" />
-        <YAxis />
-        <Tooltip />
-        <Area
-          type="monotone"
-          dataKey="value"
-          name="area"
-          strokeWidth={2}
-          fill="var(--color-area)"
-          stroke="var(--color-area)"
-        />
-      </AreaChart>
-    </ChartContainer>
-  ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    const chart = canvas.getByRole('region')
-    
-    expect(chart).toBeInTheDocument()
-    expect(chart).toHaveAttribute('data-chart')
-  },
-}
-
-/**
- * @description 棒グラフ
- */
-export const BarChartExample: Story = {
-  render: () => (
-    <ChartContainer
-      className="w-full max-w-lg"
-      config={{
-        bar: {
-          color: '#10b981',
-        },
-      }}
-    >
-      <BarChart data={barData}>
-        <XAxis dataKey="category" />
-        <YAxis />
-        <Tooltip />
-        <Bar
-          dataKey="value"
-          name="bar"
-          fill="var(--color-bar)"
-          radius={[4, 4, 0, 0]}
-        />
-      </BarChart>
-    </ChartContainer>
-  ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    const chart = canvas.getByRole('region')
-    
-    expect(chart).toBeInTheDocument()
-    expect(chart).toHaveClass('flex', 'justify-center')
-  },
-}
-
-/**
- * @description 円グラフ
- */
-export const PieChartExample: Story = {
-  render: () => (
-    <ChartContainer
-      className="w-full max-w-lg"
-      config={{
-        pie1: { color: '#3b82f6' },
-        pie2: { color: '#10b981' },
-        pie3: { color: '#f59e0b' },
-      }}
-    >
-      <PieChart>
-        <Pie
-          data={pieData}
-          dataKey="value"
-          nameKey="name"
-          cx="50%"
-          cy="50%"
-          outerRadius={80}
-          fill="#8884d8"
-        >
-          {pieData.map((entry) => (
-            <Cell
-              key={`cell-${entry.name}`}
-              fill={`var(--color-pie${pieData.indexOf(entry) + 1})`}
-            />
-          ))}
-        </Pie>
-        <Tooltip />
-      </PieChart>
-    </ChartContainer>
-  ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    const chart = canvas.getByRole('region')
-    
-    expect(chart).toBeInTheDocument()
-    expect(chart).toHaveClass('text-xs')
-  },
-}
-
-/**
- * @description カスタムツールチップを使用したグラフ
- */
-export const CustomTooltipChart: Story = {
-  render: () => (
-    <ChartContainer
-      className="w-full max-w-lg"
-      config={{
-        custom: {
+export const LineChart: Story = {
+  args: {
+    type: 'line',
+    data: {
+      labels: ['1月', '2月', '3月', '4月', '5月', '6月'],
+      datasets: [
+        {
           label: '売上高',
-          color: '#8b5cf6',
+          data: [65, 59, 80, 81, 56, 55],
+          borderColor: 'rgb(75, 192, 192)',
+          tension: 0.1,
         },
-      }}
-    >
-      <LineChart data={lineData}>
-        <XAxis dataKey="month" />
-        <YAxis />
-        <Tooltip
-          content={({ active, payload }) => {
-            if (!active || !payload?.length) return null
-            
-            return (
-              <div className="rounded-lg border bg-background p-2 shadow-sm">
-                <div className="grid gap-2">
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="text-muted-foreground">
-                      {payload[0].payload.month}
-                    </span>
-                    <span className="font-bold">
-                      {payload[0].value?.toLocaleString()}円
-                    </span>
-                  </div>
-                </div>
-              </div>
-            )
-          }}
-        />
-        <Line
-          type="monotone"
-          dataKey="value"
-          name="custom"
-          strokeWidth={2}
-          dot={{ strokeWidth: 2 }}
-          stroke="var(--color-custom)"
-        />
-      </LineChart>
-    </ChartContainer>
-  ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    const chart = canvas.getByRole('region')
-    
-    expect(chart).toBeInTheDocument()
-    expect(chart).toHaveClass('flex', 'aspect-video', 'justify-center')
+      ],
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        title: {
+          display: true,
+          text: '月次売上推移',
+        },
+      },
+    },
+  },
+}
+
+/**
+ * 棒グラフの使用例
+ */
+export const BarChart: Story = {
+  args: {
+    type: 'bar',
+    data: {
+      labels: ['月曜', '火曜', '水曜', '木曜', '金曜'],
+      datasets: [
+        {
+          label: '来客数',
+          data: [12, 19, 3, 5, 2],
+          backgroundColor: 'rgba(53, 162, 235, 0.5)',
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: 'top' as const,
+        },
+        title: {
+          display: true,
+          text: '曜日別来客数',
+        },
+      },
+    },
+  },
+}
+
+/**
+ * 円グラフの使用例
+ */
+export const PieChart: Story = {
+  args: {
+    type: 'pie',
+    data: {
+      labels: ['赤', '青', '黄'],
+      datasets: [
+        {
+          data: [300, 50, 100],
+          backgroundColor: [
+            'rgb(255, 99, 132)',
+            'rgb(54, 162, 235)',
+            'rgb(255, 205, 86)',
+          ],
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: 'top' as const,
+        },
+        title: {
+          display: true,
+          text: '色の割合',
+        },
+      },
+    },
+  },
+}
+
+/**
+ * レーダーチャートの使用例
+ */
+export const RadarChart: Story = {
+  args: {
+    type: 'radar',
+    data: {
+      labels: ['攻撃', '防御', '速度', '体力', '技術', '戦略'],
+      datasets: [
+        {
+          label: 'プレイヤー1',
+          data: [65, 59, 90, 81, 56, 55],
+          fill: true,
+          backgroundColor: 'rgba(255, 99, 132, 0.2)',
+          borderColor: 'rgb(255, 99, 132)',
+          pointBackgroundColor: 'rgb(255, 99, 132)',
+          pointBorderColor: '#fff',
+          pointHoverBackgroundColor: '#fff',
+          pointHoverBorderColor: 'rgb(255, 99, 132)',
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        title: {
+          display: true,
+          text: 'ステータス分布',
+        },
+      },
+    },
+  },
+}
+
+/**
+ * 複数データセットの使用例
+ */
+export const MultipleDatasets: Story = {
+  args: {
+    type: 'line',
+    data: {
+      labels: ['1月', '2月', '3月', '4月', '5月', '6月'],
+      datasets: [
+        {
+          label: '今年',
+          data: [65, 59, 80, 81, 56, 55],
+          borderColor: 'rgb(75, 192, 192)',
+          tension: 0.1,
+        },
+        {
+          label: '昨年',
+          data: [28, 48, 40, 19, 86, 27],
+          borderColor: 'rgb(255, 99, 132)',
+          tension: 0.1,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        title: {
+          display: true,
+          text: '年間比較',
+        },
+      },
+    },
   },
 } 

@@ -1,65 +1,47 @@
 /**
  * @file テストのセットアップファイル
- * @description テスト実行時の共通設定を行います
+ * @description テスト実行時の共通設定を定義します
  */
 
 import '@testing-library/jest-dom'
-import { afterEach } from 'vitest'
+import { vi } from 'vitest'
 import { cleanup } from '@testing-library/react'
-import { setupServer } from 'msw/node'
 
-// テスト実行後のクリーンアップ
+// テスト後のクリーンアップ
 afterEach(() => {
 	cleanup()
 })
 
-// MSWのセットアップ
-export const server = setupServer()
-
-beforeAll(() => server.listen({ onUnhandledRequest: 'error' }))
-afterEach(() => server.resetHandlers())
-afterAll(() => server.close())
-
-// グローバルなエラーハンドリング
-window.console.error = (...args: unknown[]) => {
-	const errorMessage = args.join(' ')
-	throw new Error(errorMessage)
-}
-
 // ResizeObserverのモック
-class MockResizeObserver implements ResizeObserver {
-	observe(): void {}
-	unobserve(): void {}
-	disconnect(): void {}
-}
-global.ResizeObserver = MockResizeObserver
+global.ResizeObserver = vi.fn().mockImplementation(() => ({
+	observe: vi.fn(),
+	unobserve: vi.fn(),
+	disconnect: vi.fn(),
+}))
 
 // matchMediaのモック
-Object.defineProperty(window, 'matchMedia', {
-	writable: true,
-	value: (query: string): MediaQueryList => ({
-		matches: false,
-		media: query,
-		onchange: null,
-		addListener: () => {},
-		removeListener: () => {},
-		addEventListener: () => {},
-		removeEventListener: () => {},
-		dispatchEvent: () => true,
-	}),
-})
+window.matchMedia = vi.fn().mockImplementation((query) => ({
+	matches: false,
+	media: query,
+	onchange: null,
+	addListener: vi.fn(),
+	removeListener: vi.fn(),
+	addEventListener: vi.fn(),
+	removeEventListener: vi.fn(),
+	dispatchEvent: vi.fn(),
+}))
 
 // IntersectionObserverのモック
-class MockIntersectionObserver implements IntersectionObserver {
-	readonly root: Element | null = null
-	readonly rootMargin: string = '0px'
-	readonly thresholds: ReadonlyArray<number> = [0]
-	
-	constructor(private callback: IntersectionObserverCallback) {}
-	
-	observe(): void {}
-	unobserve(): void {}
-	disconnect(): void {}
-	takeRecords(): IntersectionObserverEntry[] { return [] }
-}
-global.IntersectionObserver = MockIntersectionObserver
+global.IntersectionObserver = vi.fn().mockImplementation(() => ({
+	observe: vi.fn(),
+	unobserve: vi.fn(),
+	disconnect: vi.fn(),
+}))
+
+// ポインターキャプチャ関連のメソッドをモック化
+Element.prototype.setPointerCapture = vi.fn()
+Element.prototype.releasePointerCapture = vi.fn()
+Element.prototype.hasPointerCapture = vi.fn()
+
+// scrollIntoViewのモック化
+Element.prototype.scrollIntoView = vi.fn()

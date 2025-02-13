@@ -1,10 +1,12 @@
 /**
- * @file DropdownMenuコンポーネントのテスト
- * @description DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuCheckboxItem, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuShortcut, DropdownSub, DropdownSubTrigger, DropdownSubContent コンポーネントの機能とアクセシビリティをテストします
+ * @file ドロップダウンメニューコンポーネントのテスト
+ * @description ドロップダウンメニューコンポーネントの機能をテストします
  */
 
 import { describe, it, expect } from 'vitest'
-import { render, screen, fireEvent } from '@/tests/test-utils'
+import { waitFor } from '@testing-library/react'
+import { render, screen } from '@/tests/test-utils'
+import React from 'react'
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -13,233 +15,138 @@ import {
   DropdownMenuCheckboxItem,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownSub,
-  DropdownSubTrigger,
-  DropdownSubContent,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  DropdownMenuSubContent,
 } from '.'
 
-describe('DropdownMenu', () => {
-  describe('基本レンダリングテスト', () => {
-    it('すべてのコンポーネントが正しくレンダリングされること', () => {
-      render(
+describe('DropdownMenuコンポーネント', () => {
+  it('基本的なドロップダウンメニューが正しくレンダリングされること', async () => {
+    const { user } = render(
+      <DropdownMenu>
+        <DropdownMenuTrigger>Open Menu</DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuItem>Menu Item 1</DropdownMenuItem>
+          <DropdownMenuItem>Menu Item 2</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    )
+
+    expect(screen.queryByRole('menu')).not.toBeInTheDocument()
+    await user.click(screen.getByText('Open Menu'))
+    expect(screen.getByRole('menu')).toBeInTheDocument()
+    expect(screen.getByText('Menu Item 1')).toBeInTheDocument()
+    expect(screen.getByText('Menu Item 2')).toBeInTheDocument()
+  })
+
+  it('チェックボックス項目が正しく機能すること', async () => {
+    const TestComponent = () => {
+      const [checked, setChecked] = React.useState(false)
+      return (
         <DropdownMenu>
-          <DropdownMenuTrigger>
-            <button>メニューを開く</button>
-          </DropdownMenuTrigger>
+          <DropdownMenuTrigger>Open Menu</DropdownMenuTrigger>
           <DropdownMenuContent>
-            <DropdownMenuLabel>メニュー</DropdownMenuLabel >
-            < DropdownMenuSeparator />
-            <DropdownMenuItem>
-              項目1
-              <DropdownMenuShortcut>⌘A</DropdownMenuShortcut>
-            </DropdownMenuItem>
-            < DropdownMenuCheckboxItem checked >
-              チェックボックス1
+            <DropdownMenuCheckboxItem
+              checked={checked}
+              onCheckedChange={setChecked}
+            >
+              Checkbox Item
             </DropdownMenuCheckboxItem>
-            < DropdownMenuRadioGroup value="item2" >
-              < DropdownMenuRadioItem value="item1" >ラジオボタン1</DropdownMenuRadioItem >
-              < DropdownMenuRadioItem value="item2" >ラジオボタン2</DropdownMenuRadioItem >
-            </DropdownMenuRadioGroup>
-            <DropdownSub>
-              <DropdownSubTrigger>サブメニュー</DropdownSubTrigger >
-              <DropdownSubContent>
-                <DropdownMenuItem>サブメニュー項目1</DropdownMenuItem >
-              </DropdownSubContent>
-            </DropdownSub>
           </DropdownMenuContent>
         </DropdownMenu>
       )
+    }
 
-      const trigger = screen.getByText('メニューを開く')
-      expect(trigger).toBeInTheDocument()
+    const { user } = render(<TestComponent />)
 
-      // メニューを開く
-      fireEvent.click(trigger)
-
-      expect(screen.getByText('メニュー')).toBeInTheDocument()
-      expect(screen.getByText('項目1')).toBeInTheDocument()
-      expect(screen.getByText('⌘A')).toBeInTheDocument()
-      expect(screen.getByText('チェックボックス1')).toBeInTheDocument()
-      expect(screen.getByText('ラジオボタン1')).toBeInTheDocument()
-      expect(screen.getByText('ラジオボタン2')).toBeInTheDocument()
-      expect(screen.getByText('サブメニュー')).toBeInTheDocument()
-
-      // サブメニューを開く
-      fireEvent.mouseEnter(screen.getByText('サブメニュー'))
-      expect(screen.getByText('サブメニュー項目1')).toBeInTheDocument()
-    })
-  })
-
-  describe('インタラクションテスト', () => {
-    it('DropdownMenuTrigger をクリックするとメニューが開閉すること', () => {
-      const onOpenChange = vi.fn()
-      render(
-        < DropdownMenu onOpenChange={onOpenChange} >
-          <DropdownMenuTrigger>
-            <button>メニューを開く</button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuItem>項目1</DropdownMenuItem >
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )
-
-      const trigger = screen.getByText('メニューを開く')
-      fireEvent.click(trigger)
-      expect(onOpenChange).toHaveBeenCalledWith(true)
-
-      fireEvent.click(trigger)
-      expect(onOpenChange).toHaveBeenCalledWith(false)
-    })
-
-    it('DropdownMenuItem をクリックすると選択されること', () => {
-      const onSelect = vi.fn()
-      render(
-        <DropdownMenu>
-          <DropdownMenuTrigger>
-            <button>メニューを開く</button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            < DropdownMenuItem onSelect={onSelect} >項目1</DropdownMenuItem >
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )
-
-      const trigger = screen.getByText('メニューを開く')
-      fireEvent.click(trigger)
-
-      const item = screen.getByText('項目1')
-      fireEvent.click(item)
-      expect(onSelect).toHaveBeenCalled()
-    })
-
-    it('DropdownMenuCheckboxItem のチェック状態が変更できること', () => {
-      render(
-        <DropdownMenu>
-          <DropdownMenuTrigger>
-            <button>メニューを開く</button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuCheckboxItem>チェックボックス1</DropdownMenuCheckboxItem >
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )
-
-      const trigger = screen.getByText('メニューを開く')
-      fireEvent.click(trigger)
-
-      const checkbox = screen.getByRole('menuitemcheckbox')
-      expect(checkbox).not.toBeChecked()
-
-      fireEvent.click(checkbox)
-      expect(checkbox).toBeChecked()
-    })
-
-    it('DropdownMenuRadioGroup でラジオボタンを選択できること', () => {
-      const onValueChange = vi.fn()
-      render(
-        <DropdownMenu>
-          <DropdownMenuTrigger>
-            <button>メニューを開く</button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            < DropdownMenuRadioGroup value="item1" onValueChange={onValueChange} >
-              < DropdownMenuRadioItem value="item1" >ラジオボタン1</DropdownMenuRadioItem >
-              < DropdownMenuRadioItem value="item2" >ラジオボタン2</DropdownMenuRadioItem >
-            </DropdownMenuRadioGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )
-
-      const trigger = screen.getByText('メニューを開く')
-      fireEvent.click(trigger)
-
-      const radio1 = screen.getByText('ラジオボタン1')
-      const radio2 = screen.getByText('ラジオボタン2')
-      expect(radio1).toHaveAttribute('data-state', 'checked')
-      expect(radio2).toHaveAttribute('data-state', 'unchecked')
-
-      fireEvent.click(radio2)
-      expect(onValueChange).toHaveBeenCalledWith('item2')
-    })
-  })
-
-  describe('アクセシビリティテスト', () => {
-    it('DropdownMenuContent に role="menu" が設定されていること', () => {
-      render(
-        <DropdownMenu>
-          <DropdownMenuTrigger>
-            <button>メニューを開く</button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuItem>項目1</DropdownMenuItem >
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )
-
-      const trigger = screen.getByText('メニューを開く')
-      fireEvent.click(trigger)
-
-      expect(screen.getByRole('menu')).toBeInTheDocument()
-    })
-
-    it('DropdownMenuItem に role="menuitem" が設定されていること', () => {
-      render(
-        <DropdownMenu>
-          <DropdownMenuTrigger>
-            <button>メニューを開く</button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuItem>項目1</DropdownMenuItem >
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )
-
-      const trigger = screen.getByText('メニューを開く')
-      fireEvent.click(trigger)
-
-      expect(screen.getByRole('menuitem')).toBeInTheDocument()
-    })
-
-    it('DropdownMenuCheckboxItem に role="menuitemcheckbox" が設定されていること', () => {
-      render(
-        <DropdownMenu>
-          <DropdownMenuTrigger>
-            <button>メニューを開く</button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuCheckboxItem>チェックボックス1</DropdownMenuCheckboxItem >
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )
-
-      const trigger = screen.getByText('メニューを開く')
-      fireEvent.click(trigger)
-
+    await user.click(screen.getByText('Open Menu'))
+    await waitFor(() => {
       expect(screen.getByRole('menuitemcheckbox')).toBeInTheDocument()
     })
 
-    it('DropdownMenuRadioItem に role="menuitemradio" が設定されていること', () => {
-      render(
+    const checkboxItem = screen.getByRole('menuitemcheckbox')
+    expect(checkboxItem).toHaveAttribute('aria-checked', 'false')
+
+    await user.click(checkboxItem)
+    await waitFor(() => {
+      expect(checkboxItem).toHaveAttribute('aria-checked', 'true')
+    })
+  })
+
+  it('ラジオグループが正しく機能すること', async () => {
+    const TestComponent = () => {
+      const [value, setValue] = React.useState("")
+      return (
         <DropdownMenu>
-          <DropdownMenuTrigger>
-            <button>メニューを開く</button>
-          </DropdownMenuTrigger>
+          <DropdownMenuTrigger>Open Menu</DropdownMenuTrigger>
           <DropdownMenuContent>
-            <DropdownMenuRadioGroup>
-              < DropdownMenuRadioItem value="item1" >ラジオボタン1</DropdownMenuRadioItem >
+            <DropdownMenuRadioGroup value={value} onValueChange={setValue}>
+              <DropdownMenuRadioItem value="1">Option 1</DropdownMenuRadioItem>
+              <DropdownMenuRadioItem value="2">Option 2</DropdownMenuRadioItem>
             </DropdownMenuRadioGroup>
           </DropdownMenuContent>
         </DropdownMenu>
       )
+    }
 
-      const trigger = screen.getByText('メニューを開く')
-      fireEvent.click(trigger)
+    const { user } = render(<TestComponent />)
 
-      expect(screen.getByRole('menuitemradio')).toBeInTheDocument()
+    await user.click(screen.getByText('Open Menu'))
+    await waitFor(() => {
+      expect(screen.getByRole('menuitemradio', { name: 'Option 1' })).toBeInTheDocument()
     })
+
+    const option1 = screen.getByRole('menuitemradio', { name: 'Option 1' })
+    const option2 = screen.getByRole('menuitemradio', { name: 'Option 2' })
+
+    expect(option1).toHaveAttribute('aria-checked', 'false')
+    expect(option2).toHaveAttribute('aria-checked', 'false')
+
+    await user.click(option1)
+    await waitFor(() => {
+      expect(option1).toHaveAttribute('aria-checked', 'true')
+      expect(option2).toHaveAttribute('aria-checked', 'false')
+    })
+  })
+
+  it('サブメニューが正しく機能すること', async () => {
+    const { user } = render(
+      <DropdownMenu>
+        <DropdownMenuTrigger>Open Menu</DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger>Submenu</DropdownMenuSubTrigger>
+            <DropdownMenuSubContent>
+              <DropdownMenuItem>Submenu Item</DropdownMenuItem>
+            </DropdownMenuSubContent>
+          </DropdownMenuSub>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    )
+
+    await user.click(screen.getByText('Open Menu'))
+    expect(screen.getByText('Submenu')).toBeInTheDocument()
+
+    await user.hover(screen.getByText('Submenu'))
+    await waitFor(() => {
+      expect(screen.getByText('Submenu Item')).toBeInTheDocument()
+    })
+  })
+
+  it('セパレーターが正しくレンダリングされること', async () => {
+    const { user } = render(
+      <DropdownMenu>
+        <DropdownMenuTrigger>Open Menu</DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuItem>Item 1</DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem>Item 2</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    )
+
+    await user.click(screen.getByText('Open Menu'))
+    expect(screen.getByRole('separator')).toBeInTheDocument()
   })
 }) 

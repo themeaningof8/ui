@@ -3,18 +3,14 @@ import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
 
-/**
- * @description アラートコンポーネントのスタイルバリエーション定義
- * @param variant - アラートの見た目のバリエーション
- */
 const alertVariants = cva(
-  "relative w-full rounded-lg border px-4 py-3 text-sm [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg]:text-base-row-contrast-text [&>svg~*]:pl-7",
+  "relative w-full rounded-lg border p-4 [&>svg~*]:pl-7 [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg]:text-foreground",
   {
     variants: {
       variant: {
-        default: "bg-base-app-bg text-base-high-contrast-text border-base-ui-border",
+        default: "bg-background text-foreground",
         destructive:
-          "border-destructive-ui-border text-destructive-high-contrast-text bg-destructive-subtle-bg [&>svg]:text-destructive-row-contrast-text",
+          "border-destructive/50 text-destructive dark:border-destructive [&>svg]:text-destructive",
       },
     },
     defaultVariants: {
@@ -30,7 +26,6 @@ const Alert = React.forwardRef<
   <div
     ref={ref}
     role="alert"
-    aria-live="polite"
     className={cn(alertVariants({ variant }), className)}
     {...props}
   />
@@ -61,4 +56,4 @@ const AlertDescription = React.forwardRef<
 ))
 AlertDescription.displayName = "AlertDescription"
 
-export { Alert, AlertTitle, AlertDescription, alertVariants }
+export { Alert, AlertTitle, AlertDescription }

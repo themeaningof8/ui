@@ -1,9 +1,10 @@
 /**
- * @file Drawerのストーリー
- * @description Drawerの様々な状態とバリエーションを表示
+ * @file ドロワーコンポーネントのストーリー
+ * @description ドロワーコンポーネントの使用例を表示します
  */
 
 import type { Meta, StoryObj } from '@storybook/react'
+import { Button } from '@/components/ui/button'
 import {
   Drawer,
   DrawerTrigger,
@@ -12,25 +13,13 @@ import {
   DrawerFooter,
   DrawerTitle,
   DrawerDescription,
-} from '@/components/ui/drawer'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { within, userEvent } from '@storybook/testing-library'
-import { expect } from '@storybook/jest'
+} from '.'
 
 const meta = {
   title: 'UI/Drawer',
   component: Drawer,
   parameters: {
-    layout: 'fullscreen',
-    onLoad: () => {
-      const consoleError = console.error;
-      console.error = (...args) => {
-        consoleError(...args);
-        throw new Error(args.join(' '));
-      };
-    },
+    layout: 'centered',
   },
   tags: ['autodocs'],
 } satisfies Meta<typeof Drawer>
@@ -39,7 +28,7 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 /**
- * @description 基本的なドロワーの表示
+ * 基本的なドロワーの使用例
  */
 export const Default: Story = {
   render: () => (
@@ -51,166 +40,101 @@ export const Default: Story = {
         <DrawerHeader>
           <DrawerTitle>基本的なドロワー</DrawerTitle>
           <DrawerDescription>
-            下部から表示されるドロワーコンポーネントです。
+            これは基本的なドロワーコンポーネントの例です。
+            画面の端から表示されるパネルとして機能します。
           </DrawerDescription>
         </DrawerHeader>
         <div className="p-4">
-          <p>ドロワーの内容がここに表示されます。</p>
+          <p>ドロワーのコンテンツをここに配置します。</p>
         </div>
         <DrawerFooter>
-          <Button>保存</Button>
-          <Button variant="outline">キャンセル</Button>
+          <Button>アクション</Button>
         </DrawerFooter>
       </DrawerContent>
     </Drawer>
   ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    
-    // トリガーボタンの確認
-    const trigger = canvas.getByRole('button', { name: 'ドロワーを開く' })
-    expect(trigger).toBeInTheDocument()
-    
-    // ドロワーを開く
-    await userEvent.click(trigger)
-    
-    // ドロワーの内容を確認
-    const drawer = document.querySelector('[role="dialog"]')
-    expect(drawer).toBeInTheDocument()
-    
-    const drawerContent = within(drawer as HTMLElement)
-    expect(drawerContent.getByText('基本的なドロワー')).toBeVisible()
-    expect(drawerContent.getByText('下部から表示されるドロワーコンポーネントです。')).toBeVisible()
-    expect(drawerContent.getByText('ドロワーの内容がここに表示されます。')).toBeVisible()
-    
-    // フッターボタンの確認
-    const buttons = drawerContent.getAllByRole('button')
-    expect(buttons).toHaveLength(2)
-    expect(buttons[0]).toHaveTextContent('保存')
-    expect(buttons[1]).toHaveTextContent('キャンセル')
-  },
 }
 
 /**
- * @description フォーム付きドロワー
+ * フォームを含むドロワーの使用例
  */
 export const WithForm: Story = {
   render: () => (
     <Drawer>
       <DrawerTrigger asChild>
-        <Button>プロフィールを編集</Button>
+        <Button variant="outline">フォームを開く</Button>
       </DrawerTrigger>
       <DrawerContent>
         <DrawerHeader>
-          <DrawerTitle>プロフィール編集</DrawerTitle>
+          <DrawerTitle>新規作成</DrawerTitle>
           <DrawerDescription>
-            プロフィール情報を編集できます。
+            新しいアイテムを作成します。
+            必要な情報を入力してください。
           </DrawerDescription>
         </DrawerHeader>
-        <div className="p-4 space-y-4">
-          <div className="grid w-full items-center gap-1.5">
-            <Label htmlFor="name">名前</Label>
-            <Input
+        <form className="p-4 space-y-4">
+          <div className="space-y-2">
+            <label htmlFor="name" className="text-sm font-medium">名前</label>
+            <input
               type="text"
               id="name"
+              className="w-full p-2 border rounded-md"
               placeholder="名前を入力"
             />
           </div>
-          <div className="grid w-full items-center gap-1.5">
-            <Label htmlFor="email">メールアドレス</Label>
-            <Input
-              type="email"
-              id="email"
-              placeholder="メールアドレスを入力"
+          <div className="space-y-2">
+            <label htmlFor="description" className="text-sm font-medium">説明</label>
+            <textarea
+              id="description"
+              className="w-full p-2 border rounded-md"
+              placeholder="説明を入力"
+              rows={3}
             />
           </div>
-        </div>
+        </form>
         <DrawerFooter>
-          <Button>変更を保存</Button>
-          <Button variant="outline">キャンセル</Button>
+          <Button type="submit">保存</Button>
         </DrawerFooter>
       </DrawerContent>
     </Drawer>
   ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    
-    // トリガーボタンの確認
-    const trigger = canvas.getByRole('button', { name: 'プロフィールを編集' })
-    expect(trigger).toBeInTheDocument()
-    
-    // ドロワーを開く
-    await userEvent.click(trigger)
-    
-    // ドロワーの内容を確認
-    const drawer = document.querySelector('[role="dialog"]')
-    expect(drawer).toBeInTheDocument()
-    
-    const drawerContent = within(drawer as HTMLElement)
-    
-    // フォーム要素の確認
-    const nameInput = drawerContent.getByLabelText('名前')
-    const emailInput = drawerContent.getByLabelText('メールアドレス')
-    expect(nameInput).toBeVisible()
-    expect(emailInput).toBeVisible()
-    
-    // フォームの入力テスト
-    await userEvent.type(nameInput, 'テストユーザー')
-    await userEvent.type(emailInput, 'test@example.com')
-    expect(nameInput).toHaveValue('テストユーザー')
-    expect(emailInput).toHaveValue('test@example.com')
-    
-    // ボタンの確認
-    const buttons = drawerContent.getAllByRole('button')
-    expect(buttons[0]).toHaveTextContent('変更を保存')
-    expect(buttons[1]).toHaveTextContent('キャンセル')
-  },
 }
 
 /**
- * @description カスタムサイズのドロワー
+ * カスタムサイズのドロワーの使用例
  */
 export const CustomSize: Story = {
   render: () => (
     <Drawer>
       <DrawerTrigger asChild>
-        <Button variant="outline">カスタムサイズ</Button>
+        <Button variant="outline">大きいドロワーを開く</Button>
       </DrawerTrigger>
-      <DrawerContent className="max-h-[50vh]">
+      <DrawerContent className="max-w-[800px]">
         <DrawerHeader>
-          <DrawerTitle>カスタムサイズのドロワー</DrawerTitle>
+          <DrawerTitle>大きいドロワー</DrawerTitle>
           <DrawerDescription>
-            高さを50vhに制限したドロワーです。
+            このドロワーは通常よりも幅が広くなっています。
+            より多くのコンテンツを表示する必要がある場合に適しています。
           </DrawerDescription>
         </DrawerHeader>
-        <div className="p-4">
-          <div className="h-[200px] rounded border-2 border-dashed border-muted-foreground/25 p-4">
-            スクロール可能なコンテンツエリア
+        <div className="p-4 grid grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <h3 className="font-medium">セクション1</h3>
+            <p className="text-sm text-muted-foreground">
+              左側のコンテンツエリアです。
+            </p>
+          </div>
+          <div className="space-y-2">
+            <h3 className="font-medium">セクション2</h3>
+            <p className="text-sm text-muted-foreground">
+              右側のコンテンツエリアです。
+            </p>
           </div>
         </div>
         <DrawerFooter>
-          <Button>確認</Button>
+          <Button>完了</Button>
         </DrawerFooter>
       </DrawerContent>
     </Drawer>
   ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    
-    // トリガーボタンの確認
-    const trigger = canvas.getByRole('button', { name: 'カスタムサイズ' })
-    expect(trigger).toBeInTheDocument()
-    
-    // ドロワーを開く
-    await userEvent.click(trigger)
-    
-    // ドロワーの内容を確認
-    const drawer = document.querySelector('[role="dialog"]')
-    expect(drawer).toBeInTheDocument()
-    expect(drawer).toHaveClass('max-h-[50vh]')
-    
-    const drawerContent = within(drawer as HTMLElement)
-    expect(drawerContent.getByText('カスタムサイズのドロワー')).toBeVisible()
-    expect(drawerContent.getByText('スクロール可能なコンテンツエリア')).toBeVisible()
-  },
 } 

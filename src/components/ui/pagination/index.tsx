@@ -5,9 +5,14 @@ import { cn } from "@/lib/utils";
 import { type ButtonProps, buttonVariants } from "@/components/ui/button";
 
 /**
- * @description ページネーションコンポーネントの基本コンポーネント群
+ * ページネーションのルートコンポーネントです。
+ * ページネーション全体のコンテナとして機能します。
+ *
+ * @component
+ * @param {object} props - コンポーネントのプロパティ
+ * @param {string} [props.className] - 追加のCSSクラス名
+ * @param {React.ReactNode} props.children - 子要素
  */
-
 const Pagination = ({ className, ...props }: React.ComponentProps<"nav">) => (
 	<nav
 		aria-label="pagination"
@@ -17,6 +22,16 @@ const Pagination = ({ className, ...props }: React.ComponentProps<"nav">) => (
 );
 Pagination.displayName = "Pagination";
 
+/**
+ * ページネーションのコンテンツコンポーネントです。
+ * ページネーションアイテムのコンテナとして機能します。
+ *
+ * @component
+ * @param {object} props - コンポーネントのプロパティ
+ * @param {string} [props.className] - 追加のCSSクラス名
+ * @param {React.ReactNode} props.children - 子要素
+ * @param {React.Ref<HTMLUListElement>} ref - 転送されるref
+ */
 const PaginationContent = React.forwardRef<
 	HTMLUListElement,
 	React.ComponentProps<"ul">
@@ -29,6 +44,16 @@ const PaginationContent = React.forwardRef<
 ));
 PaginationContent.displayName = "PaginationContent";
 
+/**
+ * ページネーションのアイテムコンポーネントです。
+ * 個々のページネーション要素のコンテナとして機能します。
+ *
+ * @component
+ * @param {object} props - コンポーネントのプロパティ
+ * @param {string} [props.className] - 追加のCSSクラス名
+ * @param {React.ReactNode} props.children - 子要素
+ * @param {React.Ref<HTMLLIElement>} ref - 転送されるref
+ */
 const PaginationItem = React.forwardRef<
 	HTMLLIElement,
 	React.ComponentProps<"li">
@@ -37,11 +62,27 @@ const PaginationItem = React.forwardRef<
 ));
 PaginationItem.displayName = "PaginationItem";
 
+/**
+ * ページネーションリンクのプロパティ型定義です。
+ * @typedef {object} PaginationLinkProps
+ * @property {boolean} [isActive] - 現在のページかどうか
+ * @property {ButtonProps["size"]} size - ボタンのサイズ
+ */
 type PaginationLinkProps = {
 	isActive?: boolean;
 } & Pick<ButtonProps, "size"> &
 	React.ComponentProps<"a">;
 
+/**
+ * ページネーションのリンクコンポーネントです。
+ * 個々のページへのリンクとして機能します。
+ *
+ * @component
+ * @param {object} props - コンポーネントのプロパティ
+ * @param {string} [props.className] - 追加のCSSクラス名
+ * @param {boolean} [props.isActive] - 現在のページかどうか
+ * @param {ButtonProps["size"]} [props.size="icon"] - ボタンのサイズ
+ */
 const PaginationLink = ({
 	className,
 	isActive,
@@ -62,14 +103,22 @@ const PaginationLink = ({
 );
 PaginationLink.displayName = "PaginationLink";
 
+/**
+ * 前のページへのリンクコンポーネントです。
+ *
+ * @component
+ * @param {object} props - コンポーネントのプロパティ
+ * @param {string} [props.className] - 追加のCSSクラス名
+ */
 const PaginationPrevious = ({
 	className,
+	size = "default",
 	...props
 }: React.ComponentProps<typeof PaginationLink>) => (
 	<PaginationLink
 		aria-label="Go to previous page"
-		size="default"
-		className={cn("gap-1 pl-2.5 text-base-high-contrast-text", className)}
+		className={cn("gap-1 pl-2.5", className)}
+		size={size}
 		{...props}
 	>
 		<ChevronLeft className="h-4 w-4" />
@@ -78,14 +127,22 @@ const PaginationPrevious = ({
 );
 PaginationPrevious.displayName = "PaginationPrevious";
 
+/**
+ * 次のページへのリンクコンポーネントです。
+ *
+ * @component
+ * @param {object} props - コンポーネントのプロパティ
+ * @param {string} [props.className] - 追加のCSSクラス名
+ */
 const PaginationNext = ({
 	className,
+	size = "default",
 	...props
 }: React.ComponentProps<typeof PaginationLink>) => (
 	<PaginationLink
 		aria-label="Go to next page"
-		size="default"
-		className={cn("gap-1 pr-2.5 text-base-high-contrast-text", className)}
+		className={cn("gap-1 pr-2.5", className)}
+		size={size}
 		{...props}
 	>
 		<span>Next</span>
@@ -94,16 +151,24 @@ const PaginationNext = ({
 );
 PaginationNext.displayName = "PaginationNext";
 
+/**
+ * ページネーションの省略記号コンポーネントです。
+ * 多数のページがある場合に、ページ番号の省略を表示します。
+ *
+ * @component
+ * @param {object} props - コンポーネントのプロパティ
+ * @param {string} [props.className] - 追加のCSSクラス名
+ */
 const PaginationEllipsis = ({
 	className,
 	...props
 }: React.ComponentProps<"span">) => (
 	<span
 		aria-hidden
-		className={cn("flex h-9 w-9 items-center justify-center text-base-low-contrast-text", className)}
+		className={cn("flex h-9 w-9 items-center justify-center", className)}
 		{...props}
 	>
-		<MoreHorizontal className="h-4 w-4" />
+		<MoreHorizontal className="h-4 w-4" data-testid="ellipsis-icon" />
 		<span className="sr-only">More pages</span>
 	</span>
 );
@@ -112,9 +177,9 @@ PaginationEllipsis.displayName = "PaginationEllipsis";
 export {
 	Pagination,
 	PaginationContent,
-	PaginationLink,
-	PaginationItem,
-	PaginationPrevious,
-	PaginationNext,
 	PaginationEllipsis,
+	PaginationItem,
+	PaginationLink,
+	PaginationNext,
+	PaginationPrevious,
 };

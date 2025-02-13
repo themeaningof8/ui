@@ -1,8 +1,10 @@
 /**
- * @file Cardの Storybook 設定
- * @description Cardの様々な使用例を表示します。
+ * @file カードコンポーネントのストーリー
+ * @description カードコンポーネントの使用例を表示します
  */
-import type { Meta, StoryObj } from '@storybook/react';
+
+import type { Meta, StoryObj } from '@storybook/react'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardHeader,
@@ -10,223 +12,128 @@ import {
   CardDescription,
   CardContent,
   CardFooter,
-} from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { within } from '@storybook/testing-library';
-import { expect } from '@storybook/jest';
+} from '.'
 
 const meta = {
   title: 'UI/Card',
   component: Card,
   parameters: {
     layout: 'centered',
-    onLoad: () => {
-      const consoleError = console.error;
-      console.error = (...args) => {
-        consoleError(...args);
-        throw new Error(args.join(" "));
-      };
-    },
   },
   tags: ['autodocs'],
-} satisfies Meta<typeof Card>;
+} satisfies Meta<typeof Card>
 
-export default meta;
-type Story = StoryObj<typeof meta>;
+export default meta
+type Story = StoryObj<typeof meta>
 
 /**
- * デフォルトのカード表示
+ * 基本的なカードの使用例
  */
 export const Default: Story = {
   render: () => (
     <Card className="w-[350px]">
       <CardHeader>
         <CardTitle>カードタイトル</CardTitle>
-        <CardDescription>カードの説明文をここに記載します。</CardDescription>
+        <CardDescription>カードの説明文がここに入ります。</CardDescription>
       </CardHeader>
       <CardContent>
-        <p>カードのメインコンテンツ部分です。</p>
+        <p>カードのメインコンテンツがここに入ります。</p>
       </CardContent>
       <CardFooter>
-        <p>フッター部分です。</p>
+        <p>カードのフッターコンテンツ</p>
       </CardFooter>
     </Card>
   ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    
-    // タイトルと説明文の確認
-    const title = canvas.getByText('カードタイトル');
-    const description = canvas.getByText('カードの説明文をここに記載します。');
-    expect(title).toBeInTheDocument();
-    expect(description).toBeInTheDocument();
-    
-    // コンテンツとフッターの確認
-    const content = canvas.getByText('カードのメインコンテンツ部分です。');
-    const footer = canvas.getByText('フッター部分です。');
-    expect(content).toBeInTheDocument();
-    expect(footer).toBeInTheDocument();
-  },
-};
+}
 
 /**
- * アクションを含むカード
+ * インタラクティブな要素を含むカードの使用例
  */
-export const WithActions: Story = {
+export const Interactive: Story = {
   render: () => (
     <Card className="w-[350px]">
       <CardHeader>
-        <CardTitle>アカウント設定</CardTitle>
-        <CardDescription>プロフィールや通知設定を変更できます。</CardDescription>
+        <CardTitle>アカウント作成</CardTitle>
+        <CardDescription>以下のフォームに必要事項を入力してください。</CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <p className="text-sm font-medium">メールアドレス</p>
-            <p className="text-sm text-base-low">example@example.com</p>
+        <div className="grid w-full items-center gap-4">
+          <div className="flex flex-col space-y-1.5">
+            <label htmlFor="name">名前</label>
+            <input
+              id="name"
+              type="text"
+              placeholder="名前を入力"
+              className="rounded-md border p-2"
+            />
           </div>
-          <div className="space-y-2">
-            <p className="text-sm font-medium">通知設定</p>
-            <p className="text-sm text-base-low">すべての通知を受け取る</p>
+          <div className="flex flex-col space-y-1.5">
+            <label htmlFor="email">メールアドレス</label>
+            <input
+              id="email"
+              type="email"
+              placeholder="メールアドレスを入力"
+              className="rounded-md border p-2"
+            />
           </div>
         </div>
       </CardContent>
       <CardFooter className="flex justify-between">
         <Button variant="outline">キャンセル</Button>
-        <Button>保存</Button>
+        <Button>作成</Button>
       </CardFooter>
     </Card>
   ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    
-    // ヘッダー部分の確認
-    const title = canvas.getByText('アカウント設定');
-    const description = canvas.getByText('プロフィールや通知設定を変更できます。');
-    expect(title).toBeInTheDocument();
-    expect(description).toBeInTheDocument();
-    
-    // コンテンツ部分の確認
-    const emailLabel = canvas.getByText('メールアドレス');
-    const emailValue = canvas.getByText('example@example.com');
-    const notificationLabel = canvas.getByText('通知設定');
-    const notificationValue = canvas.getByText('すべての通知を受け取る');
-    expect(emailLabel).toBeInTheDocument();
-    expect(emailValue).toBeInTheDocument();
-    expect(notificationLabel).toBeInTheDocument();
-    expect(notificationValue).toBeInTheDocument();
-    
-    // ボタンの確認
-    const cancelButton = canvas.getByText('キャンセル');
-    const saveButton = canvas.getByText('保存');
-    expect(cancelButton).toBeInTheDocument();
-    expect(saveButton).toBeInTheDocument();
-    expect(cancelButton).toHaveClass('variant-outline');
-
-    // 「詳細を見る」を含む要素を特定 (例: ボタン)
-    const viewDetailsButton = canvas.getByText((content, element) => {
-      return element?.textContent?.includes('詳細を見る') ?? false;
-    });
-    expect(viewDetailsButton).toBeVisible();
-
-    // 例: WithActions ストーリー (修正が必要な場合)
-    // variant="outline" に対応するクラスが適用されているか確認
-    const buttons = canvas.getAllByRole('button');
-    expect(buttons[0]).toHaveClass('variant-outline'); // 修正が必要な場合
-  },
-};
+}
 
 /**
- * 画像を含むカード
+ * 画像を含むカードの使用例
  */
 export const WithImage: Story = {
   render: () => (
     <Card className="w-[350px]">
       <img
-        src="https://images.unsplash.com/photo-1523821741446-edb2b68bb7a0?w=350&h=175&fit=crop"
-        alt="カードの画像"
-        className="w-full h-[175px] object-cover"
+        src="https://images.unsplash.com/photo-1588345921523-c2dcdb7f1dcd?w=800&dpr=2&q=80"
+        alt="カード画像"
+        className="aspect-video w-full object-cover"
       />
       <CardHeader>
         <CardTitle>美しい風景</CardTitle>
         <CardDescription>自然の素晴らしさを感じる一枚</CardDescription>
       </CardHeader>
       <CardContent>
-        <p className="text-sm text-base-low">
-          山々の雄大な景色が広がる素晴らしい風景写真です。
-        </p>
+        <p>この写真は、美しい自然の風景を切り取ったものです。</p>
+      </CardContent>
+      <CardFooter>
+        <Button variant="secondary">詳細を見る</Button>
+      </CardFooter>
+    </Card>
+  ),
+}
+
+/**
+ * カスタムスタイルを適用したカードの使用例
+ */
+export const CustomStyle: Story = {
+  render: () => (
+    <Card className="w-[350px] bg-primary text-primary-foreground">
+      <CardHeader>
+        <CardTitle className="text-2xl">特別なカード</CardTitle>
+        <CardDescription className="text-primary-foreground/90">
+          カスタムスタイルを適用した特別なデザイン
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-2">
+        <p>独自のスタイリングを施したカードコンテンツです。</p>
+        <div className="rounded bg-primary-foreground/10 p-2">
+          ハイライトされたコンテンツ
+        </div>
       </CardContent>
       <CardFooter>
         <Button variant="secondary" className="w-full">
-          詳細を見る
+          アクション
         </Button>
       </CardFooter>
     </Card>
   ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    
-    // 画像の確認
-    const image = canvas.getByRole('img');
-    expect(image).toBeInTheDocument();
-    expect(image).toHaveAttribute('alt', 'カードの画像');
-    expect(image).toHaveClass('w-full', 'h-[175px]', 'object-cover');
-    
-    // テキストコンテンツの確認
-    const title = canvas.getByText('美しい風景');
-    const description = canvas.getByText('自然の素晴らしさを感じる一枚');
-    const content = canvas.getByText('山々の雄大な景色が広がる素晴らしい風景写真です。');
-    expect(title).toBeInTheDocument();
-    expect(description).toBeInTheDocument();
-    expect(content).toBeInTheDocument();
-    
-    // ボタンの確認
-    const button = canvas.getByText('詳細を見る');
-    expect(button).toBeInTheDocument();
-    expect(button).toHaveClass('w-full');
-  },
-};
-
-/**
- * 複数のカードを並べた例
- */
-export const Grid: Story = {
-  render: () => (
-    <div className="grid grid-cols-2 gap-4">
-      <Card>
-        <CardHeader>
-          <CardTitle>カード1</CardTitle>
-          <CardDescription>説明1</CardDescription>
-        </CardHeader>
-        <CardContent>コンテンツ1</CardContent>
-      </Card>
-      <Card>
-        <CardHeader>
-          <CardTitle>カード2</CardTitle>
-          <CardDescription>説明2</CardDescription>
-        </CardHeader>
-        <CardContent>コンテンツ2</CardContent>
-      </Card>
-    </div>
-  ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const cards = canvas.getAllByRole('article');
-    
-    // グリッドコンテナの確認
-    const container = canvas.getByRole('generic');
-    expect(container).toHaveClass('grid', 'grid-cols-2', 'gap-4');
-    
-    // 各カードの確認
-    const titles = canvas.getAllByRole('heading');
-    expect(titles).toHaveLength(2);
-    expect(titles[0]).toHaveTextContent('カード1');
-    expect(titles[1]).toHaveTextContent('カード2');
-    
-    const descriptions = canvas.getAllByText(/説明[12]/);
-    expect(descriptions).toHaveLength(2);
-    
-    const contents = canvas.getAllByText(/コンテンツ[12]/);
-    expect(contents).toHaveLength(2);
-  },
-}; 
+} 

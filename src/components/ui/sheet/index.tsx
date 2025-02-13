@@ -8,43 +8,20 @@ import { X } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 /**
- * @description シートコンポーネントの基本コンポーネント群
+ * シートのバリアントを定義します。
+ * サイドからのスライドインの方向を指定します。
  */
-
-const Sheet = SheetPrimitive.Root
-
-const SheetTrigger = SheetPrimitive.Trigger
-
-const SheetClose = SheetPrimitive.Close
-
-const SheetPortal = SheetPrimitive.Portal
-
-const SheetOverlay = React.forwardRef<
-  React.ElementRef<typeof SheetPrimitive.Overlay>,
-  React.ComponentPropsWithoutRef<typeof SheetPrimitive.Overlay>
->(({ className, ...props }, ref) => (
-  <SheetPrimitive.Overlay
-    className={cn(
-      "fixed inset-0 z-50 bg-base-solid/80 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
-      className
-    )}
-    {...props}
-    ref={ref}
-  />
-))
-SheetOverlay.displayName = SheetPrimitive.Overlay.displayName
-
 const sheetVariants = cva(
-  "fixed z-50 gap-4 bg-base-app-bg p-6 shadow-lg transition ease-in-out data-[state=closed]:duration-300 data-[state=open]:duration-500 data-[state=open]:animate-in data-[state=closed]:animate-out",
+  "fixed z-50 gap-4 bg-background p-6 shadow-lg transition ease-in-out data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:duration-300 data-[state=open]:duration-500",
   {
     variants: {
       side: {
-        top: "inset-x-0 top-0 border-b border-base-ui-border data-[state=closed]:slide-out-to-top data-[state=open]:slide-in-from-top",
+        top: "inset-x-0 top-0 border-b data-[state=closed]:slide-out-to-top data-[state=open]:slide-in-from-top",
         bottom:
-          "inset-x-0 bottom-0 border-t border-base-ui-border data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom",
-        left: "inset-y-0 left-0 h-full w-3/4 border-r border-base-ui-border data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left sm:max-w-sm",
+          "inset-x-0 bottom-0 border-t data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom",
+        left: "inset-y-0 left-0 h-full w-3/4 border-r data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left sm:max-w-sm",
         right:
-          "inset-y-0 right-0 h-full w-3/4 border-l border-base-ui-border data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right sm:max-w-sm",
+          "inset-y-0 right-0 h-full w-3/4 border-l data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right sm:max-w-sm",
       },
     },
     defaultVariants: {
@@ -53,12 +30,73 @@ const sheetVariants = cva(
   }
 )
 
+/**
+ * シートのルートコンポーネントです。
+ * シート全体のコンテナとして機能します。
+ */
+const Sheet = SheetPrimitive.Root
+
+/**
+ * シートのトリガーコンポーネントです。
+ * クリックした時にシートを表示する要素として機能します。
+ */
+const SheetTrigger = SheetPrimitive.Trigger
+
+/**
+ * シートのクローズボタンコンポーネントです。
+ * シートを閉じるボタンとして機能します。
+ */
+const SheetClose = SheetPrimitive.Close
+
+/**
+ * シートのポータルコンポーネントです。
+ * シートをDOMツリーの特定の場所にレンダリングします。
+ */
+const SheetPortal = SheetPrimitive.Portal
+
+/**
+ * シートのオーバーレイコンポーネントです。
+ * シートの背景として機能し、クリックするとシートを閉じます。
+ * 
+ * @component
+ * @param {object} props - コンポーネントのプロパティ
+ * @param {string} [props.className] - 追加のCSSクラス名
+ * @param {React.ReactNode} props.children - 子要素
+ * @param {React.Ref<HTMLDivElement>} ref - 転送されるref
+ */
+const SheetOverlay = React.forwardRef<
+  React.ComponentRef<typeof SheetPrimitive.Overlay>,
+  React.ComponentPropsWithoutRef<typeof SheetPrimitive.Overlay>
+>(({ className, ...props }, ref) => (
+  <SheetPrimitive.Overlay
+    className={cn(
+      "fixed inset-0 z-50 bg-black/80 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+      className
+    )}
+    data-testid="sheet-overlay"
+    {...props}
+    ref={ref}
+  />
+))
+SheetOverlay.displayName = SheetPrimitive.Overlay.displayName
+
+/**
+ * シートのコンテンツコンポーネントです。
+ * シートの内容を含むコンテナとして機能します。
+ * 
+ * @component
+ * @param {object} props - コンポーネントのプロパティ
+ * @param {string} [props.side="right"] - シートが表示される方向
+ * @param {string} [props.className] - 追加のCSSクラス名
+ * @param {React.ReactNode} props.children - 子要素
+ * @param {React.Ref<HTMLDivElement>} ref - 転送されるref
+ */
 interface SheetContentProps
   extends React.ComponentPropsWithoutRef<typeof SheetPrimitive.Content>,
     VariantProps<typeof sheetVariants> {}
 
 const SheetContent = React.forwardRef<
-  React.ElementRef<typeof SheetPrimitive.Content>,
+  React.ComponentRef<typeof SheetPrimitive.Content>,
   SheetContentProps
 >(({ side = "right", className, children, ...props }, ref) => (
   <SheetPortal>
@@ -68,16 +106,25 @@ const SheetContent = React.forwardRef<
       className={cn(sheetVariants({ side }), className)}
       {...props}
     >
-      <SheetPrimitive.Close className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-base-app-bg transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-base-ui-border focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-base-ui-hover">
+      {children}
+      <SheetPrimitive.Close className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary">
         <X className="h-4 w-4" />
         <span className="sr-only">Close</span>
       </SheetPrimitive.Close>
-      {children}
     </SheetPrimitive.Content>
   </SheetPortal>
 ))
 SheetContent.displayName = SheetPrimitive.Content.displayName
 
+/**
+ * シートのヘッダーコンポーネントです。
+ * シートのヘッダー部分として機能します。
+ * 
+ * @component
+ * @param {object} props - コンポーネントのプロパティ
+ * @param {string} [props.className] - 追加のCSSクラス名
+ * @param {React.ReactNode} props.children - 子要素
+ */
 const SheetHeader = ({
   className,
   ...props
@@ -92,6 +139,15 @@ const SheetHeader = ({
 )
 SheetHeader.displayName = "SheetHeader"
 
+/**
+ * シートのフッターコンポーネントです。
+ * シートのフッター部分として機能します。
+ * 
+ * @component
+ * @param {object} props - コンポーネントのプロパティ
+ * @param {string} [props.className] - 追加のCSSクラス名
+ * @param {React.ReactNode} props.children - 子要素
+ */
 const SheetFooter = ({
   className,
   ...props
@@ -106,25 +162,45 @@ const SheetFooter = ({
 )
 SheetFooter.displayName = "SheetFooter"
 
+/**
+ * シートのタイトルコンポーネントです。
+ * シートのタイトルとして機能します。
+ * 
+ * @component
+ * @param {object} props - コンポーネントのプロパティ
+ * @param {string} [props.className] - 追加のCSSクラス名
+ * @param {React.ReactNode} props.children - 子要素
+ * @param {React.Ref<HTMLHeadingElement>} ref - 転送されるref
+ */
 const SheetTitle = React.forwardRef<
-  React.ElementRef<typeof SheetPrimitive.Title>,
+  React.ComponentRef<typeof SheetPrimitive.Title>,
   React.ComponentPropsWithoutRef<typeof SheetPrimitive.Title>
 >(({ className, ...props }, ref) => (
   <SheetPrimitive.Title
     ref={ref}
-    className={cn("text-lg font-semibold text-base-high-contrast-text", className)}
+    className={cn("text-lg font-semibold text-foreground", className)}
     {...props}
   />
 ))
 SheetTitle.displayName = SheetPrimitive.Title.displayName
 
+/**
+ * シートの説明コンポーネントです。
+ * シートの説明文として機能します。
+ * 
+ * @component
+ * @param {object} props - コンポーネントのプロパティ
+ * @param {string} [props.className] - 追加のCSSクラス名
+ * @param {React.ReactNode} props.children - 子要素
+ * @param {React.Ref<HTMLParagraphElement>} ref - 転送されるref
+ */
 const SheetDescription = React.forwardRef<
-  React.ElementRef<typeof SheetPrimitive.Description>,
+  React.ComponentRef<typeof SheetPrimitive.Description>,
   React.ComponentPropsWithoutRef<typeof SheetPrimitive.Description>
 >(({ className, ...props }, ref) => (
   <SheetPrimitive.Description
     ref={ref}
-    className={cn("text-sm text-base-low-contrast-text", className)}
+    className={cn("text-sm text-muted-foreground", className)}
     {...props}
   />
 ))

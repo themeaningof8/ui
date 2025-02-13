@@ -1,221 +1,173 @@
 /**
- * @file ContextMenuコンポーネントのテスト
- * @description ContextMenu, ContextMenuTrigger, ContextMenuContent, ContextMenuItem, ContextMenuCheckboxItem, ContextMenuRadioGroup, ContextMenuRadioItem, ContextMenuLabel, ContextMenuSeparator, ContextMenuShortcut, ContextSub, ContextSubTrigger, ContextSubContent コンポーネントの機能とアクセシビリティをテストします
+ * @file コンテキストメニューコンポーネントのテスト
+ * @description コンテキストメニューコンポーネントの機能をテストします
  */
 
 import { describe, it, expect } from 'vitest'
-import { render, screen, fireEvent } from '@/tests/test-utils'
+import { render, screen, waitFor } from '@/tests/test-utils'
+import React from 'react'
 import {
   ContextMenu,
   ContextMenuTrigger,
   ContextMenuContent,
   ContextMenuItem,
+  ContextMenuSeparator,
+  ContextMenuSub,
+  ContextMenuSubTrigger,
+  ContextMenuSubContent,
   ContextMenuCheckboxItem,
   ContextMenuRadioGroup,
   ContextMenuRadioItem,
-  ContextMenuLabel,
-  ContextMenuSeparator,
-  ContextMenuShortcut,
-  ContextSub,
-  ContextSubTrigger,
-  ContextSubContent,
 } from '.'
 
-describe('ContextMenu', () => {
-  describe('基本レンダリングテスト', () => {
-    it('すべてのコンポーネントが正しくレンダリングされること', () => {
-      render(
-        <ContextMenu>
-          <ContextMenuTrigger>
-            <div>右クリックで開く</div>
-          </ContextMenuTrigger>
-          <ContextMenuContent>
-            <ContextMenuLabel>メニュー</ContextMenuLabel >
-            < ContextMenuSeparator />
-            <ContextMenuItem>
-              項目1
-              <ContextMenuShortcut>⌘A</ContextMenuShortcut>
-            </ContextMenuItem>
-            < ContextMenuCheckboxItem checked >
-              チェックボックス1
-            </ContextMenuCheckboxItem>
-            < ContextMenuRadioGroup value="item2" >
-              < ContextMenuRadioItem value="item1" >ラジオボタン1</ContextMenuRadioItem >
-              < ContextMenuRadioItem value="item2" >ラジオボタン2</ContextMenuRadioItem >
-            </ContextMenuRadioGroup>
-            <ContextSub>
-              <ContextSubTrigger>サブメニュー</ContextSubTrigger >
-              <ContextSubContent>
-                <ContextMenuItem>サブメニュー項目1</ContextMenuItem >
-              </ContextSubContent>
-            </ContextSub>
-          </ContextMenuContent>
-        </ContextMenu>
-      )
+describe('ContextMenuコンポーネント', () => {
+  it('基本的なコンテキストメニューが正しくレンダリングされること', async () => {
+    const { user } = render(
+      <ContextMenu>
+        <ContextMenuTrigger>右クリックエリア</ContextMenuTrigger>
+        <ContextMenuContent>
+          <ContextMenuItem>メニュー項目1</ContextMenuItem>
+          <ContextMenuItem>メニュー項目2</ContextMenuItem>
+        </ContextMenuContent>
+      </ContextMenu>
+    )
 
-      const trigger = screen.getByText('右クリックで開く')
-      expect(trigger).toBeInTheDocument()
+    const trigger = screen.getByText('右クリックエリア')
+    expect(trigger).toBeInTheDocument()
 
-      // 右クリックでコンテキストメニューを開く
-      fireEvent.contextMenu(trigger)
-
-      expect(screen.getByText('メニュー')).toBeInTheDocument()
-      expect(screen.getByText('項目1')).toBeInTheDocument()
-      expect(screen.getByText('⌘A')).toBeInTheDocument()
-      expect(screen.getByText('チェックボックス1')).toBeInTheDocument()
-      expect(screen.getByText('ラジオボタン1')).toBeInTheDocument()
-      expect(screen.getByText('ラジオボタン2')).toBeInTheDocument()
-      expect(screen.getByText('サブメニュー')).toBeInTheDocument()
-
-      // サブメニューを開く
-      fireEvent.mouseEnter(screen.getByText('サブメニュー'))
-      expect(screen.getByText('サブメニュー項目1')).toBeInTheDocument()
-    })
-  })
-
-  describe('インタラクションテスト', () => {
-    it('ContextMenuItem をクリックすると選択されること', () => {
-      const onSelect = vi.fn()
-      render(
-        <ContextMenu>
-          <ContextMenuTrigger>
-            <div>右クリックで開く</div>
-          </ContextMenuTrigger>
-          <ContextMenuContent>
-            < ContextMenuItem onSelect={onSelect} >項目1</ContextMenuItem >
-          </ContextMenuContent>
-        </ContextMenu>
-      )
-
-      const trigger = screen.getByText('右クリックで開く')
-      fireEvent.contextMenu(trigger)
-
-      const item = screen.getByText('項目1')
-      fireEvent.click(item)
-      expect(onSelect).toHaveBeenCalled()
-    })
-
-    it('ContextMenuCheckboxItem のチェック状態が変更されること', () => {
-      const onCheckedChange = vi.fn()
-      render(
-        <ContextMenu>
-          <ContextMenuTrigger>
-            <div>右クリックで開く</div>
-          </ContextMenuTrigger>
-          <ContextMenuContent>
-            < ContextMenuCheckboxItem checked={false} onCheckedChange={onCheckedChange} >
-              チェックボックス1
-            </ContextMenuCheckboxItem>
-          </ContextMenuContent>
-        </ContextMenu>
-      )
-
-      const trigger = screen.getByText('右クリックで開く')
-      fireEvent.contextMenu(trigger)
-
-      const item = screen.getByText('チェックボックス1')
-      fireEvent.click(item)
-      expect(onCheckedChange).toHaveBeenCalledWith(true)
-    })
-
-    it('ContextMenuRadioItem を選択すると他の項目が非選択になること', () => {
-      const onValueChange = vi.fn()
-      render(
-        <ContextMenu>
-          <ContextMenuTrigger>
-            <div>右クリックで開く</div>
-          </ContextMenuTrigger>
-          <ContextMenuContent>
-            < ContextMenuRadioGroup value="item1" onValueChange={onValueChange} >
-              < ContextMenuRadioItem value="item1" >ラジオボタン1</ContextMenuRadioItem >
-              < ContextMenuRadioItem value="item2" >ラジオボタン2</ContextMenuRadioItem >
-            </ContextMenuRadioGroup>
-          </ContextMenuContent>
-        </ContextMenu>
-      )
-
-      const trigger = screen.getByText('右クリックで開く')
-      fireEvent.contextMenu(trigger)
-
-      const item2 = screen.getByText('ラジオボタン2')
-      fireEvent.click(item2)
-      expect(onValueChange).toHaveBeenCalledWith('item2')
-    })
-  })
-
-  describe('アクセシビリティテスト', () => {
-    it('ContextMenuContent に role="menu" が設定されていること', () => {
-      render(
-        <ContextMenu>
-          <ContextMenuTrigger>
-            <div>右クリックで開く</div>
-          </ContextMenuTrigger>
-          <ContextMenuContent>
-            <ContextMenuItem>項目1</ContextMenuItem >
-          </ContextMenuContent>
-        </ContextMenu>
-      )
-
-      const trigger = screen.getByText('右クリックで開く')
-      fireEvent.contextMenu(trigger)
-
+    await user.pointer({ keys: '[MouseRight]', target: trigger })
+    await waitFor(() => {
       expect(screen.getByRole('menu')).toBeInTheDocument()
+      expect(screen.getByText('メニュー項目1')).toBeInTheDocument()
+      expect(screen.getByText('メニュー項目2')).toBeInTheDocument()
+    })
+  })
+
+  it('サブメニューが正しくレンダリングされること', async () => {
+    const { user } = render(
+      <ContextMenu>
+        <ContextMenuTrigger>右クリックエリア</ContextMenuTrigger>
+        <ContextMenuContent>
+          <ContextMenuSub>
+            <ContextMenuSubTrigger>サブメニュー</ContextMenuSubTrigger>
+            <ContextMenuSubContent>
+              <ContextMenuItem>サブ項目1</ContextMenuItem>
+              <ContextMenuItem>サブ項目2</ContextMenuItem>
+            </ContextMenuSubContent>
+          </ContextMenuSub>
+        </ContextMenuContent>
+      </ContextMenu>
+    )
+
+    const trigger = screen.getByText('右クリックエリア')
+    await user.pointer({ keys: '[MouseRight]', target: trigger })
+    
+    await waitFor(() => {
+      expect(screen.getByText('サブメニュー')).toBeInTheDocument()
     })
 
-    it('ContextMenuItem に role="menuitem" が設定されていること', () => {
-      render(
+    await user.hover(screen.getByText('サブメニュー'))
+    await waitFor(() => {
+      expect(screen.getByText('サブ項目1')).toBeInTheDocument()
+      expect(screen.getByText('サブ項目2')).toBeInTheDocument()
+    })
+  })
+
+  it('セパレーターが正しくレンダリングされること', async () => {
+    const { user } = render(
+      <ContextMenu>
+        <ContextMenuTrigger>右クリックエリア</ContextMenuTrigger>
+        <ContextMenuContent>
+          <ContextMenuItem>項目1</ContextMenuItem>
+          <ContextMenuSeparator />
+          <ContextMenuItem>項目2</ContextMenuItem>
+        </ContextMenuContent>
+      </ContextMenu>
+    )
+
+    const trigger = screen.getByText('右クリックエリア')
+    await user.pointer({ keys: '[MouseRight]', target: trigger })
+
+    await waitFor(() => {
+      expect(screen.getByRole('separator')).toBeInTheDocument()
+    })
+  })
+
+  it('チェックボックス項目が正しく機能すること', async () => {
+    const TestComponent = () => {
+      const [checked, setChecked] = React.useState(false)
+      return (
         <ContextMenu>
-          <ContextMenuTrigger>
-            <div>右クリックで開く</div>
-          </ContextMenuTrigger>
+          <ContextMenuTrigger>右クリックエリア</ContextMenuTrigger>
           <ContextMenuContent>
-            <ContextMenuItem>項目1</ContextMenuItem >
+            <ContextMenuCheckboxItem
+              checked={checked}
+              onCheckedChange={setChecked}
+            >
+              チェックボックス項目
+            </ContextMenuCheckboxItem>
           </ContextMenuContent>
         </ContextMenu>
       )
+    }
 
-      const trigger = screen.getByText('右クリックで開く')
-      fireEvent.contextMenu(trigger)
+    const { user } = render(<TestComponent />)
 
-      expect(screen.getByRole('menuitem')).toBeInTheDocument()
-    })
-
-    it('ContextMenuCheckboxItem に role="menuitemcheckbox" が設定されていること', () => {
-      render(
-        <ContextMenu>
-          <ContextMenuTrigger>
-            <div>右クリックで開く</div>
-          </ContextMenuTrigger>
-          <ContextMenuContent>
-            < ContextMenuCheckboxItem checked >チェックボックス1</ContextMenuCheckboxItem >
-          </ContextMenuContent>
-        </ContextMenu>
-      )
-
-      const trigger = screen.getByText('右クリックで開く')
-      fireEvent.contextMenu(trigger)
-
+    const trigger = screen.getByText('右クリックエリア')
+    await user.pointer({ keys: '[MouseRight]', target: trigger })
+    
+    await waitFor(() => {
       expect(screen.getByRole('menuitemcheckbox')).toBeInTheDocument()
     })
 
-    it('ContextMenuRadioItem に role="menuitemradio" が設定されていること', () => {
-      render(
+    const checkbox = screen.getByRole('menuitemcheckbox')
+    expect(checkbox).toHaveAttribute('aria-checked', 'false')
+
+    await user.click(checkbox)
+    await waitFor(() => {
+      expect(checkbox).toHaveAttribute('aria-checked', 'true')
+    })
+  })
+
+  it('ラジオグループが正しく機能すること', async () => {
+    const TestComponent = () => {
+      const [value, setValue] = React.useState('item1')
+      return (
         <ContextMenu>
-          <ContextMenuTrigger>
-            <div>右クリックで開く</div>
-          </ContextMenuTrigger>
+          <ContextMenuTrigger>右クリックエリア</ContextMenuTrigger>
           <ContextMenuContent>
-            < ContextMenuRadioGroup value="item1" >
-              < ContextMenuRadioItem value="item1" >ラジオボタン1</ContextMenuRadioItem >
+            <ContextMenuRadioGroup value={value} onValueChange={setValue}>
+              <ContextMenuRadioItem value="item1">
+                ラジオ項目1
+              </ContextMenuRadioItem>
+              <ContextMenuRadioItem value="item2">
+                ラジオ項目2
+              </ContextMenuRadioItem>
             </ContextMenuRadioGroup>
           </ContextMenuContent>
         </ContextMenu>
       )
+    }
 
-      const trigger = screen.getByText('右クリックで開く')
-      fireEvent.contextMenu(trigger)
+    const { user } = render(<TestComponent />)
 
-      expect(screen.getByRole('menuitemradio')).toBeInTheDocument()
+    const trigger = screen.getByText('右クリックエリア')
+    await user.pointer({ keys: '[MouseRight]', target: trigger })
+
+    await waitFor(() => {
+      expect(screen.getByRole('menuitemradio', { name: 'ラジオ項目1' })).toBeInTheDocument()
+    })
+
+    const radio1 = screen.getByRole('menuitemradio', { name: 'ラジオ項目1' })
+    const radio2 = screen.getByRole('menuitemradio', { name: 'ラジオ項目2' })
+
+    expect(radio1).toHaveAttribute('aria-checked', 'true')
+    expect(radio2).toHaveAttribute('aria-checked', 'false')
+
+    await user.click(radio2)
+    await waitFor(() => {
+      expect(radio1).toHaveAttribute('aria-checked', 'false')
+      expect(radio2).toHaveAttribute('aria-checked', 'true')
     })
   })
 }) 

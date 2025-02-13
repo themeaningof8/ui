@@ -1,4 +1,30 @@
-"use client";
+/**
+ * @file フォームコンポーネント
+ * @description フォームのバリデーションと状態管理を行うコンポーネント
+ *
+ * @example
+ * ```tsx
+ * // 基本的な使用例
+ * <Form {...form}>
+ *   <form onSubmit={form.handleSubmit(onSubmit)}>
+ *     <FormField
+ *       control={form.control}
+ *       name="username"
+ *       render={({ field }) => (
+ *         <FormItem>
+ *           <FormLabel>ユーザー名</FormLabel>
+ *           <FormControl>
+ *             <Input {...field} />
+ *           </FormControl>
+ *           <FormMessage />
+ *         </FormItem>
+ *       )}
+ *     />
+ *     <Button type="submit">送信</Button>
+ *   </form>
+ * </Form>
+ * ```
+ */
 
 import * as React from "react";
 import type * as LabelPrimitive from "@radix-ui/react-label";
@@ -15,6 +41,9 @@ import {
 import { cn } from "@/lib/utils";
 import { Label } from "@/components/ui/label";
 
+/**
+ * フォームコンテキストプロバイダー
+ */
 const Form = FormProvider;
 
 type FormFieldContextValue<
@@ -24,10 +53,16 @@ type FormFieldContextValue<
 	name: TName;
 };
 
+/**
+ * フォームフィールドコンテキスト
+ */
 const FormFieldContext = React.createContext<FormFieldContextValue>(
 	{} as FormFieldContextValue,
 );
 
+/**
+ * フォームフィールドプロバイダー
+ */
 const FormField = <
 	TFieldValues extends FieldValues = FieldValues,
 	TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
@@ -41,6 +76,9 @@ const FormField = <
 	);
 };
 
+/**
+ * フォームフィールドコンテキストを使用するためのフック
+ */
 const useFormField = () => {
 	const fieldContext = React.useContext(FormFieldContext);
 	const itemContext = React.useContext(FormItemContext);
@@ -68,10 +106,16 @@ type FormItemContextValue = {
 	id: string;
 };
 
+/**
+ * フォームアイテムコンテキスト
+ */
 const FormItemContext = React.createContext<FormItemContextValue>(
 	{} as FormItemContextValue,
 );
 
+/**
+ * フォームアイテムコンポーネント
+ */
 const FormItem = React.forwardRef<
 	HTMLDivElement,
 	React.HTMLAttributes<HTMLDivElement>
@@ -86,8 +130,11 @@ const FormItem = React.forwardRef<
 });
 FormItem.displayName = "FormItem";
 
+/**
+ * フォームラベルコンポーネント
+ */
 const FormLabel = React.forwardRef<
-	React.ElementRef<typeof LabelPrimitive.Root>,
+	React.ComponentRef<typeof LabelPrimitive.Root>,
 	React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root>
 >(({ className, ...props }, ref) => {
 	const { error, formItemId } = useFormField();
@@ -95,7 +142,7 @@ const FormLabel = React.forwardRef<
 	return (
 		<Label
 			ref={ref}
-			className={cn(error && "text-destructive-high-contrast-text", className)}
+			className={cn(error && "text-destructive", className)}
 			htmlFor={formItemId}
 			{...props}
 		/>
@@ -103,8 +150,11 @@ const FormLabel = React.forwardRef<
 });
 FormLabel.displayName = "FormLabel";
 
+/**
+ * フォームコントロールコンポーネント
+ */
 const FormControl = React.forwardRef<
-	React.ElementRef<typeof Slot>,
+	React.ComponentRef<typeof Slot>,
 	React.ComponentPropsWithoutRef<typeof Slot>
 >(({ ...props }, ref) => {
 	const { error, formItemId, formDescriptionId, formMessageId } =
@@ -126,6 +176,9 @@ const FormControl = React.forwardRef<
 });
 FormControl.displayName = "FormControl";
 
+/**
+ * フォーム説明コンポーネント
+ */
 const FormDescription = React.forwardRef<
 	HTMLParagraphElement,
 	React.HTMLAttributes<HTMLParagraphElement>
@@ -136,13 +189,16 @@ const FormDescription = React.forwardRef<
 		<p
 			ref={ref}
 			id={formDescriptionId}
-			className={cn("text-[0.8rem] text-base-low-contrast-text", className)}
+			className={cn("text-sm text-muted-foreground", className)}
 			{...props}
 		/>
 	);
 });
 FormDescription.displayName = "FormDescription";
 
+/**
+ * フォームメッセージコンポーネント
+ */
 const FormMessage = React.forwardRef<
 	HTMLParagraphElement,
 	React.HTMLAttributes<HTMLParagraphElement>
@@ -158,7 +214,7 @@ const FormMessage = React.forwardRef<
 		<p
 			ref={ref}
 			id={formMessageId}
-			className={cn("text-[0.8rem] font-medium text-destructive-high-contrast-text", className)}
+			className={cn("text-sm font-medium text-destructive", className)}
 			{...props}
 		>
 			{body}

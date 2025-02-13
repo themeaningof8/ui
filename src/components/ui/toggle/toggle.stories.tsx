@@ -1,132 +1,140 @@
-/**
- * @file Toggleのストーリー
- * @description Toggleの使用例とバリエーションを表示
- */
-import type { Meta, StoryObj } from '@storybook/react';
-import { Toggle } from '@/components/ui/toggle';
-import { Label } from '@components/ui/label';
-import { within, userEvent } from '@storybook/testing-library';
-import { expect } from '@storybook/jest';
+import type { Meta, StoryObj } from '@storybook/react'
+import { Italic, Bold, Underline } from 'lucide-react'
+import { Toggle } from '.'
 
 /**
- * @description Toggleコンポーネントのメタデータ
+ * `Toggle`は、オン/オフの状態を切り替えるボタンコンポーネントです。
+ * Radix UIのToggleプリミティブをベースに、アクセシビリティと一貫したスタイリングを提供します。
  */
-const meta: Meta<typeof Toggle> = {
+const meta = {
   title: 'UI/Toggle',
   component: Toggle,
   parameters: {
     layout: 'centered',
-    onLoad: () => {
-      const consoleError = console.error;
-      console.error = (...args) => {
-        consoleError(...args);
-        throw new Error(args.join(' '));
-      };
-    },
   },
   tags: ['autodocs'],
-};
+} satisfies Meta<typeof Toggle>
 
-export default meta;
-type Story = StoryObj<typeof Toggle>;
+export default meta
+type Story = StoryObj<typeof Toggle>
 
 /**
- * @description 基本的な使用例
+ * 基本的な使用例です。
  */
 export const Default: Story = {
-  render: () => (
-    <div className="flex items-center space-x-2">
-      <Toggle id="toggle" />
-      <Label htmlFor="toggle">トグルスイッチ</Label>
-    </div>
-  ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    
-    // トグルとラベルの存在確認
-    const toggle = canvas.getByRole('button');
-    const label = canvas.getByText('トグルスイッチ');
-    expect(toggle).toBeInTheDocument();
-    expect(label).toBeInTheDocument();
-    
-    // 初期状態の確認
-    expect(toggle).toHaveAttribute('aria-pressed', 'false');
-    
-    // クリックしてトグル状態を変更
-    await userEvent.click(toggle);
-    expect(toggle).toHaveAttribute('aria-pressed', 'true');
-    
-    // もう一度クリックして元に戻す
-    await userEvent.click(toggle);
-    expect(toggle).toHaveAttribute('aria-pressed', 'false');
-  },
-};
+  render: () => <Toggle>Toggle</Toggle>,
+}
 
 /**
- * @description サイズバリエーション
+ * アイコン付きの例です。
+ */
+export const WithIcon: Story = {
+  render: () => (
+    <div className="flex items-center space-x-2">
+      <Toggle aria-label="Toggle italic">
+        <Italic className="h-4 w-4" />
+      </Toggle>
+      <Toggle aria-label="Toggle bold">
+        <Bold className="h-4 w-4" />
+      </Toggle>
+      <Toggle aria-label="Toggle underline">
+        <Underline className="h-4 w-4" />
+      </Toggle>
+    </div>
+  ),
+}
+
+/**
+ * アウトラインバリアントの例です。
+ */
+export const Outline: Story = {
+  render: () => (
+    <Toggle variant="outline">
+      Outline
+    </Toggle>
+  ),
+}
+
+/**
+ * 異なるサイズの例です。
  */
 export const Sizes: Story = {
   render: () => (
-    <div className="flex flex-col space-y-4">
-      <div className="flex items-center space-x-2">
-        <Toggle id="toggle-sm" size="sm" />
-        <Label htmlFor="toggle-sm">Small</Label>
-      </div>
-      <div className="flex items-center space-x-2">
-        <Toggle id="toggle-default" size="default" />
-        <Label htmlFor="toggle-default">Default</Label>
-      </div>
-      <div className="flex items-center space-x-2">
-        <Toggle id="toggle-lg" size="lg" />
-        <Label htmlFor="toggle-lg">Large</Label>
-      </div>
+    <div className="flex items-center space-x-2">
+      <Toggle size="sm">Small</Toggle>
+      <Toggle size="default">Default</Toggle>
+      <Toggle size="lg">Large</Toggle>
     </div>
   ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    
-    // 各サイズのトグルを取得
-    const toggles = canvas.getAllByRole('button');
-    expect(toggles).toHaveLength(3);
-    
-    // サイズクラスの確認
-    const [small, defaultSize, large] = toggles;
-    expect(small).toHaveClass('h-8', 'w-8');
-    expect(defaultSize).toHaveClass('h-9', 'w-9');
-    expect(large).toHaveClass('h-10', 'w-10');
-    
-    // 各トグルの動作確認
-    for (const toggle of toggles) {
-      await userEvent.click(toggle);
-      expect(toggle).toHaveAttribute('aria-pressed', 'true');
-    }
-  },
-};
+}
 
 /**
- * @description 無効状態
+ * 無効化された状態の例です。
  */
 export const Disabled: Story = {
   render: () => (
     <div className="flex items-center space-x-2">
-      <Toggle id="toggle-disabled" disabled />
-      <Label htmlFor="toggle-disabled">無効状態</Label>
+      <Toggle disabled>Disabled</Toggle>
+      <Toggle disabled pressed>
+        Disabled (pressed)
+      </Toggle>
     </div>
   ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    
-    // 無効化されたトグルの確認
-    const toggle = canvas.getByRole('button');
-    expect(toggle).toBeDisabled();
-    
-    // disabled状態のスタイリングを確認
-    const computedStyle = window.getComputedStyle(toggle);
-    expect(computedStyle.pointerEvents).toBe('none');
-    expect(computedStyle.opacity).toBe('0.5');
-    
-    // クリックしても状態が変化しないことを確認
-    await userEvent.click(toggle);
-    expect(toggle).toHaveAttribute('aria-pressed', 'false');
-  },
-}; 
+}
+
+/**
+ * テキストとアイコンを組み合わせた例です。
+ */
+export const WithTextAndIcon: Story = {
+  render: () => (
+    <div className="flex items-center space-x-2">
+      <Toggle>
+        <Bold className="h-4 w-4" />
+        Bold
+      </Toggle>
+      <Toggle variant="outline">
+        <Italic className="h-4 w-4" />
+        Italic
+      </Toggle>
+    </div>
+  ),
+}
+
+/**
+ * ツールバーの例です。
+ */
+export const Toolbar: Story = {
+  render: () => (
+    <div className="rounded-lg border p-2 w-max">
+      <div className="flex items-center space-x-1">
+        <Toggle aria-label="Toggle bold">
+          <Bold className="h-4 w-4" />
+        </Toggle>
+        <Toggle aria-label="Toggle italic">
+          <Italic className="h-4 w-4" />
+        </Toggle>
+        <Toggle aria-label="Toggle underline">
+          <Underline className="h-4 w-4" />
+        </Toggle>
+      </div>
+    </div>
+  ),
+}
+
+/**
+ * プレス済みの状態の例です。
+ */
+export const Pressed: Story = {
+  render: () => (
+    <div className="flex items-center space-x-2">
+      <Toggle pressed>
+        <Bold className="h-4 w-4" />
+        Bold
+      </Toggle>
+      <Toggle variant="outline" pressed>
+        <Italic className="h-4 w-4" />
+        Italic
+      </Toggle>
+    </div>
+  ),
+} 

@@ -1,139 +1,135 @@
-/**
- * @file Switchのストーリー
- * @description Switchの使用例とバリエーションを表示
- */
 import type { Meta, StoryObj } from '@storybook/react'
-import { Switch } from '@/components/ui/switch'
-import { Label } from '@/components/ui/label'
-import { within, userEvent } from '@storybook/testing-library'
-import { expect } from '@storybook/jest'
+import { Label } from '../label'
+import { Switch } from '.'
 
+/**
+ * `Switch`は、オン/オフの状態を切り替えるためのコンポーネントです。
+ * Radix UIのSwitchプリミティブをベースに、アクセシビリティと一貫したスタイリングを提供します。
+ */
 const meta = {
   title: 'UI/Switch',
   component: Switch,
   parameters: {
     layout: 'centered',
-    // Storybookのコンソールエラーをキャッチし、テストを失敗させる
-    onLoad: () => {
-      const consoleError = console.error;
-      console.error = (...args) => {
-        consoleError(...args);
-        throw new Error(args.join(' '));
-      };
-    },
   },
   tags: ['autodocs'],
-  argTypes: {
-    checked: {
-      control: 'boolean',
-      description: 'スイッチの状態',
-    },
-    disabled: {
-      control: 'boolean',
-      description: '無効状態',
-    },
-  },
 } satisfies Meta<typeof Switch>
 
 export default meta
-type Story = StoryObj<typeof meta>
+type Story = StoryObj<typeof Switch>
 
 /**
- * @description 基本的なスイッチ
+ * 基本的な使用例です。
  */
 export const Default: Story = {
   render: () => <Switch />,
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    const switchElement = canvas.getByRole('switch')
-
-    expect(switchElement).toBeInTheDocument()
-    expect(switchElement).not.toBeChecked()
-
-    // スイッチをクリックして状態を切り替え
-    await userEvent.click(switchElement)
-    expect(switchElement).toBeChecked()
-  },
 }
 
 /**
- * @description ラベル付きスイッチ
+ * ラベル付きの例です。
  */
 export const WithLabel: Story = {
   render: () => (
     <div className="flex items-center space-x-2">
       <Switch id="airplane-mode" />
-      <Label htmlFor="airplane-mode">機内モード</Label>
+      <Label htmlFor="airplane-mode">Airplane Mode</Label>
     </div>
   ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    const switchElement = canvas.getByRole('switch')
-    const label = canvas.getByText('機内モード')
-
-    expect(switchElement).toBeInTheDocument()
-    expect(label).toBeInTheDocument()
-
-    // ラベルをクリックしてスイッチを操作
-    await userEvent.click(label)
-    expect(switchElement).toBeChecked()
-  },
 }
 
 /**
- * @description 無効化されたスイッチ
+ * チェック済みの状態の例です。
+ */
+export const Checked: Story = {
+  render: () => (
+    <div className="flex items-center space-x-2">
+      <Switch id="checked" defaultChecked />
+      <Label htmlFor="checked">Enabled</Label>
+    </div>
+  ),
+}
+
+/**
+ * 無効化された状態の例です。
  */
 export const Disabled: Story = {
-  render: () => <Switch disabled />,
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    const switchElement = canvas.getByRole('switch')
-
-    expect(switchElement).toBeInTheDocument()
-    expect(switchElement).toBeDisabled()
-
-    // 無効なスイッチはクリックしても状態が変わらない
-    await userEvent.click(switchElement)
-    expect(switchElement).not.toBeChecked()
-  },
-}
-
-/**
- * @description デフォルトでチェックされたスイッチ
- */
-export const CheckedByDefault: Story = {
-  render: () => <Switch defaultChecked />,
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    const switchElement = canvas.getByRole('switch')
-
-    expect(switchElement).toBeInTheDocument()
-    expect(switchElement).toBeChecked()
-
-    // スイッチをクリックして状態を切り替え
-    await userEvent.click(switchElement)
-    expect(switchElement).not.toBeChecked()
-  },
-}
-
-/**
- * @description カスタムスタイルを適用したスイッチ
- */
-export const CustomStyles: Story = {
   render: () => (
-    <Switch
-      className="data-[state=checked]:bg-primary data-[state=unchecked]:bg-muted-foreground"
-      defaultChecked
-    />
+    <div className="space-y-4">
+      <div className="flex items-center space-x-2">
+        <Switch id="disabled-unchecked" disabled />
+        <Label htmlFor="disabled-unchecked">Disabled</Label>
+      </div>
+      <div className="flex items-center space-x-2">
+        <Switch id="disabled-checked" disabled defaultChecked />
+        <Label htmlFor="disabled-checked">Disabled (checked)</Label>
+      </div>
+    </div>
   ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    const switchElement = canvas.getByRole('switch')
+}
 
-    expect(switchElement).toBeInTheDocument()
-    expect(switchElement).toHaveClass(
-      'data-[state=checked]:bg-primary',
-      'data-[state=unchecked]:bg-muted-foreground'
-    )
-  },
+/**
+ * フォーム内での使用例です。
+ */
+export const WithForm: Story = {
+  render: () => (
+    <div className="grid w-full max-w-sm items-center gap-1.5">
+      <Label htmlFor="notifications">Enable notifications</Label>
+      <Switch id="notifications" />
+      <p className="text-sm text-muted-foreground">
+        Receive notifications about important updates.
+      </p>
+    </div>
+  ),
+}
+
+/**
+ * カスタムスタイルを適用した例です。
+ */
+export const CustomStyle: Story = {
+  render: () => (
+    <div className="flex items-center space-x-2">
+      <Switch
+        id="custom"
+        className="data-[state=checked]:bg-green-500"
+      />
+      <Label htmlFor="custom">Custom Color</Label>
+    </div>
+  ),
+}
+
+/**
+ * 複数のスイッチを持つ例です。
+ */
+export const MultipleSettings: Story = {
+  render: () => (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <div className="space-y-0.5">
+          <Label htmlFor="notifications">Notifications</Label>
+          <p className="text-sm text-muted-foreground">
+            Receive notifications about your account.
+          </p>
+        </div>
+        <Switch id="notifications" />
+      </div>
+      <div className="flex items-center justify-between">
+        <div className="space-y-0.5">
+          <Label htmlFor="email">Email updates</Label>
+          <p className="text-sm text-muted-foreground">
+            Receive emails about your activity.
+          </p>
+        </div>
+        <Switch id="email" defaultChecked />
+      </div>
+      <div className="flex items-center justify-between">
+        <div className="space-y-0.5">
+          <Label htmlFor="marketing">Marketing emails</Label>
+          <p className="text-sm text-muted-foreground">
+            Receive emails about new products and features.
+          </p>
+        </div>
+        <Switch id="marketing" />
+      </div>
+    </div>
+  ),
 } 

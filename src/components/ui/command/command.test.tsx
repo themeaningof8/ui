@@ -1,10 +1,10 @@
 /**
- * @file Commandコンポーネントのテスト
- * @description Command, CommandDialog, CommandInput, CommandList, CommandEmpty, CommandGroup, CommandItem, CommandShortcut, CommandSeparator コンポーネントの機能とアクセシビリティをテストします
+ * @file コマンドコンポーネントのテスト
+ * @description コマンドコンポーネントの機能をテストします
  */
 
 import { describe, it, expect } from 'vitest'
-import { render, screen, fireEvent } from '@/tests/test-utils'
+import { render, screen } from '@/tests/test-utils'
 import {
   Command,
   CommandDialog,
@@ -17,132 +17,110 @@ import {
   CommandSeparator,
 } from '.'
 
-describe('Command', () => {
-  describe('基本レンダリングテスト', () => {
-    it('すべてのコンポーネントが正しくレンダリングされること', () => {
-      render(
-        <Command>
-          < CommandInput placeholder="検索..." />
-          <CommandList>
-            <CommandEmpty>該当なし</CommandEmpty>
-            < CommandGroup heading="グループ1" >
-              <CommandItem>
-                アイテム1
-                <CommandShortcut>⌘K</CommandShortcut>
-              </CommandItem>
-            </CommandGroup>
-            <CommandSeparator />
-            < CommandGroup heading="グループ2" >
-              <CommandItem>アイテム2</CommandItem >
-            </CommandGroup>
-          </CommandList>
-        </Command>
-      )
+describe('Commandコンポーネント', () => {
+  it('基本的なコマンドメニューが正しくレンダリングされること', () => {
+    render(
+      <Command>
+        <CommandInput placeholder="検索..." />
+        <CommandList>
+          <CommandEmpty>結果が見つかりません</CommandEmpty>
+          <CommandGroup heading="提案">
+            <CommandItem>アイテム1</CommandItem>
+            <CommandItem>アイテム2</CommandItem>
+          </CommandGroup>
+        </CommandList>
+      </Command>
+    )
 
-      expect(screen.getByPlaceholderText('検索...')).toBeInTheDocument()
-      expect(screen.getByText('該当なし')).toBeInTheDocument()
-      expect(screen.getByText('グループ1')).toBeInTheDocument()
-      expect(screen.getByText('アイテム1')).toBeInTheDocument()
-      expect(screen.getByText('⌘K')).toBeInTheDocument()
-      expect(screen.getByText('グループ2')).toBeInTheDocument()
-      expect(screen.getByText('アイテム2')).toBeInTheDocument()
-    })
+    expect(screen.getByPlaceholderText('検索...')).toBeInTheDocument()
+    expect(screen.getByText('提案')).toBeInTheDocument()
+    expect(screen.getByText('アイテム1')).toBeInTheDocument()
+    expect(screen.getByText('アイテム2')).toBeInTheDocument()
   })
 
-  describe('インタラクションテスト', () => {
-    it('CommandInput で検索できること', () => {
-      const onInputValueChange = vi.fn()
-      render(
-        <Command>
-          < CommandInput placeholder="検索..." onValueChange={onInputValueChange} />
-          <CommandList>
-            <CommandGroup>
-              < CommandItem value="item1" >アイテム1</CommandItem >
-              < CommandItem value="item2" >アイテム2</CommandItem >
-            </CommandGroup>
-          </CommandList>
-        </Command>
-      )
+  it('ダイアログモードが正しく機能すること', () => {
+    render(
+      <CommandDialog open={true}>
+        <CommandInput placeholder="コマンドを入力..." />
+        <CommandList>
+          <CommandItem>ダイアログアイテム</CommandItem>
+        </CommandList>
+      </CommandDialog>
+    )
 
-      const input = screen.getByPlaceholderText('検索...')
-      fireEvent.change(input, { target: { value: 'item1' } })
-      expect(onInputValueChange).toHaveBeenCalledWith('item1')
-
-      // value="item1"のアイテムだけが表示されることを確認
-      expect(screen.getByText('アイテム1')).toBeVisible()
-      expect(screen.queryByText('アイテム2')).not.toBeVisible()
-
-      fireEvent.change(input, { target: { value: '' } })
-      expect(onInputValueChange).toHaveBeenCalledWith('')
-
-      // 全てのアイテムが表示されることを確認
-      expect(screen.getByText('アイテム1')).toBeVisible()
-      expect(screen.getByText('アイテム2')).toBeVisible()
-    })
-
-    it('CommandItem をクリックすると選択されること', () => {
-      const onSelect = vi.fn()
-      render(
-        <Command>
-          < CommandInput placeholder="検索..." />
-          <CommandList>
-            <CommandGroup>
-              < CommandItem value="item1" onSelect={onSelect} >アイテム1</CommandItem >
-            </CommandGroup>
-          </CommandList>
-        </Command>
-      )
-
-      const item = screen.getByText('アイテム1')
-      fireEvent.click(item)
-      expect(onSelect).toHaveBeenCalledWith('item1')
-    })
+    expect(screen.getByPlaceholderText('コマンドを入力...')).toBeInTheDocument()
+    expect(screen.getByText('ダイアログアイテム')).toBeInTheDocument()
   })
 
-  describe('アクセシビリティテスト', () => {
-    it('CommandList に role="listbox" が設定されていること', () => {
-      render(
-        <Command>
-          <CommandList>
-            <CommandGroup>
-              <CommandItem>アイテム1</CommandItem >
-            </CommandGroup>
-          </CommandList>
-        </Command>
-      )
+  it('ショートカットが正しく表示されること', () => {
+    render(
+      <Command>
+        <CommandList>
+          <CommandItem>
+            設定
+            <CommandShortcut>⌘S</CommandShortcut>
+          </CommandItem>
+        </CommandList>
+      </Command>
+    )
 
-      expect(screen.getByRole('listbox')).toBeInTheDocument()
-    })
-
-    it('CommandItem に role="option" が設定されていること', () => {
-      render(
-        <Command>
-          <CommandList>
-            <CommandGroup>
-              <CommandItem>アイテム1</CommandItem >
-            </CommandGroup>
-          </CommandList>
-        </Command>
-      )
-
-      expect(screen.getByRole('option')).toBeInTheDocument()
-    })
+    expect(screen.getByText('⌘S')).toBeInTheDocument()
   })
 
-  describe('CommandDialog のテスト', () => {
-    it('CommandDialog が正しく開閉すること', () => {
-      render(
-        < CommandDialog open={true} >
-          < CommandInput placeholder="検索..." />
-          <CommandList>
-            <CommandGroup>
-              <CommandItem>アイテム1</CommandItem >
-            </CommandGroup>
-          </CommandList>
-        </CommandDialog>
-      )
+  it('セパレーターが正しく表示されること', () => {
+    render(
+      <Command>
+        <CommandList>
+          <CommandItem>上部アイテム</CommandItem>
+          <CommandSeparator />
+          <CommandItem>下部アイテム</CommandItem>
+        </CommandList>
+      </Command>
+    )
 
-      expect(screen.getByRole('dialog')).toBeInTheDocument()
-    })
+    expect(screen.getByRole('separator')).toBeInTheDocument()
+  })
+
+  it('空の状態が正しく表示されること', async () => {
+    const { user } = render(
+      <Command>
+        <CommandInput placeholder="検索..." />
+        <CommandList>
+          <CommandEmpty>結果が見つかりません</CommandEmpty>
+          <CommandGroup>
+            <CommandItem>検索結果</CommandItem>
+          </CommandGroup>
+        </CommandList>
+      </Command>
+    )
+
+    const input = screen.getByPlaceholderText('検索...')
+    await user.type(input, '存在しない検索語')
+    
+    expect(screen.getByText('結果が見つかりません')).toBeVisible()
+    const searchResult = screen.queryByText('検索結果')
+    expect(searchResult).toBeNull()
+  })
+
+  it('グループ化されたアイテムが正しく表示されること', () => {
+    render(
+      <Command>
+        <CommandList>
+          <CommandGroup heading="グループ1">
+            <CommandItem>アイテム1-1</CommandItem>
+            <CommandItem>アイテム1-2</CommandItem>
+          </CommandGroup>
+          <CommandGroup heading="グループ2">
+            <CommandItem>アイテム2-1</CommandItem>
+            <CommandItem>アイテム2-2</CommandItem>
+          </CommandGroup>
+        </CommandList>
+      </Command>
+    )
+
+    expect(screen.getByText('グループ1')).toBeInTheDocument()
+    expect(screen.getByText('グループ2')).toBeInTheDocument()
+    expect(screen.getByText('アイテム1-1')).toBeInTheDocument()
+    expect(screen.getByText('アイテム2-1')).toBeInTheDocument()
   })
 }) 

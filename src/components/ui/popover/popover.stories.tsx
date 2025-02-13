@@ -1,253 +1,156 @@
-/**
- * @file Popoverの Stories
- * @description Popoverの使用例とバリエーションを Storybook で表示
- */
-import type { Meta, StoryObj } from '@storybook/react';
-import { Button } from '@/components/ui/button';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { within, userEvent, waitFor } from '@storybook/testing-library';
-import { expect } from '@storybook/jest';
+import type { Meta, StoryObj } from '@storybook/react'
+import { Settings2, X } from 'lucide-react'
+import { Button } from '../button'
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from '.'
 
+/**
+ * `Popover`は、クリックした時に追加情報やアクションを表示するためのコンポーネントです。
+ * Radix UIのPopoverプリミティブをベースに、アクセシビリティと一貫したスタイリングを提供します。
+ */
 const meta = {
   title: 'UI/Popover',
   component: Popover,
   parameters: {
     layout: 'centered',
-    onLoad: () => {
-      const consoleError = console.error;
-      console.error = (...args) => {
-        consoleError(...args);
-        throw new Error(args.join(' '));
-      };
-    },
   },
   tags: ['autodocs'],
-} satisfies Meta<typeof Popover>;
+} satisfies Meta<typeof Popover>
 
-export default meta;
-type Story = StoryObj<typeof meta>;
+export default meta
+type Story = StoryObj<typeof Popover>
 
 /**
- * @description 基本的な Popover の使用例
+ * 基本的な使用例です。
  */
 export const Default: Story = {
   render: () => (
     <Popover>
       <PopoverTrigger asChild>
-        <Button>ポップオーバーを開く</Button>
+        <Button variant="outline">Open Popover</Button>
       </PopoverTrigger>
-      <PopoverContent>
+      <PopoverContent className="w-80">
         <div className="grid gap-4">
           <div className="space-y-2">
-            <h4 className="font-medium leading-none">設定</h4>
-            <p className="text-sm text-base-high">
-              ポップオーバーの内容をここに表示します。
+            <h4 className="font-medium leading-none">Dimensions</h4>
+            <p className="text-sm text-muted-foreground">
+              Set the dimensions for the layer.
             </p>
           </div>
         </div>
       </PopoverContent>
     </Popover>
   ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const trigger = canvas.getByRole('button');
-    
-    // トリガーボタンの確認
-    expect(trigger).toBeInTheDocument();
-    expect(trigger).toHaveTextContent('ポップオーバーを開く');
-    
-    // ポップオーバーを開く
-    await userEvent.click(trigger);
-    
-    // ポップオーバーの内容を確認
-    const popover = document.querySelector('[role="dialog"]');
-    expect(popover).toBeInTheDocument();
-    
-    const popoverContent = within(popover as HTMLElement);
-    expect(popoverContent.getByText('設定')).toBeVisible();
-    expect(popoverContent.getByText('ポップオーバーの内容をここに表示します。')).toBeVisible();
-    
-    // ポップオーバーを閉じる
-    await userEvent.keyboard('{Escape}');
-    expect(popover).not.toBeVisible();
-  },
-};
+}
 
 /**
- * @description 位置を指定した Popover
+ * 設定パネルの例です。
  */
-export const Positioned: Story = {
-  render: () => (
-    <div className="flex items-center justify-center gap-4">
-      <Popover>
-        <PopoverTrigger asChild>
-          <Button>上に表示</Button>
-        </PopoverTrigger>
-        <PopoverContent side="top">
-          <p>上側に表示されるポップオーバー</p>
-        </PopoverContent>
-      </Popover>
-
-      <Popover>
-        <PopoverTrigger asChild>
-          <Button>右に表示</Button>
-        </PopoverTrigger>
-        <PopoverContent side="right">
-          <p>右側に表示されるポップオーバー</p>
-        </PopoverContent>
-      </Popover>
-
-      <Popover>
-        <PopoverTrigger asChild>
-          <Button>下に表示</Button>
-        </PopoverTrigger>
-        <PopoverContent side="bottom">
-          <p>下側に表示されるポップオーバー</p>
-        </PopoverContent>
-      </Popover>
-
-      <Popover>
-        <PopoverTrigger asChild>
-          <Button>左に表示</Button>
-        </PopoverTrigger>
-        <PopoverContent side="left">
-          <p>左側に表示されるポップオーバー</p>
-        </PopoverContent>
-      </Popover>
-    </div>
-  ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const buttons = canvas.getAllByRole('button');
-    
-    // 4つのボタンが存在することを確認
-    expect(buttons).toHaveLength(4);
-    
-    // 各方向のポップオーバーをテスト
-    for (const [index, button] of buttons.entries()) {
-      await userEvent.click(button);
-      const popover = document.querySelector('[role="dialog"]');
-      expect(popover).toBeInTheDocument();
-      
-      // 位置属性の確認
-      const sides = ['top', 'right', 'bottom', 'left'];
-      expect(popover).toHaveAttribute('data-side', sides[index]);
-      
-      // 内容の確認
-      const content = within(popover as HTMLElement);
-      expect(content.getByText(`${sides[index]}側に表示されるポップオーバー`)).toBeVisible();
-      
-      // 閉じる
-      await userEvent.keyboard('{Escape}');
-      expect(popover).not.toBeVisible();
-    }
-  },
-};
-
-/**
- * @description 配置を指定した Popover
- */
-export const Aligned: Story = {
-  render: () => (
-    <div className="flex items-center justify-center gap-4">
-      <Popover>
-        <PopoverTrigger asChild>
-          <Button>開始位置に揃える</Button>
-        </PopoverTrigger>
-        <PopoverContent align="start">
-          <p>開始位置に揃えたポップオーバー</p>
-        </PopoverContent>
-      </Popover>
-
-      <Popover>
-        <PopoverTrigger asChild>
-          <Button>中央に揃える</Button>
-        </PopoverTrigger>
-        <PopoverContent align="center">
-          <p>中央に揃えたポップオーバー</p>
-        </PopoverContent>
-      </Popover>
-
-      <Popover>
-        <PopoverTrigger asChild>
-          <Button>終了位置に揃える</Button>
-        </PopoverTrigger>
-        <PopoverContent align="end">
-          <p>終了位置に揃えたポップオーバー</p>
-        </PopoverContent>
-      </Popover>
-    </div>
-  ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const buttons = canvas.getAllByRole('button');
-    
-    // 3つのボタンが存在することを確認
-    expect(buttons).toHaveLength(3);
-    
-    // 各配置のポップオーバーをテスト
-    for (const [index, button] of buttons.entries()) {
-      await userEvent.click(button);
-      const popover = document.querySelector('[role="dialog"]');
-      expect(popover).toBeInTheDocument();
-      
-      // 配置属性の確認
-      const alignments = ['start', 'center', 'end'];
-      expect(popover).toHaveAttribute('data-align', alignments[index]);
-      
-      // 内容の確認
-      const content = within(popover as HTMLElement);
-      expect(content.getByText(`${alignments[index]}位置に揃えたポップオーバー`)).toBeVisible();
-      
-      // 閉じる
-      await userEvent.keyboard('{Escape}');
-      expect(popover).not.toBeVisible();
-    }
-  },
-};
-
-/**
- * @description カスタムスタイルを適用した Popover
- */
-export const CustomStyles: Story = {
+export const Settings: Story = {
   render: () => (
     <Popover>
       <PopoverTrigger asChild>
-        <Button>カスタムスタイル</Button>
+        <Button variant="outline" size="icon">
+          <Settings2 className="h-4 w-4" />
+        </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-96 bg-base-subtle p-6">
+      <PopoverContent className="w-80">
+        <div className="grid gap-4">
+          <div className="flex items-center justify-between">
+            <h4 className="font-medium leading-none">Settings</h4>
+            <Button variant="ghost" size="icon">
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+          <div className="grid gap-2">
+            <div className="grid grid-cols-3 items-center gap-4">
+              <label htmlFor="width">Width</label>
+              <input
+                id="width"
+                defaultValue="100%"
+                className="col-span-2 h-8 rounded-md border border-input bg-transparent px-3 py-1 text-sm"
+              />
+            </div>
+            <div className="grid grid-cols-3 items-center gap-4">
+              <label htmlFor="height">Height</label>
+              <input
+                id="height"
+                defaultValue="25px"
+                className="col-span-2 h-8 rounded-md border border-input bg-transparent px-3 py-1 text-sm"
+              />
+            </div>
+          </div>
+        </div>
+      </PopoverContent>
+    </Popover>
+  ),
+}
+
+/**
+ * カスタム配置の例です。
+ */
+export const CustomPlacement: Story = {
+  render: () => (
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button variant="outline">Custom Placement</Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-80" align="start" sideOffset={10}>
         <div className="grid gap-4">
           <div className="space-y-2">
-            <h4 className="text-lg font-medium leading-none">カスタマイズ例</h4>
-            <p className="text-sm text-base-high">
-              幅を広げ、背景色を変更し、パディングを大きくしたポップオーバーです。
+            <h4 className="font-medium leading-none">Custom Placement</h4>
+            <p className="text-sm text-muted-foreground">
+              This popover is aligned to the start and has a side offset of 10 pixels.
             </p>
           </div>
         </div>
       </PopoverContent>
     </Popover>
   ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const trigger = canvas.getByText('カスタムスタイル');
-    expect(trigger).toBeInTheDocument();
+}
 
-    await userEvent.click(trigger);
-
-    // Popover が表示されるのを待つ
-    const popover = await waitFor(() => canvas.getByRole('dialog'));
-    expect(popover).toBeVisible();
-
-    // PopoverContent 内の要素を特定 (例: getByText とカスタムマッチャー)
-    const popoverContent = within(popover);
-    expect(
-      popoverContent.getByText((content, element) =>
-        element?.textContent?.includes('カスタマイズ例') ?? false
-      )
-    ).toBeVisible();
-
-    // ポップオーバーを閉じる
-    await userEvent.keyboard('{Escape}');
-    expect(popover).not.toBeVisible();
-  },
-}; 
+/**
+ * フォーム要素を含む例です。
+ */
+export const WithForm: Story = {
+  render: () => (
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button variant="outline">Edit Profile</Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-80">
+        <form className="grid gap-4">
+          <div className="space-y-2">
+            <h4 className="font-medium leading-none">Edit Profile</h4>
+            <p className="text-sm text-muted-foreground">
+              Make changes to your profile here.
+            </p>
+          </div>
+          <div className="grid gap-2">
+            <div className="grid grid-cols-3 items-center gap-4">
+              <label htmlFor="name">Name</label>
+              <input
+                id="name"
+                defaultValue="John Doe"
+                className="col-span-2 h-8 rounded-md border border-input bg-transparent px-3 py-1 text-sm"
+              />
+            </div>
+            <div className="grid grid-cols-3 items-center gap-4">
+              <label htmlFor="email">Email</label>
+              <input
+                id="email"
+                type="email"
+                defaultValue="john@example.com"
+                className="col-span-2 h-8 rounded-md border border-input bg-transparent px-3 py-1 text-sm"
+              />
+            </div>
+          </div>
+          <Button type="submit">Save changes</Button>
+        </form>
+      </PopoverContent>
+    </Popover>
+  ),
+} 

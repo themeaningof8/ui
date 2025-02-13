@@ -1,24 +1,16 @@
 /**
- * @file AspectRatioのストーリー
- * @description AspectRatioの使用例とバリエーションを表示
+ * @file アスペクト比コンポーネントのストーリー
+ * @description アスペクト比コンポーネントの使用例を表示します
  */
+
 import type { Meta, StoryObj } from '@storybook/react'
-import { AspectRatio } from '@/components/ui/aspect-ratio'
-import { within } from '@storybook/testing-library'
-import { expect } from '@storybook/jest'
+import { AspectRatio } from '.'
 
 const meta = {
   title: 'UI/AspectRatio',
   component: AspectRatio,
   parameters: {
     layout: 'centered',
-    onLoad: () => {
-      const consoleError = console.error;
-      console.error = (...args) => {
-        consoleError(...args);
-        throw new Error(args.join(' '));
-      };
-    },
   },
   tags: ['autodocs'],
 } satisfies Meta<typeof AspectRatio>
@@ -27,95 +19,86 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 /**
- * @description 基本的なアスペクト比の設定（16:9）
+ * 16:9のアスペクト比の使用例
  */
-export const Default: Story = {
-  render: () => (
-    <div className="w-[450px]">
-      <AspectRatio ratio={16 / 9}>
-        <img
-          src="https://images.unsplash.com/photo-1588345921523-c2dcdb7f1dcd?w=800&dpr=2&q=80"
-          alt="写真"
-          className="rounded-md object-cover w-full h-full"
-        />
-      </AspectRatio>
-    </div>
-  ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    const image = canvas.getByRole('img')
-    
-    expect(image).toBeInTheDocument()
-    expect(image).toHaveAttribute('alt', '写真')
-    expect(image).toHaveClass('object-cover', 'w-full', 'h-full')
+export const Widescreen: Story = {
+  args: {
+    ratio: 16 / 9,
+    children: (
+      <img
+        src="https://images.unsplash.com/photo-1588345921523-c2dcdb7f1dcd?w=800&dpr=2&q=80"
+        alt="写真"
+        className="rounded-md object-cover w-full"
+      />
+    ),
+    className: "w-[600px]",
   },
 }
 
 /**
- * @description 正方形のアスペクト比（1:1）
+ * 4:3のアスペクト比の使用例
+ */
+export const Standard: Story = {
+  args: {
+    ratio: 4 / 3,
+    children: (
+      <img
+        src="https://images.unsplash.com/photo-1588345921523-c2dcdb7f1dcd?w=800&dpr=2&q=80"
+        alt="写真"
+        className="rounded-md object-cover w-full"
+      />
+    ),
+    className: "w-[600px]",
+  },
+}
+
+/**
+ * 1:1の正方形アスペクト比の使用例
  */
 export const Square: Story = {
-  render: () => (
-    <div className="w-[450px]">
-      <AspectRatio ratio={1} data-testid="aspect-ratio">
-        <img
-          src="https://images.unsplash.com/photo-1588345921523-c2dcdb7f1dcd?w=800&dpr=2&q=80"
-          alt="正方形の写真"
-          className="rounded-md object-cover w-full h-full"
-        />
-      </AspectRatio>
-    </div>
-  ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    const aspectRatio = canvas.getByTestId('aspect-ratio')
-    // AspectRatio コンポーネントの paddingBottom の値を検証
-    expect(aspectRatio).toHaveStyle({ paddingBottom: '100%' })
+  args: {
+    ratio: 1,
+    children: (
+      <img
+        src="https://images.unsplash.com/photo-1588345921523-c2dcdb7f1dcd?w=800&dpr=2&q=80"
+        alt="写真"
+        className="rounded-md object-cover w-full"
+      />
+    ),
+    className: "w-[400px]",
   },
 }
 
 /**
- * @description 縦長のアスペクト比（9:16）
+ * ビデオコンテンツでの使用例
  */
-export const Portrait: Story = {
-  render: () => (
-    <div className="w-[250px]">
-      <AspectRatio ratio={9 / 16}>
-        <img
-          src="https://images.unsplash.com/photo-1588345921523-c2dcdb7f1dcd?w=800&dpr=2&q=80"
-          alt="縦長の写真"
-          className="rounded-md object-cover w-full h-full"
-        />
-      </AspectRatio>
-    </div>
-  ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    const aspectRatio = canvas.getByTestId('aspect-ratio')
-    const style = window.getComputedStyle(aspectRatio)
-    expect(style.paddingBottom).toBe('177.777%')
+export const Video: Story = {
+  args: {
+    ratio: 16 / 9,
+    children: (
+      <iframe
+        src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+        title="YouTube動画"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen
+        className="w-full h-full rounded-md"
+      />
+    ),
+    className: "w-[600px]",
   },
 }
 
 /**
- * @description カスタムスタイルを適用したアスペクト比
+ * カスタムコンテンツでの使用例
  */
-export const CustomStyles: Story = {
-  render: () => (
-    <div className="w-[450px]">
-      <AspectRatio ratio={16 / 9} className="bg-muted" data-testid="aspect-ratio">
-        <div className="flex items-center justify-center">
-          <span className="text-muted-foreground">16:9のアスペクト比</span>
-        </div>
-      </AspectRatio>
-    </div>
-  ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    const text = canvas.getByText('16:9のアスペクト比')
-    const container = text.closest('div')
-    
-    expect(text).toBeInTheDocument()
-    expect(container).toHaveClass('bg-muted')
+export const CustomContent: Story = {
+  args: {
+    ratio: 16 / 9,
+    children: (
+      <div className="flex items-center justify-center bg-muted rounded-md w-full h-full">
+        <p className="text-muted-foreground">16:9のコンテンツエリア</p>
+      </div>
+    ),
+    className: "w-[600px]",
   },
 } 

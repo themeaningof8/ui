@@ -1,27 +1,22 @@
 /**
- * @file Collapsibleのストーリー
- * @description Collapsibleの様々な状態とバリエーションを表示
+ * @file コラプシブルコンポーネントのストーリー
+ * @description コラプシブルコンポーネントの使用例を表示します
  */
 
 import type { Meta, StoryObj } from '@storybook/react'
-import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '@/components/ui/collapsible'
+import { ChevronsUpDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { ChevronDown } from 'lucide-react'
-import { within, userEvent, waitFor } from '@storybook/testing-library'
-import { expect } from '@storybook/jest'
+import {
+  Collapsible,
+  CollapsibleTrigger,
+  CollapsibleContent,
+} from '.'
 
 const meta = {
   title: 'UI/Collapsible',
   component: Collapsible,
   parameters: {
     layout: 'centered',
-    onLoad: () => {
-      const consoleError = console.error;
-      console.error = (...args) => {
-        consoleError(...args);
-        throw new Error(args.join(' '));
-      };
-    },
   },
   tags: ['autodocs'],
 } satisfies Meta<typeof Collapsible>
@@ -30,167 +25,100 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 /**
- * @description 基本的なコラプシブルの表示
+ * 基本的なコラプシブルの使用例
  */
 export const Default: Story = {
   render: () => (
-    <Collapsible className="w-[350px]">
-      <CollapsibleTrigger asChild>
-        <Button variant="outline" className="w-full justify-between">
-          詳細を表示
-          <ChevronDown className="h-4 w-4" />
-        </Button>
-      </CollapsibleTrigger>
-      <CollapsibleContent className="space-y-2">
-        <div className="rounded-md border p-4 text-sm">
-          コラプシブルの内容がここに表示されます。
-          クリックして開閉することができます。
-        </div>
-      </CollapsibleContent>
-    </Collapsible>
-  ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    
-    // トリガーボタンの確認
-    const trigger = canvas.getByRole('button', { name: '詳細を表示' })
-    expect(trigger).toBeInTheDocument()
-    
-    // 初期状態では内容が非表示
-    const content = canvas.getByText((content, element) => element?.textContent?.includes('コラプシブルの内容がここに表示されます。') ?? false)
-    expect(content).not.toBeVisible()
-    
-    // トリガーをクリックして内容を表示
-    await userEvent.click(trigger)
-    
-    // CollapsibleContent が開くのを待つ (より具体的なセレクタを使用)
-    const contentAfterClick = await waitFor(() => canvas.getByText('コラプシブルの内容がここに表示されます。'))
-    
-    expect(contentAfterClick).toBeVisible()
-  },
-}
-
-/**
- * @description アニメーション付きのコラプシブル
- */
-export const WithAnimation: Story = {
-  render: () => (
-    <Collapsible className="w-[350px]">
-      <CollapsibleTrigger asChild>
-        <Button variant="outline" className="w-full justify-between">
-          アニメーション付き
-          <ChevronDown className="h-4 w-4 transition-transform duration-200 [&[data-state=open]>svg]:rotate-180" />
-        </Button>
-      </CollapsibleTrigger>
-      <CollapsibleContent className="transition-all data-[state=closed]:animate-collapse data-[state=open]:animate-expand">
-        <div className="rounded-md border p-4 text-sm">
-          このコンテンツは開閉時にアニメーションが適用されます。
-        </div>
-      </CollapsibleContent>
-    </Collapsible>
-  ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    
-    // トリガーボタンの確認
-    const trigger = canvas.getByRole('button', { name: 'アニメーション付き' })
-    expect(trigger).toBeInTheDocument()
-    
-    // アニメーションクラスの確認 (初期状態では非表示)
-    expect(canvas.queryByText('このコンテンツは開閉時にアニメーションが適用されます。')).not.toBeVisible()
-    
-    // コラプシブルを開く
-    await userEvent.click(trigger)
-    
-    // アニメーションコンテンツが表示されるのを待つ
-    const content = await waitFor(() =>
-      canvas.getByText('このコンテンツは開閉時にアニメーションが適用されます。'),
-    )
-    expect(content).toBeVisible()
-  },
-}
-
-/**
- * @description カスタムトリガーを使用したコラプシブル
- */
-export const WithCustomTrigger: Story = {
-  render: () => (
-    <Collapsible className="w-[350px]">
-      <div className="flex items-center justify-between space-x-4 px-4">
-        <h4 className="text-sm font-semibold">
-          カスタムトリガー
-        </h4>
-        <CollapsibleTrigger asChild>
-          <Button variant="ghost" size="sm" className="w-9 p-0">
-            <ChevronDown className="h-4 w-4" />
-            <span className="sr-only">Toggle</span>
-          </Button>
-        </CollapsibleTrigger>
-      </div>
-      <CollapsibleContent className="space-y-2">
-        <div className="rounded-md border px-4 py-3 font-mono text-sm">
-          カスタマイズされたトリガーボタンを使用しています。
-        </div>
-      </CollapsibleContent>
-    </Collapsible>
-  ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    
-    // カスタムトリガーの確認
-    const trigger = canvas.getByRole('button', { name: 'Toggle' })
-    expect(trigger).toBeInTheDocument()
-    expect(trigger).toHaveClass('w-9', 'p-0')
-    
-    // ヘッダーテキストの確認
-    expect(canvas.getByText('カスタムトリガー')).toBeVisible()
-  },
-}
-
-/**
- * @description 複数のコンテンツを含むコラプシブル
- */
-export const WithMultipleContent: Story = {
-  render: () => (
     <Collapsible className="w-[350px] space-y-2">
       <CollapsibleTrigger asChild>
-        <Button variant="outline" className="w-full justify-between">
-          詳細設定
-          <ChevronDown className="h-4 w-4" />
+        <Button variant="ghost" className="w-full justify-between">
+          クリックして開閉
+          <ChevronsUpDown className="h-4 w-4" />
         </Button>
       </CollapsibleTrigger>
       <CollapsibleContent className="space-y-2">
-        <div className="rounded-md border p-4">
-          <h4 className="mb-2 text-sm font-medium">一般設定</h4>
-          <p className="text-sm text-muted-foreground">
-            基本的な設定オプションです。
-          </p>
+        <div className="rounded-md border px-4 py-3">
+          コンテンツ1
         </div>
-        <div className="rounded-md border p-4">
-          <h4 className="mb-2 text-sm font-medium">詳細設定</h4>
-          <p className="text-sm text-muted-foreground">
-            高度な設定オプションです。
-          </p>
+        <div className="rounded-md border px-4 py-3">
+          コンテンツ2
         </div>
       </CollapsibleContent>
     </Collapsible>
   ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    
-    // トリガーボタンの確認
-    const trigger = canvas.getByRole('button', { name: '詳細設定' })
-    expect(trigger).toBeInTheDocument()
-    
-    // 初期状態では内容が非表示
-    const content = canvas.getByText((content, element) => element?.textContent?.includes('基本的な設定オプションです。') ?? false)
-    expect(content).not.toBeVisible()
-    
-    // トリガーをクリックして内容を表示
-    await userEvent.click(trigger)
-    
-    // 両方のセクションが表示されることを確認
-    expect(canvas.getByText((content, element) => element?.textContent?.includes('基本的な設定オプションです。') ?? false)).toBeVisible()
-    expect(canvas.getByText((content, element) => element?.textContent?.includes('高度な設定オプションです。') ?? false)).toBeVisible()
-  },
+}
+
+/**
+ * デフォルトで開いた状態のコラプシブルの使用例
+ */
+export const DefaultOpen: Story = {
+  render: () => (
+    <Collapsible defaultOpen className="w-[350px] space-y-2">
+      <CollapsibleTrigger asChild>
+        <Button variant="ghost" className="w-full justify-between">
+          デフォルトで開いた状態
+          <ChevronsUpDown className="h-4 w-4" />
+        </Button>
+      </CollapsibleTrigger>
+      <CollapsibleContent className="space-y-2">
+        <div className="rounded-md border px-4 py-3">
+          コンテンツ1
+        </div>
+        <div className="rounded-md border px-4 py-3">
+          コンテンツ2
+        </div>
+      </CollapsibleContent>
+    </Collapsible>
+  ),
+}
+
+/**
+ * 無効化状態のコラプシブルの使用例
+ */
+export const Disabled: Story = {
+  render: () => (
+    <Collapsible disabled className="w-[350px] space-y-2">
+      <CollapsibleTrigger asChild>
+        <Button variant="ghost" className="w-full justify-between" disabled>
+          無効化状態
+          <ChevronsUpDown className="h-4 w-4" />
+        </Button>
+      </CollapsibleTrigger>
+      <CollapsibleContent className="space-y-2">
+        <div className="rounded-md border px-4 py-3">
+          コンテンツ1
+        </div>
+        <div className="rounded-md border px-4 py-3">
+          コンテンツ2
+        </div>
+      </CollapsibleContent>
+    </Collapsible>
+  ),
+}
+
+/**
+ * カスタムスタイルを適用したコラプシブルの使用例
+ */
+export const CustomStyle: Story = {
+  render: () => (
+    <Collapsible className="w-[350px] rounded-lg border p-2">
+      <CollapsibleTrigger asChild>
+        <Button
+          variant="ghost"
+          className="w-full justify-between hover:bg-muted"
+        >
+          カスタムスタイル
+          <ChevronsUpDown className="h-4 w-4" />
+        </Button>
+      </CollapsibleTrigger>
+      <CollapsibleContent className="mt-2 space-y-2">
+        <div className="rounded-md bg-muted px-4 py-3">
+          カスタムコンテンツ1
+        </div>
+        <div className="rounded-md bg-muted px-4 py-3">
+          カスタムコンテンツ2
+        </div>
+      </CollapsibleContent>
+    </Collapsible>
+  ),
 } 

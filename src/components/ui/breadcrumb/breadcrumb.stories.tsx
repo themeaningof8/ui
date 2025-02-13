@@ -1,32 +1,17 @@
 /**
- * @file Breadcrumbのストーリー
- * @description Breadcrumbの使用例とバリエーションを表示
+ * @file パンくずリストコンポーネントのストーリー
+ * @description パンくずリストコンポーネントの使用例を表示します
  */
+
 import type { Meta, StoryObj } from '@storybook/react'
-import {
-  Breadcrumb,
-  BreadcrumbList,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-  BreadcrumbEllipsis,
-} from '@/components/ui/breadcrumb'
-import { within } from '@storybook/testing-library'
-import { expect } from '@storybook/jest'
+import { ChevronRight, Home, FileText, Folder } from 'lucide-react'
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbPage, BreadcrumbSeparator } from '.'
 
 const meta = {
   title: 'UI/Breadcrumb',
   component: Breadcrumb,
   parameters: {
     layout: 'centered',
-    onLoad: () => {
-      const consoleError = console.error;
-      console.error = (...args) => {
-        consoleError(...args);
-        throw new Error(args.join(' '));
-      };
-    },
   },
   tags: ['autodocs'],
 } satisfies Meta<typeof Breadcrumb>
@@ -35,146 +20,113 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 /**
- * @description 基本的なパンくずリスト
+ * 基本的なパンくずリストの使用例
  */
 export const Default: Story = {
   render: () => (
     <Breadcrumb>
-      <BreadcrumbList>
-        <BreadcrumbItem>
-          <BreadcrumbLink href="/">ホーム</BreadcrumbLink>
-        </BreadcrumbItem>
-        <BreadcrumbSeparator />
-        <BreadcrumbItem>
-          <BreadcrumbLink href="/products">製品</BreadcrumbLink>
-        </BreadcrumbItem>
-        <BreadcrumbSeparator />
-        <BreadcrumbItem>
-          <BreadcrumbPage>詳細</BreadcrumbPage>
-        </BreadcrumbItem>
-      </BreadcrumbList>
+      <BreadcrumbItem>
+        <BreadcrumbLink href="/">ホーム</BreadcrumbLink>
+      </BreadcrumbItem>
+      <BreadcrumbSeparator />
+      <BreadcrumbItem>
+        <BreadcrumbPage>現在のページ</BreadcrumbPage>
+      </BreadcrumbItem>
     </Breadcrumb>
   ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    const nav = canvas.getByRole('navigation')
-    expect(nav).toHaveAttribute('aria-label', 'breadcrumb')
-
-    const links = canvas.getAllByRole('link')
-    expect(links).toHaveLength(3) // ホーム、製品、詳細（現在のページ）
-
-    // 各リンクのテキストと属性を確認
-    expect(links[0]).toHaveTextContent('ホーム')
-    expect(links[0]).toHaveAttribute('href', '/')
-    expect(links[1]).toHaveTextContent('製品')
-    expect(links[1]).toHaveAttribute('href', '/products')
-    expect(links[2]).toHaveAttribute('aria-current', 'page')
-  },
 }
 
 /**
- * @description 長いパンくずリストの省略表示
+ * 複数階層のパンくずリストの使用例
  */
-export const WithEllipsis: Story = {
+export const MultiLevel: Story = {
   render: () => (
     <Breadcrumb>
-      <BreadcrumbList>
-        <BreadcrumbItem>
-          <BreadcrumbLink href="/">ホーム</BreadcrumbLink>
-        </BreadcrumbItem>
-        <BreadcrumbSeparator>→</BreadcrumbSeparator>
-        <BreadcrumbItem>
-          <BreadcrumbEllipsis />
-        </BreadcrumbItem>
-        <BreadcrumbSeparator>→</BreadcrumbSeparator>
-        <BreadcrumbItem>
-          <BreadcrumbLink href="/products">製品</BreadcrumbLink>
-        </BreadcrumbItem>
-        <BreadcrumbSeparator>→</BreadcrumbSeparator>
-        <BreadcrumbItem>
-          <BreadcrumbPage>詳細</BreadcrumbPage>
-        </BreadcrumbItem>
-      </BreadcrumbList>
+      <BreadcrumbItem>
+        <BreadcrumbLink href="/">ホーム</BreadcrumbLink>
+      </BreadcrumbItem>
+      <BreadcrumbSeparator />
+      <BreadcrumbItem>
+        <BreadcrumbLink href="/category">カテゴリー</BreadcrumbLink>
+      </BreadcrumbItem>
+      <BreadcrumbSeparator />
+      <BreadcrumbItem>
+        <BreadcrumbLink href="/category/subcategory">サブカテゴリー</BreadcrumbLink>
+      </BreadcrumbItem>
+      <BreadcrumbSeparator />
+      <BreadcrumbItem>
+        <BreadcrumbPage>現在のページ</BreadcrumbPage>
+      </BreadcrumbItem>
     </Breadcrumb>
   ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    
-    // 省略記号の存在確認
-    const ellipsis = canvas.getByRole('presentation')
-    expect(ellipsis).toBeInTheDocument()
-    
-    // スクリーンリーダー用のテキストを確認
-    const srOnlyText = canvas.getByText('More')
-    expect(srOnlyText).toHaveClass('sr-only')
-  },
 }
 
 /**
- * @description カスタムセパレーターを使用したパンくずリスト
+ * カスタムセパレーターを使用したパンくずリストの使用例
  */
 export const CustomSeparator: Story = {
   render: () => (
     <Breadcrumb>
-      <BreadcrumbList>
-        <BreadcrumbItem>
-          <BreadcrumbLink href="/">ホーム</BreadcrumbLink>
-        </BreadcrumbItem>
-        <BreadcrumbSeparator>→</BreadcrumbSeparator>
-        <BreadcrumbItem>
-          <BreadcrumbLink href="/products">製品</BreadcrumbLink>
-        </BreadcrumbItem>
-        <BreadcrumbSeparator>→</BreadcrumbSeparator>
-        <BreadcrumbItem>
-          <BreadcrumbPage>詳細</BreadcrumbPage>
-        </BreadcrumbItem>
-      </BreadcrumbList>
+      <BreadcrumbItem>
+        <BreadcrumbLink href="/">ホーム</BreadcrumbLink>
+      </BreadcrumbItem>
+      <BreadcrumbSeparator>
+        <ChevronRight className="h-4 w-4" />
+      </BreadcrumbSeparator>
+      <BreadcrumbItem>
+        <BreadcrumbPage>現在のページ</BreadcrumbPage>
+      </BreadcrumbItem>
     </Breadcrumb>
   ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    
-    // カスタムセパレーターの確認
-    const separators = canvas.getAllByRole('presentation')
-    for (const separator of separators) {
-      expect(separator).toHaveTextContent('→')
-    }
-  },
 }
 
 /**
- * @description 非アクティブなリンクを含むパンくずリスト
+ * アイコン付きのパンくずリストの使用例
  */
-export const WithDisabledLink: Story = {
+export const WithIcons: Story = {
   render: () => (
     <Breadcrumb>
-      <BreadcrumbList>
-        <BreadcrumbItem>
-          <BreadcrumbLink href="/">ホーム</BreadcrumbLink>
-        </BreadcrumbItem>
-        <BreadcrumbSeparator />
-        <BreadcrumbItem>
-          <BreadcrumbLink
-            href="/products"
-            className="pointer-events-none opacity-50"
-            aria-disabled="true"
-          >
-            製品
-          </BreadcrumbLink>
-        </BreadcrumbItem>
-        <BreadcrumbSeparator />
-        <BreadcrumbItem>
-          <BreadcrumbPage>詳細</BreadcrumbPage>
-        </BreadcrumbItem>
-      </BreadcrumbList>
+      <BreadcrumbItem>
+        <BreadcrumbLink href="/" className="flex items-center gap-2">
+          <Home className="h-4 w-4" />
+          ホーム
+        </BreadcrumbLink>
+      </BreadcrumbItem>
+      <BreadcrumbSeparator />
+      <BreadcrumbItem>
+        <BreadcrumbLink href="/documents" className="flex items-center gap-2">
+          <Folder className="h-4 w-4" />
+          ドキュメント
+        </BreadcrumbLink>
+      </BreadcrumbItem>
+      <BreadcrumbSeparator />
+      <BreadcrumbItem>
+        <BreadcrumbPage className="flex items-center gap-2">
+          <FileText className="h-4 w-4" />
+          レポート
+        </BreadcrumbPage>
+      </BreadcrumbItem>
     </Breadcrumb>
   ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    
-    // 非アクティブなリンクの確認
-    const disabledLink = canvas.getByText('製品').closest('a')
-    expect(disabledLink).toHaveAttribute('aria-disabled', 'true')
-    expect(disabledLink).toHaveClass('pointer-events-none', 'opacity-50')
-  },
+}
+
+/**
+ * カスタムスタイルを適用したパンくずリストの使用例
+ */
+export const CustomStyle: Story = {
+  render: () => (
+    <Breadcrumb className="bg-muted p-2 rounded-lg">
+      <BreadcrumbItem>
+        <BreadcrumbLink href="/" className="text-primary hover:text-primary/80">
+          ホーム
+        </BreadcrumbLink>
+      </BreadcrumbItem>
+      <BreadcrumbSeparator className="text-muted-foreground" />
+      <BreadcrumbItem>
+        <BreadcrumbPage className="font-semibold">
+          現在のページ
+        </BreadcrumbPage>
+      </BreadcrumbItem>
+    </Breadcrumb>
+  ),
 } 

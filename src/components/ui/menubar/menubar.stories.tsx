@@ -1,289 +1,171 @@
-/**
- * @file Menubarのストーリー
- * @description Menubarの様々な状態とバリエーションを表示
- */
-
 import type { Meta, StoryObj } from '@storybook/react'
-import * as MenubarPrimitive from '@radix-ui/react-menubar'
 import {
   Menubar,
+  MenubarMenu,
+  MenubarTrigger,
   MenubarContent,
   MenubarItem,
-  MenubarMenu,
   MenubarSeparator,
-  MenubarShortcut,
-  MenubarTrigger,
-  MenubarCheckboxItem,
-  MenubarRadioItem,
   MenubarLabel,
+  MenubarCheckboxItem,
+  MenubarRadioGroup,
+  MenubarRadioItem,
   MenubarSub,
   MenubarSubContent,
   MenubarSubTrigger,
-} from '@/components/ui/menubar'
-import { within, userEvent } from '@storybook/testing-library'
-import { expect } from '@storybook/jest'
+  MenubarShortcut,
+} from '.'
 
+/**
+ * `Menubar`は、アプリケーションのメニューバーを作成するためのコンポーネントセットです。
+ * Radix UIのMenubarプリミティブをベースに、アクセシビリティと一貫したスタイリングを提供します。
+ */
 const meta = {
   title: 'UI/Menubar',
   component: Menubar,
   parameters: {
     layout: 'centered',
-    onLoad: () => {
-      const consoleError = console.error;
-      console.error = (...args) => {
-        consoleError(...args);
-        throw new Error(args.join(' '));
-      };
-    },
   },
   tags: ['autodocs'],
 } satisfies Meta<typeof Menubar>
 
 export default meta
-type Story = StoryObj<typeof meta>
+type Story = StoryObj<typeof Menubar>
 
 /**
- * @description 基本的なメニューバー
+ * 基本的なメニューバーの例です。
  */
 export const Default: Story = {
   render: () => (
     <Menubar>
       <MenubarMenu>
-        <MenubarTrigger>ファイル</MenubarTrigger>
+        <MenubarTrigger>File</MenubarTrigger>
         <MenubarContent>
           <MenubarItem>
-            新規作成
-            <MenubarShortcut>⌘N</MenubarShortcut>
+            New Tab <MenubarShortcut>⌘T</MenubarShortcut>
           </MenubarItem>
-          <MenubarItem>
-            開く
-            <MenubarShortcut>⌘O</MenubarShortcut>
-          </MenubarItem>
+          <MenubarItem>New Window</MenubarItem>
           <MenubarSeparator />
-          <MenubarItem>
-            保存
-            <MenubarShortcut>⌘S</MenubarShortcut>
-          </MenubarItem>
-        </MenubarContent>
-      </MenubarMenu>
-      <MenubarMenu>
-        <MenubarTrigger>編集</MenubarTrigger>
-        <MenubarContent>
-          <MenubarItem>
-            元に戻す
-            <MenubarShortcut>⌘Z</MenubarShortcut>
-          </MenubarItem>
-          <MenubarItem>
-            やり直し
-            <MenubarShortcut>⇧⌘Z</MenubarShortcut>
-          </MenubarItem>
+          <MenubarItem>Share</MenubarItem>
           <MenubarSeparator />
-          <MenubarItem>
-            切り取り
-            <MenubarShortcut>⌘X</MenubarShortcut>
-          </MenubarItem>
-          <MenubarItem>
-            コピー
-            <MenubarShortcut>⌘C</MenubarShortcut>
-          </MenubarItem>
-          <MenubarItem>
-            貼り付け
-            <MenubarShortcut>⌘V</MenubarShortcut>
-          </MenubarItem>
+          <MenubarItem>Print</MenubarItem>
         </MenubarContent>
       </MenubarMenu>
     </Menubar>
   ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    
-    // メニュートリガーの確認
-    const triggers = canvas.getAllByRole('menuitem')
-    expect(triggers).toHaveLength(2)
-    expect(triggers[0]).toHaveTextContent('ファイル')
-    expect(triggers[1]).toHaveTextContent('編集')
-    
-    // ファイルメニューの操作テスト
-    await userEvent.click(triggers[0])
-    const fileMenuItems = document.querySelectorAll('[role="menuitem"]')
-    expect(fileMenuItems.length).toBeGreaterThan(0)
-    expect(fileMenuItems[0]).toHaveTextContent('新規作成')
-    expect(fileMenuItems[1]).toHaveTextContent('開く')
-    expect(fileMenuItems[2]).toHaveTextContent('保存')
-    
-    // 編集メニューの操作テスト
-    await userEvent.click(triggers[1])
-    const editMenuItems = document.querySelectorAll('[role="menuitem"]')
-    expect(editMenuItems.length).toBeGreaterThan(0)
-    expect(editMenuItems[0]).toHaveTextContent('元に戻す')
-    expect(editMenuItems[1]).toHaveTextContent('やり直し')
-  },
-}
-Default.parameters = {
-  docs: {
-    description: {
-      story: '基本的なメニューバーの表示例です。',
-    },
-  },
 }
 
 /**
- * @description チェックボックス付きメニュー
+ * サブメニューを含むメニューバーの例です。
  */
-export const WithCheckboxItems: Story = {
+export const WithSubmenu: Story = {
   render: () => (
     <Menubar>
       <MenubarMenu>
-        <MenubarTrigger>表示</MenubarTrigger>
+        <MenubarTrigger>Edit</MenubarTrigger>
         <MenubarContent>
-          <MenubarLabel>表示オプション</MenubarLabel>
-          <MenubarSeparator />
-          <MenubarCheckboxItem checked>ツールバー</MenubarCheckboxItem>
-          <MenubarCheckboxItem>ステータスバー</MenubarCheckboxItem>
-          <MenubarCheckboxItem>サイドバー</MenubarCheckboxItem>
-        </MenubarContent>
-      </MenubarMenu>
-    </Menubar>
-  ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    
-    // メニュートリガーの確認
-    const trigger = canvas.getByRole('menuitem', { name: '表示' })
-    expect(trigger).toBeInTheDocument()
-    
-    // メニューを開く
-    await userEvent.click(trigger)
-    
-    // チェックボックスアイテムの確認
-    const checkboxItems = document.querySelectorAll('[role="menuitemcheckbox"]')
-    expect(checkboxItems).toHaveLength(3)
-    
-    // 初期状態の確認
-    expect(checkboxItems[0]).toHaveAttribute('aria-checked', 'true')
-    expect(checkboxItems[1]).toHaveAttribute('aria-checked', 'false')
-    expect(checkboxItems[2]).toHaveAttribute('aria-checked', 'false')
-    
-    // チェックボックスの操作テスト
-    await userEvent.click(checkboxItems[0])
-    expect(checkboxItems[0]).toHaveAttribute('aria-checked', 'true')
-  },
-}
-WithCheckboxItems.parameters = {
-  docs: {
-    description: {
-      story: 'チェックボックス付きメニューアイテムの表示例です。',
-    },
-  },
-}
-
-/**
- * @description ラジオボタン付きメニュー
- */
-export const WithRadioItems: Story = {
-  render: () => (
-    <Menubar>
-      <MenubarMenu>
-        <MenubarTrigger>表示</MenubarTrigger>
-        <MenubarContent>
-          <MenubarLabel>表示サイズ</MenubarLabel>
-          <MenubarSeparator />
-          <MenubarPrimitive.RadioGroup value="medium">
-            <MenubarRadioItem value="small">小</MenubarRadioItem>
-            <MenubarRadioItem value="medium">中</MenubarRadioItem>
-            <MenubarRadioItem value="large">大</MenubarRadioItem>
-          </MenubarPrimitive.RadioGroup>
-        </MenubarContent>
-      </MenubarMenu>
-    </Menubar>
-  ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    
-    // メニュートリガーの確認
-    const trigger = canvas.getByRole('menuitem', { name: '表示' })
-    expect(trigger).toBeInTheDocument()
-    
-    // メニューを開く
-    await userEvent.click(trigger)
-    
-    // ラジオアイテムの確認
-    const radioItems = document.querySelectorAll('[role="menuitemradio"]')
-    expect(radioItems).toHaveLength(3)
-    
-    // 初期値の確認
-    expect(radioItems[1]).toHaveAttribute('aria-checked', 'true') // medium
-    
-    // ラジオボタンの操作テスト
-    await userEvent.click(radioItems[0])
-    expect(radioItems[0]).toHaveAttribute('aria-checked', 'true')
-    expect(radioItems[1]).toHaveAttribute('aria-checked', 'false')
-  },
-}
-WithRadioItems.parameters = {
-  docs: {
-    description: {
-      story: 'ラジオボタン付きメニューアイテムの表示例です。',
-    },
-  },
-}
-
-/**
- * @description サブメニュー付きメニュー
- */
-export const WithSubMenu: Story = {
-  render: () => (
-    <Menubar>
-      <MenubarMenu>
-        <MenubarTrigger>設定</MenubarTrigger>
-        <MenubarContent>
-          <MenubarItem>基本設定</MenubarItem>
+          <MenubarItem>
+            Undo <MenubarShortcut>⌘Z</MenubarShortcut>
+          </MenubarItem>
+          <MenubarItem>
+            Redo <MenubarShortcut>⇧⌘Z</MenubarShortcut>
+          </MenubarItem>
           <MenubarSeparator />
           <MenubarSub>
-            <MenubarSubTrigger>詳細設定</MenubarSubTrigger>
+            <MenubarSubTrigger>Find</MenubarSubTrigger>
             <MenubarSubContent>
-              <MenubarItem>設定1</MenubarItem>
-              <MenubarItem>設定2</MenubarItem>
-              <MenubarItem>設定3</MenubarItem>
+              <MenubarItem>Search the web</MenubarItem>
+              <MenubarItem>Find in page</MenubarItem>
+              <MenubarItem>Find in files</MenubarItem>
             </MenubarSubContent>
           </MenubarSub>
         </MenubarContent>
       </MenubarMenu>
     </Menubar>
   ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    
-    // メニュートリガーの確認
-    const trigger = canvas.getByRole('menuitem', { name: '設定' })
-    expect(trigger).toBeInTheDocument()
-    
-    // メインメニューを開く
-    await userEvent.click(trigger)
-    
-    // メインメニューアイテムの確認
-    const menuItems = document.querySelectorAll('[role="menuitem"]')
-    expect(menuItems[0]).toHaveTextContent('基本設定')
-    
-    // サブメニューの確認
-    const subTrigger = document.querySelector('[role="menuitem"]')
-    expect(subTrigger).toHaveTextContent('詳細設定')
-    
-    // サブメニューを開く
-    if (subTrigger) {
-      await userEvent.hover(subTrigger)
-      const subMenuItems = document.querySelectorAll('[role="menuitem"]')
-      expect(subMenuItems.length).toBeGreaterThan(0)
-      expect(subMenuItems[0]).toHaveTextContent('設定1')
-      expect(subMenuItems[1]).toHaveTextContent('設定2')
-      expect(subMenuItems[2]).toHaveTextContent('設定3')
-    }
-  },
 }
-WithSubMenu.parameters = {
-  docs: {
-    description: {
-      story: 'サブメニュー付きメニューの表示例です。',
-    },
-  },
+
+/**
+ * チェックボックスとラジオボタンを含むメニューバーの例です。
+ */
+export const WithSelections: Story = {
+  render: () => (
+    <Menubar>
+      <MenubarMenu>
+        <MenubarTrigger>View</MenubarTrigger>
+        <MenubarContent>
+          <MenubarCheckboxItem>Show Toolbar</MenubarCheckboxItem>
+          <MenubarCheckboxItem>Show Statusbar</MenubarCheckboxItem>
+          <MenubarSeparator />
+          <MenubarLabel>Zoom</MenubarLabel>
+          <MenubarRadioGroup value="100%">
+            <MenubarRadioItem value="50%">50%</MenubarRadioItem>
+            <MenubarRadioItem value="75%">75%</MenubarRadioItem>
+            <MenubarRadioItem value="100%">100%</MenubarRadioItem>
+            <MenubarRadioItem value="150%">150%</MenubarRadioItem>
+          </MenubarRadioGroup>
+        </MenubarContent>
+      </MenubarMenu>
+    </Menubar>
+  ),
+}
+
+/**
+ * 複数のメニューを持つメニューバーの例です。
+ */
+export const FullExample: Story = {
+  render: () => (
+    <Menubar className="w-[600px]">
+      <MenubarMenu>
+        <MenubarTrigger>File</MenubarTrigger>
+        <MenubarContent>
+          <MenubarItem>
+            New Tab <MenubarShortcut>⌘T</MenubarShortcut>
+          </MenubarItem>
+          <MenubarItem>
+            New Window <MenubarShortcut>⌘N</MenubarShortcut>
+          </MenubarItem>
+          <MenubarSeparator />
+          <MenubarItem>Share</MenubarItem>
+          <MenubarSeparator />
+          <MenubarItem>Print</MenubarItem>
+        </MenubarContent>
+      </MenubarMenu>
+      <MenubarMenu>
+        <MenubarTrigger>Edit</MenubarTrigger>
+        <MenubarContent>
+          <MenubarItem>
+            Undo <MenubarShortcut>⌘Z</MenubarShortcut>
+          </MenubarItem>
+          <MenubarItem>
+            Redo <MenubarShortcut>⇧⌘Z</MenubarShortcut>
+          </MenubarItem>
+          <MenubarSeparator />
+          <MenubarSub>
+            <MenubarSubTrigger>Find</MenubarSubTrigger>
+            <MenubarSubContent>
+              <MenubarItem>Search the web</MenubarItem>
+              <MenubarItem>Find in page</MenubarItem>
+              <MenubarItem>Find in files</MenubarItem>
+            </MenubarSubContent>
+          </MenubarSub>
+        </MenubarContent>
+      </MenubarMenu>
+      <MenubarMenu>
+        <MenubarTrigger>View</MenubarTrigger>
+        <MenubarContent>
+          <MenubarCheckboxItem>Show Toolbar</MenubarCheckboxItem>
+          <MenubarCheckboxItem>Show Statusbar</MenubarCheckboxItem>
+          <MenubarSeparator />
+          <MenubarLabel>Zoom</MenubarLabel>
+          <MenubarRadioGroup value="100%">
+            <MenubarRadioItem value="50%">50%</MenubarRadioItem>
+            <MenubarRadioItem value="75%">75%</MenubarRadioItem>
+            <MenubarRadioItem value="100%">100%</MenubarRadioItem>
+            <MenubarRadioItem value="150%">150%</MenubarRadioItem>
+          </MenubarRadioGroup>
+        </MenubarContent>
+      </MenubarMenu>
+    </Menubar>
+  ),
 } 

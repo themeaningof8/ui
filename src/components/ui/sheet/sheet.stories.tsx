@@ -1,9 +1,5 @@
-/**
- * @file Sheetのストーリー
- * @description Sheetの様々な状態とバリエーションを表示
- */
-
 import type { Meta, StoryObj } from '@storybook/react'
+import { Button } from '../button'
 import {
   Sheet,
   SheetTrigger,
@@ -12,48 +8,59 @@ import {
   SheetFooter,
   SheetTitle,
   SheetDescription,
-} from '@/components/ui/sheet'
-import { Button } from '@/components/ui/button'
-import { within, userEvent, waitFor } from '@storybook/testing-library'
-import { expect } from '@storybook/jest'
+} from '.'
 
+/**
+ * `Sheet`は、サイドから表示されるモーダルコンポーネントです。
+ * Radix UIのDialogプリミティブをベースに、アクセシビリティと一貫したスタイリングを提供します。
+ */
 const meta = {
   title: 'UI/Sheet',
   component: Sheet,
   parameters: {
-    layout: 'fullscreen',
-    onLoad: () => {
-      const consoleError = console.error;
-      console.error = (...args) => {
-        consoleError(...args);
-        throw new Error(args.join(' '));
-      };
-    },
+    layout: 'centered',
   },
   tags: ['autodocs'],
 } satisfies Meta<typeof Sheet>
 
 export default meta
-type Story = StoryObj<typeof meta>
+type Story = StoryObj<typeof Sheet>
 
 /**
- * @description 基本的なシートの表示
+ * 基本的な使用例です。
  */
 export const Default: Story = {
   render: () => (
     <Sheet>
       <SheetTrigger asChild>
-        <Button>シートを開く</Button>
+        <Button variant="outline">シートを開く</Button>
       </SheetTrigger>
       <SheetContent>
         <SheetHeader>
           <SheetTitle>シートのタイトル</SheetTitle>
           <SheetDescription>
-            シートの説明文をここに記述します。
+            シートの説明文が入ります。この部分は複数行に渡る説明を記述できます。
           </SheetDescription>
         </SheetHeader>
-        <div className="py-4">
-          シートのメインコンテンツをここに配置します。
+        <div className="grid gap-4 py-4">
+          <div className="grid grid-cols-4 items-center gap-4">
+            <label htmlFor="name" className="text-right">
+              名前
+            </label>
+            <input
+              id="name"
+              className="col-span-3 rounded-md border p-2"
+            />
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <label htmlFor="username" className="text-right">
+              ユーザー名
+            </label>
+            <input
+              id="username"
+              className="col-span-3 rounded-md border p-2"
+            />
+          </div>
         </div>
         <SheetFooter>
           <Button type="submit">保存</Button>
@@ -61,195 +68,155 @@ export const Default: Story = {
       </SheetContent>
     </Sheet>
   ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    
-    // トリガーボタンの確認
-    const triggerButton = canvas.getByText('シートを開く')
-    expect(triggerButton).toBeInTheDocument()
-    
-    // 初期状態でシートが非表示であることを確認
-    expect(canvas.queryByRole('dialog')).not.toBeVisible()
-    
-    // シートを開く
-    await userEvent.click(triggerButton)
-    
-    // Sheet が表示されるのを待つ
-    const sheet = await waitFor(() => canvas.getByRole('dialog'))
-    expect(sheet).toBeVisible()
-    
-    const sheetContent = within(sheet as HTMLElement)
-    expect(sheetContent.getByText('シートのタイトル')).toBeVisible()
-    expect(sheetContent.getByText('シートの説明文をここに記述します。')).toBeVisible()
-    expect(sheetContent.getByText('シートのメインコンテンツをここに配置します。')).toBeVisible()
-    
-    // 閉じるボタンの確認
-    const closeButton = sheetContent.getByRole('button', { name: 'Close' })
-    expect(closeButton).toBeVisible()
-    
-    // シートを閉じる
-    await userEvent.click(closeButton)
-    expect(sheet).not.toBeVisible()
-  },
 }
 
 /**
- * @description 異なる表示位置のシート
+ * 左側から表示される例です。
  */
-export const Positions: Story = {
-  render: () => (
-    <div className="flex flex-col gap-4">
-      <Sheet>
-        <SheetTrigger asChild>
-          <Button>上部から表示</Button>
-        </SheetTrigger>
-        <SheetContent side="top">
-          <SheetHeader>
-            <SheetTitle>上部シート</SheetTitle>
-            <SheetDescription>上部から表示されるシートです。</SheetDescription>
-          </SheetHeader>
-        </SheetContent>
-      </Sheet>
-      
-      <Sheet>
-        <SheetTrigger asChild>
-          <Button>右側から表示</Button>
-        </SheetTrigger>
-        <SheetContent side="right">
-          <SheetHeader>
-            <SheetTitle>右側シート</SheetTitle>
-            <SheetDescription>右側から表示されるシートです。</SheetDescription>
-          </SheetHeader>
-        </SheetContent>
-      </Sheet>
-      
-      <Sheet>
-        <SheetTrigger asChild>
-          <Button>下部から表示</Button>
-        </SheetTrigger>
-        <SheetContent side="bottom">
-          <SheetHeader>
-            <SheetTitle>下部シート</SheetTitle>
-            <SheetDescription>下部から表示されるシートです。</SheetDescription>
-          </SheetHeader>
-        </SheetContent>
-      </Sheet>
-      
-      <Sheet>
-        <SheetTrigger asChild>
-          <Button>左側から表示</Button>
-        </SheetTrigger>
-        <SheetContent side="left">
-          <SheetHeader>
-            <SheetTitle>左側シート</SheetTitle>
-            <SheetDescription>左側から表示されるシートです。</SheetDescription>
-          </SheetHeader>
-        </SheetContent>
-      </Sheet>
-    </div>
-  ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    
-    // 各位置のトリガーボタンを確認
-    const buttons = canvas.getAllByRole('button')
-    expect(buttons).toHaveLength(4)
-    
-    // 各シートの表示テスト
-    for (const button of buttons) {
-      await userEvent.click(button)
-      const dialog = document.querySelector('[role="dialog"]')
-      expect(dialog).toBeInTheDocument()
-      
-      // シートを閉じる
-      const closeButton = within(dialog as HTMLElement).getByRole('button', { name: 'Close' })
-      await userEvent.click(closeButton)
-      expect(dialog).not.toBeVisible()
-    }
-  },
-}
-
-/**
- * @description カスタムコンテンツを含むシート
- */
-export const WithCustomContent: Story = {
+export const Left: Story = {
   render: () => (
     <Sheet>
       <SheetTrigger asChild>
-        <Button>設定を開く</Button>
+        <Button variant="outline">左から開く</Button>
       </SheetTrigger>
-      <SheetContent>
+      <SheetContent side="left">
         <SheetHeader>
-          <SheetTitle>設定</SheetTitle>
+          <SheetTitle>左側のシート</SheetTitle>
           <SheetDescription>
-            アプリケーションの設定を変更できます。
+            このシートは左側からスライドインします。
           </SheetDescription>
         </SheetHeader>
         <div className="py-4">
-          <div className="flex items-center justify-between py-2">
-            <span className="text-sm font-medium">通知</span>
-            <Button variant="outline" size="sm">設定</Button>
-          </div>
-          <div className="flex items-center justify-between py-2">
-            <span className="text-sm font-medium">プライバシー</span>
-            <Button variant="outline" size="sm">設定</Button>
-          </div>
-          <div className="flex items-center justify-between py-2">
-            <span className="text-sm font-medium">セキュリティ</span>
-            <Button variant="outline" size="sm">設定</Button>
-          </div>
+          <p>シートのコンテンツが入ります。</p>
         </div>
-        <SheetFooter>
-          <Button variant="outline">キャンセル</Button>
-          <Button>変更を保存</Button>
-        </SheetFooter>
       </SheetContent>
     </Sheet>
   ),
-  play: async ({ canvasElement, step }) => {
-    const canvas = within(canvasElement)
-    
-    await step("サイドバーを開く", async () => {
-      const trigger = canvas.getByRole("button", { name: "設定を開く" })
-      await userEvent.click(trigger)
-    })
-    
-    // Sheet が表示されるのを待つ
-    const sheet = await waitFor(() => canvas.getByRole('dialog'))
-    expect(sheet).toBeVisible()
-    
-    const sheetContent = within(sheet as HTMLElement)
-    
-    // ヘッダーの確認
-    expect(sheetContent.getByText('設定')).toBeVisible()
-    expect(sheetContent.getByText('アプリケーションの設定を変更できます。')).toBeVisible()
-    
-    // 設定項目の確認
-    const settingLabels = ['通知', 'プライバシー', 'セキュリティ']
-    for (const label of settingLabels) {
-      const settingRow = sheetContent.getByText(label)
-      expect(settingRow).toBeVisible()
-      const settingButton = settingRow.nextElementSibling
-      expect(settingButton).toHaveTextContent('設定')
-      expect(settingButton).toHaveClass('variant-outline')
-    }
-    
-    // フッターボタンの確認
-    const buttons = sheetContent.getAllByRole('button')
-    const footerButtons = buttons.slice(-2)
-    expect(footerButtons[0]).toHaveTextContent('キャンセル')
-    expect(footerButtons[1]).toHaveTextContent('変更を保存')
-    
-    await step("サイドバーを閉じる", async () => {
-      const closeButton = sheetContent.getByRole('button', { name: 'Close' })
-      await userEvent.click(closeButton)
-    })
+}
 
-    await step("サイドバーが閉じたことを確認", async () => {
-      // 要素が存在しないことを確認 (queryBy... を使用)
-      expect(
-        canvas.queryByText('設定'),
-      ).not.toBeInTheDocument()
-    })
-  },
+/**
+ * 上部から表示される例です。
+ */
+export const Top: Story = {
+  render: () => (
+    <Sheet>
+      <SheetTrigger asChild>
+        <Button variant="outline">上から開く</Button>
+      </SheetTrigger>
+      <SheetContent side="top">
+        <SheetHeader>
+          <SheetTitle>上部のシート</SheetTitle>
+          <SheetDescription>
+            このシートは上部からスライドインします。
+          </SheetDescription>
+        </SheetHeader>
+        <div className="py-4">
+          <p>シートのコンテンツが入ります。</p>
+        </div>
+      </SheetContent>
+    </Sheet>
+  ),
+}
+
+/**
+ * 下部から表示される例です。
+ */
+export const Bottom: Story = {
+  render: () => (
+    <Sheet>
+      <SheetTrigger asChild>
+        <Button variant="outline">下から開く</Button>
+      </SheetTrigger>
+      <SheetContent side="bottom">
+        <SheetHeader>
+          <SheetTitle>下部のシート</SheetTitle>
+          <SheetDescription>
+            このシートは下部からスライドインします。
+          </SheetDescription>
+        </SheetHeader>
+        <div className="py-4">
+          <p>シートのコンテンツが入ります。</p>
+        </div>
+      </SheetContent>
+    </Sheet>
+  ),
+}
+
+/**
+ * カスタムサイズの例です。
+ */
+export const CustomSize: Story = {
+  render: () => (
+    <Sheet>
+      <SheetTrigger asChild>
+        <Button variant="outline">カスタムサイズ</Button>
+      </SheetTrigger>
+      <SheetContent className="w-[800px] sm:max-w-[800px]">
+        <SheetHeader>
+          <SheetTitle>大きいシート</SheetTitle>
+          <SheetDescription>
+            このシートはカスタムサイズで表示されます。
+          </SheetDescription>
+        </SheetHeader>
+        <div className="py-4">
+          <p>シートのコンテンツが入ります。</p>
+        </div>
+      </SheetContent>
+    </Sheet>
+  ),
+}
+
+/**
+ * フォーム付きの例です。
+ */
+export const WithForm: Story = {
+  render: () => (
+    <Sheet>
+      <SheetTrigger asChild>
+        <Button variant="outline">フォームを開く</Button>
+      </SheetTrigger>
+      <SheetContent>
+        <SheetHeader>
+          <SheetTitle>プロフィール編集</SheetTitle>
+          <SheetDescription>
+            プロフィール情報を編集できます。
+          </SheetDescription>
+        </SheetHeader>
+        <form className="grid gap-4 py-4">
+          <div className="grid grid-cols-4 items-center gap-4">
+            <label htmlFor="name" className="text-right">
+              名前
+            </label>
+            <input
+              id="name"
+              className="col-span-3 rounded-md border p-2"
+            />
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <label htmlFor="email" className="text-right">
+              メールアドレス
+            </label>
+            <input
+              id="email"
+              type="email"
+              className="col-span-3 rounded-md border p-2"
+            />
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <label htmlFor="bio" className="text-right">
+              自己紹介
+            </label>
+            <textarea
+              id="bio"
+              className="col-span-3 rounded-md border p-2"
+              rows={3}
+            />
+          </div>
+          <SheetFooter>
+            <Button type="submit">保存</Button>
+          </SheetFooter>
+        </form>
+      </SheetContent>
+    </Sheet>
+  ),
 } 

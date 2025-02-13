@@ -1,3 +1,27 @@
+/**
+ * @file アラートダイアログコンポーネント
+ * @description 重要な操作の確認を行うためのダイアログコンポーネントです
+ * 
+ * @example
+ * ```tsx
+ * <AlertDialog>
+ *   <AlertDialogTrigger>開く</AlertDialogTrigger>
+ *   <AlertDialogContent>
+ *     <AlertDialogHeader>
+ *       <AlertDialogTitle>確認</AlertDialogTitle>
+ *       <AlertDialogDescription>
+ *         この操作は取り消せません。
+ *       </AlertDialogDescription>
+ *     </AlertDialogHeader>
+ *     <AlertDialogFooter>
+ *       <AlertDialogCancel>キャンセル</AlertDialogCancel>
+ *       <AlertDialogAction>続行</AlertDialogAction>
+ *     </AlertDialogFooter>
+ *   </AlertDialogContent>
+ * </AlertDialog>
+ * ```
+ */
+
 "use client"
 
 import * as React from "react"
@@ -6,20 +30,36 @@ import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog"
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
 
-/**
- * @description アラートダイアログコンポーネントの基本コンポーネント群
- */
 const AlertDialog = AlertDialogPrimitive.Root
-const AlertDialogTrigger = AlertDialogPrimitive.Trigger
-const AlertDialogPortal = AlertDialogPrimitive.Portal
 
+const AlertDialogTrigger = AlertDialogPrimitive.Trigger
+
+/**
+ * アラートダイアログのポータル要素
+ * @param props - コンポーネントのプロパティ
+ * @param props.children - ポータルの内容
+ */
+const AlertDialogPortal = ({
+  ...props
+}: AlertDialogPrimitive.AlertDialogPortalProps) => (
+  <AlertDialogPrimitive.Portal {...props} />
+)
+AlertDialogPortal.displayName = AlertDialogPrimitive.Portal.displayName
+
+/**
+ * アラートダイアログのオーバーレイ要素
+ * @param props - コンポーネントのプロパティ
+ * @param props.className - 追加のCSSクラス名
+ * @param props.children - オーバーレイの内容
+ * @param ref - 転送されるref
+ */
 const AlertDialogOverlay = React.forwardRef<
-  React.ElementRef<typeof AlertDialogPrimitive.Overlay>,
+  React.ComponentRef<typeof AlertDialogPrimitive.Overlay>,
   React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Overlay>
->(({ className, ...props }, ref) => (
+>(({ className, children, ...props }, ref) => (
   <AlertDialogPrimitive.Overlay
     className={cn(
-      "fixed inset-0 z-50 bg-base-app/80 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+      "fixed inset-0 z-50 bg-background/80 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
       className
     )}
     {...props}
@@ -28,8 +68,15 @@ const AlertDialogOverlay = React.forwardRef<
 ))
 AlertDialogOverlay.displayName = AlertDialogPrimitive.Overlay.displayName
 
+/**
+ * アラートダイアログのコンテンツ要素
+ * @param props - コンポーネントのプロパティ
+ * @param props.className - 追加のCSSクラス名
+ * @param props.children - コンテンツの内容
+ * @param ref - 転送されるref
+ */
 const AlertDialogContent = React.forwardRef<
-  React.ElementRef<typeof AlertDialogPrimitive.Content>,
+  React.ComponentRef<typeof AlertDialogPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Content>
 >(({ className, ...props }, ref) => (
   <AlertDialogPortal>
@@ -37,7 +84,7 @@ const AlertDialogContent = React.forwardRef<
     <AlertDialogPrimitive.Content
       ref={ref}
       className={cn(
-        "fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border border-base-ui-border bg-base-app-bg p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg",
+        "fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg md:w-full",
         className
       )}
       {...props}
@@ -46,6 +93,12 @@ const AlertDialogContent = React.forwardRef<
 ))
 AlertDialogContent.displayName = AlertDialogPrimitive.Content.displayName
 
+/**
+ * アラートダイアログのヘッダー要素
+ * @param props - コンポーネントのプロパティ
+ * @param props.className - 追加のCSSクラス名
+ * @param props.children - ヘッダーの内容
+ */
 const AlertDialogHeader = ({
   className,
   ...props
@@ -60,6 +113,12 @@ const AlertDialogHeader = ({
 )
 AlertDialogHeader.displayName = "AlertDialogHeader"
 
+/**
+ * アラートダイアログのフッター要素
+ * @param props - コンポーネントのプロパティ
+ * @param props.className - 追加のCSSクラス名
+ * @param props.children - フッターの内容
+ */
 const AlertDialogFooter = ({
   className,
   ...props
@@ -74,33 +133,53 @@ const AlertDialogFooter = ({
 )
 AlertDialogFooter.displayName = "AlertDialogFooter"
 
+/**
+ * アラートダイアログのタイトル要素
+ * @param props - コンポーネントのプロパティ
+ * @param props.className - 追加のCSSクラス名
+ * @param props.children - タイトルの内容
+ * @param ref - 転送されるref
+ */
 const AlertDialogTitle = React.forwardRef<
-  React.ElementRef<typeof AlertDialogPrimitive.Title>,
+  React.ComponentRef<typeof AlertDialogPrimitive.Title>,
   React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Title>
 >(({ className, ...props }, ref) => (
   <AlertDialogPrimitive.Title
     ref={ref}
-    className={cn("text-lg font-semibold text-base-high-contrast-text", className)}
+    className={cn("text-lg font-semibold", className)}
     {...props}
   />
 ))
 AlertDialogTitle.displayName = AlertDialogPrimitive.Title.displayName
 
+/**
+ * アラートダイアログの説明要素
+ * @param props - コンポーネントのプロパティ
+ * @param props.className - 追加のCSSクラス名
+ * @param props.children - 説明の内容
+ * @param ref - 転送されるref
+ */
 const AlertDialogDescription = React.forwardRef<
-  React.ElementRef<typeof AlertDialogPrimitive.Description>,
+  React.ComponentRef<typeof AlertDialogPrimitive.Description>,
   React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Description>
 >(({ className, ...props }, ref) => (
   <AlertDialogPrimitive.Description
     ref={ref}
-    className={cn("text-sm text-base-low-contrast-text", className)}
+    className={cn("text-sm text-muted-foreground", className)}
     {...props}
   />
 ))
-AlertDialogDescription.displayName =
-  AlertDialogPrimitive.Description.displayName
+AlertDialogDescription.displayName = AlertDialogPrimitive.Description.displayName
 
+/**
+ * アラートダイアログのアクションボタン要素
+ * @param props - コンポーネントのプロパティ
+ * @param props.className - 追加のCSSクラス名
+ * @param props.children - ボタンの内容
+ * @param ref - 転送されるref
+ */
 const AlertDialogAction = React.forwardRef<
-  React.ElementRef<typeof AlertDialogPrimitive.Action>,
+  React.ComponentRef<typeof AlertDialogPrimitive.Action>,
   React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Action>
 >(({ className, ...props }, ref) => (
   <AlertDialogPrimitive.Action
@@ -111,8 +190,15 @@ const AlertDialogAction = React.forwardRef<
 ))
 AlertDialogAction.displayName = AlertDialogPrimitive.Action.displayName
 
+/**
+ * アラートダイアログのキャンセルボタン要素
+ * @param props - コンポーネントのプロパティ
+ * @param props.className - 追加のCSSクラス名
+ * @param props.children - ボタンの内容
+ * @param ref - 転送されるref
+ */
 const AlertDialogCancel = React.forwardRef<
-  React.ElementRef<typeof AlertDialogPrimitive.Cancel>,
+  React.ComponentRef<typeof AlertDialogPrimitive.Cancel>,
   React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Cancel>
 >(({ className, ...props }, ref) => (
   <AlertDialogPrimitive.Cancel
@@ -129,8 +215,6 @@ AlertDialogCancel.displayName = AlertDialogPrimitive.Cancel.displayName
 
 export {
   AlertDialog,
-  AlertDialogPortal,
-  AlertDialogOverlay,
   AlertDialogTrigger,
   AlertDialogContent,
   AlertDialogHeader,

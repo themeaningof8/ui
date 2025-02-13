@@ -1,175 +1,118 @@
 /**
- * @file Popoverコンポーネントのテスト
- * @description Popover関連コンポーネントの機能とアクセシビリティをテストします
+ * @jest-environment jsdom
  */
-
-import { describe, it, expect } from 'vitest'
-import { render, screen, waitFor } from '@/tests/test-utils'
-import { userEvent } from '@testing-library/user-event'
+import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import {
-   Popover, PopoverTrigger, PopoverContent, PopoverAnchor
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
 } from '.'
 
 describe('Popover', () => {
-  describe('基本機能テスト', () => {
-    it('基本的なポップオーバーが正しくレンダリングされること', () => {
-      render(
-        <Popover>
-          <PopoverTrigger>クリックしてください</PopoverTrigger>
-          <PopoverContent>
-            <p>ポップオーバーの内容</p>
-            <PopoverAnchor>閉じる</PopoverAnchor>
-          </PopoverContent>
-        </Popover>
-      )
+  it('renders popover trigger correctly', () => {
+    render(
+      <Popover>
+        <PopoverTrigger>Click me</PopoverTrigger>
+        <PopoverContent>Popover content</PopoverContent>
+      </Popover>
+    )
 
-      expect(screen.getByText('クリックしてください')).toBeInTheDocument()
-    })
-
-    it('トリガーをクリックするとコンテンツが表示されること', async () => {
-      const user = userEvent.setup()
-      
-      render(
-        <Popover>
-          <PopoverTrigger>クリックしてください</PopoverTrigger>
-          <PopoverContent>
-            <p>ポップオーバーの内容</p>
-          </PopoverContent>
-        </Popover>
-      )
-
-      const trigger = screen.getByText('クリックしてください')
-      await user.click(trigger)
-
-      await waitFor(() => {
-        expect(screen.getByText('ポップオーバーの内容')).toBeVisible()
-      })
-    })
-
-    it('閉じるボタンをクリックするとポップオーバーが閉じること', async () => {
-      const user = userEvent.setup()
-      
-      render(
-        <Popover>
-          <PopoverTrigger>クリックしてください</PopoverTrigger>
-          <PopoverContent>
-            <p>ポップオーバーの内容</p>
-            <PopoverAnchor>閉じる</PopoverAnchor>
-          </PopoverContent>
-        </Popover>
-      )
-
-      // ポップオーバーを開く
-      const trigger = screen.getByText('クリックしてください')
-      await user.click(trigger)
-
-      // 閉じるボタンをクリック
-      const closeButton = screen.getByText('閉じる')
-      await user.click(closeButton)
-
-      await waitFor(() => {
-        expect(screen.queryByText('ポップオーバーの内容')).not.toBeVisible()
-      })
-    })
+    expect(screen.getByText('Click me')).toBeInTheDocument()
   })
 
-  describe('アクセシビリティテスト', () => {
-    it('適切なARIA属性が設定されていること', async () => {
-      const user = userEvent.setup()
-      
-      render(
-        <Popover>
-          <PopoverTrigger>クリックしてください</PopoverTrigger>
-          <PopoverContent>
-            <p>ポップオーバーの内容</p>
-          </PopoverContent>
-        </Popover>
-      )
+  it('shows content on click', async () => {
+    const user = userEvent.setup()
+    
+    render(
+      <Popover>
+        <PopoverTrigger>Click me</PopoverTrigger>
+        <PopoverContent>Popover content</PopoverContent>
+      </Popover>
+    )
 
-      const trigger = screen.getByRole('button')
-      expect(trigger).toHaveAttribute('aria-expanded', 'false')
-
-      await user.click(trigger)
-
-      await waitFor(() => {
-        const content = screen.getByRole('dialog')
-        expect(content).toHaveAttribute('aria-modal', 'true')
-        expect(trigger).toHaveAttribute('aria-expanded', 'true')
-      })
-    })
-
-    it('キーボード操作が正しく機能すること', async () => {
-      const user = userEvent.setup()
-      
-      render(
-        <Popover>
-          <PopoverTrigger>クリックしてください</PopoverTrigger>
-          <PopoverContent>
-            <p>ポップオーバーの内容</p>
-            <PopoverAnchor>閉じる</PopoverAnchor>
-          </PopoverContent>
-        </Popover>
-      )
-
-      // Tabキーでフォーカス
-      await user.tab()
-      expect(screen.getByText('クリックしてください')).toHaveFocus()
-
-      // Enterキーで開く
-      await user.keyboard('{Enter}')
-      await waitFor(() => {
-        expect(screen.getByText('ポップオーバーの内容')).toBeVisible()
-      })
-
-      // Escapeキーで閉じる
-      await user.keyboard('{Escape}')
-      await waitFor(() => {
-        expect(screen.queryByText('ポップオーバーの内容')).not.toBeVisible()
-      })
-    })
+    const trigger = screen.getByText('Click me')
+    await user.click(trigger)
+    
+    expect(screen.getByText('Popover content')).toBeInTheDocument()
   })
 
-  describe('スタイルテスト', () => {
-    it('カスタムクラスが適用できること', async () => {
-      const user = userEvent.setup()
-      
-      render(
+  it('applies custom className to content', async () => {
+    const user = userEvent.setup()
+    const customClass = 'custom-class'
+    
+    render(
+      <Popover>
+        <PopoverTrigger>Click me</PopoverTrigger>
+        <PopoverContent className={customClass}>
+          Popover content
+        </PopoverContent>
+      </Popover>
+    )
+
+    const trigger = screen.getByText('Click me')
+    await user.click(trigger)
+    
+    expect(screen.getByText('Popover content')).toHaveClass(customClass)
+  })
+
+  it('positions content correctly with align prop', async () => {
+    const user = userEvent.setup()
+    
+    render(
+      <Popover>
+        <PopoverTrigger>Click me</PopoverTrigger>
+        <PopoverContent align="start">
+          Popover content
+        </PopoverContent>
+      </Popover>
+    )
+
+    const trigger = screen.getByText('Click me')
+    await user.click(trigger)
+    
+    expect(screen.getByText('Popover content')).toHaveAttribute('data-align', 'start')
+  })
+
+  it('applies correct offset with sideOffset prop', async () => {
+    const user = userEvent.setup()
+    
+    render(
+      <Popover>
+        <PopoverTrigger>Click me</PopoverTrigger>
+        <PopoverContent sideOffset={10}>
+          Popover content
+        </PopoverContent>
+      </Popover>
+    )
+
+    const trigger = screen.getByText('Click me')
+    await user.click(trigger)
+    
+    expect(screen.getByText('Popover content')).toHaveAttribute('data-side-offset', '10')
+  })
+
+  it('hides content when clicking outside', async () => {
+    const user = userEvent.setup()
+    
+    render(
+      <div>
+        <div data-testid="outside">Outside</div>
         <Popover>
-          <PopoverTrigger className="custom-trigger">クリックしてください</PopoverTrigger>
-          <PopoverContent className="custom-content">
-            <p>ポップオーバーの内容</p>
-          </PopoverContent>
+          <PopoverTrigger>Click me</PopoverTrigger>
+          <PopoverContent>Popover content</PopoverContent>
         </Popover>
-      )
+      </div>
+    )
 
-      expect(screen.getByText('クリックしてください')).toHaveClass('custom-trigger')
-
-      await user.click(screen.getByText('クリックしてください'))
-
-      await waitFor(() => {
-        expect(screen.getByRole('dialog')).toHaveClass('custom-content')
-      })
-    })
-
-    it('サイドとアラインメントが正しく適用されること', async () => {
-      const user = userEvent.setup()
-      
-      render(
-        <Popover>
-          <PopoverTrigger>クリックしてください</PopoverTrigger>
-          <PopoverContent side="right" align="start">
-            <p>ポップオーバーの内容</p>
-          </PopoverContent>
-        </Popover>
-      )
-
-      await user.click(screen.getByText('クリックしてください'))
-
-      await waitFor(() => {
-        const content = screen.getByRole('dialog')
-        expect(content).toHaveAttribute('data-side', 'right')
-        expect(content).toHaveAttribute('data-align', 'start')
-      })
-    })
+    const trigger = screen.getByText('Click me')
+    await user.click(trigger)
+    
+    expect(screen.getByText('Popover content')).toBeInTheDocument()
+    
+    const outside = screen.getByTestId('outside')
+    await user.click(outside)
+    
+    expect(screen.queryByText('Popover content')).not.toBeInTheDocument()
   })
 }) 

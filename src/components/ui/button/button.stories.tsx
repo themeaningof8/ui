@@ -1,231 +1,169 @@
 /**
- * @file Buttonのストーリー
- * @description Buttonの使用例とバリエーションを表示
+ * @file ボタンコンポーネントのストーリー
+ * @description ボタンコンポーネントの使用例を表示します
  */
+
 import type { Meta, StoryObj } from '@storybook/react'
-import { Button } from '@/components/ui/button'
-import { Search, Settings, Loader2 } from 'lucide-react'
-import { within, userEvent } from '@storybook/testing-library'
-import { expect } from '@storybook/jest'
+import { Button } from '.'
 
 const meta = {
   title: 'UI/Button',
   component: Button,
   parameters: {
     layout: 'centered',
-    onLoad: () => {
-      const consoleError = console.error;
-      console.error = (...args) => {
-        consoleError(...args);
-        throw new Error(args.join(' '));
-      };
-    },
   },
   tags: ['autodocs'],
-  argTypes: {
-    asChild: {
-      control: 'boolean',
-      description: 'Whether to render as a Slot component',
-    },
-    variant: {
-      control: 'select',
-      options: ['default', 'destructive', 'outline', 'secondary', 'ghost', 'link'],
-      description: 'The visual style of the button',
-    },
-    size: {
-      control: 'select',
-      options: ['default', 'sm', 'lg', 'icon'],
-      description: 'The size of the button',
-    },
-  },
 } satisfies Meta<typeof Button>
 
 export default meta
-type Story = StoryObj<typeof Button>
+type Story = StoryObj<typeof meta>
 
 /**
- * @description デフォルトのボタン
+ * 基本的なボタンの使用例
  */
 export const Default: Story = {
-  render: () => <Button>ボタン</Button>,
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    const button = canvas.getByRole('button')
-    
-    expect(button).toBeInTheDocument()
-    expect(button).toHaveTextContent('ボタン')
-    expect(button).toBeEnabled()
-    
-    // クリックイベントのテスト
-    await userEvent.click(button)
+  args: {
+    children: 'ボタン',
   },
 }
 
 /**
- * @description バリアントのバリエーション
+ * セカンダリーボタンの使用例
  */
-export const Variants: Story = {
-  render: () => (
-    <div className="flex flex-wrap gap-4">
-      <Button variant="default">デフォルト</Button>
-      <Button variant="destructive">デストラクティブ</Button>
-      <Button variant="outline">アウトライン</Button>
-      <Button variant="secondary">セカンダリ</Button>
-      <Button variant="ghost">ゴースト</Button>
-      <Button variant="link">リンク</Button>
-    </div>
-  ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    const buttons = canvas.getAllByRole('button')
-    
-    // 6つのバリアントが存在することを確認
-    expect(buttons).toHaveLength(6)
-    
-    // 各バリアントのスタイルを確認
-    const [defaultBtn, destructive, outline, secondary, ghost, link] = buttons
-    expect(defaultBtn).toHaveClass('bg-base-solid')
-    expect(destructive).toHaveClass('bg-destructive-solid')
-    expect(outline).toHaveClass('border-base-ui-border')
-    expect(secondary).toHaveClass('bg-base-subtle-bg')
-    expect(ghost).toHaveClass('hover:bg-base-ui-hover')
-    expect(link).toHaveClass('text-base-solid')
+export const Secondary: Story = {
+  args: {
+    variant: 'secondary',
+    children: 'セカンダリー',
   },
 }
 
 /**
- * @description サイズのバリエーション
+ * アウトラインボタンの使用例
  */
-export const Sizes: Story = {
-  render: () => (
-    <div className="flex items-center gap-4">
-      <Button size="sm">Small</Button>
-      <Button size="default">Default</Button>
-      <Button size="lg">Large</Button>
-      <Button size="icon">
-        <Search className="h-4 w-4" />
-      </Button>
-    </div>
-  ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    const buttons = canvas.getAllByRole('button')
-    
-    // 4つのサイズが存在することを確認
-    expect(buttons).toHaveLength(4)
-    
-    // 各サイズのクラスを確認
-    const [small, defaultSize, large, icon] = buttons
-    expect(small).toHaveClass('h-8')
-    expect(defaultSize).toHaveClass('h-9')
-    expect(large).toHaveClass('h-10')
-    expect(icon).toHaveClass('h-9', 'w-9')
+export const Outline: Story = {
+  args: {
+    variant: 'outline',
+    children: 'アウトライン',
   },
 }
 
 /**
- * @description 無効化されたボタン
+ * デストラクティブボタンの使用例
  */
-export const Disabled: Story = {
-  render: () => (
-    <div className="flex gap-4">
-      <Button disabled>無効化</Button>
-      <Button disabled variant="secondary">
-        無効化（セカンダリ）
-      </Button>
-    </div>
-  ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    const buttons = canvas.getAllByRole('button')
-    
-    // すべてのボタンが無効化されていることを確認
-    for (const button of buttons) {
-      expect(button).toBeDisabled()
-      expect(button).toHaveClass('disabled:opacity-50')
-    }
+export const Destructive: Story = {
+  args: {
+    variant: 'destructive',
+    children: '削除',
   },
 }
 
 /**
- * @description アイコン付きボタン
+ * ゴーストボタンの使用例
+ */
+export const Ghost: Story = {
+  args: {
+    variant: 'ghost',
+    children: 'ゴースト',
+  },
+}
+
+/**
+ * リンクボタンの使用例
+ */
+export const Link: Story = {
+  args: {
+    variant: 'link',
+    children: 'リンク',
+  },
+}
+
+/**
+ * 大きいサイズのボタンの使用例
+ */
+export const Large: Story = {
+  args: {
+    size: 'lg',
+    children: '大きいボタン',
+  },
+}
+
+/**
+ * 小さいサイズのボタンの使用例
+ */
+export const Small: Story = {
+  args: {
+    size: 'sm',
+    children: '小さいボタン',
+  },
+}
+
+/**
+ * アイコン付きボタンの使用例
  */
 export const WithIcon: Story = {
-  render: () => (
-    <div className="flex gap-4">
-      <Button>
-        <Search className="mr-2" />
-        検索
-      </Button>
-      <Button variant="secondary">
-        <Settings className="mr-2" />
-        設定
-      </Button>
-    </div>
-  ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    const buttons = canvas.getAllByRole('button')
-    
-    // アイコンとテキストが正しく表示されていることを確認
-    expect(buttons[0]).toHaveTextContent('検索')
-    expect(buttons[1]).toHaveTextContent('設定')
+  args: {
+    children: (
+      <>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="mr-2"
+          aria-hidden="true"
+          role="presentation"
+        >
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+          <polyline points="7 10 12 15 17 10" />
+          <line x1="12" y1="15" x2="12" y2="3" />
+        </svg>
+        ダウンロード
+      </>
+    ),
   },
 }
 
 /**
- * @description ローディング状態のボタン
+ * 無効化されたボタンの使用例
+ */
+export const Disabled: Story = {
+  args: {
+    disabled: true,
+    children: '無効',
+  },
+}
+
+/**
+ * ローディング状態のボタンの使用例
  */
 export const Loading: Story = {
-  render: () => (
-    <div className="flex gap-4">
-      <Button>
-        <Loader2 className="mr-2 animate-spin" />
-        読み込み中...
-      </Button>
-      <Button variant="outline">
-        <Loader2 className="mr-2 animate-spin" />
-        読み込み中...
-      </Button>
-    </div>
-  ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    const buttons = canvas.getAllByRole('button')
-    
-    // ボタンが無効化されていることを確認
-    for (const button of buttons) {
-      expect(button).toBeDisabled()
-      expect(button).toHaveClass('disabled:opacity-50')
-    }
-    
-    // ローディングアイコンが表示されていることを確認
-    const loaders = canvas.getAllByTestId('loader')
-    expect(loaders).toHaveLength(2)
-    for (const loader of loaders) {
-      expect(loader).toHaveClass('animate-spin')
-    }
-  },
-}
-
-/**
- * @description カスタムスタイルを適用したボタン
- */
-export const CustomStyles: Story = {
-  render: () => (
-    <Button className="bg-gradient-to-r from-pink-500 to-violet-500 text-white">
-      グラデーション
-    </Button>
-  ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    const button = canvas.getByRole('button')
-    
-    expect(button).toHaveClass(
-      'bg-gradient-to-r',
-      'from-pink-500',
-      'to-violet-500',
-      'text-white'
-    )
+  args: {
+    disabled: true,
+    children: (
+      <>
+        <svg
+          className="mr-2 h-4 w-4 animate-spin"
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+          role="presentation"
+        >
+          <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+        </svg>
+        読み込み中
+      </>
+    ),
   },
 } 

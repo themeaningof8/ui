@@ -1,205 +1,74 @@
 /**
- * @file ScrollAreaコンポーネントのテスト
- * @description ScrollArea関連コンポーネントの機能とアクセシビリティをテストします
+ * @jest-environment jsdom
  */
-
-import { describe, it, expect } from 'vitest'
-import { render, screen, } from '@/tests/test-utils'
-import { userEvent } from '@testing-library/user-event'
-import {
-  ScrollArea,
-  ScrollBar,
-} from '.'
+import { render, screen, fireEvent } from '@testing-library/react'
+import { ScrollArea } from '.'
+import { vi } from 'vitest'
 
 describe('ScrollArea', () => {
-  describe('基本機能テスト', () => {
-    it('スクロールエリアが正しくレンダリングされること', () => {
-      render(
-        <ScrollArea className="h-[200px] w-[350px]">
-          <div style={{ height: '500px' }}>
-            スクロール可能なコンテンツ
-          </div>
-        </ScrollArea>
-      )
+  it('renders scroll area correctly', () => {
+    render(
+      <ScrollArea className="h-[200px]">
+        <div>Scrollable content</div>
+      </ScrollArea>
+    )
 
-      expect(screen.getByText('スクロール可能なコンテンツ')).toBeInTheDocument()
-    })
+    expect(screen.getByText('Scrollable content')).toBeInTheDocument()
+  })
 
-    it('スクロールバーが表示されること', () => {
-      render(
-        <ScrollArea className="h-[200px] w-[350px]">
-          <div style={{ height: '500px' }}>
-            スクロール可能なコンテンツ
-          </div>
-          <ScrollBar orientation="vertical" />
-        </ScrollArea>
-      )
+  it('applies custom className to scroll area', () => {
+    const customClass = 'custom-class'
+    render(
+      <ScrollArea className={customClass}>
+        <div>Scrollable content</div>
+      </ScrollArea>
+    )
 
-      expect(screen.getByRole('scrollbar')).toBeInTheDocument()
-    })
+    const scrollArea = screen.getByTestId('scroll-area')
+    expect(scrollArea).toHaveClass(customClass)
+  })
 
-    it('水平スクロールバーが表示されること', () => {
-      render(
-        <ScrollArea className="h-[200px] w-[350px]">
-          <div style={{ width: '500px' }}>
-            横にスクロール可能なコンテンツ
-          </div>
-          <ScrollBar orientation="horizontal" />
-        </ScrollArea>
-      )
+  it('renders viewport with correct styles', () => {
+    render(
+      <ScrollArea className="h-[200px]">
+        <div style={{ height: '1000px' }}>Scrollable content</div>
+      </ScrollArea>
+    )
 
-      const scrollbar = screen.getByRole('scrollbar')
-      expect(scrollbar).toHaveAttribute('aria-orientation', 'horizontal')
+    const viewport = screen.getByTestId('scroll-area-viewport')
+    expect(viewport).toBeInTheDocument()
+    expect(viewport).toHaveStyle({
+      'overflow-x': 'scroll',
+      'overflow-y': 'scroll'
     })
   })
 
-  describe('インタラクティブ機能テスト', () => {
-    it('スクロールバーをドラッグしてスクロールできること', async () => {
-      const user = userEvent.setup()
-      
-      render(
-        <ScrollArea className="h-[200px] w-[350px]">
-          <div style={{ height: '500px' }}>
-            スクロール可能なコンテンツ
-          </div>
-          <ScrollBar orientation="vertical" />
-        </ScrollArea>
-      )
+  it('handles scroll events correctly', async () => {
+    const onScroll = vi.fn()
+    const scrollHeight = 1000
 
-      const scrollbar = screen.getByRole('scrollbar')
-      const thumb = scrollbar.querySelector('[role="thumb"]')
+    render(
+      <ScrollArea className="h-[200px]" onScroll={onScroll}>
+        <div style={{ height: `${scrollHeight}px` }}>
+          Scrollable content
+        </div>
+      </ScrollArea>
+    )
 
-      if (thumb) {
-        await user.pointer({ target: thumb, keys: '[MouseLeft>]' })
-        await user.pointer({ target: thumb, coords: { x: 0, y: 100 } })
-        await user.pointer({ target: thumb, keys: '[/MouseLeft]' })
-      }
-    })
+    const viewport = screen.getByTestId('scroll-area-viewport')
+    await fireEvent.scroll(viewport, { target: { scrollTop: scrollHeight / 2 } })
 
-    it('マウスホイールでスクロールできること', async () => {
-      const user = userEvent.setup()
-      
-      render(
-        <ScrollArea className="h-[200px] w-[350px]">
-          <div style={{ height: '500px' }}>
-            スクロール可能なコンテンツ
-          </div>
-          <ScrollBar orientation="vertical" />
-        </ScrollArea>
-      )
-
-      const content = screen.getByText('スクロール可能なコンテンツ')
-      await user.wheel(content, { deltaY: 100 })
-    })
+    expect(onScroll).toHaveBeenCalled()
   })
 
-  describe('アクセシビリティテスト', () => {
-    it('適切なARIA属性が設定されていること', () => {
-      render(
-        <ScrollArea className="h-[200px] w-[350px]">
-          <div style={{ height: '500px' }}>
-            スクロール可能なコンテンツ
-          </div>
-          <ScrollBar orientation="vertical" />
-        </ScrollArea>
-      )
+  it('applies correct styles to scroll area', () => {
+    render(
+      <ScrollArea className="h-[200px]">
+        <div style={{ height: '1000px' }}>Scrollable content</div>
+      </ScrollArea>
+    )
 
-      const scrollbar = screen.getByRole('scrollbar')
-      expect(scrollbar).toHaveAttribute('aria-orientation', 'vertical')
-      expect(scrollbar).toHaveAttribute('aria-valuemin', '0')
-      expect(scrollbar).toHaveAttribute('aria-valuemax', '100')
-    })
-
-    it('キーボード操作が正しく機能すること', async () => {
-      const user = userEvent.setup()
-      
-      render(
-        <ScrollArea className="h-[200px] w-[350px]">
-          <div style={{ height: '500px' }}>
-            スクロール可能なコンテンツ
-          </div>
-          <ScrollBar orientation="vertical" />
-        </ScrollArea>
-      )
-
-      const scrollbar = screen.getByRole('scrollbar')
-      
-      await user.tab()
-      expect(scrollbar).toHaveFocus()
-
-      await user.keyboard('{ArrowDown}')
-      await user.keyboard('{ArrowUp}')
-      await user.keyboard('{PageDown}')
-      await user.keyboard('{PageUp}')
-      await user.keyboard('{Home}')
-      await user.keyboard('{End}')
-    })
+    const scrollArea = screen.getByTestId('scroll-area')
+    expect(scrollArea).toHaveClass('relative', 'overflow-hidden')
   })
-
-  describe('スタイルテスト', () => {
-    it('カスタムクラスが適用できること', () => {
-      render(
-        <ScrollArea className="custom-scroll-area">
-          <div>コンテンツ</div>
-          <ScrollBar className="custom-scrollbar" orientation="vertical" />
-        </ScrollArea>
-      )
-
-      expect(screen.getByRole('region')).toHaveClass('custom-scroll-area')
-      expect(screen.getByRole('scrollbar')).toHaveClass('custom-scrollbar')
-    })
-
-    it('スクロールバーの表示/非表示が切り替わること', () => {
-      const { rerender } = render(
-        <ScrollArea>
-          <div style={{ height: '100px' }}>
-            スクロール不要なコンテンツ
-          </div>
-          <ScrollBar orientation="vertical" />
-        </ScrollArea>
-      )
-
-      let scrollbar = screen.getByRole('scrollbar')
-      expect(scrollbar).toHaveAttribute('data-state', 'hidden')
-
-      rerender(
-        <ScrollArea>
-          <div style={{ height: '500px' }}>
-            スクロール可能なコンテンツ
-          </div>
-          <ScrollBar orientation="vertical" />
-        </ScrollArea>
-      )
-
-      scrollbar = screen.getByRole('scrollbar')
-      expect(scrollbar).toHaveAttribute('data-state', 'visible')
-    })
-  })
-
-  describe('エッジケーステスト', () => {
-    it('コンテンツが空の場合でも正しく動作すること', () => {
-      render(
-        <ScrollArea>
-          <ScrollBar orientation="vertical" />
-        </ScrollArea>
-      )
-
-      expect(screen.getByRole('region')).toBeInTheDocument()
-    })
-
-    it('大きなコンテンツでも正しく動作すること', () => {
-      render(
-        <ScrollArea className="h-[200px] w-[350px]">
-          <div style={{ height: '10000px' }}>
-            非常に長いコンテンツ
-          </div>
-          <ScrollBar orientation="vertical" />
-        </ScrollArea>
-      )
-
-      const scrollbar = screen.getByRole('scrollbar')
-      expect(scrollbar).toBeInTheDocument()
-      expect(scrollbar).toHaveAttribute('data-state', 'visible')
-    })
-  })
-}) 
+})

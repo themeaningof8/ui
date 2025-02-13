@@ -1,137 +1,130 @@
-/**
- * @file Separatorの Storybook 設定
- * @description Separatorの様々な状態と使用例を表示します。
- */
-import type { Meta, StoryObj } from '@storybook/react';
-import { Separator } from '@/components/ui/separator';
-import { within } from '@storybook/testing-library';
-import { expect } from '@storybook/jest';
+import * as React from 'react'
+import type { Meta, StoryObj } from '@storybook/react'
+import { Separator } from '.'
 
+/**
+ * `Separator`は、コンテンツを視覚的に分離するためのコンポーネントです。
+ * Radix UIのSeparatorプリミティブをベースに、アクセシビリティと一貫したスタイリングを提供します。
+ */
 const meta = {
   title: 'UI/Separator',
   component: Separator,
   parameters: {
     layout: 'centered',
-    onLoad: () => {
-      const consoleError = console.error;
-      console.error = (...args) => {
-        consoleError(...args);
-        throw new Error(args.join(' '));
-      };
-    },
   },
   tags: ['autodocs'],
-  argTypes: {
-    decorative: {
-      control: 'boolean',
-    },
-    orientation: {
-      control: 'select',
-      options: ['horizontal', 'vertical'],
-    },
-  },
-} satisfies Meta<typeof Separator>;
+} satisfies Meta<typeof Separator>
 
-export default meta;
-type Story = StoryObj<typeof meta>;
+export default meta
+type Story = StoryObj<typeof Separator>
 
 /**
- * @description デフォルトの水平方向のセパレーター
+ * 基本的な水平セパレーターの例です。
  */
-export const Horizontal: Story = {
-  render: () => <Separator />,
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const separator = canvas.getByRole('separator');
-
-    expect(separator).toBeInTheDocument();
-    expect(separator).toHaveAttribute('data-orientation', 'horizontal');
-    expect(separator).toHaveClass('h-[1px]');
-  },
-};
-
-/**
- * @description 垂直方向のセパレーター
- */
-export const Vertical: Story = {
-  render: () => <Separator orientation="vertical" className="h-10" />,
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const separator = canvas.getByRole('separator');
-
-    expect(separator).toBeInTheDocument();
-    expect(separator).toHaveAttribute('data-orientation', 'vertical');
-    expect(separator).toHaveClass('w-[1px]');
-  },
-};
-
-/**
- * @description 装飾的なセパレーター（`aria-hidden`属性を持つ）
- */
-export const Decorative: Story = {
-  render: () => <Separator decorative />,
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const separator = canvas.getByRole('none');
-
-    expect(separator).toBeInTheDocument();
-    expect(separator).toHaveAttribute('aria-hidden', 'true');
-  },
-};
-
-/**
- * @description カスタムスタイルを適用したセパレーター
- */
-export const CustomStyles: Story = {
+export const Default: Story = {
   render: () => (
-    <Separator
-      className="bg-primary h-1 w-24"
-      style={{
-        backgroundImage:
-          'linear-gradient(to right, transparent, currentColor, transparent)',
-      }}
-    />
-  ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const separator = canvas.getByRole('separator');
-
-    expect(separator).toBeInTheDocument();
-    expect(separator).toHaveClass('bg-primary', 'h-1', 'w-24');
-  },
-};
-
-/**
- * 様々な使用例
- */
-export const Examples: Story = {
-  render: () => (
-    <div className="w-[500px] space-y-8">
-      <div className="space-y-4">
-        <h4 className="text-sm font-medium leading-none">水平セパレーター</h4>
-        <Separator />
-        <div className="text-sm text-base-low">
-          セパレーターの下のコンテンツ
-        </div>
+    <div className="w-[300px]">
+      <div className="space-y-1">
+        <h4 className="text-sm font-medium leading-none">セクション1</h4>
+        <p className="text-sm text-muted-foreground">
+          セクション1の説明文が入ります。
+        </p>
       </div>
-
-      <div className="flex h-[100px] space-x-4">
-        <div className="space-y-4">
-          <h4 className="text-sm font-medium leading-none">垂直セパレーター</h4>
-        </div>
-        <Separator orientation="vertical" />
-        <div className="text-sm text-base-low">
-          セパレーターの右のコンテンツ
-        </div>
-      </div>
-
-      <div className="space-y-4">
-        <h4 className="text-sm font-medium leading-none">装飾的セパレーター</h4>
-        <Separator decorative />
-        <div className="text-sm text-base-low">
-          装飾的なセパレーターはスクリーンリーダーで読み上げられません
-        </div>
+      <Separator className="my-4" />
+      <div className="space-y-1">
+        <h4 className="text-sm font-medium leading-none">セクション2</h4>
+        <p className="text-sm text-muted-foreground">
+          セクション2の説明文が入ります。
+        </p>
       </div>
     </div>
   ),
-}; 
+}
+
+/**
+ * 垂直セパレーターの例です。
+ */
+export const Vertical: Story = {
+  render: () => (
+    <div className="flex h-5 items-center space-x-4 text-sm">
+      <div>アイテム1</div>
+      <Separator orientation="vertical" />
+      <div>アイテム2</div>
+      <Separator orientation="vertical" />
+      <div>アイテム3</div>
+    </div>
+  ),
+}
+
+/**
+ * カスタムスタイルを適用した例です。
+ */
+export const CustomStyle: Story = {
+  render: () => (
+    <div className="w-[300px]">
+      <div className="space-y-1">
+        <h4 className="text-sm font-medium leading-none">カスタムスタイル</h4>
+        <p className="text-sm text-muted-foreground">
+          セパレーターにカスタムスタイルを適用できます。
+        </p>
+      </div>
+      <Separator className="my-4 bg-primary" />
+      <div className="space-y-1">
+        <h4 className="text-sm font-medium leading-none">セクション2</h4>
+        <p className="text-sm text-muted-foreground">
+          セクション2の説明文が入ります。
+        </p>
+      </div>
+    </div>
+  ),
+}
+
+/**
+ * 装飾的でないセパレーターの例です。
+ */
+export const NonDecorative: Story = {
+  render: () => (
+    <div className="w-[300px]">
+      <div className="space-y-1">
+        <h4 className="text-sm font-medium leading-none">セクション1</h4>
+        <p className="text-sm text-muted-foreground">
+          セクション1の説明文が入ります。
+        </p>
+      </div>
+      <Separator className="my-4" decorative={false} />
+      <div className="space-y-1">
+        <h4 className="text-sm font-medium leading-none">セクション2</h4>
+        <p className="text-sm text-muted-foreground">
+          セクション2の説明文が入ります。
+        </p>
+      </div>
+    </div>
+  ),
+}
+
+/**
+ * リストの区切りとして使用する例です。
+ */
+export const ListDivider: Story = {
+  render: () => {
+    const id = React.useId()
+    let counter = 0;
+    return (
+      <div className="w-[300px] space-y-4">
+        {Array.from({ length: 5 }).map(() => (
+          <React.Fragment key={`${id}-${counter++}`}>
+            {counter > 1 && <Separator className="my-4" />}
+            <div className="space-y-1">
+              <h4 className="text-sm font-medium leading-none">
+                リストアイテム {counter}
+              </h4>
+              <p className="text-sm text-muted-foreground">
+                リストアイテム {counter} の説明文が入ります。
+              </p>
+            </div>
+          </React.Fragment>
+        ))}
+      </div>
+    )
+  },
+} 

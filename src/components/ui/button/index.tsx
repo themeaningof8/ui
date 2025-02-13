@@ -1,3 +1,20 @@
+/**
+ * @file ボタンコンポーネント
+ * @description 様々なスタイルとサイズを持つボタンコンポーネントです
+ * 
+ * @example
+ * ```tsx
+ * // デフォルトのボタン
+ * <Button>クリック</Button>
+ * 
+ * // バリアントの指定
+ * <Button variant="destructive">削除</Button>
+ * 
+ * // サイズの指定
+ * <Button size="lg">大きいボタン</Button>
+ * ```
+ */
+
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
@@ -5,31 +22,28 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 /**
- * @description ボタンコンポーネントのスタイルバリエーション定義
- * @param variant - ボタンの見た目のバリエーション
- * @param size - ボタンのサイズバリエーション
+ * ボタンのスタイルバリエーションを定義
  */
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-base-ui-border disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
-        default:
-          "bg-base-solid text-base-on-solid shadow hover:bg-base-solid-hover",
+        default: "bg-primary text-primary-foreground hover:bg-primary/90",
         destructive:
-          "bg-destructive-solid text-destructive-on-solid shadow-sm hover:bg-destructive-solid-hover",
+          "bg-destructive text-destructive-foreground hover:bg-destructive/90",
         outline:
-          "border border-base-ui-border bg-base-app-bg shadow-sm hover:bg-base-subtle-bg hover:text-base-high-contrast-text",
+          "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
         secondary:
-          "bg-base-subtle-bg text-base-high-contrast-text shadow-sm hover:bg-base-subtle-bg-hover",
-        ghost: "hover:bg-base-ui-hover hover:text-base-high-contrast-text",
-        link: "text-base-high-contrast-text underline-offset-4 hover:underline",
+          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+        ghost: "hover:bg-accent hover:text-accent-foreground",
+        link: "text-primary underline-offset-4 hover:underline",
       },
       size: {
-        default: "h-9 px-4 py-2",
-        sm: "h-8 rounded-md px-3 text-xs",
-        lg: "h-10 rounded-md px-8",
-        icon: "size-9",
+        default: "h-10 px-4 py-2",
+        sm: "h-9 rounded-md px-3",
+        lg: "h-11 rounded-md px-8",
+        icon: "h-10 w-10",
       },
     },
     defaultVariants: {
@@ -39,32 +53,36 @@ const buttonVariants = cva(
   }
 )
 
+/**
+ * ボタンコンポーネントのプロパティ
+ * @typedef ButtonProps
+ * @property {boolean} [asChild] - 子要素をボタンとして扱うかどうか
+ * @property {string} [className] - 追加のCSSクラス名
+ * @property {React.ReactNode} [children] - ボタンの内容
+ */
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean
-  isLoading?: boolean
 }
 
+/**
+ * ボタンコンポーネント
+ * @param props - コンポーネントのプロパティ
+ * @param props.className - 追加のCSSクラス名
+ * @param props.variant - ボタンのスタイルバリアント
+ * @param props.size - ボタンのサイズ
+ * @param props.asChild - 子要素をボタンとして扱うかどうか
+ * @param props.children - ボタンの内容
+ * @param ref - 転送されるref
+ */
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, isLoading = false, type = "button", onClick, ...props }, ref) => {
+  ({ className, variant, size, asChild = false, ...props }, ref) => {
     const Comp = asChild ? Slot : "button"
-
-    const handleClick = async (event: React.MouseEvent<HTMLButtonElement>) => {
-      try {
-        await onClick?.(event)
-      } catch (error) {
-        console.error('Button click error:', error)
-      }
-    }
-
     return (
       <Comp
         className={cn(buttonVariants({ variant, size, className }))}
         ref={ref}
-        type={type}
-        onClick={onClick ? handleClick : undefined}
-        disabled={isLoading || props.disabled}
         {...props}
       />
     )

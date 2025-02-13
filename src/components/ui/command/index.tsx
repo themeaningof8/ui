@@ -1,25 +1,52 @@
+/**
+ * @file コマンドコンポーネント
+ * @description コマンドパレットを提供するコンポーネント
+ *
+ * @example
+ * ```tsx
+ * // 基本的な使用例
+ * <Command>
+ *   <CommandInput placeholder="検索..." />
+ *   <CommandList>
+ *     <CommandEmpty>結果が見つかりません</CommandEmpty>
+ *     <CommandGroup heading="提案">
+ *       <CommandItem>アイテム1</CommandItem>
+ *       <CommandItem>アイテム2</CommandItem>
+ *     </CommandGroup>
+ *   </CommandList>
+ * </Command>
+ *
+ * // ダイアログモードでの使用例
+ * <CommandDialog>
+ *   <CommandInput placeholder="コマンドを入力..." />
+ *   <CommandList>
+ *     <CommandItem>アイテム1</CommandItem>
+ *   </CommandList>
+ * </CommandDialog>
+ * ```
+ */
+
 "use client";
 
 import * as React from "react";
 import type { DialogProps } from "@radix-ui/react-dialog";
 import { Command as CommandPrimitive } from "cmdk";
 import { Search } from "lucide-react";
-
-import { cn } from "@/lib/utils";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { DialogTitle, DialogDescription } from "@radix-ui/react-dialog";
+import { cn } from "@/lib/utils";
 
 /**
- * @description コマンドコンポーネントの基本コンポーネント群
+ * コマンドコンポーネントのプロパティ
  */
-
 const Command = React.forwardRef<
-	React.ElementRef<typeof CommandPrimitive>,
+	React.ComponentRef<typeof CommandPrimitive>,
 	React.ComponentPropsWithoutRef<typeof CommandPrimitive>
 >(({ className, ...props }, ref) => (
 	<CommandPrimitive
 		ref={ref}
 		className={cn(
-			"flex h-full w-full flex-col overflow-hidden rounded-md bg-base-app-bg text-base-high-contrast-text",
+			"flex h-full w-full flex-col overflow-hidden rounded-md bg-popover text-popover-foreground",
 			className,
 		)}
 		{...props}
@@ -27,11 +54,23 @@ const Command = React.forwardRef<
 ));
 Command.displayName = CommandPrimitive.displayName;
 
-const CommandDialog = ({ children, ...props }: DialogProps) => {
+/**
+ * コマンドダイアログのプロパティ
+ */
+interface CommandDialogProps extends DialogProps {}
+
+/**
+ * コマンドダイアログコンポーネント
+ */
+const CommandDialog = ({ children, ...props }: CommandDialogProps) => {
 	return (
 		<Dialog {...props}>
-			<DialogContent className="overflow-hidden p-0">
-				<Command className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-base-low-contrast-text [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-group]]:px-2 [&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:h-5 [&_[cmdk-item]_svg]:w-5">
+			<DialogContent className="overflow-hidden p-0 shadow-lg">
+				<DialogTitle className="sr-only">コマンドパレット</DialogTitle>
+				<DialogDescription className="sr-only">
+					コマンドを入力して操作を実行できます
+				</DialogDescription>
+				<Command className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-group]]:px-2 [&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:h-5 [&_[cmdk-item]_svg]:w-5">
 					{children}
 				</Command>
 			</DialogContent>
@@ -39,27 +78,32 @@ const CommandDialog = ({ children, ...props }: DialogProps) => {
 	);
 };
 
+/**
+ * コマンド入力フィールドコンポーネント
+ */
 const CommandInput = React.forwardRef<
-	React.ElementRef<typeof CommandPrimitive.Input>,
+	React.ComponentRef<typeof CommandPrimitive.Input>,
 	React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input>
 >(({ className, ...props }, ref) => (
-	<div className="flex items-center border-b border-base-ui-border px-3" cmdk-input-wrapper="">
-		<Search className="mr-2 h-4 w-4 shrink-0 text-base-low-contrast-text opacity-50" />
+	<div className="flex items-center border-b px-3" cmdk-input-wrapper="">
+		<Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
 		<CommandPrimitive.Input
 			ref={ref}
 			className={cn(
-				"flex h-10 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-base-low-contrast-text disabled:cursor-not-allowed disabled:opacity-50",
+				"flex h-11 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50",
 				className,
 			)}
 			{...props}
 		/>
 	</div>
 ));
-
 CommandInput.displayName = CommandPrimitive.Input.displayName;
 
+/**
+ * コマンドリストコンポーネント
+ */
 const CommandList = React.forwardRef<
-	React.ElementRef<typeof CommandPrimitive.List>,
+	React.ComponentRef<typeof CommandPrimitive.List>,
 	React.ComponentPropsWithoutRef<typeof CommandPrimitive.List>
 >(({ className, ...props }, ref) => (
 	<CommandPrimitive.List
@@ -68,66 +112,77 @@ const CommandList = React.forwardRef<
 		{...props}
 	/>
 ));
-
 CommandList.displayName = CommandPrimitive.List.displayName;
 
+/**
+ * 空の状態を表示するコンポーネント
+ */
 const CommandEmpty = React.forwardRef<
-	React.ElementRef<typeof CommandPrimitive.Empty>,
+	React.ComponentRef<typeof CommandPrimitive.Empty>,
 	React.ComponentPropsWithoutRef<typeof CommandPrimitive.Empty>
 >((props, ref) => (
 	<CommandPrimitive.Empty
 		ref={ref}
-		className="py-6 text-center text-sm text-base-low-contrast-text"
+		className="py-6 text-center text-sm"
 		{...props}
 	/>
 ));
-
 CommandEmpty.displayName = CommandPrimitive.Empty.displayName;
 
+/**
+ * コマンドグループコンポーネント
+ */
 const CommandGroup = React.forwardRef<
-	React.ElementRef<typeof CommandPrimitive.Group>,
+	React.ComponentRef<typeof CommandPrimitive.Group>,
 	React.ComponentPropsWithoutRef<typeof CommandPrimitive.Group>
 >(({ className, ...props }, ref) => (
 	<CommandPrimitive.Group
 		ref={ref}
 		className={cn(
-			"overflow-hidden p-1 text-base-high-contrast-text [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-base-low-contrast-text",
+			"overflow-hidden p-1 text-foreground [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground",
 			className,
 		)}
 		{...props}
 	/>
 ));
-
 CommandGroup.displayName = CommandPrimitive.Group.displayName;
 
+/**
+ * 区切り線コンポーネント
+ */
 const CommandSeparator = React.forwardRef<
-	React.ElementRef<typeof CommandPrimitive.Separator>,
+	React.ComponentRef<typeof CommandPrimitive.Separator>,
 	React.ComponentPropsWithoutRef<typeof CommandPrimitive.Separator>
 >(({ className, ...props }, ref) => (
 	<CommandPrimitive.Separator
 		ref={ref}
-		className={cn("-mx-1 h-px bg-base-ui-border", className)}
+		className={cn("-mx-1 h-px bg-border", className)}
 		{...props}
 	/>
 ));
 CommandSeparator.displayName = CommandPrimitive.Separator.displayName;
 
+/**
+ * コマンドアイテムコンポーネント
+ */
 const CommandItem = React.forwardRef<
-	React.ElementRef<typeof CommandPrimitive.Item>,
+	React.ComponentRef<typeof CommandPrimitive.Item>,
 	React.ComponentPropsWithoutRef<typeof CommandPrimitive.Item>
 >(({ className, ...props }, ref) => (
 	<CommandPrimitive.Item
 		ref={ref}
 		className={cn(
-			"relative flex cursor-default gap-2 select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none data-[disabled=true]:pointer-events-none data-[selected=true]:bg-base-subtle-bg data-[selected=true]:text-base-high-contrast-text data-[disabled=true]:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+			"relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none aria-selected:bg-accent aria-selected:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
 			className,
 		)}
 		{...props}
 	/>
 ));
-
 CommandItem.displayName = CommandPrimitive.Item.displayName;
 
+/**
+ * ショートカットを表示するコンポーネント
+ */
 const CommandShortcut = ({
 	className,
 	...props
@@ -135,7 +190,7 @@ const CommandShortcut = ({
 	return (
 		<span
 			className={cn(
-				"ml-auto text-xs tracking-widest text-base-low-contrast-text",
+				"ml-auto text-xs tracking-widest text-muted-foreground",
 				className,
 			)}
 			{...props}

@@ -1,43 +1,56 @@
 /**
- * @file Badgeコンポーネントのテスト
- * @description Badgeコンポーネントの機能とバリアントをテストします
+ * @file バッジコンポーネントのテスト
+ * @description バッジコンポーネントの機能をテストします
  */
 
 import { describe, it, expect } from 'vitest'
-import { render, screen } from '@/tests/test-utils'
-import { Badge, badgeVariants } from '.'
+import { render, screen } from '@testing-library/react'
+import { Badge } from '.'
 
-describe('Badge', () => {
-  describe('基本レンダリングテスト', () => {
-    it('デフォルトのバッジが正しくレンダリングされること', () => {
-      render(<Badge>デフォルトバッジ</Badge>)
-      const badge = screen.getByText('デフォルトバッジ')
-      expect(badge).toBeInTheDocument()
-      expect(badge).toHaveClass(badgeVariants({ variant: 'default' }))
-    })
+describe('Badgeコンポーネント', () => {
+  it('デフォルトのバッジが正しくレンダリングされる', () => {
+    render(<Badge>デフォルト</Badge>)
+    const badge = screen.getByText('デフォルト')
+    expect(badge).toBeInTheDocument()
+    expect(badge).toHaveClass('bg-primary')
   })
 
-  describe('バリアントテスト', () => {
-    it('各バリアントが正しく適用されること', () => {
-      const { rerender } = render(<Badge variant="default">デフォルト</Badge>)
-      expect(screen.getByText('デフォルト')).toHaveClass(badgeVariants({ variant: 'default' }))
-
-      rerender(<Badge variant="secondary">セカンダリ</Badge>)
-      expect(screen.getByText('セカンダリ')).toHaveClass(badgeVariants({ variant: 'secondary' }))
-
-      rerender(<Badge variant="destructive">破壊的</Badge>)
-      expect(screen.getByText('破壊的')).toHaveClass(badgeVariants({ variant: 'destructive' }))
-
-      rerender(<Badge variant="outline">アウトライン</Badge>)
-      expect(screen.getByText('アウトライン')).toHaveClass(badgeVariants({ variant: 'outline' }))
-    })
+  it('セカンダリバリアントが正しく適用される', () => {
+    render(<Badge variant="secondary">セカンダリ</Badge>)
+    const badge = screen.getByText('セカンダリ')
+    expect(badge).toBeInTheDocument()
+    expect(badge).toHaveClass('bg-secondary')
   })
 
-  describe('スタイルテスト', () => {
-    it('カスタムクラスが適用できること', () => {
-      render(<Badge className="custom-badge">カスタム</Badge>)
-      const badge = screen.getByText('カスタム')
-      expect(badge).toHaveClass('custom-badge')
-    })
+  it('デストラクティブバリアントが正しく適用される', () => {
+    render(<Badge variant="destructive">デストラクティブ</Badge>)
+    const badge = screen.getByText('デストラクティブ')
+    expect(badge).toBeInTheDocument()
+    expect(badge).toHaveClass('bg-destructive')
+  })
+
+  it('アウトラインバリアントが正しく適用される', () => {
+    render(<Badge variant="outline">アウトライン</Badge>)
+    const badge = screen.getByText('アウトライン')
+    expect(badge).toBeInTheDocument()
+    expect(badge).toHaveClass('border')
+  })
+
+  it('カスタムクラス名が正しく適用される', () => {
+    render(<Badge className="custom-class">カスタム</Badge>)
+    const badge = screen.getByText('カスタム')
+    expect(badge).toBeInTheDocument()
+    expect(badge).toHaveClass('custom-class')
+  })
+
+  it('リンクとして機能する場合、正しくレンダリングされる', () => {
+    render(
+      <Badge asChild>
+        <a href="/test">リンク</a>
+      </Badge>
+    )
+    const link = screen.getByRole('link', { name: 'リンク' })
+    expect(link).toBeInTheDocument()
+    expect(link).toHaveAttribute('href', '/test')
   })
 }) 

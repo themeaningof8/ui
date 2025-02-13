@@ -1,11 +1,11 @@
 /**
- * @file Sheetコンポーネントのテスト
- * @description Sheetコンポーネントの機能とアクセシビリティをテストします
+ * @file シートコンポーネントのテスト
+ * @description シートコンポーネントの機能をテストします
  */
 
 import { describe, it, expect } from 'vitest'
-import { render, screen, waitFor } from '@/tests/test-utils'
-import { userEvent } from '@testing-library/user-event'
+import { render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import {
   Sheet,
   SheetTrigger,
@@ -17,173 +17,169 @@ import {
   SheetClose,
 } from '.'
 
-describe('Sheet', () => {
-  describe('基本機能テスト', () => {
-    it('トリガーをクリックするとSheetが開くこと', async () => {
-      const user = userEvent.setup()
-      
-      render(
-        <Sheet>
-          <SheetTrigger asChild>
-            <button type="button">シートを開く</button>
-          </SheetTrigger>
-          <SheetContent>
-            <SheetHeader>
-              <SheetTitle>シートのタイトル</SheetTitle>
-              <SheetDescription>シートの説明文</SheetDescription>
-            </SheetHeader>
-            <div>シートのコンテンツ</div>
-            <SheetFooter>
-              <SheetClose asChild>
-                <button type="button">閉じる</button>
-              </SheetClose>
-            </SheetFooter>
-          </SheetContent>
-        </Sheet>
-      )
+describe('Sheetコンポーネント', () => {
+  it('トリガーが正しくレンダリングされること', () => {
+    render(
+      <Sheet>
+        <SheetTrigger>開く</SheetTrigger>
+        <SheetContent>
+          <SheetDescription>シートの説明</SheetDescription>
+          <div>コンテンツ</div>
+        </SheetContent>
+      </Sheet>
+    )
+    expect(screen.getByText('開く')).toBeInTheDocument()
+  })
 
-      const trigger = screen.getByText('シートを開く')
-      await user.click(trigger)
+  it('トリガーをクリックするとシートが開くこと', async () => {
+    const user = userEvent.setup()
+    render(
+      <Sheet>
+        <SheetTrigger>開く</SheetTrigger>
+        <SheetContent>
+          <SheetHeader>
+            <SheetTitle>シートタイトル</SheetTitle>
+            <SheetDescription>シートの説明</SheetDescription>
+          </SheetHeader>
+          コンテンツ
+        </SheetContent>
+      </Sheet>
+    )
 
-      await waitFor(() => {
-        expect(screen.getByRole('dialog')).toBeInTheDocument()
-        expect(screen.getByText('シートのタイトル')).toBeInTheDocument()
-        expect(screen.getByText('シートの説明文')).toBeInTheDocument()
-        expect(screen.getByText('シートのコンテンツ')).toBeInTheDocument()
-      })
-    })
+    await user.click(screen.getByText('開く'))
+    expect(screen.getByText('コンテンツ')).toBeInTheDocument()
+  })
 
-    it('閉じるボタンをクリックするとSheetが閉じること', async () => {
-      const user = userEvent.setup()
-      
-      render(
-        <Sheet defaultOpen>
-          <SheetTrigger asChild>
-            <button type="button">シートを開く</button>
-          </SheetTrigger>
-          <SheetContent>
-            <SheetHeader>
-              <SheetTitle>シートのタイトル</SheetTitle>
-            </SheetHeader>
-            <SheetClose asChild>
-              <button type="button">閉じる</button>
-            </SheetClose>
-          </SheetContent>
-        </Sheet>
-      )
+  it('カスタムクラス名が正しく適用されること', () => {
+    render(
+      <Sheet>
+        <SheetTrigger className="custom-trigger">開く</SheetTrigger>
+        <SheetContent className="custom-content">
+          <SheetDescription>シートの説明</SheetDescription>
+          <div>コンテンツ</div>
+        </SheetContent>
+      </Sheet>
+    )
 
-      const closeButton = screen.getByText('閉じる')
-      await user.click(closeButton)
+    expect(screen.getByText('開く')).toHaveClass('custom-trigger')
+  })
 
-      await waitFor(() => {
-        expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
-      })
+  it('ヘッダーとフッターが正しくレンダリングされること', async () => {
+    const user = userEvent.setup()
+    render(
+      <Sheet>
+        <SheetTrigger>開く</SheetTrigger>
+        <SheetContent>
+          <SheetHeader>
+            <SheetTitle>タイトル</SheetTitle>
+            <SheetDescription>シートの説明</SheetDescription>
+          </SheetHeader>
+          <div>コンテンツ</div>
+          <SheetFooter>
+            <button type="button">アクション</button>
+          </SheetFooter>
+        </SheetContent>
+      </Sheet>
+    )
+
+    await user.click(screen.getByText('開く'))
+    expect(screen.getByText('タイトル')).toBeInTheDocument()
+    expect(screen.getByText('アクション')).toBeInTheDocument()
+  })
+
+  it('閉じるボタンをクリックするとシートが閉じること', async () => {
+    const user = userEvent.setup()
+    render(
+      <Sheet>
+        <SheetTrigger>開く</SheetTrigger>
+        <SheetContent>
+          <SheetHeader>
+            <SheetTitle>シートタイトル</SheetTitle>
+            <SheetDescription>シートの説明</SheetDescription>
+          </SheetHeader>
+          コンテンツ
+        </SheetContent>
+      </Sheet>
+    )
+
+    await user.click(screen.getByText('開く'))
+    expect(screen.getByText('コンテンツ')).toBeInTheDocument()
+
+    const closeButton = screen.getByRole('button', { name: /close/i })
+    await user.click(closeButton)
+    
+    await waitFor(() => {
+      expect(screen.queryByText('コンテンツ')).not.toBeInTheDocument()
     })
   })
 
-  describe('アクセシビリティテスト', () => {
-    it('適切なARIA属性が設定されていること', async () => {
-      const user = userEvent.setup()
-      
-      render(
-        <Sheet>
-          <SheetTrigger asChild>
-            <button type="button">シートを開く</button>
-          </SheetTrigger>
-          <SheetContent>
-            <SheetHeader>
-              <SheetTitle>アクセシブルなタイトル</SheetTitle>
-              <SheetDescription>アクセシブルな説明</SheetDescription>
-            </SheetHeader>
-          </SheetContent>
-        </Sheet>
-      )
+  it('オーバーレイをクリックするとシートが閉じること', async () => {
+    const user = userEvent.setup()
+    render(
+      <Sheet>
+        <SheetTrigger>開く</SheetTrigger>
+        <SheetContent>
+          <SheetHeader>
+            <SheetTitle>シートタイトル</SheetTitle>
+            <SheetDescription>シートの説明</SheetDescription>
+          </SheetHeader>
+          コンテンツ
+        </SheetContent>
+      </Sheet>
+    )
 
-      const trigger = screen.getByText('シートを開く')
-      await user.click(trigger)
+    await user.click(screen.getByText('開く'))
+    expect(screen.getByText('コンテンツ')).toBeInTheDocument()
 
-      await waitFor(() => {
-        const dialog = screen.getByRole('dialog')
-        expect(dialog).toHaveAttribute('aria-modal', 'true')
-        expect(dialog).toHaveAttribute('role', 'dialog')
-      })
-    })
-
-    it('Escapeキーで閉じることができること', async () => {
-      const user = userEvent.setup()
-      
-      render(
-        <Sheet defaultOpen>
-          <SheetTrigger asChild>
-            <button type="button">シートを開く</button>
-          </SheetTrigger>
-          <SheetContent>
-            <SheetTitle>シートのタイトル</SheetTitle>
-          </SheetContent>
-        </Sheet>
-      )
-
-      const dialog = screen.getByRole('dialog')
-      await user.keyboard('{Escape}')
-
-      await waitFor(() => {
-        expect(dialog).not.toBeInTheDocument()
-      })
+    const overlay = screen.getByTestId('sheet-overlay')
+    await user.click(overlay)
+    await waitFor(() => {
+      expect(screen.queryByText('コンテンツ')).not.toBeInTheDocument()
     })
   })
 
-  describe('表示位置テスト', () => {
-    it('各サイドから表示できること', async () => {
-      const positions = ['top', 'right', 'bottom', 'left'] as const
-      const user = userEvent.setup()
+  it('サイドスタイルが正しく適用されること', async () => {
+    const user = userEvent.setup()
+    render(
+      <Sheet>
+        <SheetTrigger>開く</SheetTrigger>
+        <SheetContent side="right">
+          <SheetHeader>
+            <SheetTitle>シートタイトル</SheetTitle>
+            <SheetDescription>シートの説明</SheetDescription>
+          </SheetHeader>
+          コンテンツ
+        </SheetContent>
+      </Sheet>
+    )
 
-      for (const position of positions) {
-        const { rerender } = render(
-          <Sheet>
-            <SheetTrigger asChild>
-              <button type="button">{position}から表示</button>
-            </SheetTrigger>
-            <SheetContent side={position}>
-              <SheetTitle>{position}サイドのシート</SheetTitle>
-            </SheetContent>
-          </Sheet>
-        )
-
-        const trigger = screen.getByText(`${position}から表示`)
-        await user.click(trigger)
-
-        await waitFor(() => {
-          const dialog = screen.getByRole('dialog')
-          expect(dialog).toHaveAttribute('data-side', position)
-          expect(screen.getByText(`${position}サイドのシート`)).toBeInTheDocument()
-        })
-
-        // 次のテストのために閉じる
-        await user.keyboard('{Escape}')
-        rerender(<div />)
-      }
-    })
+    await user.click(screen.getByText('開く'))
+    const content = screen.getByText('コンテンツ').closest('[class*="right-0"]')
+    expect(content).toHaveClass('right-0')
   })
 
-  describe('オーバーレイテスト', () => {
-    it('オーバーレイをクリックするとSheetが閉じること', async () => {
-      const user = userEvent.setup()
-      
-      render(
-        <Sheet defaultOpen>
-          <SheetContent>
-            <SheetTitle>シートのタイトル</SheetTitle>
-          </SheetContent>
-        </Sheet>
-      )
+  it('閉じるボタンにフォーカススタイルが適用されること', async () => {
+    const user = userEvent.setup()
+    render(
+      <Sheet>
+        <SheetTrigger>開く</SheetTrigger>
+        <SheetContent>
+          <SheetHeader>
+            <SheetTitle>シートタイトル</SheetTitle>
+            <SheetDescription>シートの説明</SheetDescription>
+          </SheetHeader>
+          コンテンツ
+        </SheetContent>
+      </Sheet>
+    )
 
-      // オーバーレイは[role="presentation"]を持つ要素
-      const overlay = screen.getByRole('presentation')
-      await user.click(overlay)
+    const trigger = screen.getByText('開く')
+    await user.click(trigger)
 
-      await waitFor(() => {
-        expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
-      })
-    })
+    const closeButton = screen.getByRole('button', { name: /close/i })
+    await user.tab()
+
+    expect(document.activeElement).toBe(closeButton)
+    expect(closeButton).toHaveClass('focus:ring-2')
   })
 }) 

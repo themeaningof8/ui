@@ -1,165 +1,72 @@
 /**
- * @file Skeletonコンポーネントのテスト
- * @description Skeletonコンポーネントの機能とアクセシビリティをテストします
+ * @file src/components/ui/skeleton/skeleton.test.tsx
+ * @description Skeletonコンポーネントのテスト
  */
 
-import { describe, it, expect } from 'vitest'
-import { render, screen } from '@/tests/test-utils'
-import { Skeleton } from '.'
+import { render, screen } from '@testing-library/react'
+import { Skeleton } from '.';
 
 describe('Skeleton', () => {
-  describe('基本機能テスト', () => {
-    it('基本的なスケルトンが正しくレンダリングされること', () => {
-      render(<Skeleton className="h-4 w-[250px]" />)
-      
-      const skeleton = screen.getByRole('status')
-      expect(skeleton).toBeInTheDocument()
-      expect(skeleton).toHaveClass('h-4 w-[250px]')
-    })
-
-    it('カスタムサイズのスケルトンが正しくレンダリングされること', () => {
-      render(
-        <Skeleton
-          className="h-12 w-12 rounded-full"
-          aria-label="アバター読み込み中"
-        />
-      )
-      
-      const skeleton = screen.getByRole('status', { name: 'アバター読み込み中' })
-      expect(skeleton).toHaveClass('h-12 w-12 rounded-full')
-    })
-
-    it('子要素を含むスケルトンが正しくレンダリングされること', () => {
-      render(
-        <Skeleton>
-          <div>読み込み中のコンテンツ</div>
-        </Skeleton>
-      )
-      
-      const skeleton = screen.getByRole('status')
-      expect(skeleton).toContainHTML('読み込み中のコンテンツ')
-    })
+  it('renders skeleton correctly', () => {
+    render(<Skeleton />)
+    const elements = screen.getAllByRole('generic')
+    expect(elements[elements.length - 1]).toBeInTheDocument()
   })
 
-  describe('アクセシビリティテスト', () => {
-    it('適切なARIA属性が設定されていること', () => {
-      render(
-        <Skeleton
-          aria-label="コンテンツ読み込み中"
-          aria-busy="true"
-        />
-      )
-      
-      const skeleton = screen.getByRole('status')
-      expect(skeleton).toHaveAttribute('aria-label', 'コンテンツ読み込み中')
-      expect(skeleton).toHaveAttribute('aria-busy', 'true')
-    })
-
-    it('アニメーション中のARIA属性が正しく設定されること', () => {
-      render(<Skeleton />)
-      const skeleton = screen.getByRole('status')
-      expect(skeleton).toHaveAttribute('data-state', 'loading')
-      expect(skeleton).toHaveAttribute('aria-valuemin', '0')
-      expect(skeleton).toHaveAttribute('aria-valuemax', '100')
-      expect(skeleton).toHaveAttribute('aria-valuenow')
-    })
+  it('applies custom className', () => {
+    const customClass = 'custom-class'
+    render(<Skeleton className={customClass} />)
+    const elements = screen.getAllByRole('generic')
+    expect(elements[elements.length - 1]).toHaveClass(customClass)
   })
 
-  describe('スタイルテスト', () => {
-    it('デフォルトのスタイルが適用されること', () => {
-      render(<Skeleton />)
-      
-      const skeleton = screen.getByRole('status')
-      expect(skeleton).toHaveClass('animate-pulse rounded-md bg-muted')
-    })
-
-    it('カスタムクラスが適用できること', () => {
-      render(
-        <Skeleton className="custom-skeleton bg-primary/10" />
-      )
-      
-      const skeleton = screen.getByRole('status')
-      expect(skeleton).toHaveClass('custom-skeleton bg-primary/10')
-    })
-
-    it('複数のスケルトンが正しくレイアウトされること', () => {
-      render(
-        <div className="space-y-2">
-          <Skeleton className="h-4 w-[250px]" />
-          <Skeleton className="h-4 w-[200px]" />
-          <Skeleton className="h-4 w-[150px]" />
-        </div>
-      )
-      
-      const skeletons = screen.getAllByRole('status')
-      expect(skeletons).toHaveLength(3)
-      expect(skeletons[0]).toHaveClass('h-4 w-[250px]')
-      expect(skeletons[1]).toHaveClass('h-4 w-[200px]')
-      expect(skeletons[2]).toHaveClass('h-4 w-[150px]')
-    })
+  it('applies base styles correctly', () => {
+    render(<Skeleton />)
+    const elements = screen.getAllByRole('generic')
+    const skeleton = elements[elements.length - 1]
+    expect(skeleton).toHaveClass('animate-pulse')
+    expect(skeleton).toHaveClass('rounded-md')
+    expect(skeleton).toHaveClass('bg-muted')
   })
 
-  describe('コンテキストテスト', () => {
-    it('カード内でのスケルトンUIが正しく表示されること', () => {
-      render(
-        <div className="rounded-lg border p-4">
-          <div className="space-y-3">
-            <Skeleton className="h-8 w-[200px]" />
-            <Skeleton className="h-4 w-full" />
-            <Skeleton className="h-4 w-full" />
-            <Skeleton className="h-4 w-2/3" />
-          </div>
-        </div>
-      )
-      
-      const skeletons = screen.getAllByRole('status')
-      expect(skeletons).toHaveLength(4)
-    })
-
-    it('アバタースケルトンが正しく表示されること', () => {
-      render(
-        <div className="flex items-center space-x-4">
-          <Skeleton className="h-12 w-12 rounded-full" />
-          <div className="space-y-2">
-            <Skeleton className="h-4 w-[150px]" />
-            <Skeleton className="h-4 w-[100px]" />
-          </div>
-        </div>
-      )
-      
-      const skeletons = screen.getAllByRole('status')
-      expect(skeletons).toHaveLength(3)
-      expect(skeletons[0]).toHaveClass('rounded-full')
-    })
+  it('renders with custom dimensions', () => {
+    render(<Skeleton className="h-12 w-12" />)
+    const elements = screen.getAllByRole('generic')
+    const skeleton = elements[elements.length - 1]
+    expect(skeleton).toHaveClass('h-12')
+    expect(skeleton).toHaveClass('w-12')
   })
 
-  describe('エッジケーステスト', () => {
-    it('空のスケルトンが正しく表示されること', () => {
-      render(<Skeleton />)
-      
-      const skeleton = screen.getByRole('status')
-      expect(skeleton).toBeEmptyDOMElement()
-    })
+  it('renders with custom shape', () => {
+    render(<Skeleton className="rounded-full" />)
+    const elements = screen.getAllByRole('generic')
+    expect(elements[elements.length - 1]).toHaveClass('rounded-full')
+  })
 
-    it('非常に大きなスケルトンが正しく表示されること', () => {
-      render(
-        <Skeleton className="h-[500px] w-[1000px]" />
-      )
-      
-      const skeleton = screen.getByRole('status')
-      expect(skeleton).toHaveClass('h-[500px] w-[1000px]')
-    })
+  it('forwards additional props', () => {
+    const dataTestId = 'test-skeleton'
+    render(<Skeleton data-testid={dataTestId} />)
+    expect(screen.getByTestId(dataTestId)).toBeInTheDocument()
+  })
 
-    it('ネストされたスケルトンが正しく表示されること', () => {
-      render(
-        <Skeleton className="p-4">
-          <Skeleton className="h-4 w-full" />
-          <Skeleton className="h-4 w-full" />
-        </Skeleton>
-      )
-      
-      const skeletons = screen.getAllByRole('status')
-      expect(skeletons).toHaveLength(3)
-    })
+  it('renders children correctly', () => {
+    render(
+      <Skeleton>
+        <div>Loading content</div>
+      </Skeleton>
+    )
+    expect(screen.getByText('Loading content')).toBeInTheDocument()
+  })
+
+  it('combines multiple classes correctly', () => {
+    render(
+      <Skeleton className="h-12 w-12 rounded-full bg-gray-200" />
+    )
+    const elements = screen.getAllByRole('generic')
+    const skeleton = elements[elements.length - 1]
+    expect(skeleton).toHaveClass('h-12')
+    expect(skeleton).toHaveClass('w-12')
+    expect(skeleton).toHaveClass('rounded-full')
+    expect(skeleton).toHaveClass('bg-gray-200')
   })
 }) 

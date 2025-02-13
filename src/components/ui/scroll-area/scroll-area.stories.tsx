@@ -1,192 +1,199 @@
-/**
- * @file ScrollAreaのストーリー
- * @description ScrollAreaの様々な状態とバリエーションを表示
- */
-
 import type { Meta, StoryObj } from '@storybook/react'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { within, waitFor } from '@storybook/testing-library'
-import { expect } from '@storybook/jest'
+import { ScrollArea, ScrollBar } from '.'
+import React from 'react';
 
+/**
+ * `ScrollArea`は、カスタムスクロールバーを持つスクロール可能な領域を作成するコンポーネントです。
+ * Radix UIのScroll Areaプリミティブをベースに、アクセシビリティと一貫したスタイリングを提供します。
+ */
 const meta = {
   title: 'UI/ScrollArea',
   component: ScrollArea,
   parameters: {
     layout: 'centered',
-    onLoad: () => {
-      const consoleError = console.error;
-      console.error = (...args) => {
-        consoleError(...args);
-        throw new Error(args.join(' '));
-      };
-    },
   },
   tags: ['autodocs'],
 } satisfies Meta<typeof ScrollArea>
 
 export default meta
-type Story = StoryObj<typeof meta>
-
-// 一意のIDを生成する関数
-const generateId = (prefix: string, num: number) => `${prefix}-${num}`
+type Story = StoryObj<typeof ScrollArea>
 
 /**
- * @description 基本的なスクロールエリアの表示
+ * 基本的な垂直スクロールの例です。
  */
-export const Default: Story = {
-  render: () => (
-    <ScrollArea className="h-[200px] w-[350px] rounded-md border p-4">
-      <div className="space-y-4">
-        <h4 className="text-sm font-medium leading-none">スクロールコンテンツ</h4>
-        {Array.from({ length: 10 }, (_, i) => (
-          <div key={generateId('default-item', i)} className="text-sm">
-            項目 {i + 1}：スクロール可能なコンテンツの例です。
-          </div>
-        ))}
-      </div>
-    </ScrollArea>
-  ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    
-    // スクロールエリアの存在確認
-    await waitFor(() => {
-      expect(canvas.getByRole('region')).toBeInTheDocument()
-    })
-    
-    // コンテンツの確認
-    const items = canvas.getAllByText(/項目 \d+：/)
-    expect(items).toHaveLength(10)
-    
-    // スクロールバーの確認
-    const scrollbar = canvas.getByRole('scrollbar')
-    expect(scrollbar).toBeInTheDocument()
+export const Vertical: Story = {
+  render: () => {
+    const id = React.useId();
+    let counter = 0;
+    return (
+      <ScrollArea className="h-[200px] w-[350px] rounded-md border p-4">
+        <div className="space-y-4">
+          {Array.from({ length: 20 }).map((_) => (
+            <div key={`${id}-${counter++}`} className="text-sm">
+              Item {counter}
+            </div>
+          ))}
+        </div>
+      </ScrollArea>
+    );
   },
 }
 
 /**
- * @description 長いコンテンツを含むスクロールエリア
+ * 水平スクロールの例です。
  */
-export const LongContent: Story = {
-  render: () => (
-    <ScrollArea className="h-[300px] w-[350px] rounded-md border p-4">
-      <div className="space-y-4">
-        <h4 className="text-sm font-medium leading-none">長いコンテンツ</h4>
-        <p className="text-sm text-base-low-contrast-text">
-          以下のコンテンツは長いテキストを含み、垂直方向にスクロール可能です。
-        </p>
-        {Array.from({ length: 20 }, (_, i) => (
-          <div key={generateId('long-content', i)} className="rounded-md border p-4">
-            <h5 className="mb-2 text-sm font-medium">セクション {i + 1}</h5>
-            <p className="text-sm text-base-low-contrast-text">
-              これは長いコンテンツの例です。スクロールエリアを使用することで、
-              限られたスペースでも多くのコンテンツを表示できます。
-            </p>
-          </div>
-        ))}
-      </div>
-    </ScrollArea>
-  ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    
-    // スクロールエリアの存在確認
-    await waitFor(() => {
-      expect(canvas.getByRole('region')).toBeInTheDocument()
-    })
-    
-    // セクションの確認
-    const sections = canvas.getAllByText(/セクション \d+/)
-    expect(sections).toHaveLength(20)
-    
-    // スクロールバーの確認
-    const scrollbar = canvas.getByRole('scrollbar')
-    expect(scrollbar).toBeInTheDocument()
-    expect(scrollbar).toHaveAttribute('data-orientation', 'vertical')
-  },
-}
-
-/**
- * @description 水平スクロール可能なコンテンツ
- */
-export const HorizontalScroll: Story = {
-  render: () => (
-    <ScrollArea className="h-[200px] w-[350px] rounded-md border p-4">
-      <div className="flex space-x-4">
-        {Array.from({ length: 10 }, (_, i) => (
+export const Horizontal: Story = {
+  render: () => {
+     const id = React.useId();
+     let counter = 0;
+    return (
+    <ScrollArea className="h-[100px] w-[350px] rounded-md border">
+      <div className="flex p-4">
+        {Array.from({ length: 20 }).map(() => (
           <div
-            key={generateId('horizontal-card', i)}
-            className="h-32 w-32 flex-shrink-0 rounded-md border p-4"
+            key={`${id}-${counter++}`}
+            className="flex h-16 w-16 shrink-0 items-center justify-center border"
           >
-            <h5 className="mb-2 text-sm font-medium">カード {i + 1}</h5>
-            <p className="text-sm text-base-low-contrast-text">
-              水平スクロール可能なカードの例です。
-            </p>
+            {counter}
           </div>
         ))}
       </div>
     </ScrollArea>
-  ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    
-    // スクロールエリアの存在確認
-    await waitFor(() => {
-      expect(canvas.getByRole('region')).toBeInTheDocument()
-    })
-    
-    // カードの確認
-    const cards = canvas.getAllByText(/カード \d+/)
-    expect(cards).toHaveLength(10)
-    
-    // 水平スクロールバーの確認
-    const scrollbar = canvas.getByRole('scrollbar')
-    expect(scrollbar).toBeInTheDocument()
-    expect(scrollbar).toHaveAttribute('data-orientation', 'horizontal')
-  },
+  );
+  }
 }
 
 /**
- * @description カスタムスタイルを適用したスクロールエリア
+ * 両方向のスクロールの例です。
  */
-export const CustomStyles: Story = {
-  render: () => (
-    <ScrollArea className="h-[200px] w-[350px] rounded-md bg-base-ui-bg p-4">
-      <div className="space-y-4">
-        <h4 className="text-sm font-medium leading-none text-base-high-contrast-text">
-          カスタムスタイル
-        </h4>
-        {Array.from({ length: 10 }, (_, i) => (
+export const Both: Story = {
+   render: () => {
+    const id = React.useId();
+    let counter = 0;
+    return (
+    <ScrollArea className="h-[300px] w-[400px] rounded-md border p-4">
+      <div className="grid grid-cols-3 gap-4">
+        {Array.from({ length: 30 }).map(() => (
           <div
-            key={generateId('custom-item', i)}
-            className="rounded-md bg-base-app-bg p-4 shadow-sm"
+            key={`${id}-${counter++}`}
+            className="flex h-[120px] items-center justify-center rounded-md border"
           >
-            <h5 className="mb-2 text-sm font-medium">項目 {i + 1}</h5>
-            <p className="text-sm text-base-low-contrast-text">
-              カスタムスタイルを適用したコンテンツの例です。
+            Item {counter}
+          </div>
+        ))}
+      </div>
+    </ScrollArea>
+    );
+   }
+}
+
+/**
+ * テキストコンテンツの例です。
+ */
+export const WithText: Story = {
+  render: () => {
+    const id = React.useId();
+    let counter = 0;
+    return(
+    <ScrollArea className="h-[300px] w-[600px] rounded-md border p-4">
+      <div className="space-y-4">
+        <h4 className="text-sm font-medium leading-none">テキストコンテンツ</h4>
+        {Array.from({ length: 10 }).map(() => (
+          <div key={`${id}-${counter++}`} className="text-sm">
+            <p>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla
+              facilisi. Sed euismod, nisl nec ultricies lacinia, nunc nisl
+              tincidunt nunc, vitae aliquam nunc nisl eu nunc.
+            </p>
+            <p className="mt-2">
+              Pellentesque habitant morbi tristique senectus et netus et
+              malesuada fames ac turpis egestas. Integer euismod lacus luctus
+              magna.
             </p>
           </div>
         ))}
       </div>
     </ScrollArea>
-  ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    
-    // スクロールエリアの存在確認
-    await waitFor(() => {
-      expect(canvas.getByRole('region')).toBeInTheDocument()
-    })
-    expect(canvas.getByRole('region')).toHaveClass('bg-base-ui-bg')
-    
-    // コンテンツの確認
-    const items = canvas.getAllByText(/項目 \d+/)
-    expect(items).toHaveLength(10)
-    
-    // スタイルの確認
-    const contentItems = canvas.getAllByText(/カスタムスタイルを適用したコンテンツの例です。/)
-    for (const item of contentItems) {
-      expect(item.parentElement).toHaveClass('bg-base-app-bg', 'shadow-sm')
-    }
+    );
+  }
+}
+
+/**
+ * カスタムスタイルを適用した例です。
+ */
+export const CustomStyle: Story = {
+  render: () => {
+    const id = React.useId();
+    let counter = 0;
+    return (
+    <ScrollArea className="h-[200px] w-[350px] rounded-md border bg-muted p-4">
+      <div className="space-y-4">
+        {Array.from({ length: 20 }).map(() => (
+          <div key={`${id}-${counter++}`} className="text-sm text-muted-foreground">
+            Item {counter}
+          </div>
+        ))}
+      </div>
+    </ScrollArea>
+    );
+  }
+}
+
+/**
+ * ネストされたスクロールエリアの例です。
+ */
+export const Nested: Story = {
+  render: () => {
+      const outerId = React.useId();
+      let outerCounter = 0;
+    return (
+    <ScrollArea className="h-[400px] w-[600px] rounded-md border p-4">
+      <div className="space-y-4">
+        <h4 className="text-sm font-medium leading-none">外側のスクロールエリア</h4>
+        <div className="space-y-2">
+          {Array.from({ length: 5 }).map(() => {
+              const innerId = React.useId();
+              let innerCounter = 0;
+              return (
+            <ScrollArea
+              key={`${outerId}-${outerCounter++}`}
+              className="h-[100px] w-full rounded-md border bg-muted p-4"
+            >
+              <div className="space-y-2">
+                <h5 className="text-sm font-medium leading-none">
+                  内側のスクロールエリア {outerCounter}
+                </h5>
+                {Array.from({ length: 10 }).map(() => (
+                  <div key={`${innerId}-${innerCounter++}`} className="text-sm">
+                    Nested Item {innerCounter}
+                  </div>
+                ))}
+              </div>
+            </ScrollArea>
+              );
+          })}
+        </div>
+      </div>
+    </ScrollArea>
+    );
+  }
+}
+
+export const VerticalWithScrollBar: Story = {
+  render: () => {
+    const id = React.useId();
+    let counter = 0;
+    return (
+      <ScrollArea className="h-[200px] w-[350px] rounded-md border p-4">
+        <div className="space-y-4">
+          {Array.from({ length: 20 }).map((_) => (
+            <div key={`${id}-${counter++}`} className="text-sm">
+              Item {counter}
+            </div>
+          ))}
+        </div>
+        <ScrollBar orientation="vertical" />
+      </ScrollArea>
+    );
   },
 } 

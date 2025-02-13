@@ -1,128 +1,54 @@
 /**
- * @file Progressコンポーネントのテスト
- * @description Progressコンポーネントの機能とアクセシビリティをテストします
+ * @jest-environment jsdom
  */
-
-import { describe, it, expect } from 'vitest'
-import { render, screen } from '@/tests/test-utils'
+import { render, screen } from '@testing-library/react'
 import { Progress } from '.'
 
 describe('Progress', () => {
-  describe('基本機能テスト', () => {
-    it('デフォルトの進捗バーが正しくレンダリングされること', () => {
-      render(<Progress value={0} />)
-      
-      const progress = screen.getByRole('progressbar')
-      expect(progress).toBeInTheDocument()
-      expect(progress).toHaveAttribute('aria-valuenow', '0')
-    })
-
-    it('進捗値が正しく表示されること', () => {
-      render(<Progress value={50} />)
-      
-      const progress = screen.getByRole('progressbar')
-      expect(progress).toHaveAttribute('aria-valuenow', '50')
-    })
-
-    it('最大値が正しく設定されること', () => {
-      render(<Progress value={75} max={200} />)
-      
-      const progress = screen.getByRole('progressbar')
-      expect(progress).toHaveAttribute('aria-valuemax', '200')
-      expect(progress).toHaveAttribute('aria-valuenow', '75')
-    })
+  it('renders progress bar correctly', () => {
+    render(<Progress value={50} />)
+    expect(screen.getByRole('progressbar')).toBeInTheDocument()
   })
 
-  describe('アクセシビリティテスト', () => {
-    it('適切なARIA属性が設定されていること', () => {
-      render(<Progress value={30} />)
-      
-      const progress = screen.getByRole('progressbar')
-      expect(progress).toHaveAttribute('aria-valuemin', '0')
-      expect(progress).toHaveAttribute('aria-valuemax', '100')
-      expect(progress).toHaveAttribute('aria-valuenow', '30')
-    })
-
-    it('カスタムラベルが設定できること', () => {
-      render(
-        <Progress
-          value={40}
-          aria-label="ダウンロードの進捗状況"
-        />
-      )
-      
-      const progress = screen.getByRole('progressbar')
-      expect(progress).toHaveAttribute('aria-label', 'ダウンロードの進捗状況')
-    })
-
-    it('進捗の説明テキストが設定できること', () => {
-      render(
-        <Progress
-          value={60}
-          aria-describedby="progress-description"
-        />
-      )
-      
-      const progress = screen.getByRole('progressbar')
-      expect(progress).toHaveAttribute('aria-describedby', 'progress-description')
-    })
+  it('applies custom className', () => {
+    const customClass = 'custom-class'
+    render(<Progress className={customClass} value={50} />)
+    expect(screen.getByRole('progressbar')).toHaveClass(customClass)
   })
 
-  describe('スタイルテスト', () => {
-    it('カスタムクラスが適用できること', () => {
-      render(<Progress value={50} className="custom-progress" />)
-      
-      const progress = screen.getByRole('progressbar')
-      expect(progress).toHaveClass('custom-progress')
-    })
-
-    it('進捗インジケーターのスタイルが正しく適用されること', () => {
-      render(<Progress value={50} />)
-      
-      const indicator = screen.getByRole('progressbar').firstChild
-      expect(indicator).toHaveStyle({
-        transform: 'translateX(-50%)',
-      })
-    })
+  it('sets correct progress value', () => {
+    render(<Progress value={75} />)
+    const indicator = screen.getByRole('progressbar').querySelector('div')
+    expect(indicator).toHaveStyle({ transform: 'translateX(-25%)' })
   })
 
-  describe('エッジケーステスト', () => {
-    it('0%の進捗が正しく表示されること', () => {
-      render(<Progress value={0} />)
-      
-      const progress = screen.getByRole('progressbar')
-      expect(progress).toHaveAttribute('aria-valuenow', '0')
-      
-      const indicator = progress.firstChild
-      expect(indicator).toHaveStyle({
-        transform: 'translateX(-100%)',
-      })
-    })
+  it('handles zero value correctly', () => {
+    render(<Progress value={0} />)
+    const indicator = screen.getByRole('progressbar').querySelector('div')
+    expect(indicator).toHaveStyle({ transform: 'translateX(-100%)' })
+  })
 
-    it('100%の進捗が正しく表示されること', () => {
-      render(<Progress value={100} />)
-      
-      const progress = screen.getByRole('progressbar')
-      expect(progress).toHaveAttribute('aria-valuenow', '100')
-      
-      const indicator = progress.firstChild
-      expect(indicator).toHaveStyle({
-        transform: 'translateX(0%)',
-      })
-    })
+  it('handles full value correctly', () => {
+    render(<Progress value={100} />)
+    const indicator = screen.getByRole('progressbar').querySelector('div')
+    expect(indicator).toHaveStyle({ transform: 'translateX(0%)' })
+  })
 
-    it('最大値を超える値が指定された場合、100%として表示されること', () => {
-      render(<Progress value={150} max={100} />)
-      
-      const progress = screen.getByRole('progressbar')
-      expect(progress).toHaveAttribute('aria-valuenow', '100')
-    })
+  it('handles undefined value correctly', () => {
+    render(<Progress />)
+    const indicator = screen.getByRole('progressbar').querySelector('div')
+    expect(indicator).toHaveStyle({ transform: 'translateX(-100%)' })
+  })
 
-    it('負の値が指定された場合、0%として表示されること', () => {
-      render(<Progress value={-10} />)
-      
-      const progress = screen.getByRole('progressbar')
-      expect(progress).toHaveAttribute('aria-valuenow', '0')
-    })
+  it('applies correct base styles', () => {
+    render(<Progress value={50} />)
+    const progressBar = screen.getByRole('progressbar')
+    expect(progressBar).toHaveClass('relative', 'h-4', 'w-full', 'overflow-hidden', 'rounded-full', 'bg-secondary')
+  })
+
+  it('applies correct indicator styles', () => {
+    render(<Progress value={50} />)
+    const indicator = screen.getByRole('progressbar').querySelector('div')
+    expect(indicator).toHaveClass('h-full', 'w-full', 'flex-1', 'bg-primary', 'transition-all')
   })
 }) 

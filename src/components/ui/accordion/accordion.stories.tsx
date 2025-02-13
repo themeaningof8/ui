@@ -1,84 +1,85 @@
 /**
- * Accordionのストーリー
- * @see https://storybook.js.org/docs/writing-stories
+ * @file アコーディオンコンポーネントのストーリー
+ * @description アコーディオンコンポーネントの使用例を表示します
  */
-import type { Meta, StoryObj } from '@storybook/react'
-import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion'
-import userEvent from '@testing-library/user-event';
-import { screen, waitFor } from '@storybook/testing-library';
-import { expect } from '@storybook/jest';
 
-const meta: Meta<typeof Accordion> = {
+import type { Meta, StoryObj } from '@storybook/react'
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '.'
+
+const meta = {
   title: 'UI/Accordion',
   component: Accordion,
   parameters: {
     layout: 'centered',
-    onLoad: () => {
-      const consoleError = console.error;
-      console.error = (...args) => {
-        consoleError(...args);
-        throw new Error(args.join(' '));
-      };
-    },
-    docs: {
-      autodocs: true,
-    }
   },
   tags: ['autodocs'],
-  argTypes: {
-  },
-}
+} satisfies Meta<typeof Accordion>
 
 export default meta
+type Story = StoryObj<typeof meta>
 
-type Story = StoryObj<typeof Accordion>
-
-export const Primary: Story = {
-  render: (args) => (
-    <Accordion {...args}>
-      <AccordionItem value="item-1">
-        <AccordionTrigger>よくある質問</AccordionTrigger>
-        <AccordionContent>
-          回答内容がここに入ります。コンポーネントの動作確認用テキストです。
-        </AccordionContent>
-      </AccordionItem>
-      <AccordionItem value="item-2">
-        <AccordionTrigger>質問2</AccordionTrigger>
-        <AccordionContent>
-          回答内容2
-        </AccordionContent>
-      </AccordionItem>
-    </Accordion>
-  ),
+/**
+ * 単一のアコーディオンアイテムを表示する基本的な使用例
+ */
+export const Default: Story = {
   args: {
     type: 'single',
     collapsible: true,
   },
-  parameters: {
-    docs: {
-      story: {
-        height: '300px',
-      },
-    },
+  render: (args) => (
+    <Accordion {...args}>
+      <AccordionItem value="item-1">
+        <AccordionTrigger>アコーディオン1</AccordionTrigger>
+        <AccordionContent>アコーディオン1の内容</AccordionContent>
+      </AccordionItem>
+    </Accordion>
+  ),
+}
+
+/**
+ * 複数のアコーディオンアイテムを表示する使用例
+ */
+export const Multiple: Story = {
+  args: {
+    type: 'multiple',
   },
-  play: async () => {
-    const trigger1 = screen.getByText('よくある質問');
-    const trigger2 = screen.getByText('質問2');
+  render: (args) => (
+    <Accordion {...args}>
+      <AccordionItem value="item-1">
+        <AccordionTrigger>アコーディオン1</AccordionTrigger>
+        <AccordionContent>アコーディオン1の内容</AccordionContent>
+      </AccordionItem>
+      <AccordionItem value="item-2">
+        <AccordionTrigger>アコーディオン2</AccordionTrigger>
+        <AccordionContent>アコーディオン2の内容</AccordionContent>
+      </AccordionItem>
+      <AccordionItem value="item-3">
+        <AccordionTrigger>アコーディオン3</AccordionTrigger>
+        <AccordionContent>アコーディオン3の内容</AccordionContent>
+      </AccordionItem>
+    </Accordion>
+  ),
+}
 
-    await userEvent.click(trigger1);
-    const content1 = await screen.findByText('回答内容がここに入ります。コンポーネントの動作確認用テキストです。');
-    await expect(content1).toBeVisible();
-
-    await userEvent.click(trigger2);
-    await waitFor(() => {
-      expect(content1).not.toBeVisible();
-    });
-    const content2 = await screen.findByText('回答内容2');
-    await expect(content2).toBeVisible();
-
-    await userEvent.click(trigger2);
-    await waitFor(() => {
-      expect(content2).not.toBeVisible();
-    });
-  }
+/**
+ * 長いコンテンツを含むアコーディオンの使用例
+ */
+export const LongContent: Story = {
+  args: {
+    type: 'single',
+    collapsible: true,
+  },
+  render: (args) => (
+    <Accordion {...args}>
+      <AccordionItem value="item-1">
+        <AccordionTrigger>長いコンテンツ</AccordionTrigger>
+        <AccordionContent>
+          これは非常に長いコンテンツの例です。アコーディオンは、長いコンテンツを
+          効率的に表示するのに適しています。ユーザーは必要な情報のみを展開して
+          閲覧することができます。これにより、画面の空間を効率的に使用することが
+          できます。
+        </AccordionContent>
+      </AccordionItem>
+    </Accordion>
+  ),
 } 

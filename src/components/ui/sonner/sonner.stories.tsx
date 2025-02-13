@@ -1,17 +1,14 @@
-/**
- * Sonnerのストーリー
- * @module Sonner.stories
- */
-
 import type { Meta, StoryObj } from '@storybook/react'
-import { Button } from '@/components/ui/button'
-import { Toaster } from '@/components/ui/sonner'
+import { Button } from '../button'
+import { Toaster } from '.'
 import { toast } from 'sonner'
-import { expect } from '@storybook/jest'
-import { screen, within, userEvent } from '@storybook/testing-library'
 
+/**
+ * `Toaster`は、トースト通知を表示するためのコンポーネントです。
+ * Sonnerライブラリを使用して、美しいトースト通知を提供します。
+ */
 const meta = {
-  title: 'UI/Sonner',
+  title: 'UI/Toaster',
   component: Toaster,
   parameters: {
     layout: 'centered',
@@ -22,115 +19,108 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-function ToastDemo() {
-  return (
-    <div className="flex flex-col gap-4">
-      <Button
-        onClick={() => {
-          toast('デフォルトトースト', {
-            description: 'これはデフォルトのトースト通知です。',
-          })
-        }}
-      >
-        デフォルト
+/**
+ * 基本的な使用例です。
+ */
+export const Default: Story = {
+  render: () => (
+    <div className="flex flex-col gap-2">
+      <Button onClick={() => toast('基本的なメッセージ')}>
+        基本的なトースト
       </Button>
+      <Toaster />
+    </div>
+  ),
+}
 
-      <Button
-        onClick={() => {
-          toast.success('成功トースト', {
-            description: 'これは成功を示すトースト通知です。',
-          })
-        }}
-      >
-        成功
+/**
+ * 成功メッセージの例です。
+ */
+export const Success: Story = {
+  render: () => (
+    <div className="flex flex-col gap-2">
+      <Button onClick={() => toast.success('成功しました！')}>
+        成功トースト
       </Button>
+      <Toaster />
+    </div>
+  ),
+}
 
-      <Button
-        onClick={() => {
-          toast.warning('警告トースト', {
-            description: 'これは警告を示すトースト通知です。',
-          })
-        }}
-      >
-        警告
+/**
+ * エラーメッセージの例です。
+ */
+export const ErrorToast: Story = {
+  render: () => (
+    <div className="flex flex-col gap-2">
+      <Button onClick={() => toast.error('エラーが発生しました')}>
+        エラートースト
       </Button>
+      <Toaster />
+    </div>
+  ),
+}
 
+/**
+ * アクション付きの例です。
+ */
+export const WithAction: Story = {
+  render: () => (
+    <div className="flex flex-col gap-2">
       <Button
-        variant="destructive"
-        onClick={() => {
-          toast.error('エラートースト', {
-            description: 'これはエラーを示すトースト通知です。',
-          })
-        }}
-      >
-        エラー
-      </Button>
-
-      <Button
-        onClick={() => {
-          toast('アクション付きトースト', {
-            description: 'これはアクション付きのトースト通知です。',
+        onClick={() =>
+          toast('アクション付きメッセージ', {
             action: {
-              label: 'アクション',
+              label: '元に戻す',
               onClick: () => console.log('アクションがクリックされました'),
             },
           })
-        }}
+        }
       >
-        アクション付き
+        アクション付きトースト
       </Button>
-    </div>
-  )
-}
-
-export const Default: Story = {
-  render: () => (
-    <>
-      <ToastDemo />
       <Toaster />
-    </>
+    </div>
   ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-
-    // デフォルトトーストのテスト
-    const defaultButton = canvas.getByText('デフォルト')
-    await userEvent.click(defaultButton)
-    const defaultToast = await screen.findByText('デフォルトトースト')
-    expect(defaultToast).toBeInTheDocument()
-    expect(screen.getByText('これはデフォルトのトースト通知です。')).toBeInTheDocument()
-
-    // 成功トーストのテスト
-    const successButton = canvas.getByText('成功')
-    await userEvent.click(successButton)
-    const successToast = await screen.findByText('成功トースト')
-    expect(successToast).toBeInTheDocument()
-    expect(screen.getByText('これは成功を示すトースト通知です。')).toBeInTheDocument()
-
-    // 警告トーストのテスト
-    const warningButton = canvas.getByText('警告')
-    await userEvent.click(warningButton)
-    const warningToast = await screen.findByText('警告トースト')
-    expect(warningToast).toBeInTheDocument()
-    expect(screen.getByText('これは警告を示すトースト通知です。')).toBeInTheDocument()
-
-    // エラートーストのテスト
-    const errorButton = canvas.getByText('エラー')
-    await userEvent.click(errorButton)
-    const errorToast = await screen.findByText('エラートースト')
-    expect(errorToast).toBeInTheDocument()
-    expect(screen.getByText('これはエラーを示すトースト通知です。')).toBeInTheDocument()
-
-    // アクション付きトーストのテスト
-    const actionButton = canvas.getByText('アクション付き')
-    await userEvent.click(actionButton)
-    const actionToast = await screen.findByText('アクション付きトースト')
-    expect(actionToast).toBeInTheDocument()
-    expect(screen.getByText('これはアクション付きのトースト通知です。')).toBeInTheDocument()
-    
-    // アクションボタンのテスト
-    const toastActionButton = screen.getByText('アクション')
-    expect(toastActionButton).toBeInTheDocument()
-    await userEvent.click(toastActionButton)
-  }
 }
+
+/**
+ * 説明付きの例です。
+ */
+export const WithDescription: Story = {
+  render: () => (
+    <div className="flex flex-col gap-2">
+      <Button
+        onClick={() =>
+          toast('タイトル', {
+            description: 'これは詳細な説明文です。',
+          })
+        }
+      >
+        説明付きトースト
+      </Button>
+      <Toaster />
+    </div>
+  ),
+}
+
+/**
+ * カスタムスタイルの例です。
+ */
+export const CustomStyle: Story = {
+  render: () => (
+    <div className="flex flex-col gap-2">
+      <Button
+        onClick={() =>
+          toast('カスタムスタイル', {
+            className: 'bg-blue-500 text-white',
+            description: 'カスタマイズされたトーストです。',
+          })
+        }
+      >
+        カスタムスタイルトースト
+      </Button>
+      <Toaster />
+    </div>
+  ),
+} 

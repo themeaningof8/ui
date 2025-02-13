@@ -1,5 +1,6 @@
 /**
- * @file テスト実行環境の設定を行います
+ * @file Vitestの設定ファイル
+ * @description テストの実行環境と設定を定義します
  */
 /// <reference types="vitest" />
 /// <reference types="vite/client" />
@@ -40,5 +41,6 @@ export default defineConfig({
     deps: {
       inline: [/@radix-ui\/react-.*/, /class-variance-authority/],
     },
+    css: true,
   }
 }) 

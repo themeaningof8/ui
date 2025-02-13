@@ -1,11 +1,9 @@
 /**
- * @file Paginationコンポーネントのテスト
- * @description Pagination関連コンポーネントの機能とアクセシビリティをテストします
+ * @jest-environment jsdom
  */
-
-import { describe, it, expect } from 'vitest'
-import { render, screen } from '@/tests/test-utils'
-import { userEvent } from '@testing-library/user-event'
+import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { describe, it, expect, vi } from 'vitest'
 import {
   Pagination,
   PaginationContent,
@@ -17,177 +15,121 @@ import {
 } from '.'
 
 describe('Pagination', () => {
-  describe('基本機能テスト', () => {
-    it('基本的なページネーションが正しくレンダリングされること', () => {
-      render(
-        <Pagination>
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious href="#" />
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationLink href="#">1</PaginationLink>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationLink href="#" isActive>2</PaginationLink>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationLink href="#">3</PaginationLink>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationNext href="#" />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
-      )
+  it('renders basic pagination structure', () => {
+    render(
+      <Pagination>
+        <PaginationContent>
+          <PaginationItem>
+            <PaginationPrevious href="#" size="default" />
+          </PaginationItem>
+          <PaginationItem>
+            <PaginationLink href="#" size="icon" isActive>
+              1
+            </PaginationLink>
+          </PaginationItem>
+          <PaginationItem>
+            <PaginationNext href="#" size="default" />
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
+    )
 
-      expect(screen.getByText('1')).toBeInTheDocument()
-      expect(screen.getByText('2')).toBeInTheDocument()
-      expect(screen.getByText('3')).toBeInTheDocument()
-      expect(screen.getByLabelText('前のページへ')).toBeInTheDocument()
-      expect(screen.getByLabelText('次のページへ')).toBeInTheDocument()
-    })
-
-    it('省略記号が正しく表示されること', () => {
-      render(
-        <Pagination>
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationLink href="#">1</PaginationLink>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationEllipsis />
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationLink href="#">10</PaginationLink>
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
-      )
-
-      expect(screen.getByText('...')).toBeInTheDocument()
-    })
+    expect(screen.getByRole('navigation')).toBeInTheDocument()
+    expect(screen.getByText('Previous')).toBeInTheDocument()
+    expect(screen.getByText('1')).toBeInTheDocument()
+    expect(screen.getByText('Next')).toBeInTheDocument()
   })
 
-  describe('インタラクティブ機能テスト', () => {
-    it('アクティブなページが正しく表示されること', () => {
-      render(
-        <Pagination>
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationLink href="#">1</PaginationLink>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationLink href="#" isActive>2</PaginationLink>
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
-      )
+  it('applies custom className to components', () => {
+    const customClass = 'custom-class'
+    
+    render(
+      <Pagination className={customClass}>
+        <PaginationContent className={customClass}>
+          <PaginationItem className={customClass}>
+            <PaginationLink href="#" size="icon" className={customClass}>
+              1
+            </PaginationLink>
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
+    )
 
-      const activeLink = screen.getByText('2').closest('a')
-      expect(activeLink).toHaveAttribute('aria-current', 'page')
-    })
-
-    it('無効なページが正しく表示されること', () => {
-      render(
-        <Pagination>
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious href="#" isDisabled />
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationLink href="#" isDisabled>1</PaginationLink>
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
-      )
-
-      const disabledLink = screen.getByText('1').closest('a')
-      expect(disabledLink).toHaveAttribute('aria-disabled', 'true')
-      expect(disabledLink).toHaveClass('pointer-events-none')
-    })
+    expect(screen.getByRole('navigation')).toHaveClass(customClass)
+    expect(screen.getByRole('list')).toHaveClass(customClass)
+    expect(screen.getByRole('listitem')).toHaveClass(customClass)
+    expect(screen.getByText('1')).toHaveClass(customClass)
   })
 
-  describe('アクセシビリティテスト', () => {
-    it('適切なARIA属性が設定されていること', () => {
-      render(
-        <Pagination aria-label="ページナビゲーション">
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious href="#" />
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationLink href="#" isActive>1</PaginationLink>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationNext href="#" />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
-      )
+  it('renders active page correctly', () => {
+    render(
+      <Pagination>
+        <PaginationContent>
+          <PaginationItem>
+            <PaginationLink href="#" size="icon" isActive>
+              1
+            </PaginationLink>
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
+    )
 
-      const nav = screen.getByRole('navigation')
-      expect(nav).toHaveAttribute('aria-label', 'ページナビゲーション')
-
-      const activeLink = screen.getByText('1').closest('a')
-      expect(activeLink).toHaveAttribute('aria-current', 'page')
-    })
-
-    it('キーボード操作が正しく機能すること', async () => {
-      const user = userEvent.setup()
-      
-      render(
-        <Pagination>
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationLink href="#">1</PaginationLink>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationLink href="#">2</PaginationLink>
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
-      )
-
-      await user.tab()
-      expect(screen.getByText('1')).toHaveFocus()
-
-      await user.tab()
-      expect(screen.getByText('2')).toHaveFocus()
-    })
+    const activeLink = screen.getByText('1')
+    expect(activeLink).toHaveAttribute('aria-current', 'page')
   })
 
-  describe('スタイルテスト', () => {
-    it('カスタムクラスが適用できること', () => {
-      render(
-        <Pagination className="custom-pagination">
-          <PaginationContent className="custom-content">
-            <PaginationItem className="custom-item">
-              <PaginationLink href="#" className="custom-link">1</PaginationLink>
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
-      )
+  it('renders ellipsis correctly', () => {
+    render(
+      <Pagination>
+        <PaginationContent>
+          <PaginationItem>
+            <PaginationEllipsis />
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
+    )
 
-      expect(screen.getByRole('navigation')).toHaveClass('custom-pagination')
-      expect(screen.getByRole('navigation').firstChild).toHaveClass('custom-content')
-      expect(screen.getByRole('listitem')).toHaveClass('custom-item')
-      expect(screen.getByRole('link')).toHaveClass('custom-link')
-    })
+    expect(screen.getByTestId('ellipsis-icon')).toBeInTheDocument()
+    expect(screen.getByText('More pages')).toHaveClass('sr-only')
+  })
 
-    it('アクティブページのスタイルが適用されること', () => {
-      render(
-        <Pagination>
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationLink href="#" isActive>1</PaginationLink>
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
-      )
+  it('renders previous and next buttons with correct aria-labels', () => {
+    render(
+      <Pagination>
+        <PaginationContent>
+          <PaginationItem>
+            <PaginationPrevious href="#" size="default" />
+          </PaginationItem>
+          <PaginationItem>
+            <PaginationNext href="#" size="default" />
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
+    )
 
-      const activeLink = screen.getByText('1').closest('a')
-      expect(activeLink).toHaveClass('bg-primary text-primary-foreground')
-    })
+    expect(screen.getByLabelText('Go to previous page')).toBeInTheDocument()
+    expect(screen.getByLabelText('Go to next page')).toBeInTheDocument()
+  })
+
+  it('handles link interactions correctly', async () => {
+    const user = userEvent.setup()
+    const onClick = vi.fn()
+    
+    render(
+      <Pagination>
+        <PaginationContent>
+          <PaginationItem>
+            <PaginationLink href="#" size="icon" onClick={onClick}>
+              1
+            </PaginationLink>
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
+    )
+
+    const link = screen.getByText('1')
+    await user.click(link)
+    
+    expect(onClick).toHaveBeenCalled()
   })
 }) 

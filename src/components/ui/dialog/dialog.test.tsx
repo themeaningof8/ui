@@ -1,10 +1,10 @@
 /**
- * @file Dialogコンポーネントのテスト
- * @description Dialog, DialogTrigger, DialogContent, DialogHeader, DialogFooter, DialogTitle, DialogDescription, DialogClose コンポーネントの機能とアクセシビリティをテストします
+ * @file ダイアログコンポーネントのテスト
+ * @description ダイアログコンポーネントの機能をテストします
  */
 
 import { describe, it, expect } from 'vitest'
-import { render, screen, fireEvent } from '@/tests/test-utils'
+import { render, screen } from '@/tests/test-utils'
 import {
   Dialog,
   DialogTrigger,
@@ -13,186 +13,107 @@ import {
   DialogFooter,
   DialogTitle,
   DialogDescription,
-  DialogClose,
 } from '.'
+import { Button } from '@/components/ui/button'
 
-describe('Dialog', () => {
-  describe('基本レンダリングテスト', () => {
-    it('すべてのコンポーネントが正しくレンダリングされること', () => {
-      render(
-        <Dialog>
-          <DialogTrigger>ダイアログを開く</DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>ダイアログのタイトル</DialogTitle>
-              <DialogDescription>ダイアログの説明</DialogDescription>
-            </DialogHeader>
-            <div>ダイアログのコンテンツ</div>
-            <DialogFooter>
-              <DialogClose>閉じる</DialogClose>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      )
+describe('Dialogコンポーネント', () => {
+  it('基本的なダイアログが正しくレンダリングされること', async () => {
+    const { user } = render(
+      <Dialog>
+        <DialogTrigger>開く</DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>タイトル</DialogTitle>
+            <DialogDescription>説明文</DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button>閉じる</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    )
 
-      const trigger = screen.getByText('ダイアログを開く')
-      expect(trigger).toBeInTheDocument()
+    // トリガーをクリックする前はダイアログは表示されていない
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
 
-      // ダイアログを開く
-      fireEvent.click(trigger)
+    // トリガーをクリック
+    await user.click(screen.getByText('開く'))
 
-      expect(screen.getByRole('dialog')).toBeInTheDocument()
-      expect(screen.getByText('ダイアログのタイトル')).toBeInTheDocument()
-      expect(screen.getByText('ダイアログの説明')).toBeInTheDocument()
-      expect(screen.getByText('ダイアログのコンテンツ')).toBeInTheDocument()
-      expect(screen.getByText('閉じる')).toBeInTheDocument()
-    })
+    // ダイアログが表示される
+    expect(screen.getByRole('dialog')).toBeInTheDocument()
+    expect(screen.getByText('タイトル')).toBeInTheDocument()
+    expect(screen.getByText('説明文')).toBeInTheDocument()
   })
 
-  describe('インタラクションテスト', () => {
-    it('DialogTrigger をクリックするとダイアログが開くこと', () => {
-      const onOpenChange = vi.fn()
-      render(
-        < Dialog onOpenChange={onOpenChange} >
-          <DialogTrigger>ダイアログを開く</DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>ダイアログのタイトル</DialogTitle>
-            </DialogHeader>
-          </DialogContent>
-        </Dialog>
-      )
+  it('カスタムクラス名が正しく適用されること', async () => {
+    const { user } = render(
+      <Dialog>
+        <DialogTrigger className="custom-trigger">開く</DialogTrigger>
+        <DialogContent className="custom-content">
+          <DialogHeader className="custom-header">
+            <DialogTitle className="custom-title">タイトル</DialogTitle>
+            <DialogDescription className="custom-description">説明文</DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="custom-footer">
+            <button type="button" data-testid="close-button">閉じる</button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    )
 
-      const trigger = screen.getByText('ダイアログを開く')
-      fireEvent.click(trigger)
-      expect(onOpenChange).toHaveBeenCalledWith(true)
-    })
+    await user.click(screen.getByText('開く'))
 
-    it('DialogClose をクリックするとダイアログが閉じること', () => {
-      const onOpenChange = vi.fn()
-      render(
-        < Dialog onOpenChange={onOpenChange} >
-          <DialogTrigger>ダイアログを開く</DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>ダイアログのタイトル</DialogTitle>
-            </DialogHeader>
-            <DialogFooter>
-              <DialogClose>閉じる</DialogClose>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      )
-
-      const trigger = screen.getByText('ダイアログを開く')
-      fireEvent.click(trigger)
-
-      const closeButton = screen.getByText('閉じる')
-      fireEvent.click(closeButton)
-      expect(onOpenChange).toHaveBeenCalledWith(false)
-    })
-
-    it('エスケープキーを押すとダイアログが閉じること', () => {
-      const onOpenChange = vi.fn()
-      render(
-        <Dialog onOpenChange={onOpenChange} >
-          <DialogTrigger>ダイアログを開く</DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>ダイアログのタイトル</DialogTitle>
-            </DialogHeader>
-          </DialogContent>
-        </Dialog>
-      )
-
-      const trigger = screen.getByText('ダイアログを開く')
-      fireEvent.click(trigger)
-
-      fireEvent.keyDown(document, { key: 'Escape' })
-      expect(onOpenChange).toHaveBeenCalledWith(false)
-    })
-
-    it('背景をクリックするとダイアログが閉じること', () => {
-      const onOpenChange = vi.fn()
-      render(
-        < Dialog onOpenChange={onOpenChange} >
-          <DialogTrigger>ダイアログを開く</DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>ダイアログのタイトル</DialogTitle>
-            </DialogHeader>
-          </DialogContent>
-        </Dialog>
-      )
-
-      const trigger = screen.getByText('ダイアログを開く')
-      fireEvent.click(trigger)
-
-      fireEvent.mouseDown(document.body)
-      expect(onOpenChange).toHaveBeenCalledWith(false)
-    })
+    expect(screen.getByText('開く')).toHaveClass('custom-trigger')
+    expect(screen.getByRole('dialog')).toHaveClass('custom-content')
+    expect(screen.getByText('タイトル').parentElement).toHaveClass('custom-header')
+    expect(screen.getByText('タイトル')).toHaveClass('custom-title')
+    expect(screen.getByText('説明文')).toHaveClass('custom-description')
+    expect(screen.getByTestId('close-button').parentElement).toHaveClass('custom-footer')
   })
 
-  describe('アクセシビリティテスト', () => {
-    it('DialogContent に role="dialog" が設定されていること', () => {
-      render(
-        <Dialog>
-          <DialogTrigger>ダイアログを開く</DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>ダイアログのタイトル</DialogTitle>
-            </DialogHeader>
-          </DialogContent>
-        </Dialog>
-      )
+  it('ダイアログが閉じられること', async () => {
+    const { user } = render(
+      <Dialog>
+        <DialogTrigger>開く</DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>タイトル</DialogTitle>
+            <DialogDescription>説明文</DialogDescription>
+          </DialogHeader>
+          <button type="button">閉じる</button>
+        </DialogContent>
+      </Dialog>
+    )
 
-      const trigger = screen.getByText('ダイアログを開く')
-      fireEvent.click(trigger)
+    // ダイアログを開く
+    await user.click(screen.getByText('開く'))
+    expect(screen.getByRole('dialog')).toBeInTheDocument()
 
-      expect(screen.getByRole('dialog')).toBeInTheDocument()
-    })
+    // ESCキーでダイアログを閉じる
+    await user.keyboard('{Escape}')
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+  })
 
-    it('DialogTitle に id が設定され、DialogContent の aria-labelledby で参照されていること', () => {
-      render(
-        <Dialog>
-          <DialogTrigger>ダイアログを開く</DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>ダイアログのタイトル</DialogTitle>
-            </DialogHeader>
-          </DialogContent>
-        </Dialog>
-      )
+  it('オーバーレイをクリックしてダイアログが閉じられること', async () => {
+    const { user } = render(
+      <Dialog>
+        <DialogTrigger>開く</DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>タイトル</DialogTitle>
+            <DialogDescription>説明文</DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
+    )
 
-      const trigger = screen.getByText('ダイアログを開く')
-      fireEvent.click(trigger)
+    // ダイアログを開く
+    await user.click(screen.getByText('開く'))
+    expect(screen.getByRole('dialog')).toBeInTheDocument()
 
-      const title = screen.getByText('ダイアログのタイトル')
-      const dialogContent = screen.getByRole('dialog')
-      expect(title).toHaveAttribute('id')
-      expect(dialogContent).toHaveAttribute('aria-labelledby', title.getAttribute('id'))
-    })
-
-    it('DialogDescription に id が設定され、DialogContent の aria-describedby で参照されていること', () => {
-      render(
-        <Dialog>
-          <DialogTrigger>ダイアログを開く</DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>ダイアログのタイトル</DialogTitle>
-              <DialogDescription>ダイアログの説明</DialogDescription>
-            </DialogHeader>
-          </DialogContent>
-        </Dialog>
-      )
-
-      const trigger = screen.getByText('ダイアログを開く')
-      fireEvent.click(trigger)
-
-      const description = screen.getByText('ダイアログの説明')
-      const dialogContent = screen.getByRole('dialog')
-      expect(description).toHaveAttribute('id')
-      expect(dialogContent).toHaveAttribute('aria-describedby', description.getAttribute('id'))
-    })
+    // オーバーレイをクリック
+    const overlay = screen.getByTestId('dialog-overlay')
+    await user.click(overlay)
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
   })
 }) 

@@ -1,109 +1,116 @@
 /**
- * @file Avatarコンポーネントのテスト
- * @description Avatar, AvatarImage, AvatarFallback コンポーネントの機能とアクセシビリティをテストします
+ * @file アバターコンポーネントのテスト
+ * @description アバターコンポーネントの機能をテストします
  */
 
-import { render, screen, waitFor } from '@/tests/test-utils'
+import { render, screen, waitFor, act } from '@testing-library/react'
+import { describe, expect, it, vi, beforeEach } from 'vitest'
 import { Avatar, AvatarImage, AvatarFallback } from '.'
 
-describe('Avatar', () => {
-  describe('基本レンダリングテスト', () => {
-    it('Avatar, AvatarImage, AvatarFallback が正しくレンダリングされること', async () => {
-      render(
-        <Avatar data-testid="avatar-root">
-          <AvatarImage
-            src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-            alt="テストユーザー"
-            data-testid="avatar-image"
-          />
-          <AvatarFallback data-testid="avatar-fallback">TU</AvatarFallback>
-        </Avatar>
-      )
+describe('アバターコンポーネント', () => {
+  beforeEach(() => {
+    // 画像の読み込みをシミュレートするモック
+    const originalImage = window.Image
+    window.Image = class extends originalImage {
+      constructor() {
+        super()
+        setTimeout(() => {
+          if (this.onload) this.onload(new Event('load'))
+        }, 0)
+      }
+    }
 
-      const avatarRoot = screen.getByTestId('avatar-root')
-      expect(avatarRoot).toBeInTheDocument()
-      expect(avatarRoot).toHaveClass('relative flex size-10 shrink-0 overflow-hidden rounded-full')
+    return () => {
+      window.Image = originalImage
+    }
+  })
 
-      await waitFor(() => {
-        const avatarImage = screen.getByTestId('avatar-image')
-        expect(avatarImage).toBeInTheDocument()
-        expect(avatarImage).toHaveAttribute('src', 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7')
-        expect(avatarImage).toHaveAttribute('alt', 'テストユーザー')
-      })
+  it('画像が正しくレンダリングされること', async () => {
+    render(
+      <Avatar>
+        <AvatarImage src="test.jpg" alt="テストユーザー" />
+        <AvatarFallback>TU</AvatarFallback>
+      </Avatar>
+    )
 
-      const fallback = screen.queryByTestId('avatar-fallback')
-      expect(fallback).toBeNull()
-    })
-
-    it('AvatarImage の src が空の場合、AvatarFallback が表示されること', () => {
-      render(
-        <Avatar>
-          <AvatarImage src="" alt="テストユーザー" />
-          <AvatarFallback data-testid="avatar-fallback">TU</AvatarFallback>
-        </Avatar>
-      )
-
-      const fallback = screen.getByTestId('avatar-fallback')
-      expect(fallback).toBeVisible()
+    await waitFor(() => {
+      const image = screen.getByAltText('テストユーザー')
+      expect(image).toBeInTheDocument()
+      expect(image).toHaveAttribute('src', 'test.jpg')
     })
   })
 
-  describe('アクセシビリティテスト', () => {
-    it('AvatarImage に適切な alt 属性が設定されていること', async () => {
-      render(
-        <Avatar>
-          <AvatarImage
-            src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-            alt="テストユーザー"
-            data-testid="avatar-image"
-          />
-          <AvatarFallback>TU</AvatarFallback>
-        </Avatar>
-      )
+  it('画像の読み込みに失敗した場合にフォールバックが表示されること', async () => {
+    // 画像の読み込み失敗をシミュレート
+    window.Image = class extends window.Image {
+      constructor() {
+        super()
+        setTimeout(() => {
+          if (this.onerror) this.onerror(new Event('error'))
+        }, 0)
+      }
+    }
 
-      await waitFor(() => {
-        const avatarImage = screen.getByTestId('avatar-image')
-        expect(avatarImage).toHaveAttribute('alt', 'テストユーザー')
-      })
-    })
+    render(
+      <Avatar>
+        <AvatarImage src="invalid.jpg" alt="テストユーザー" />
+        <AvatarFallback>TU</AvatarFallback>
+      </Avatar>
+    )
 
-    it('AvatarFallback が適切に表示されること', () => {
-      render(
-        <Avatar>
-          <AvatarImage src="" alt="テストユーザー" />
-          <AvatarFallback data-testid="avatar-fallback">TU</AvatarFallback>
-        </Avatar>
-      )
-
-      const fallback = screen.getByTestId('avatar-fallback')
-      expect(fallback).toBeVisible()
+    await waitFor(() => {
+      const fallback = screen.getByText('TU')
+      expect(fallback).toBeInTheDocument()
     })
   })
 
-  describe('スタイルテスト', () => {
-    it('カスタムクラスが適用できること', async () => {
-      render(
-        <Avatar className="custom-avatar" data-testid="avatar-root">
-          <AvatarImage
-            src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-            alt="テストユーザー"
-            className="custom-image"
-            data-testid="avatar-image"
-          />
-          <AvatarFallback className="custom-fallback" data-testid="avatar-fallback">TU</AvatarFallback>
-        </Avatar>
-      )
+  it('カスタムクラス名が正しく適用されること', async () => {
+    render(
+      <Avatar className="custom-avatar">
+        <AvatarImage className="custom-image" src="test.jpg" alt="テストユーザー" />
+        <AvatarFallback className="custom-fallback">TU</AvatarFallback>
+      </Avatar>
+    )
 
-      const avatarRoot = screen.getByTestId('avatar-root')
-      expect(avatarRoot).toHaveClass('custom-avatar')
-
-      await waitFor(() => {
-        const avatarImage = screen.getByTestId('avatar-image')
-        expect(avatarImage).toHaveClass('custom-image')
-      })
-
-      const fallback = screen.queryByTestId('avatar-fallback')
-      expect(fallback).toBeNull()
+    await waitFor(() => {
+      const avatar = screen.getByAltText('テストユーザー').parentElement
+      expect(avatar).toHaveClass('custom-avatar')
+      
+      const image = screen.getByAltText('テストユーザー')
+      expect(image).toHaveClass('custom-image')
     })
+  })
+
+  it('フォールバックのみでも正しく表示されること', () => {
+    render(
+      <Avatar>
+        <AvatarFallback>TU</AvatarFallback>
+      </Avatar>
+    )
+
+    const fallback = screen.getByText('TU')
+    expect(fallback).toBeInTheDocument()
+  })
+
+  it('delayMsプロパティが機能すること', async () => {
+    vi.useFakeTimers()
+
+    render(
+      <Avatar>
+        <AvatarFallback delayMs={100}>TU</AvatarFallback>
+      </Avatar>
+    )
+
+    // 初期状態ではフォールバックは表示されない
+    expect(screen.queryByText('TU')).not.toBeInTheDocument()
+
+    // 100ms経過後にフォールバックが表示される
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(100)
+    })
+
+    expect(screen.getByText('TU')).toBeInTheDocument()
+
+    vi.useRealTimers()
   })
 }) 

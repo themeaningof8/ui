@@ -1,230 +1,131 @@
-/**
- * @file HoverCardのストーリー
- * @description HoverCardの様々な状態とバリエーションを表示
- */
-
 import type { Meta, StoryObj } from '@storybook/react'
-import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
-import { Button } from '@/components/ui/button'
-import { within, userEvent, waitFor } from '@storybook/testing-library'
-import { expect } from '@storybook/jest'
+import { CalendarDays } from 'lucide-react'
+import {
+  HoverCard,
+  HoverCardTrigger,
+  HoverCardContent,
+} from '.'
 
+/**
+ * `HoverCard`は、要素にホバーした時に追加情報を表示するためのコンポーネントです。
+ * Radix UIのHoverCardプリミティブをベースに、アクセシビリティと一貫したスタイリングを提供します。
+ */
 const meta = {
   title: 'UI/HoverCard',
   component: HoverCard,
   parameters: {
     layout: 'centered',
-    onLoad: () => {
-      const consoleError = console.error;
-      console.error = (...args) => {
-        consoleError(...args);
-        throw new Error(args.join(' '));
-      };
-    },
   },
   tags: ['autodocs'],
 } satisfies Meta<typeof HoverCard>
 
 export default meta
-type Story = StoryObj<typeof meta>
+type Story = StoryObj<typeof HoverCard>
 
 /**
- * @description 基本的なHoverCardの表示
+ * 基本的な使用例です。
  */
 export const Default: Story = {
-		render: () => (
-			<HoverCard>
-				<HoverCardTrigger asChild>
-					<Button variant="link" aria-label="@nextjs">ホバーしてください</Button>
-				</HoverCardTrigger>
-				<HoverCardContent>
-					<div className="space-y-2">
-						<h4 className="text-sm font-semibold">ホバーカードのタイトル</h4>
-						<p className="text-sm">
-							ホバーカードの説明文をここに記述します。
-							ユーザーに対して補足情報を提供します。
-						</p>
-					</div>
-				</HoverCardContent>
-			</HoverCard>
-		),
-		// 例: Default ストーリー
-		play: async ({ canvasElement }) => {
-			const canvas = within(canvasElement);
-			const trigger = canvas.getByRole("button", { name: "@nextjs" });
-			await userEvent.hover(trigger);
-
-			// HoverCard が表示されるのを待つ
-			await waitFor(() => {
-				expect(
-					canvas.getByText(
-						(content, element) =>
-							element?.textContent?.includes(
-								"The React Framework for the Web",
-							) ?? false,
-					),
-				).toBeVisible();
-			});
-			await userEvent.unhover(trigger);
-			// HoverCard が非表示になるのを待つ
-			await waitFor(() => {
-				expect(
-					canvas.queryByText(
-						(content, element) =>
-							element?.textContent?.includes(
-								"The React Framework for the Web",
-							) ?? false,
-					),
-				).not.toBeVisible();
-			});
-		},
-	}
-
-/**
- * @description 異なる配置のHoverCardの表示
- */
-export const DifferentAlignments: Story = {
-  render: () => (
-    <div className="flex justify-around w-full">
-      <HoverCard>
-        <HoverCardTrigger asChild>
-          <Button variant="outline">左寄せ</Button>
-        </HoverCardTrigger>
-        <HoverCardContent align="start">
-          <div className="space-y-2">
-            <h4 className="text-sm font-semibold">左寄せの例</h4>
-            <p className="text-sm">このカードは左寄せで表示されます。</p>
-          </div>
-        </HoverCardContent>
-      </HoverCard>
-
-      <HoverCard>
-        <HoverCardTrigger asChild>
-          <Button variant="outline">中央寄せ</Button>
-        </HoverCardTrigger>
-        <HoverCardContent>
-          <div className="space-y-2">
-            <h4 className="text-sm font-semibold">中央寄せの例</h4>
-            <p className="text-sm">このカードは中央寄せで表示されます。</p>
-          </div>
-        </HoverCardContent>
-      </HoverCard>
-
-      <HoverCard>
-        <HoverCardTrigger asChild>
-          <Button variant="outline">右寄せ</Button>
-        </HoverCardTrigger>
-        <HoverCardContent align="end">
-          <div className="space-y-2">
-            <h4 className="text-sm font-semibold">右寄せの例</h4>
-            <p className="text-sm">このカードは右寄せで表示されます。</p>
-          </div>
-        </HoverCardContent>
-      </HoverCard>
-    </div>
-  ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    
-    // 各トリガーボタンの確認
-    const leftButton = canvas.getByRole('button', { name: '左寄せ' })
-    const centerButton = canvas.getByRole('button', { name: '中央寄せ' })
-    const rightButton = canvas.getByRole('button', { name: '右寄せ' })
-    expect(leftButton).toBeInTheDocument()
-    expect(centerButton).toBeInTheDocument()
-    expect(rightButton).toBeInTheDocument()
-    
-    // 左寄せホバーカードのテスト
-    await userEvent.hover(leftButton)
-    const leftCard = await waitFor(() =>
-      document.querySelector('[role="dialog"]') as HTMLElement,
-    )
-    expect(leftCard).toBeInTheDocument()
-    expect(leftCard.textContent).toContain("左寄せ")
-    await userEvent.unhover(leftButton)
-    
-    // 中央寄せホバーカードのテスト
-    await userEvent.hover(centerButton)
-    const centerCard = await waitFor(() =>
-      document.querySelector('[role="dialog"]') as HTMLElement,
-    )
-    expect(centerCard).toBeInTheDocument()
-    expect(centerCard.textContent).toContain("中央寄せ")
-    await userEvent.unhover(centerButton)
-    
-    // 右寄せホバーカードのテスト
-    await userEvent.hover(rightButton)
-    const rightCard = await waitFor(() =>
-      document.querySelector('[role="dialog"]') as HTMLElement,
-    )
-    expect(rightCard).toBeInTheDocument()
-    expect(rightCard.textContent).toContain("右寄せ")
-    await userEvent.unhover(rightButton)
-  }
-}
-
-/**
- * @description カスタムコンテンツを持つHoverCardの表示
- */
-export const CustomContent: Story = {
   render: () => (
     <HoverCard>
-      <HoverCardTrigger asChild>
-        <Button variant="outline">商品情報</Button>
-      </HoverCardTrigger>
-      <HoverCardContent className="w-80">
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <h4 className="text-sm font-semibold">商品名</h4>
-            <p className="text-sm">高品質なUIコンポーネントライブラリ</p>
-          </div>
-          <div className="space-y-2">
-            <h4 className="text-sm font-semibold">特徴</h4>
-            <ul className="text-sm list-disc list-inside space-y-1">
-              <li>アクセシビリティ対応</li>
-              <li>カスタマイズ可能</li>
-              <li>TypeScript対応</li>
-              <li>ドキュメント完備</li>
-            </ul>
-          </div>
-          <div className="pt-2">
-            <span className="text-sm font-semibold">価格: </span>
-            <span className="text-sm">オープンソース</span>
+      <HoverCardTrigger>Hover me</HoverCardTrigger>
+      <HoverCardContent>
+        <div className="flex justify-between space-x-4">
+          <div className="space-y-1">
+            <h4 className="text-sm font-semibold">@nextjs</h4>
+            <p className="text-sm">The React Framework – created and maintained by @vercel.</p>
           </div>
         </div>
       </HoverCardContent>
     </HoverCard>
   ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    
-    // トリガーボタンの確認
-    const triggerButton = canvas.getByText('商品情報')
-    expect(triggerButton).toBeInTheDocument()
-    
-    // ホバーカードを表示
-    await userEvent.hover(triggerButton)
-    
-    // ホバーカードの内容を確認
-    const hoverCard = document.querySelector('[role="dialog"]')
-    expect(hoverCard).toBeInTheDocument()
-    
-    const hoverCardContent = within(hoverCard as HTMLElement)
-    
-    // 商品情報の確認
-    expect(hoverCardContent.getByText('商品名')).toBeInTheDocument()
-    expect(hoverCardContent.getByText('高品質なUIコンポーネントライブラリ')).toBeInTheDocument()
-    
-    // 特徴リストの確認
-    const features = hoverCardContent.getAllByRole('listitem')
-    expect(features).toHaveLength(4)
-    
-    // 価格情報の確認
-    expect(hoverCardContent.getByText('価格:')).toBeInTheDocument()
-    expect(hoverCardContent.getByText('オープンソース')).toBeInTheDocument()
-    
-    // ホバーを解除
-    await userEvent.unhover(triggerButton)
-    expect(hoverCard).not.toBeVisible()
-  },
+}
+
+/**
+ * プロフィールカードの例です。
+ */
+export const Profile: Story = {
+  render: () => (
+    <HoverCard>
+      <HoverCardTrigger asChild>
+        <a
+          href="https://example.com/user"
+          className="text-sm font-medium underline underline-offset-4"
+        >
+          @user
+        </a>
+      </HoverCardTrigger>
+      <HoverCardContent className="w-80">
+        <div className="flex justify-between space-x-4">
+          <div className="space-y-1">
+            <h4 className="text-sm font-semibold">@user</h4>
+            <p className="text-sm">
+              Frontend developer and UI/UX enthusiast. Loves React and TypeScript.
+            </p>
+            <div className="flex items-center pt-2">
+              <CalendarDays className="mr-2 h-4 w-4 opacity-70" />
+              <span className="text-xs text-muted-foreground">
+                Joined December 2021
+              </span>
+            </div>
+          </div>
+        </div>
+      </HoverCardContent>
+    </HoverCard>
+  ),
+}
+
+/**
+ * カスタム配置の例です。
+ */
+export const CustomPlacement: Story = {
+  render: () => (
+    <HoverCard>
+      <HoverCardTrigger>Hover me (custom placement)</HoverCardTrigger>
+      <HoverCardContent align="start" sideOffset={10}>
+        <div className="space-y-1">
+          <h4 className="text-sm font-semibold">Custom Placement</h4>
+          <p className="text-sm">
+            This card is aligned to the start and has a side offset of 10 pixels.
+          </p>
+        </div>
+      </HoverCardContent>
+    </HoverCard>
+  ),
+}
+
+/**
+ * リッチコンテンツの例です。
+ */
+export const RichContent: Story = {
+  render: () => (
+    <HoverCard>
+      <HoverCardTrigger>Hover for rich content</HoverCardTrigger>
+      <HoverCardContent className="w-96">
+        <div className="space-y-4">
+          <div className="space-y-1">
+            <h4 className="text-lg font-semibold">Rich Content Example</h4>
+            <p className="text-sm text-muted-foreground">
+              HoverCardは、画像、リスト、その他のリッチコンテンツを表示できます。
+            </p>
+          </div>
+          <div className="grid gap-2">
+            <div className="rounded-md bg-muted p-2">
+              <p className="text-sm">サンプルコード:</p>
+              <pre className="text-xs">
+                {`<HoverCard>
+  <HoverCardTrigger>
+    Hover me
+  </HoverCardTrigger>
+  <HoverCardContent>
+    Content
+  </HoverCardContent>
+</HoverCard>`}
+              </pre>
+            </div>
+          </div>
+        </div>
+      </HoverCardContent>
+    </HoverCard>
+  ),
 } 

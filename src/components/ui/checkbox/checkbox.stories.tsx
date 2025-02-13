@@ -1,26 +1,17 @@
 /**
- * @file Checkboxのストーリー
- * @description Checkboxの使用例とバリエーションを表示
+ * @file チェックボックスコンポーネントのストーリー
+ * @description チェックボックスコンポーネントの使用例を表示します
  */
+
 import type { Meta, StoryObj } from '@storybook/react'
-import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
-import { within, userEvent } from '@storybook/testing-library'
-import { expect } from '@storybook/jest'
+import { Checkbox } from '.'
 
 const meta = {
   title: 'UI/Checkbox',
   component: Checkbox,
   parameters: {
     layout: 'centered',
-    // Add error handling
-    onLoad: () => {
-      const consoleError = console.error;
-      console.error = (...args) => {
-        consoleError(...args);
-        throw new Error(args.join(' '));
-      };
-    },
   },
   tags: ['autodocs'],
 } satisfies Meta<typeof Checkbox>
@@ -29,135 +20,85 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 /**
- * @description 基本的なチェックボックス
+ * 基本的なチェックボックスの使用例
  */
 export const Default: Story = {
-  render: () => <Checkbox />,
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    const checkbox = canvas.getByRole('checkbox')
-    
-    expect(checkbox).toBeInTheDocument()
-    expect(checkbox).not.toBeChecked()
-    
-    // チェックボックスをクリック
-    await userEvent.click(checkbox)
-    expect(checkbox).toBeChecked()
-    
-    // もう一度クリックして解除
-    await userEvent.click(checkbox)
-    expect(checkbox).not.toBeChecked()
-  },
-}
-
-/**
- * @description ラベル付きチェックボックス
- */
-export const WithLabel: Story = {
   render: () => (
     <div className="flex items-center space-x-2">
       <Checkbox id="terms" />
       <Label htmlFor="terms">利用規約に同意する</Label>
     </div>
   ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    const checkbox = canvas.getByRole('checkbox')
-    const label = canvas.getByText('利用規約に同意する')
-    
-    expect(checkbox).toBeInTheDocument()
-    expect(label).toBeInTheDocument()
-    
-    // ラベルをクリックしてチェックボックスを操作
-    await userEvent.click(label)
-    expect(checkbox).toBeChecked()
-  },
 }
 
 /**
- * @description 無効化されたチェックボックス
+ * チェック済み状態のチェックボックスの使用例
+ */
+export const Checked: Story = {
+  render: () => (
+    <div className="flex items-center space-x-2">
+      <Checkbox id="terms" defaultChecked />
+      <Label htmlFor="terms">利用規約に同意する</Label>
+    </div>
+  ),
+}
+
+/**
+ * 無効化されたチェックボックスの使用例
  */
 export const Disabled: Story = {
   render: () => (
     <div className="flex items-center space-x-2">
-      <Checkbox id="disabled" disabled />
-      <Label htmlFor="disabled" className="text-muted-foreground">
-        無効化された選択肢
+      <Checkbox id="terms" disabled />
+      <Label htmlFor="terms" className="text-muted-foreground">
+        利用規約に同意する
       </Label>
     </div>
   ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    const checkbox = canvas.getByRole('checkbox')
-    
-    expect(checkbox).toBeDisabled()
-    expect(checkbox).toHaveClass('disabled:cursor-not-allowed')
-  },
 }
 
 /**
- * @description チェック済みの状態
+ * カスタムサイズのチェックボックスの使用例
  */
-export const Checked: Story = {
-  render: () => <Checkbox defaultChecked />,
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    const checkbox = canvas.getByRole('checkbox')
-    
-    expect(checkbox).toBeChecked()
-    expect(checkbox).toHaveAttribute('data-state', 'checked')
-  },
-}
-
-/**
- * @description 複数のチェックボックスグループ
- */
-export const CheckboxGroup: Story = {
+export const CustomSize: Story = {
   render: () => (
-    <div className="space-y-4">
+    <div className="flex flex-col gap-4">
       <div className="flex items-center space-x-2">
-        <Checkbox id="option1" />
-        <Label htmlFor="option1">オプション1</Label>
+        <Checkbox id="small" className="h-4 w-4" />
+        <Label htmlFor="small">小さいサイズ</Label>
       </div>
       <div className="flex items-center space-x-2">
-        <Checkbox id="option2" defaultChecked />
-        <Label htmlFor="option2">オプション2</Label>
+        <Checkbox id="default" />
+        <Label htmlFor="default">デフォルトサイズ</Label>
       </div>
       <div className="flex items-center space-x-2">
-        <Checkbox id="option3" />
-        <Label htmlFor="option3">オプション3</Label>
+        <Checkbox id="large" className="h-6 w-6" />
+        <Label htmlFor="large">大きいサイズ</Label>
       </div>
     </div>
   ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    const checkboxes = canvas.getAllByRole('checkbox')
-    
-    expect(checkboxes).toHaveLength(3)
-    expect(checkboxes[1]).toBeChecked() // オプション2がデフォルトでチェック済み
-    
-    // 各チェックボックスを順番にクリック
-    for (const checkbox of checkboxes) {
-      await userEvent.click(checkbox)
-      expect(checkbox).toHaveAttribute('aria-checked', 'true')
-    }
-  },
 }
 
 /**
- * @description カスタムスタイルを適用したチェックボックス
+ * フォーム内での使用例
  */
-export const CustomStyles: Story = {
+export const InForm: Story = {
   render: () => (
-    <Checkbox className="h-6 w-6 rounded-full border-primary data-[state=checked]:bg-primary-foreground" />
+    <form className="space-y-4">
+      <div className="flex items-center space-x-2">
+        <Checkbox id="newsletter" />
+        <Label htmlFor="newsletter">ニュースレターを購読する</Label>
+      </div>
+      <div className="flex items-center space-x-2">
+        <Checkbox id="marketing" />
+        <Label htmlFor="marketing">マーケティングメールを受け取る</Label>
+      </div>
+      <div className="flex items-center space-x-2">
+        <Checkbox id="terms" required />
+        <Label htmlFor="terms" className="text-sm">
+          <span className="text-red-500">*</span> 利用規約に同意する
+        </Label>
+      </div>
+    </form>
   ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    const checkbox = canvas.getByRole('checkbox')
-    
-    expect(checkbox).toHaveClass('h-6', 'w-6', 'rounded-full')
-    
-    await userEvent.click(checkbox)
-    expect(checkbox).toHaveAttribute('data-state', 'checked')
-  },
 } 

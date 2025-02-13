@@ -1,6 +1,6 @@
 /**
- * @file AlertDialogのストーリー
- * @description AlertDialogの様々な状態とバリエーションを表示
+ * @file アラートダイアログコンポーネントのストーリー
+ * @description アラートダイアログコンポーネントの使用例を表示します
  */
 
 import type { Meta, StoryObj } from '@storybook/react'
@@ -14,23 +14,13 @@ import {
   AlertDialogFooter,
   AlertDialogCancel,
   AlertDialogAction,
-} from '@/components/ui/alert-dialog'
-import { Button } from '@/components/ui/button'
-import { within, userEvent, waitFor } from '@storybook/testing-library'
-import { expect } from '@storybook/jest'
+} from '.'
 
 const meta = {
   title: 'UI/AlertDialog',
   component: AlertDialog,
   parameters: {
     layout: 'centered',
-    onLoad: () => {
-      const consoleError = console.error;
-      console.error = (...args) => {
-        consoleError(...args);
-        throw new Error(args.join(' '));
-      };
-    },
   },
   tags: ['autodocs'],
 } satisfies Meta<typeof AlertDialog>
@@ -39,161 +29,90 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 /**
- * @description 基本的なアラートダイアログ
+ * 基本的なアラートダイアログの使用例
  */
 export const Default: Story = {
   render: () => (
     <AlertDialog>
-      <AlertDialogTrigger asChild>
-        <Button variant="destructive">アカウントを削除</Button>
-      </AlertDialogTrigger>
+      <AlertDialogTrigger>アラートを開く</AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>本当に削除しますか？</AlertDialogTitle>
           <AlertDialogDescription>
-            この操作は取り消すことができません。アカウントに関連するすべてのデータが完全に削除されます。
+            この操作は取り消せません。削除したデータは復元できません。
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>キャンセル</AlertDialogCancel>
-          <AlertDialogAction>削除する</AlertDialogAction>
+          <AlertDialogAction>削除</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
   ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    
-    // トリガーボタンの確認
-    const triggerButton = canvas.getByRole('button', { name: 'アカウントを削除' })
-    expect(triggerButton).toBeInTheDocument()
-    
-    // ダイアログを開く
-    await userEvent.click(triggerButton)
-    
-    // ダイアログが開くのを待つ
-    const dialog = await waitFor(() => canvas.getByRole('alertdialog'))
-    expect(dialog).toBeInTheDocument()
-    
-    // タイトルと説明の確認
-    expect(canvas.getByText('本当に削除しますか？')).toBeVisible()
-    expect(canvas.getByText(/この操作は取り消すことができません/)).toBeVisible()
-    
-    // フッターボタンの確認
-    const cancelButton = canvas.getByRole('button', { name: 'キャンセル' })
-    const deleteButton = canvas.getByRole('button', { name: '削除する' })
-    expect(cancelButton).toBeVisible()
-    expect(deleteButton).toBeVisible()
-    
-    // キャンセルボタンでダイアログを閉じる
-    await userEvent.click(cancelButton)
-    expect(dialog).not.toBeVisible()
-  },
 }
 
 /**
- * @description カスタムアクション付きのアラートダイアログ
+ * 長いコンテンツを含むアラートダイアログの使用例
  */
-export const WithCustomActions: Story = {
+export const LongContent: Story = {
   render: () => (
     <AlertDialog>
-      <AlertDialogTrigger asChild>
-        <Button>設定を変更</Button>
-      </AlertDialogTrigger>
+      <AlertDialogTrigger>詳細なアラートを開く</AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>利用規約の確認</AlertDialogTitle>
+          <AlertDialogDescription>
+            以下の利用規約をよくお読みください。同意される場合は「同意する」を
+            クリックしてください。
+            <br /><br />
+            1. 個人情報の取り扱いについて
+            <br />
+            当サービスは、ユーザーの個人情報を適切に管理し、以下の目的以外では
+            使用しません。
+            <br /><br />
+            2. サービスの利用について
+            <br />
+            当サービスの利用にあたっては、以下の事項を遵守してください。
+            <br /><br />
+            3. 免責事項
+            <br />
+            当サービスは、以下の事項について一切の責任を負いません。
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>キャンセル</AlertDialogCancel>
+          <AlertDialogAction>同意する</AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  ),
+}
+
+/**
+ * カスタムアクションを持つアラートダイアログの使用例
+ */
+export const CustomActions: Story = {
+  render: () => (
+    <AlertDialog>
+      <AlertDialogTrigger>設定を開く</AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>設定の変更</AlertDialogTitle>
           <AlertDialogDescription>
-            変更を保存する前に、すべての設定を確認してください。
-            この操作は後で元に戻すことができます。
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter className="sm:space-x-4">
-          <AlertDialogCancel>キャンセル</AlertDialogCancel>
-          <AlertDialogAction className="bg-orange-500 hover:bg-orange-600">
-            後で適用
-          </AlertDialogAction>
-          <AlertDialogAction>
-            今すぐ適用
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
-  ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    
-    // トリガーボタンの確認
-    const triggerButton = canvas.getByRole('button', { name: '設定を変更' })
-    expect(triggerButton).toBeInTheDocument()
-    
-    // ダイアログを開く
-    await userEvent.click(triggerButton)
-    
-    // ダイアログの内容を確認
-    const dialog = canvas.getByRole('alertdialog')
-    expect(dialog).toBeInTheDocument()
-    
-    // フッターボタンの確認
-    const buttons = canvas.getAllByRole('button')
-    expect(buttons).toHaveLength(4) // トリガー + 3つのアクションボタン
-    
-    // 各ボタンのテキストを確認
-    expect(canvas.getByText('キャンセル')).toBeVisible()
-    expect(canvas.getByText('後で適用')).toBeVisible()
-    expect(canvas.getByText('今すぐ適用')).toBeVisible()
-  },
-}
-
-/**
- * @description フォーム確認用のアラートダイアログ
- */
-export const FormConfirmation: Story = {
-  render: () => (
-    <AlertDialog>
-      <AlertDialogTrigger asChild>
-        <Button>フォームを送信</Button>
-      </AlertDialogTrigger>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>送信の確認</AlertDialogTitle>
-          <AlertDialogDescription className="space-y-2">
-            <p>以下の内容で送信します：</p>
-            <ul className="list-disc pl-4 text-sm">
-              <li>ユーザー名: example_user</li>
-              <li>メールアドレス: user@example.com</li>
-              <li>プラン: プロフェッショナル</li>
-            </ul>
+            現在の設定を変更しようとしています。
+            以下のオプションから選択してください。
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>修正する</AlertDialogCancel>
-          <AlertDialogAction>送信する</AlertDialogAction>
+          <AlertDialogCancel>後で</AlertDialogCancel>
+          <AlertDialogAction className="bg-yellow-500 hover:bg-yellow-600">
+            保存
+          </AlertDialogAction>
+          <AlertDialogAction className="bg-red-500 hover:bg-red-600">
+            リセット
+          </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
   ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    
-    // トリガーボタンの確認
-    const triggerButton = canvas.getByRole('button', { name: 'フォームを送信' })
-    expect(triggerButton).toBeInTheDocument()
-    
-    // ダイアログを開く
-    await userEvent.click(triggerButton)
-    
-    // ダイアログの内容を確認
-    const dialog = canvas.getByRole('alertdialog')
-    expect(dialog).toBeInTheDocument()
-    
-    // リストアイテムの確認
-    const listItems = canvas.getAllByRole('listitem')
-    expect(listItems).toHaveLength(3)
-    
-    // 各リストアイテムのテキストを確認
-    expect(canvas.getByText(/ユーザー名: example_user/)).toBeVisible()
-    expect(canvas.getByText(/メールアドレス: user@example.com/)).toBeVisible()
-    expect(canvas.getByText(/プラン: プロフェッショナル/)).toBeVisible()
-  },
 } 

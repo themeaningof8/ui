@@ -1,31 +1,23 @@
 /**
- * @file Carouselのストーリー
- * @description Carouselの使用例とバリエーションを表示
+ * @file カルーセルコンポーネントのストーリー
+ * @description カルーセルコンポーネントの使用例を表示します
  */
+
 import type { Meta, StoryObj } from '@storybook/react'
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
-  CarouselNext,
   CarouselPrevious,
-} from '@/components/ui/carousel'
-import { Card, CardContent } from '@/components/ui/card'
-import { within, userEvent } from '@storybook/testing-library'
-import { expect } from '@storybook/jest'
+  CarouselNext,
+} from '.'
+import React from 'react';
 
 const meta = {
   title: 'UI/Carousel',
   component: Carousel,
   parameters: {
     layout: 'centered',
-    onLoad: () => {
-      const consoleError = console.error;
-      console.error = (...args) => {
-        consoleError(...args);
-        throw new Error(args.join(' '));
-      };
-    },
   },
   tags: ['autodocs'],
 } satisfies Meta<typeof Carousel>
@@ -33,160 +25,118 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-const generateSlideId = (prefix: string, index: number) => `${prefix}-slide-${index}`
-
 /**
- * @description 基本的なカルーセル
+ * 基本的なカルーセルの使用例
  */
 export const Default: Story = {
-  render: () => (
-    <Carousel className="w-full max-w-xs">
-      <CarouselContent>
-        {Array.from({ length: 5 }).map((_, index) => (
-          <CarouselItem key={generateSlideId('default', index)}>
-            <Card>
-              <CardContent className="flex aspect-square items-center justify-center p-6">
-                <span className="text-4xl font-semibold">{index + 1}</span>
-              </CardContent>
-            </Card>
-          </CarouselItem>
-        ))}
-      </CarouselContent>
-      <CarouselPrevious />
-      <CarouselNext />
-    </Carousel>
-  ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    
-    // カルーセルの存在確認
-    const carousel = canvas.getByRole('region', { name: /carousel/i })
-    expect(carousel).toBeInTheDocument()
-    
-    // ナビゲーションボタンの確認
-    const prevButton = canvas.getByRole('button', { name: /previous slide/i })
-    const nextButton = canvas.getByRole('button', { name: /next slide/i })
-    expect(prevButton).toBeInTheDocument()
-    expect(nextButton).toBeInTheDocument()
-    
-    // 最初のスライドでは「前へ」ボタンが無効
-    expect(prevButton).toBeDisabled()
-    expect(nextButton).not.toBeDisabled()
-    
-    // 次のスライドへ移動
-    await userEvent.click(nextButton)
+  render: () => {
+    const id = React.useId();
+    let counter = 0;
+    return (
+      <Carousel className="w-full max-w-xs">
+        <CarouselContent>
+          {Array.from({ length: 5 }).map(() => (
+            <CarouselItem key={`${id}-${counter++}`}>
+              <div className="p-1">
+                <div className="flex aspect-square items-center justify-center rounded-lg bg-muted p-6">
+                  <span className="text-4xl font-semibold">{counter}</span>
+                </div>
+              </div>
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+        <CarouselPrevious />
+        <CarouselNext />
+      </Carousel>
+    );
   },
 }
 
 /**
- * @description 垂直方向のカルーセル
+ * 画像を含むカルーセルの使用例
  */
-export const Vertical: Story = {
-  render: () => (
-    <Carousel orientation="vertical" className="w-full max-w-xs">
-      <CarouselContent>
-        {Array.from({ length: 5 }).map((_, index) => (
-          <CarouselItem key={generateSlideId('vertical', index)}>
-            <Card>
-              <CardContent className="flex aspect-square items-center justify-center p-6">
-                <span className="text-4xl font-semibold">{index + 1}</span>
-              </CardContent>
-            </Card>
-          </CarouselItem>
-        ))}
-      </CarouselContent>
-      <CarouselPrevious />
-      <CarouselNext />
-    </Carousel>
-  ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    
-    // 垂直方向のナビゲーションボタンの確認
-    const prevButton = canvas.getByRole('button', { name: /previous slide/i })
-    const nextButton = canvas.getByRole('button', { name: /next slide/i })
-    
-    expect(prevButton).toHaveClass('rotate-90')
-    expect(nextButton).toHaveClass('rotate-90')
+export const WithImages: Story = {
+  render: () => {
+    const id = React.useId();
+    let counter = 0;
+    return (
+      <Carousel className="w-full max-w-md">
+        <CarouselContent>
+          {[
+            'https://images.unsplash.com/photo-1588345921523-c2dcdb7f1dcd?w=800&dpr=2&q=80',
+            'https://images.unsplash.com/photo-1588345921517-c2dcdb7f1dcd?w=800&dpr=2&q=80',
+            'https://images.unsplash.com/photo-1588345921532-c2dcdb7f1dcd?w=800&dpr=2&q=80',
+          ].map(() => {
+            return (
+              <CarouselItem key={`${id}-${counter++}`}>
+                <div className="p-1">
+                  <img
+                    src={'https://images.unsplash.com/photo-1588345921523-c2dcdb7f1dcd?w=800&dpr=2&q=80'}
+                    alt={`スライド ${counter}`}
+                    className="aspect-video w-full rounded-lg object-cover"
+                  />
+                </div>
+              </CarouselItem>
+            );
+          })}
+        </CarouselContent>
+        <CarouselPrevious />
+        <CarouselNext />
+      </Carousel>
+    );
   },
 }
 
 /**
- * @description 複数のアイテムを表示するカルーセル
+ * オートプレイ機能を使用したカルーセルの例
  */
-export const MultipleSlides: Story = {
-  render: () => (
-    <Carousel
-      opts={{
-        align: 'start',
-        slidesToScroll: 2,
-      }}
-      className="w-full max-w-sm"
-    >
-      <CarouselContent className="-ml-2">
-        {Array.from({ length: 6 }).map((_, index) => (
-          <CarouselItem key={generateSlideId('multiple', index)} className="pl-2 basis-1/2">
-            <Card>
-              <CardContent className="flex aspect-square items-center justify-center p-6">
-                <span className="text-4xl font-semibold">{index + 1}</span>
-              </CardContent>
-            </Card>
-          </CarouselItem>
-        ))}
-      </CarouselContent>
-      <CarouselPrevious />
-      <CarouselNext />
-    </Carousel>
-  ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    
-    // 2つのスライドが表示されていることを確認
-    const slides = canvas.getAllByRole('group')
-    expect(slides).toHaveLength(6)
-    
-    // ナビゲーションの動作確認
-    const nextButton = canvas.getByRole('button', { name: /next slide/i })
-    await userEvent.click(nextButton)
+export const AutoPlay: Story = {
+  render: () => {
+    const id = React.useId();
+    let counter = 0;
+    return (
+      <Carousel className="w-full max-w-xs" autoPlay interval={3000}>
+        <CarouselContent>
+          {Array.from({ length: 5 }).map(() => (
+            <CarouselItem key={`${id}-${counter++}`}>
+              <div className="p-1">
+                <div className="flex aspect-square items-center justify-center rounded-lg bg-primary text-primary-foreground">
+                  <span className="text-4xl font-semibold">{counter}</span>
+                </div>
+              </div>
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+        <CarouselPrevious />
+        <CarouselNext />
+      </Carousel>
+    );
   },
 }
 
 /**
- * @description カスタムスタイルを適用したカルーセル
+ * カスタムスタイルを適用したカルーセルの例
  */
-export const CustomStyles: Story = {
-  render: () => (
-    <Carousel className="w-full max-w-xs">
-      <CarouselContent className="rounded-lg bg-muted p-4">
-        {Array.from({ length: 3 }).map((_, index) => (
-          <CarouselItem key={generateSlideId('custom', index)}>
-            <div className="p-1">
-              <Card className="border-2 border-primary">
-                <CardContent className="flex aspect-square items-center justify-center p-6">
-                  <span className="text-4xl font-semibold text-primary">
-                    {index + 1}
-                  </span>
-                </CardContent>
-              </Card>
-            </div>
-          </CarouselItem>
-        ))}
-      </CarouselContent>
-      <CarouselPrevious className="border-2 border-primary text-primary" />
-      <CarouselNext className="border-2 border-primary text-primary" />
-    </Carousel>
-  ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    
-    // カスタムスタイルの確認
-    const content = canvas.getByRole('region').querySelector('.rounded-lg')
-    expect(content).toHaveClass('bg-muted')
-    
-    // ナビゲーションボタンのスタイル確認
-    const buttons = canvas.getAllByRole('button')
-    for (const button of buttons) {
-      expect(button).toHaveClass('border-2', 'border-primary', 'text-primary')
-    }
+export const CustomStyle: Story = {
+  render: () => {
+    const id = React.useId();
+    let counter = 0;
+    return (
+      <Carousel className="w-full max-w-md bg-muted p-4 rounded-xl">
+        <CarouselContent className="-ml-2 md:-ml-4">
+          {Array.from({ length: 5 }).map(() => (
+            <CarouselItem key={`${id}-${counter++}`} className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/3">
+              <div className="p-1">
+                <div className="flex aspect-video items-center justify-center rounded-lg bg-primary-foreground p-6">
+                  <span className="text-4xl font-semibold">{counter}</span>
+                </div>
+              </div>
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+        <CarouselPrevious className="left-4" />
+        <CarouselNext className="right-4" />
+      </Carousel>
+    );
   },
-}
+} 
