@@ -3,7 +3,7 @@
  */
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { Toggle } from './toggle'
+import { Toggle } from '@/components/ui/toggle'
 
 describe('Toggle', () => {
   const user = userEvent.setup()

@@ -4,83 +4,139 @@
  */
 
 import { describe, it, expect } from 'vitest'
-import { render, screen } from '@/tests/test-utils'
-import { Chart } from '.'
+import { render } from '@/tests/test-utils'
+import { ChartContainer } from '.'
+import { LineChart, Line, XAxis, YAxis, ResponsiveContainer } from 'recharts'
 
 describe('Chartコンポーネント', () => {
-  const mockData = {
-    labels: ['1月', '2月', '3月'],
-    datasets: [
-      {
-        label: 'データセット1',
-        data: [10, 20, 30],
-      },
-    ],
+  const mockData = [
+    { name: '1月', value: 10 },
+    { name: '2月', value: 20 },
+    { name: '3月', value: 30 },
+  ]
+
+  const mockConfig = {
+    value: {
+      label: 'データセット1',
+      color: '#ff0000',
+    },
+  }
+
+  // テスト用のスタイルを設定
+  const containerStyle = {
+    width: '600px',
+    height: '400px',
   }
 
   it('基本的なチャートが正しくレンダリングされること', () => {
-    render(<Chart type="line" data={mockData} />)
-    expect(screen.getByTestId('chart')).toBeInTheDocument()
+    const { container } = render(
+      <div style={containerStyle}>
+        <ChartContainer config={mockConfig}>
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={mockData}>
+              <Line type="monotone" dataKey="value" />
+              <XAxis dataKey="name" />
+              <YAxis />
+            </LineChart>
+          </ResponsiveContainer>
+        </ChartContainer>
+      </div>
+    )
+    const chart = container.querySelector('[data-chart]')
+    expect(chart).toBeInTheDocument()
   })
 
   it('カスタムクラス名が正しく適用されること', () => {
-    render(
-      <Chart
-        type="line"
-        data={mockData}
-        className="custom-chart"
-      />
+    const { container } = render(
+      <div style={containerStyle}>
+        <ChartContainer config={mockConfig} className="custom-chart">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={mockData}>
+              <Line type="monotone" dataKey="value" />
+              <XAxis dataKey="name" />
+              <YAxis />
+            </LineChart>
+          </ResponsiveContainer>
+        </ChartContainer>
+      </div>
     )
-    expect(screen.getByTestId('chart')).toHaveClass('custom-chart')
+    const chart = container.querySelector('[data-chart]')
+    expect(chart).toHaveClass('custom-chart')
   })
 
-  it('異なるタイプのチャートがレンダリングできること', () => {
-    const { rerender } = render(<Chart type="line" data={mockData} />)
-    expect(screen.getByTestId('chart')).toHaveAttribute('data-chart-type', 'line')
+  it('異なるデータセットが正しく表示されること', () => {
+    const multiData = [
+      { name: '1月', value1: 10, value2: 15 },
+      { name: '2月', value1: 20, value2: 25 },
+      { name: '3月', value1: 30, value2: 35 },
+    ]
 
-    rerender(<Chart type="bar" data={mockData} />)
-    expect(screen.getByTestId('chart')).toHaveAttribute('data-chart-type', 'bar')
-
-    rerender(<Chart type="pie" data={mockData} />)
-    expect(screen.getByTestId('chart')).toHaveAttribute('data-chart-type', 'pie')
-  })
-
-  it('オプションが正しく適用されること', () => {
-    const options = {
-      responsive: true,
-      plugins: {
-        title: {
-          display: true,
-          text: 'テストチャート',
-        },
+    const multiConfig = {
+      value1: {
+        label: 'データセット1',
+        color: '#ff0000',
+      },
+      value2: {
+        label: 'データセット2',
+        color: '#00ff00',
       },
     }
 
-    render(
-      <Chart
-        type="line"
-        data={mockData}
-        options={options}
-      />
+    const { container } = render(
+      <div style={containerStyle}>
+        <ChartContainer config={multiConfig}>
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={multiData}>
+              <Line type="monotone" dataKey="value1" />
+              <Line type="monotone" dataKey="value2" />
+              <XAxis dataKey="name" />
+              <YAxis />
+            </LineChart>
+          </ResponsiveContainer>
+        </ChartContainer>
+      </div>
     )
 
-    expect(screen.getByTestId('chart')).toHaveAttribute('data-has-options', 'true')
+    const chart = container.querySelector('[data-chart]')
+    expect(chart).toBeInTheDocument()
   })
 
   it('データが更新された時にチャートが再レンダリングされること', () => {
-    const { rerender } = render(<Chart type="line" data={mockData} />)
+    const { container, rerender } = render(
+      <div style={containerStyle}>
+        <ChartContainer config={mockConfig}>
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={mockData}>
+              <Line type="monotone" dataKey="value" />
+              <XAxis dataKey="name" />
+              <YAxis />
+            </LineChart>
+          </ResponsiveContainer>
+        </ChartContainer>
+      </div>
+    )
     
-    const updatedData = {
-      ...mockData,
-      datasets: [
-        {
-          label: 'データセット1',
-          data: [40, 50, 60],
-        },
-      ],
-    }
+    const updatedData = [
+      { name: '1月', value: 40 },
+      { name: '2月', value: 50 },
+      { name: '3月', value: 60 },
+    ]
 
-    rerender(<Chart type="line" data={updatedData} />)
-    expect(screen.getByTestId('chart')).toBeInTheDocument()
+    rerender(
+      <div style={containerStyle}>
+        <ChartContainer config={mockConfig}>
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={updatedData}>
+              <Line type="monotone" dataKey="value" />
+              <XAxis dataKey="name" />
+              <YAxis />
+            </LineChart>
+          </ResponsiveContainer>
+        </ChartContainer>
+      </div>
+    )
+
+    const chart = container.querySelector('[data-chart]')
+    expect(chart).toBeInTheDocument()
   })
 }) 

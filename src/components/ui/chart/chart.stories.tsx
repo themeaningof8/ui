@@ -4,7 +4,14 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react'
-import { Chart } from '.'
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+  ChartLegend,
+  ChartLegendContent,
+  ChartStyle,
+} from '.'
 
 const meta = {
   title: 'UI/Chart',

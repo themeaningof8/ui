@@ -42,5 +42,11 @@ export default defineConfig({
       inline: [/@radix-ui\/react-.*/, /class-variance-authority/],
     },
     css: true,
+    onConsoleLog: (log) => {
+      // rechartsの警告を抑制
+      if (log.includes('The width(0) and height(0) of chart should be greater than 0')) {
+        return false
+      }
+    },
   }
 }) 

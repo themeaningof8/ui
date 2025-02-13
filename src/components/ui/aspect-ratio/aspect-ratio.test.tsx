@@ -4,7 +4,7 @@
  */
 
 import { describe, it, expect } from 'vitest'
-import { render } from '@/tests/test-utils'
+import { render } from '@testing-library/react'
 import { AspectRatio } from '.'
 
 describe('アスペクト比コンポーネント', () => {
@@ -15,10 +15,11 @@ describe('アスペクト比コンポーネント', () => {
       </AspectRatio>
     )
     
-    const wrapper = container.firstChild as HTMLElement
+    const wrapper = container.querySelector('[style*="padding-bottom"]') as HTMLElement
     expect(wrapper).toHaveStyle({
       position: 'relative',
       width: '100%',
+      paddingBottom: `${(9 / 16) * 100}%`,
     })
   })
 
@@ -29,8 +30,11 @@ describe('アスペクト比コンポーネント', () => {
       </AspectRatio>
     )
     
-    const wrapper = container.firstChild as HTMLElement
-    expect(wrapper).toHaveClass('custom-class')
+    const content = container.querySelector('[style*="position: absolute"]') as HTMLElement
+    expect(content).not.toBeNull()
+    expect(content.className).toContain('custom-class')
+    expect(content.className).toContain('relative')
+    expect(content.className).toContain('w-full')
   })
 
   it('子要素が正しく表示されること', () => {
@@ -50,10 +54,12 @@ describe('アスペクト比コンポーネント', () => {
       </AspectRatio>
     )
     
-    const wrapper = container.firstChild as HTMLElement
+    const wrapper = container.querySelector('[style*="padding-bottom"]') as HTMLElement
+    expect(wrapper).not.toBeNull()
     expect(wrapper).toHaveStyle({
       position: 'relative',
       width: '100%',
+      paddingBottom: '100%',
     })
   })
 }) 
