@@ -23,7 +23,8 @@ describe('Breadcrumbコンポーネント', () => {
 
     expect(screen.getByText('ホーム')).toBeInTheDocument()
     expect(screen.getByText('現在のページ')).toBeInTheDocument()
-    expect(screen.getByText('/')).toBeInTheDocument()
+    const homeLink = screen.getByRole('link', { name: 'ホーム' })
+    expect(homeLink).toHaveAttribute('href', '/')
   })
 
   it('複数のアイテムが正しくレンダリングされる', () => {
@@ -46,7 +47,11 @@ describe('Breadcrumbコンポーネント', () => {
     expect(screen.getByText('ホーム')).toBeInTheDocument()
     expect(screen.getByText('カテゴリー')).toBeInTheDocument()
     expect(screen.getByText('現在のページ')).toBeInTheDocument()
-    expect(screen.getAllByText('/')).toHaveLength(2)
+    
+    const homeLink = screen.getByRole('link', { name: 'ホーム' })
+    const categoryLink = screen.getByRole('link', { name: 'カテゴリー' })
+    expect(homeLink).toHaveAttribute('href', '/')
+    expect(categoryLink).toHaveAttribute('href', '/category')
   })
 
   it('カスタムセパレーターが正しく適用される', () => {

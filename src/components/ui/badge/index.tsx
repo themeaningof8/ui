@@ -77,6 +77,7 @@ const Badge = React.forwardRef<HTMLDivElement, BadgeProps>(
     const Comp = asChild ? Slot : "div"
     return (
       <Comp
+			  role="status"
         className={cn(badgeVariants({ variant, className }))}
         ref={ref}
         {...props}
