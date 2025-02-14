@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { ScrollArea, ScrollBar } from '.'
+import { ScrollArea } from '.'
 import React from 'react';
 
 /**

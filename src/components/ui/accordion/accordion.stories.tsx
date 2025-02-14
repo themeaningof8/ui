@@ -9,9 +9,6 @@ import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '.'
 const meta = {
   title: 'UI/Accordion',
   component: Accordion,
-  parameters: {
-    layout: 'centered',
-  },
   tags: ['autodocs'],
 } satisfies Meta<typeof Accordion>
 

@@ -71,7 +71,7 @@ export const CustomSeparator: Story = {
         <BreadcrumbLink href="/">ホーム</BreadcrumbLink>
       </BreadcrumbItem>
       <BreadcrumbSeparator>
-        <ChevronRight className="h-4 w-4" />
+        <ChevronRight className="size-4" />
       </BreadcrumbSeparator>
       <BreadcrumbItem>
         <BreadcrumbPage>現在のページ</BreadcrumbPage>
@@ -88,21 +88,21 @@ export const WithIcons: Story = {
     <Breadcrumb>
       <BreadcrumbItem>
         <BreadcrumbLink href="/" className="flex items-center gap-2">
-          <Home className="h-4 w-4" />
+          <Home className="size-4" />
           ホーム
         </BreadcrumbLink>
       </BreadcrumbItem>
       <BreadcrumbSeparator />
       <BreadcrumbItem>
         <BreadcrumbLink href="/documents" className="flex items-center gap-2">
-          <Folder className="h-4 w-4" />
+          <Folder className="size-4" />
           ドキュメント
         </BreadcrumbLink>
       </BreadcrumbItem>
       <BreadcrumbSeparator />
       <BreadcrumbItem>
         <BreadcrumbPage className="flex items-center gap-2">
-          <FileText className="h-4 w-4" />
+          <FileText className="size-4" />
           レポート
         </BreadcrumbPage>
       </BreadcrumbItem>

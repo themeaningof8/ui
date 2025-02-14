@@ -31,7 +31,7 @@
     "@types/react-dom": "^19.0.3",
     "@vitejs/plugin-react": "^4.3.4",
     "@vitest/browser": "^3.0.5",
-    "@vitest/coverage-v8": "^3.0.4",
+    "@vitest/coverage-v8": "^3.0.5",
     "@vitest/ui": "^3.0.5",
     "apca-w3": "^0.1.9",
     "axe-core": "^4.10.2",

@@ -9,9 +9,7 @@ import { AspectRatio } from '.'
 const meta = {
   title: 'UI/AspectRatio',
   component: AspectRatio,
-  parameters: {
-    layout: 'centered',
-  },
+  
   tags: ['autodocs'],
 } satisfies Meta<typeof AspectRatio>
 

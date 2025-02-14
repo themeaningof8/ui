@@ -4,15 +4,12 @@ import { Toaster } from '.'
 import { toast } from 'sonner'
 
 /**
- * `Toaster`は、トースト通知を表示するためのコンポーネントです。
+ * `Sonner`は、トースト通知を表示するためのコンポーネントです。
  * Sonnerライブラリを使用して、美しいトースト通知を提供します。
  */
 const meta = {
-  title: 'UI/Toaster',
+  title: 'UI/Sonner',
   component: Toaster,
-  parameters: {
-    layout: 'centered',
-  },
   tags: ['autodocs'],
 } satisfies Meta<typeof Toaster>
 

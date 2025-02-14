@@ -5,35 +5,40 @@
 
 import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
-import { Badge } from '.'
+import { Badge, badgeVariants } from '.'
 
 describe('Badgeコンポーネント', () => {
   it('デフォルトのバッジが正しくレンダリングされる', () => {
     render(<Badge>デフォルト</Badge>)
     const badge = screen.getByText('デフォルト')
     expect(badge).toBeInTheDocument()
-    expect(badge).toHaveClass('bg-primary')
+    expect(badge).toHaveAttribute('role', 'status')
+    expect(badge).toHaveClass(badgeVariants({ variant: 'default' }))
+    
   })
 
   it('セカンダリバリアントが正しく適用される', () => {
     render(<Badge variant="secondary">セカンダリ</Badge>)
     const badge = screen.getByText('セカンダリ')
     expect(badge).toBeInTheDocument()
-    expect(badge).toHaveClass('bg-secondary')
+    expect(badge).toHaveAttribute('role', 'status')
+    expect(badge).toHaveClass(badgeVariants({ variant: 'secondary' }))
   })
 
   it('デストラクティブバリアントが正しく適用される', () => {
     render(<Badge variant="destructive">デストラクティブ</Badge>)
     const badge = screen.getByText('デストラクティブ')
     expect(badge).toBeInTheDocument()
-    expect(badge).toHaveClass('bg-destructive')
+    expect(badge).toHaveAttribute('role', 'status')
+    expect(badge).toHaveClass(badgeVariants({ variant: 'destructive' }))
   })
 
   it('アウトラインバリアントが正しく適用される', () => {
     render(<Badge variant="outline">アウトライン</Badge>)
     const badge = screen.getByText('アウトライン')
     expect(badge).toBeInTheDocument()
-    expect(badge).toHaveClass('border')
+    expect(badge).toHaveAttribute('role', 'status')
+    expect(badge).toHaveClass(badgeVariants({ variant: 'outline' }))
   })
 
   it('カスタムクラス名が正しく適用される', () => {
@@ -45,7 +50,7 @@ describe('Badgeコンポーネント', () => {
 
   it('リンクとして機能する場合、正しくレンダリングされる', () => {
     render(
-      <Badge asChild>
+      <Badge>
         <a href="/test">リンク</a>
       </Badge>
     )

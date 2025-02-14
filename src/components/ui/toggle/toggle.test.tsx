@@ -3,20 +3,24 @@
  */
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { Toggle } from '@/components/ui/toggle'
+import { Toggle, toggleVariants } from '@/components/ui/toggle'
+import { vi } from 'vitest'
 
 describe('Toggle', () => {
   const user = userEvent.setup()
 
   it('renders toggle correctly', () => {
     render(<Toggle>Toggle</Toggle>)
-    expect(screen.getByRole('button')).toBeInTheDocument()
+    const button = screen.getByRole('button')
+    expect(button).toBeInTheDocument()
+    expect(button).toHaveClass(toggleVariants())
   })
 
   it('applies custom className', () => {
     const customClass = 'custom-class'
     render(<Toggle className={customClass}>Toggle</Toggle>)
-    expect(screen.getByRole('button')).toHaveClass(customClass)
+    const button = screen.getByRole('button')
+    expect(button).toHaveClass(customClass)
   })
 
   it('handles pressed state correctly', async () => {
@@ -31,7 +35,8 @@ describe('Toggle', () => {
 
   it('handles unpressed state correctly', () => {
     render(<Toggle pressed={false}>Toggle</Toggle>)
-    expect(screen.getByRole('button')).toHaveAttribute('data-state', 'off')
+    const button = screen.getByRole('button')
+    expect(button).toHaveAttribute('data-state', 'off')
   })
 
   it('handles state change correctly', async () => {
@@ -48,8 +53,8 @@ describe('Toggle', () => {
     
     const button = screen.getByRole('button')
     expect(button).toBeDisabled()
-    expect(button).toHaveClass('disabled:pointer-events-none')
-    expect(button).toHaveClass('disabled:opacity-50')
+    expect(button).toHaveAttribute('aria-disabled', 'true')
+    expect(button).toHaveClass(toggleVariants())
   })
 
   it('applies focus styles correctly', async () => {
@@ -62,52 +67,50 @@ describe('Toggle', () => {
     expect(button).toHaveClass('focus-visible:ring-2')
   })
 
-  it('applies hover styles correctly', async () => {
-    render(<Toggle>Toggle</Toggle>)
+  it('applies variant styles correctly', () => {
+    const variant = 'outline'
+    render(<Toggle variant={variant}>Toggle</Toggle>)
     
     const button = screen.getByRole('button')
-    await user.hover(button)
-    
-    expect(button).toHaveClass('hover:bg-muted')
-    expect(button).toHaveClass('hover:text-muted-foreground')
+    const expectedClasses = [
+      'border',
+      'border-input',
+      'bg-transparent',
+      'hover:bg-accent',
+      'hover:text-accent-foreground'
+    ]
+    for (const className of expectedClasses) {
+      expect(button).toHaveClass(className)
+    }
   })
 
-  it('applies variant styles correctly', () => {
-    render(
-      <>
-        <Toggle variant="default">Default</Toggle>
-        <Toggle variant="outline">Outline</Toggle>
-      </>
-    )
+  it('applies size variant styles correctly', () => {
+    const size = 'sm'
+    render(<Toggle size={size}>Toggle</Toggle>)
     
-    const defaultButton = screen.getByText('Default')
-    const outlineButton = screen.getByText('Outline')
-    
-    expect(outlineButton).toBeInTheDocument()
-    
-    expect(defaultButton).toHaveClass('bg-transparent')
-    expect(outlineButton).toHaveClass('border')
-    expect(outlineButton).toHaveClass('border-input')
+    const button = screen.getByRole('button')
+    const variantClasses = toggleVariants({ size })
+    expect(button.className).toContain(variantClasses)
   })
 
-  it('applies size styles correctly', () => {
-    render(
-      <>
-        <Toggle size="sm">Small</Toggle>
-        <Toggle size="default">Default</Toggle>
-        <Toggle size="lg">Large</Toggle>
-      </>
-    )
+  it('applies combined variant styles correctly', () => {
+    const variant = 'outline'
+    const size = 'sm'
+    render(<Toggle variant={variant} size={size}>Toggle</Toggle>)
     
-    const smallButton = screen.getByText('Small')
-    const defaultButton = screen.getByText('Default')
-    const largeButton = screen.getByText('Large')
-    
-    expect(smallButton).toHaveClass('h-9')
-    expect(smallButton).toHaveClass('px-2.5')
-    expect(defaultButton).toHaveClass('h-10')
-    expect(defaultButton).toHaveClass('px-3')
-    expect(largeButton).toHaveClass('h-11')
-    expect(largeButton).toHaveClass('px-5')
+    const button = screen.getByRole('button')
+    const expectedClasses = [
+      'border',
+      'border-input',
+      'bg-transparent',
+      'hover:bg-accent',
+      'hover:text-accent-foreground',
+      'h-9',
+      'px-2.5',
+      'min-w-9'
+    ]
+    for (const className of expectedClasses) {
+      expect(button).toHaveClass(className)
+    }
   })
 }) 

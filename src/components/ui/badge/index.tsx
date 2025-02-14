@@ -19,7 +19,8 @@
  * ```
  */
 
-import type * as React from "react";
+import React from "react";
+import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "@/lib/utils";
@@ -60,7 +61,9 @@ const badgeVariants = cva(
  */
 export interface BadgeProps
 	extends React.HTMLAttributes<HTMLDivElement>,
-		VariantProps<typeof badgeVariants> {}
+		VariantProps<typeof badgeVariants> {
+			asChild?: boolean
+		}
 
 /**
  * @function Badge
@@ -68,10 +71,18 @@ export interface BadgeProps
  * @param {BadgeProps} props - コンポーネントのプロパティ
  * @returns {JSX.Element} バッジ要素
  */
-function Badge({ className, variant, ...props }: BadgeProps) {
-	return (
-		<div className={cn(badgeVariants({ variant }), className)} {...props} />
-	);
-}
+
+const Badge = React.forwardRef<HTMLDivElement, BadgeProps>(
+  ({ className, variant, asChild = false, ...props }, ref) => {
+    const Comp = asChild ? Slot : "div"
+    return (
+      <Comp
+        className={cn(badgeVariants({ variant, className }))}
+        ref={ref}
+        {...props}
+      />
+    )
+  }
+)
 
 export { Badge, badgeVariants };
