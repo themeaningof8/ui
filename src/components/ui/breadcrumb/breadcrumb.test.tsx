@@ -15,6 +15,7 @@ import {
   BreadcrumbList,
   BreadcrumbEllipsis,
 } from '.'
+import React from 'react'
 
 describe('Breadcrumbコンポーネント', () => {
   it('基本的なパンくずリストが正しくレンダリングされる', () => {
@@ -165,5 +166,32 @@ describe('Breadcrumbコンポーネント', () => {
 
     const ellipsisContainer = screen.getByText('その他のページ').parentElement
     expect(ellipsisContainer).toHaveClass(customClass)
+  })
+
+  it('BreadcrumbLinkがasChildプロパティを正しく処理する', () => {
+    const CustomLink = React.forwardRef<
+      HTMLAnchorElement,
+      React.ComponentPropsWithoutRef<"a">
+    >((props, ref) => (
+      <a ref={ref} {...props} className="custom-link">
+        {props.children}
+      </a>
+    ))
+    CustomLink.displayName = "CustomLink"
+
+    render(
+      <Breadcrumb>
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink asChild>
+              <CustomLink href="/">ホーム</CustomLink>
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
+    )
+
+    const link = screen.getByRole('link', { name: 'ホーム' })
+    expect(link).toHaveClass('custom-link')
   })
 }) 

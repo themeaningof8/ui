@@ -19,6 +19,10 @@ import {
   DropdownMenuSub,
   DropdownMenuSubTrigger,
   DropdownMenuSubContent,
+  DropdownMenuLabel,
+  DropdownMenuGroup,
+  DropdownMenuPortal,
+  DropdownMenuShortcut,
 } from '.'
 
 describe('DropdownMenuコンポーネント', () => {
@@ -148,5 +152,133 @@ describe('DropdownMenuコンポーネント', () => {
 
     await user.click(screen.getByText('Open Menu'))
     expect(screen.getByRole('separator')).toBeInTheDocument()
+  })
+
+  it('ラベルが正しくレンダリングされること', async () => {
+    const { user } = render(
+      <DropdownMenu>
+        <DropdownMenuTrigger>Open Menu</DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuLabel>Settings</DropdownMenuLabel>
+          <DropdownMenuItem>Menu Item</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    )
+
+    await user.click(screen.getByText('Open Menu'))
+    expect(screen.getByText('Settings')).toHaveClass(
+      'px-2',
+      'py-1.5',
+      'text-sm',
+      'font-semibold',
+      'text-step-12'
+    )
+  })
+
+  it('ラベルにinsetプロパティが正しく適用されること', async () => {
+    const { user } = render(
+      <DropdownMenu>
+        <DropdownMenuTrigger>Open Menu</DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuLabel inset>Settings</DropdownMenuLabel>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    )
+
+    await user.click(screen.getByText('Open Menu'))
+    expect(screen.getByText('Settings')).toHaveClass('pl-8')
+  })
+
+  it('グループが正しくレンダリングされること', async () => {
+    const { user } = render(
+      <DropdownMenu>
+        <DropdownMenuTrigger>Open Menu</DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuGroup>
+            <DropdownMenuItem>Item 1</DropdownMenuItem>
+            <DropdownMenuItem>Item 2</DropdownMenuItem>
+          </DropdownMenuGroup>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    )
+
+    await user.click(screen.getByText('Open Menu'))
+    const group = screen.getByRole('group')
+    expect(group).toBeInTheDocument()
+    expect(group.children).toHaveLength(2)
+  })
+
+  it('ショートカットが正しくレンダリングされること', async () => {
+    const { user } = render(
+      <DropdownMenu>
+        <DropdownMenuTrigger>Open Menu</DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuItem>
+            Menu Item
+            <DropdownMenuShortcut>⌘K</DropdownMenuShortcut>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    )
+
+    await user.click(screen.getByText('Open Menu'))
+    const shortcut = screen.getByText('⌘K')
+    expect(shortcut).toHaveClass(
+      'ml-auto',
+      'text-xs',
+      'tracking-widest',
+      'text-step-11/60'
+    )
+  })
+
+  it('ポータルを使用してコンテンツがレンダリングされること', async () => {
+    const { user } = render(
+      <DropdownMenu>
+        <DropdownMenuTrigger>Open Menu</DropdownMenuTrigger>
+        <DropdownMenuPortal>
+          <DropdownMenuContent>
+            <DropdownMenuItem>Menu Item</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenuPortal>
+      </DropdownMenu>
+    )
+
+    await user.click(screen.getByText('Open Menu'))
+    await waitFor(() => {
+      const menuItem = screen.getByText('Menu Item')
+      expect(menuItem).toBeInTheDocument()
+      expect(menuItem.closest('[role="menu"]')).toBeInTheDocument()
+    })
+  })
+
+  it('メニュー項目にinsetプロパティが正しく適用されること', async () => {
+    const { user } = render(
+      <DropdownMenu>
+        <DropdownMenuTrigger>Open Menu</DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuItem inset>Menu Item</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    )
+
+    await user.click(screen.getByText('Open Menu'))
+    expect(screen.getByText('Menu Item')).toHaveClass('pl-8')
+  })
+
+  it('無効化されたメニュー項目が正しく表示されること', async () => {
+    const { user } = render(
+      <DropdownMenu>
+        <DropdownMenuTrigger>Open Menu</DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuItem disabled>Menu Item</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    )
+
+    await user.click(screen.getByText('Open Menu'))
+    const menuItem = screen.getByText('Menu Item')
+    expect(menuItem).toHaveAttribute('data-disabled')
+    expect(menuItem).toHaveClass('data-[disabled]:pointer-events-none')
+    expect(menuItem).toHaveClass('data-[disabled]:opacity-50')
   })
 }) 
