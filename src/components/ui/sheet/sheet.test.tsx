@@ -105,7 +105,7 @@ describe('Sheetコンポーネント', () => {
     await user.click(screen.getByText('開く'))
     expect(screen.getByText('コンテンツ')).toBeInTheDocument()
 
-    const closeButton = screen.getByRole('button', { name: /close/i })
+    const closeButton = screen.getByRole('button', { name: '閉じる' })
     await user.click(closeButton)
     
     await waitFor(() => {
@@ -173,13 +173,11 @@ describe('Sheetコンポーネント', () => {
       </Sheet>
     )
 
-    const trigger = screen.getByText('開く')
-    await user.click(trigger)
-
-    const closeButton = screen.getByRole('button', { name: /close/i })
+    await user.click(screen.getByText('開く'))
+    const closeButton = screen.getByRole('button', { name: '閉じる' })
     await user.tab()
 
-    expect(document.activeElement).toBe(closeButton)
+    expect(closeButton).toHaveFocus()
     expect(closeButton).toHaveClass('focus:ring-2')
   })
 }) 

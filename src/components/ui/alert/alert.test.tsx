@@ -4,54 +4,85 @@
  * @package components
  */
 
-import { describe, it, expect } from "vitest"
-import { render, screen } from "@testing-library/react"
-import { Alert, AlertTitle, AlertDescription } from "./index"
+/**
+ * @jest-environment jsdom
+ */
+import { render, screen } from '@testing-library/react'
+import { Alert, AlertTitle, AlertDescription } from '.'
+import { describe, it, expect } from 'vitest'
 
-describe("Alert", () => {
-  it("renders alert with default variant", () => {
-    render(<Alert>Test alert</Alert>)
-    const alert = screen.getByRole("alert")
-    expect(alert).toBeInTheDocument()
-    expect(alert).toHaveClass("bg-background")
-  })
-
-  it("renders alert with destructive variant", () => {
-    render(<Alert variant="destructive">Destructive alert</Alert>)
-    const alert = screen.getByRole("alert")
-    expect(alert).toBeInTheDocument()
-    expect(alert).toHaveClass("border-destructive/50")
-  })
-
-  it("renders alert with custom className", () => {
-    render(<Alert className="custom-class">Custom alert</Alert>)
-    const alert = screen.getByRole("alert")
-    expect(alert).toHaveClass("custom-class")
-  })
-
-  it("renders alert with title and description", () => {
-    const title = "Alert Title"
-    const description = "Alert Description"
+describe('Alert', () => {
+  it('renders alert with default variant', () => {
     render(
       <Alert>
-        <AlertTitle>{title}</AlertTitle>
-        <AlertDescription>{description}</AlertDescription>
+        <AlertTitle>タイトル</AlertTitle>
+        <AlertDescription>説明文</AlertDescription>
       </Alert>
     )
-    
-    expect(screen.getByText(title)).toBeInTheDocument()
-    expect(screen.getByText(description)).toBeInTheDocument()
+
+    const alert = screen.getByRole('alert')
+    expect(alert).toHaveClass('border-step-6')
+    expect(alert).toHaveClass('bg-step-2')
+    expect(alert).toHaveClass('text-step-12')
   })
 
-  it("renders AlertTitle with custom className", () => {
-    render(<AlertTitle className="custom-title">Title</AlertTitle>)
-    const title = screen.getByText("Title")
-    expect(title).toHaveClass("custom-title")
+  it('renders alert with destructive variant', () => {
+    render(
+      <Alert variant="destructive">
+        <AlertTitle>エラー</AlertTitle>
+        <AlertDescription>エラーが発生しました</AlertDescription>
+      </Alert>
+    )
+
+    const alert = screen.getByRole('alert')
+    expect(alert).toHaveClass('border-destructive-step-6')
+    expect(alert).toHaveClass('bg-destructive-step-2')
+    expect(alert).toHaveClass('text-destructive-step-12')
   })
 
-  it("renders AlertDescription with custom className", () => {
-    render(<AlertDescription className="custom-desc">Description</AlertDescription>)
-    const desc = screen.getByText("Description")
-    expect(desc).toHaveClass("custom-desc")
+  it('renders alert with custom className', () => {
+    const customClass = 'custom-class'
+    render(
+      <Alert className={customClass}>
+        <AlertTitle>タイトル</AlertTitle>
+        <AlertDescription>説明文</AlertDescription>
+      </Alert>
+    )
+
+    expect(screen.getByRole('alert')).toHaveClass(customClass)
+  })
+
+  it('renders alert with title and description', () => {
+    render(
+      <Alert>
+        <AlertTitle>タイトル</AlertTitle>
+        <AlertDescription>説明文</AlertDescription>
+      </Alert>
+    )
+
+    expect(screen.getByText('タイトル')).toBeInTheDocument()
+    expect(screen.getByText('説明文')).toBeInTheDocument()
+  })
+
+  it('renders AlertTitle with custom className', () => {
+    const customClass = 'custom-title'
+    render(
+      <Alert>
+        <AlertTitle className={customClass}>タイトル</AlertTitle>
+      </Alert>
+    )
+
+    expect(screen.getByText('タイトル')).toHaveClass(customClass)
+  })
+
+  it('renders AlertDescription with custom className', () => {
+    const customClass = 'custom-description'
+    render(
+      <Alert>
+        <AlertDescription className={customClass}>説明文</AlertDescription>
+      </Alert>
+    )
+
+    expect(screen.getByText('説明文')).toHaveClass(customClass)
   })
 }) 

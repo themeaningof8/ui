@@ -7,9 +7,7 @@ import type { Meta, StoryObj } from '@storybook/react'
 import { cn } from '@/lib/utils'
 import { Card,
   CardHeader,
-  CardFooter,
   CardTitle,
-  CardDescription,
   CardContent } from '@/components/ui/card'
 
 const meta = {
@@ -36,29 +34,38 @@ type Story = StoryObj<typeof meta>
 const ColorScale = ({
   step,
   useCase,
-  className,
-  colorValue,
+  className
 }: {
   step: number
   useCase: string
   className?: string
-  colorValue?: string
 }) => (
   <div className="flex items-center gap-2" data-testid={`color-scale-${step}`}>
     <div
       className={cn(
         'size-10 rounded-md',
+        className,
+      )}
+      style={{ backgroundColor: `var(--color-step-${step})` }}
+    />
+    <div
+      className={cn(
+        'size-10 rounded-md',
         className
       )}
-      style={{ backgroundColor: colorValue }}
+      style={{ backgroundColor: `var(--color-accent-step-${step})` }}
+    />
+    <div
+      className={cn(
+        'size-10 rounded-md',
+        className,
+      )}
+      style={{ backgroundColor: `var(--color-destructive-step-${step})` }}
     />
 
     <div className="flex flex-col">
       <div className="text-xs font-medium">Step {step}</div>
       <div className="text-xs">{useCase}</div>
-      {colorValue && (
-        <div className="text-xs">{colorValue}</div>
-      )}
     </div>
   </div>
 )

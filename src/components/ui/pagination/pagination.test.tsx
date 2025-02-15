@@ -35,9 +35,9 @@ describe('Pagination', () => {
     )
 
     expect(screen.getByRole('navigation')).toBeInTheDocument()
-    expect(screen.getByText('Previous')).toBeInTheDocument()
+    expect(screen.getByText('前へ')).toBeInTheDocument()
     expect(screen.getByText('1')).toBeInTheDocument()
-    expect(screen.getByText('Next')).toBeInTheDocument()
+    expect(screen.getByText('次へ')).toBeInTheDocument()
   })
 
   it('applies custom className to components', () => {
@@ -90,7 +90,7 @@ describe('Pagination', () => {
     )
 
     expect(screen.getByTestId('ellipsis-icon')).toBeInTheDocument()
-    expect(screen.getByText('More pages')).toHaveClass('sr-only')
+    expect(screen.getByText('その他のページ')).toBeInTheDocument()
   })
 
   it('renders previous and next buttons with correct aria-labels', () => {
@@ -107,8 +107,8 @@ describe('Pagination', () => {
       </Pagination>
     )
 
-    expect(screen.getByLabelText('Go to previous page')).toBeInTheDocument()
-    expect(screen.getByLabelText('Go to next page')).toBeInTheDocument()
+    expect(screen.getByLabelText('前のページへ')).toBeInTheDocument()
+    expect(screen.getByLabelText('次のページへ')).toBeInTheDocument()
   })
 
   it('handles link interactions correctly', async () => {

@@ -132,7 +132,7 @@ describe('Select', () => {
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="option1">Option 1</SelectItem>
-          <SelectSeparator className="my-1 h-px bg-muted" />
+          <SelectSeparator data-testid="select-separator" />
           <SelectItem value="option2">Option 2</SelectItem>
         </SelectContent>
       </Select>
@@ -144,7 +144,7 @@ describe('Select', () => {
     await waitFor(() => {
       expect(screen.getByRole('listbox')).toBeInTheDocument()
       const separator = screen.getByTestId('select-separator')
-      expect(separator).toHaveClass('my-1', 'h-px', 'bg-muted')
+      expect(separator).toHaveClass('-mx-1', 'my-1', 'h-px', 'bg-step-6')
     })
   })
 
@@ -177,6 +177,6 @@ describe('Select', () => {
     await user.tab()
     
     expect(trigger).toHaveFocus()
-    expect(trigger).toHaveClass('focus:outline-none', 'focus:ring-2', 'focus:ring-ring', 'focus:ring-offset-2')
+    expect(trigger).toHaveClass('focus:outline-none', 'focus:ring-2', 'focus:ring-step-7', 'focus:ring-offset-2')
   })
 }) 

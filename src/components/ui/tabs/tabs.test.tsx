@@ -90,16 +90,13 @@ describe('Tabs', () => {
       <Tabs defaultValue="tab1">
         <TabsList>
           <TabsTrigger value="tab1">Tab 1</TabsTrigger>
-          <TabsTrigger value="tab2">Tab 2</TabsTrigger>
         </TabsList>
-        <TabsContent value="tab1">Content 1</TabsContent>
-        <TabsContent value="tab2">Content 2</TabsContent>
       </Tabs>
     )
 
     const activeTab = screen.getByRole('tab', { selected: true })
-    expect(activeTab).toHaveClass('data-[state=active]:bg-background')
-    expect(activeTab).toHaveClass('data-[state=active]:text-foreground')
+    expect(activeTab).toHaveClass('data-[state=active]:bg-step-9')
+    expect(activeTab).toHaveClass('data-[state=active]:text-step-1')
   })
 
   it('applies focus styles correctly', async () => {

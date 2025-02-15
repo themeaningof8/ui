@@ -26,7 +26,7 @@ describe('Skeleton', () => {
     const skeleton = elements[elements.length - 1]
     expect(skeleton).toHaveClass('animate-pulse')
     expect(skeleton).toHaveClass('rounded-md')
-    expect(skeleton).toHaveClass('bg-muted')
+    expect(skeleton).toHaveClass('bg-step-3')
   })
 
   it('renders with custom dimensions', () => {

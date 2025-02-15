@@ -43,12 +43,12 @@ describe('Progress', () => {
   it('applies correct base styles', () => {
     render(<Progress value={50} />)
     const progressBar = screen.getByRole('progressbar')
-    expect(progressBar).toHaveClass('relative', 'h-4', 'w-full', 'overflow-hidden', 'rounded-full', 'bg-secondary')
+    expect(progressBar).toHaveClass('relative', 'h-4', 'w-full', 'overflow-hidden', 'rounded-full', 'bg-step-3')
   })
 
   it('applies correct indicator styles', () => {
     render(<Progress value={50} />)
     const indicator = screen.getByRole('progressbar').querySelector('div')
-    expect(indicator).toHaveClass('h-full', 'w-full', 'flex-1', 'bg-primary', 'transition-all')
+    expect(indicator).toHaveClass('h-full', 'w-full', 'flex-1', 'bg-step-9', 'transition-all', 'duration-200')
   })
 }) 

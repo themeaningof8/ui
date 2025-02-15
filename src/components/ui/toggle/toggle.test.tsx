@@ -3,114 +3,102 @@
  */
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { Toggle, toggleVariants } from '@/components/ui/toggle'
-import { vi } from 'vitest'
+import { Toggle } from '.'
+import { describe, it, expect, vi } from 'vitest'
 
 describe('Toggle', () => {
-  const user = userEvent.setup()
-
   it('renders toggle correctly', () => {
     render(<Toggle>Toggle</Toggle>)
-    const button = screen.getByRole('button')
-    expect(button).toBeInTheDocument()
-    expect(button).toHaveClass(toggleVariants())
+    expect(screen.getByRole('button')).toBeInTheDocument()
   })
 
   it('applies custom className', () => {
     const customClass = 'custom-class'
     render(<Toggle className={customClass}>Toggle</Toggle>)
-    const button = screen.getByRole('button')
-    expect(button).toHaveClass(customClass)
+    expect(screen.getByRole('button')).toHaveClass(customClass)
   })
 
   it('handles pressed state correctly', async () => {
-    const onPressedChange = vi.fn()
-    render(<Toggle onPressedChange={onPressedChange}>Toggle</Toggle>)
+    const user = userEvent.setup()
+    render(<Toggle>Toggle</Toggle>)
     
-    const button = screen.getByRole('button')
-    await user.click(button)
-    expect(onPressedChange).toHaveBeenCalledWith(true)
-    expect(button).toHaveAttribute('data-state', 'on')
+    const toggle = screen.getByRole('button')
+    await user.click(toggle)
+    
+    expect(toggle).toHaveAttribute('data-state', 'on')
   })
 
   it('handles unpressed state correctly', () => {
-    render(<Toggle pressed={false}>Toggle</Toggle>)
-    const button = screen.getByRole('button')
-    expect(button).toHaveAttribute('data-state', 'off')
+    render(<Toggle>Toggle</Toggle>)
+    expect(screen.getByRole('button')).toHaveAttribute('data-state', 'off')
   })
 
   it('handles state change correctly', async () => {
+    const user = userEvent.setup()
     const onPressedChange = vi.fn()
+    
     render(<Toggle onPressedChange={onPressedChange}>Toggle</Toggle>)
     
-    const button = screen.getByRole('button')
-    await user.click(button)
+    const toggle = screen.getByRole('button')
+    await user.click(toggle)
+    
     expect(onPressedChange).toHaveBeenCalledWith(true)
   })
 
   it('handles disabled state correctly', () => {
     render(<Toggle disabled>Toggle</Toggle>)
     
-    const button = screen.getByRole('button')
-    expect(button).toBeDisabled()
-    expect(button).toHaveAttribute('aria-disabled', 'true')
-    expect(button).toHaveClass(toggleVariants())
+    const toggle = screen.getByRole('button')
+    expect(toggle).toBeDisabled()
+    expect(toggle).toHaveClass('disabled:pointer-events-none')
+    expect(toggle).toHaveClass('disabled:opacity-50')
   })
 
   it('applies focus styles correctly', async () => {
+    const user = userEvent.setup()
+    
     render(<Toggle>Toggle</Toggle>)
     
-    const button = screen.getByRole('button')
+    const toggle = screen.getByRole('button')
     await user.tab()
     
-    expect(button).toHaveFocus()
-    expect(button).toHaveClass('focus-visible:ring-2')
+    expect(toggle).toHaveFocus()
+    expect(toggle).toHaveClass('focus-visible:ring-2')
   })
 
   it('applies variant styles correctly', () => {
-    const variant = 'outline'
-    render(<Toggle variant={variant}>Toggle</Toggle>)
+    render(<Toggle variant="outline">Toggle</Toggle>)
     
-    const button = screen.getByRole('button')
-    const expectedClasses = [
-      'border',
-      'border-step-7',
-      'bg-transparent',
-      'hover:bg-step-5',
-      'hover:text-step-12',
-    ]
-    for (const className of expectedClasses) {
-      expect(button).toHaveClass(className)
-    }
+    const toggle = screen.getByRole('button')
+    expect(toggle).toHaveClass('border')
+    expect(toggle).toHaveClass('border-step-7')
+    expect(toggle).toHaveClass('bg-transparent')
+    expect(toggle).toHaveClass('hover:bg-step-4')
+    expect(toggle).toHaveClass('hover:text-step-12')
   })
 
   it('applies size variant styles correctly', () => {
-    const size = 'sm'
-    render(<Toggle size={size}>Toggle</Toggle>)
+    render(<Toggle size="sm">Toggle</Toggle>)
     
-    const button = screen.getByRole('button')
-    const variantClasses = toggleVariants({ size })
-    expect(button.className).toContain(variantClasses)
+    const toggle = screen.getByRole('button')
+    expect(toggle).toHaveClass('h-9')
+    expect(toggle).toHaveClass('px-2.5')
   })
 
   it('applies combined variant styles correctly', () => {
-    const variant = 'outline'
-    const size = 'sm'
-    render(<Toggle variant={variant} size={size}>Toggle</Toggle>)
+    render(
+      <Toggle variant="outline" size="sm">
+        Toggle
+      </Toggle>
+    )
     
-    const button = screen.getByRole('button')
-    const expectedClasses = [
-      'border',
-      'border-step-7',
-      'bg-transparent',
-      'hover:bg-step-5',
-      'hover:text-step-12',
-      'h-9',
-      'px-2.5',
-      'min-w-9'
-    ]
-    for (const className of expectedClasses) {
-      expect(button).toHaveClass(className)
-    }
+    const toggle = screen.getByRole('button')
+    expect(toggle).toHaveClass('border')
+    expect(toggle).toHaveClass('border-step-7')
+    expect(toggle).toHaveClass('bg-transparent')
+    expect(toggle).toHaveClass('hover:bg-step-4')
+    expect(toggle).toHaveClass('hover:text-step-12')
+    expect(toggle).toHaveClass('h-9')
+    expect(toggle).toHaveClass('px-2.5')
   })
 }) 

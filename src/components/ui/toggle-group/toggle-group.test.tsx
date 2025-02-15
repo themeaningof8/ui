@@ -3,27 +3,27 @@
  */
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { describe, it, expect, vi } from 'vitest'
 import { ToggleGroup, ToggleGroupItem } from '.'
+import { describe, it, expect, vi } from 'vitest'
 
 describe('ToggleGroup', () => {
   it('renders toggle group correctly', () => {
     render(
-      <ToggleGroup type="single" defaultValue="a">
-        <ToggleGroupItem value="a">Option A</ToggleGroupItem>
-        <ToggleGroupItem value="b">Option B</ToggleGroupItem>
+      <ToggleGroup type="single">
+        <ToggleGroupItem value="item1">Item 1</ToggleGroupItem>
+        <ToggleGroupItem value="item2">Item 2</ToggleGroupItem>
       </ToggleGroup>
     )
 
-    expect(screen.getByText('Option A')).toBeInTheDocument()
-    expect(screen.getByText('Option B')).toBeInTheDocument()
+    expect(screen.getByRole('group')).toBeInTheDocument()
+    expect(screen.getAllByRole('radio')).toHaveLength(2)
   })
 
   it('applies custom className to group', () => {
     const customClass = 'custom-class'
     render(
-      <ToggleGroup className={customClass} type="single" defaultValue="a">
-        <ToggleGroupItem value="a">Option A</ToggleGroupItem>
+      <ToggleGroup type="single" className={customClass}>
+        <ToggleGroupItem value="item1">Item 1</ToggleGroupItem>
       </ToggleGroup>
     )
 
@@ -33,9 +33,9 @@ describe('ToggleGroup', () => {
   it('applies custom className to item', () => {
     const customClass = 'custom-class'
     render(
-      <ToggleGroup type="single" defaultValue="a">
-        <ToggleGroupItem value="a" className={customClass}>
-          Option A
+      <ToggleGroup type="single">
+        <ToggleGroupItem value="item1" className={customClass}>
+          Item 1
         </ToggleGroupItem>
       </ToggleGroup>
     )
@@ -48,16 +48,16 @@ describe('ToggleGroup', () => {
     const onValueChange = vi.fn()
     
     render(
-      <ToggleGroup type="single" defaultValue="a" onValueChange={onValueChange}>
-        <ToggleGroupItem value="a">Option A</ToggleGroupItem>
-        <ToggleGroupItem value="b">Option B</ToggleGroupItem>
+      <ToggleGroup type="single" onValueChange={onValueChange}>
+        <ToggleGroupItem value="item1">Item 1</ToggleGroupItem>
+        <ToggleGroupItem value="item2">Item 2</ToggleGroupItem>
       </ToggleGroup>
     )
 
-    const optionB = screen.getByText('Option B')
-    await user.click(optionB)
+    const item1 = screen.getByRole('radio', { name: 'Item 1' })
+    await user.click(item1)
     
-    expect(onValueChange).toHaveBeenCalledWith('b')
+    expect(onValueChange).toHaveBeenCalledWith('item1')
   })
 
   it('handles multiple selection correctly', async () => {
@@ -65,56 +65,65 @@ describe('ToggleGroup', () => {
     const onValueChange = vi.fn()
     
     render(
-      <ToggleGroup type="multiple" defaultValue={['a']} onValueChange={onValueChange}>
-        <ToggleGroupItem value="a">Option A</ToggleGroupItem>
-        <ToggleGroupItem value="b">Option B</ToggleGroupItem>
+      <ToggleGroup type="multiple" onValueChange={onValueChange}>
+        <ToggleGroupItem value="item1">Item 1</ToggleGroupItem>
+        <ToggleGroupItem value="item2">Item 2</ToggleGroupItem>
       </ToggleGroup>
     )
 
-    const optionB = screen.getByText('Option B')
-    await user.click(optionB)
+    const item1 = screen.getByRole('button', { name: 'Item 1' })
+    const item2 = screen.getByRole('button', { name: 'Item 2' })
     
-    expect(onValueChange).toHaveBeenCalledWith(['a', 'b'])
+    await user.click(item1)
+    await user.click(item2)
+    
+    expect(onValueChange).toHaveBeenCalledWith(['item1'])
+    expect(onValueChange).toHaveBeenCalledWith(['item1', 'item2'])
   })
 
   it('handles disabled state correctly', () => {
     render(
-      <ToggleGroup type="single" defaultValue="a">
-        <ToggleGroupItem value="a" disabled>
-          Option A
+      <ToggleGroup type="single">
+        <ToggleGroupItem value="item1" disabled>
+          Item 1
         </ToggleGroupItem>
       </ToggleGroup>
     )
 
-    const button = screen.getByRole('radio')
-    expect(button).toBeDisabled()
-    expect(button).toHaveClass('disabled:pointer-events-none')
+    const item = screen.getByRole('radio')
+    expect(item).toBeDisabled()
+    expect(item).toHaveClass('disabled:pointer-events-none')
+    expect(item).toHaveClass('disabled:opacity-50')
   })
 
   it('applies variant styles correctly', () => {
     render(
-      <ToggleGroup type="single" defaultValue="a">
-        <ToggleGroupItem value="a" variant="outline">
-          Option A
+      <ToggleGroup type="single">
+        <ToggleGroupItem value="item1" variant="outline">
+          Item 1
         </ToggleGroupItem>
       </ToggleGroup>
     )
 
-    const button = screen.getByRole('radio')
-    expect(button).toHaveClass('border')
-    expect(button).toHaveClass('border-input')
-    expect(button).toHaveClass('bg-transparent')
+    const item = screen.getByRole('radio')
+    expect(item).toHaveClass('border')
+    expect(item).toHaveClass('border-step-7')
+    expect(item).toHaveClass('bg-transparent')
+    expect(item).toHaveClass('hover:bg-step-4')
+    expect(item).toHaveClass('hover:text-step-12')
   })
 
   it('applies size styles correctly', () => {
     render(
-      <ToggleGroup type="single" defaultValue="a">
-        <ToggleGroupItem value="a" size="sm">
-          Option A
+      <ToggleGroup type="single">
+        <ToggleGroupItem value="item1" size="sm">
+          Item 1
         </ToggleGroupItem>
       </ToggleGroup>
     )
 
-    expect(screen.getByRole('radio')).toHaveClass('h-9')
+    const item = screen.getByRole('radio')
+    expect(item).toHaveClass('h-9')
+    expect(item).toHaveClass('px-2.5')
   })
 }) 

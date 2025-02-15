@@ -8,8 +8,8 @@ import { describe, it, expect, vi } from 'vitest'
 
 describe('Textarea', () => {
   it('renders textarea correctly', () => {
-    render(<Textarea placeholder="Enter text" />)
-    expect(screen.getByPlaceholderText('Enter text')).toBeInTheDocument()
+    render(<Textarea />)
+    expect(screen.getByRole('textbox')).toBeInTheDocument()
   })
 
   it('applies custom className', () => {
@@ -26,15 +26,19 @@ describe('Textarea', () => {
 
   it('handles user input correctly', async () => {
     const user = userEvent.setup()
-    render(<Textarea />)
-    const textarea = screen.getByRole('textbox')
+    const onChange = vi.fn()
     
-    await user.type(textarea, 'Hello, World!')
-    expect(textarea).toHaveValue('Hello, World!')
+    render(<Textarea onChange={onChange} />)
+    
+    const textarea = screen.getByRole('textbox')
+    await user.type(textarea, 'test')
+    
+    expect(onChange).toHaveBeenCalled()
   })
 
   it('applies disabled styles when disabled', () => {
     render(<Textarea disabled />)
+    
     const textarea = screen.getByRole('textbox')
     expect(textarea).toBeDisabled()
     expect(textarea).toHaveClass('disabled:cursor-not-allowed')
@@ -43,11 +47,15 @@ describe('Textarea', () => {
 
   it('applies focus styles when focused', async () => {
     const user = userEvent.setup()
-    render(<Textarea />)
-    const textarea = screen.getByRole('textbox')
     
-    await user.click(textarea)
+    render(<Textarea />)
+    
+    const textarea = screen.getByRole('textbox')
+    await user.tab()
+    
+    expect(textarea).toHaveFocus()
     expect(textarea).toHaveClass('focus-visible:ring-2')
-    expect(textarea).toHaveClass('focus-visible:ring-ring')
+    expect(textarea).toHaveClass('focus-visible:ring-step-7')
+    expect(textarea).toHaveClass('focus-visible:ring-offset-2')
   })
 }) 

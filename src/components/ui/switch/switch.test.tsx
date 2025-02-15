@@ -67,7 +67,7 @@ describe('Switch', () => {
     const thumb = screen.getByRole('switch').querySelector('[class*="pointer-events-none"]')
     expect(thumb).toBeInTheDocument()
     expect(thumb).toHaveClass('rounded-full')
-    expect(thumb).toHaveClass('bg-background')
+    expect(thumb).toHaveClass('bg-step-1')
   })
 
   it('applies correct transition styles', () => {

@@ -3,48 +3,61 @@
  * @description ボタンコンポーネントの機能をテストします
  */
 
-import { describe, it, expect, vi } from 'vitest'
+/**
+ * @jest-environment jsdom
+ */
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Button } from '.'
+import { describe, it, expect, vi } from 'vitest'
 
 describe('ボタンコンポーネント', () => {
   it('基本的なボタンが正しくレンダリングされること', () => {
-    render(<Button>テスト</Button>)
-    expect(screen.getByRole('button', { name: 'テスト' })).toBeInTheDocument()
+    render(<Button>ボタン</Button>)
+    expect(screen.getByRole('button')).toBeInTheDocument()
   })
 
   it('variantプロパティが正しく適用されること', () => {
-    render(<Button variant="secondary">セカンダリ</Button>)
-    const button = screen.getByRole('button', { name: 'セカンダリ' })
-    expect(button).toHaveClass('bg-secondary')
+    render(<Button variant="secondary">ボタン</Button>)
+    
+    const button = screen.getByRole('button')
+    expect(button).toHaveClass('bg-step-4')
+    expect(button).toHaveClass('text-step-12')
+    expect(button).toHaveClass('hover:bg-step-5')
   })
 
   it('sizeプロパティが正しく適用されること', () => {
-    render(<Button size="sm">小さい</Button>)
-    const button = screen.getByRole('button', { name: '小さい' })
-    expect(button).toHaveClass('h-9 px-3')
+    render(<Button size="sm">ボタン</Button>)
+    
+    const button = screen.getByRole('button')
+    expect(button).toHaveClass('h-9')
+    expect(button).toHaveClass('px-3')
   })
 
   it('disabledプロパティが正しく適用されること', () => {
-    render(<Button disabled>無効</Button>)
-    const button = screen.getByRole('button', { name: '無効' })
+    render(<Button disabled>ボタン</Button>)
+    
+    const button = screen.getByRole('button')
     expect(button).toBeDisabled()
-    expect(button).toHaveClass('disabled:pointer-events-none disabled:opacity-50')
+    expect(button).toHaveClass('disabled:pointer-events-none')
+    expect(button).toHaveClass('disabled:opacity-50')
   })
 
   it('カスタムクラス名が正しく適用されること', () => {
-    render(<Button className="custom-class">カスタム</Button>)
-    const button = screen.getByRole('button', { name: 'カスタム' })
-    expect(button).toHaveClass('custom-class')
+    const customClass = 'custom-class'
+    render(<Button className={customClass}>ボタン</Button>)
+    expect(screen.getByRole('button')).toHaveClass(customClass)
   })
 
   it('クリックイベントが正しく発火すること', async () => {
     const user = userEvent.setup()
-    const handleClick = vi.fn()
-    render(<Button onClick={handleClick}>クリック</Button>)
+    const onClick = vi.fn()
     
-    await user.click(screen.getByRole('button', { name: 'クリック' }))
-    expect(handleClick).toHaveBeenCalledTimes(1)
+    render(<Button onClick={onClick}>ボタン</Button>)
+    
+    const button = screen.getByRole('button')
+    await user.click(button)
+    
+    expect(onClick).toHaveBeenCalled()
   })
 }) 

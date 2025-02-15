@@ -133,8 +133,8 @@ describe('Toaster', () => {
     
     await waitFor(() => {
       const actionButton = screen.getByText('Action')
-      expect(actionButton).toHaveClass('group-[.toast]:bg-primary')
-      expect(actionButton).toHaveClass('group-[.toast]:text-primary-foreground')
+      expect(actionButton).toHaveClass('group-[.toast]:bg-step-9')
+      expect(actionButton).toHaveClass('group-[.toast]:text-step-1')
     })
   })
 }) 

@@ -41,7 +41,7 @@ describe('Separator', () => {
     render(<Separator decorative={false} />)
     const separator = screen.getByRole('separator')
     expect(separator).toHaveClass('shrink-0')
-    expect(separator).toHaveClass('bg-border')
+    expect(separator).toHaveClass('bg-step-6')
   })
 
   it('handles orientation change correctly', () => {

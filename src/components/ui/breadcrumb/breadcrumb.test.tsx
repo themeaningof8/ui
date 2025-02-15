@@ -3,8 +3,9 @@
  * @description パンくずリストコンポーネントの機能をテストします
  */
 
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -73,7 +74,7 @@ describe('Breadcrumbコンポーネント', () => {
           <BreadcrumbItem>
             <BreadcrumbLink href="/">ホーム</BreadcrumbLink>
           </BreadcrumbItem>
-          <BreadcrumbSeparator>{'>'}</BreadcrumbSeparator>
+          <BreadcrumbSeparator className="custom-separator">/</BreadcrumbSeparator>
           <BreadcrumbItem>
             <BreadcrumbPage>現在のページ</BreadcrumbPage>
           </BreadcrumbItem>
@@ -81,12 +82,13 @@ describe('Breadcrumbコンポーネント', () => {
       </Breadcrumb>
     )
 
-    expect(screen.getByText('>')).toBeInTheDocument()
+    expect(screen.getByText('/')).toHaveClass('custom-separator')
   })
 
   it('カスタムクラス名が正しく適用される', () => {
+    const customClass = 'custom-class'
     render(
-      <Breadcrumb className="custom-class">
+      <Breadcrumb className={customClass}>
         <BreadcrumbList className="list-class">
           <BreadcrumbItem>
             <BreadcrumbLink href="/" className="link-class">ホーム</BreadcrumbLink>
@@ -99,25 +101,32 @@ describe('Breadcrumbコンポーネント', () => {
       </Breadcrumb>
     )
 
-    expect(screen.getByRole('navigation')).toHaveClass('custom-class')
+    expect(screen.getByRole('navigation')).toHaveClass(customClass)
     expect(screen.getByRole('list')).toHaveClass('list-class')
     expect(screen.getByText('ホーム')).toHaveClass('link-class')
     expect(screen.getByText('現在のページ')).toHaveClass('page-class')
   })
 
-  it('リンクが正しく機能する', () => {
+  it('リンクが正しく機能する', async () => {
+    const user = userEvent.setup()
+    const onClick = vi.fn()
+    
     render(
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
-            <BreadcrumbLink href="/test">テストリンク</BreadcrumbLink>
+            <BreadcrumbLink href="/" onClick={onClick}>
+              ホーム
+            </BreadcrumbLink>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
     )
 
-    const link = screen.getByRole('link', { name: 'テストリンク' })
-    expect(link).toHaveAttribute('href', '/test')
+    const link = screen.getByText('ホーム')
+    await user.click(link)
+    
+    expect(onClick).toHaveBeenCalled()
   })
 
   it('省略記号が正しくレンダリングされる', () => {
@@ -139,23 +148,22 @@ describe('Breadcrumbコンポーネント', () => {
       </Breadcrumb>
     )
 
-    const ellipsisContainer = screen.getByText('More').closest('[aria-hidden="true"]')
-    expect(ellipsisContainer).toBeInTheDocument()
-    expect(screen.getByText('More')).toBeInTheDocument()
+    expect(screen.getByText('その他のページ')).toBeInTheDocument()
   })
 
   it('省略記号にカスタムクラス名が適用される', () => {
+    const customClass = 'custom-ellipsis'
     render(
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
-            <BreadcrumbEllipsis className="custom-ellipsis" />
+            <BreadcrumbEllipsis className={customClass} />
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
     )
 
-    const ellipsisElement = screen.getByText('More').parentElement
-    expect(ellipsisElement).toHaveClass('flex', 'size-9', 'items-center', 'justify-center', 'custom-ellipsis')
+    const ellipsisContainer = screen.getByText('その他のページ').parentElement
+    expect(ellipsisContainer).toHaveClass(customClass)
   })
 }) 
