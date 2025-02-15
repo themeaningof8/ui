@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { ScrollArea } from '.'
+import { Separator } from '@/components/ui/separator';
 import React from 'react';
 
 /**
@@ -28,10 +29,14 @@ export const Vertical: Story = {
     return (
       <ScrollArea className="h-[200px] w-[350px] rounded-md border p-4">
         <div className="space-y-4">
+          <h4 className="mb-4 text-sm font-medium leading-none">Tags</h4>
           {Array.from({ length: 20 }).map((_) => (
-            <div key={`${id}-${counter++}`} className="text-sm">
-              Item {counter}
-            </div>
+            <React.Fragment key={`${id}-${counter++}`}>
+              <div className="text-sm">
+                Item {counter}
+              </div>
+              <Separator className='my-2' />
+            </React.Fragment>
           ))}
         </div>
       </ScrollArea>
@@ -129,7 +134,7 @@ export const CustomStyle: Story = {
     <ScrollArea className="h-[200px] w-[350px] rounded-md border bg-muted p-4">
       <div className="space-y-4">
         {Array.from({ length: 20 }).map(() => (
-          <div key={`${id}-${counter++}`} className="text-sm text-muted-foreground">
+          <div key={`${id}-${counter++}`} className="text-sm text-step-11">
             Item {counter}
           </div>
         ))}
@@ -192,7 +197,6 @@ export const VerticalWithScrollBar: Story = {
             </div>
           ))}
         </div>
-        <ScrollBar orientation="vertical" />
       </ScrollArea>
     );
   },

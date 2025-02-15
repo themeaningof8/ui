@@ -4,7 +4,7 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react'
-import { InputOTPGroup, InputOTPSlot, InputOTPSeparator } from '.'
+import { InputOTP, InputOTPGroup, InputOTPSlot, InputOTPSeparator } from '.'
 
 const meta = {
   title: 'UI/InputOTP',
@@ -23,15 +23,16 @@ type Story = StoryObj<typeof meta>
  */
 export const Default: Story = {
   render: () => (
-    <InputOTPGroup>
-      <InputOTPSlot />
-      <InputOTPSeparator />
-      <InputOTPSlot />
-      <InputOTPSeparator />
-      <InputOTPSlot />
-      <InputOTPSeparator />
-      <InputOTPSlot />
-    </InputOTPGroup>
+    <InputOTP maxLength={6}>
+      <InputOTPGroup>
+        <InputOTPSlot index={0} />
+        <InputOTPSlot index={1} />
+        <InputOTPSlot index={2} />
+        <InputOTPSlot index={3} />
+        <InputOTPSlot index={4} />
+        <InputOTPSlot index={5} />
+      </InputOTPGroup>
+    </InputOTP>
   ),
 }
 
@@ -40,36 +41,19 @@ export const Default: Story = {
  */
 export const SixDigits: Story = {
   render: () => (
-    <InputOTPGroup>
-      <InputOTPSlot />
+    <InputOTP maxLength={6}>
+      <InputOTPGroup>
+        <InputOTPSlot index={0} />
+        <InputOTPSlot index={1} />
+        <InputOTPSlot index={2} />
+      </InputOTPGroup>
       <InputOTPSeparator />
-      <InputOTPSlot />
-      <InputOTPSeparator />
-      <InputOTPSlot />
-      <InputOTPSeparator />
-      <InputOTPSlot />
-      <InputOTPSeparator />
-      <InputOTPSlot />
-      <InputOTPSeparator />
-      <InputOTPSlot />
-    </InputOTPGroup>
-  ),
-}
-
-/**
- * カスタムスタイルを適用したOTPインプットの使用例
- */
-export const CustomStyle: Story = {
-  render: () => (
-    <InputOTPGroup className="gap-4">
-      <InputOTPSlot className="h-12 w-12 rounded-xl border-2" />
-      <InputOTPSeparator className="text-muted-foreground" />
-      <InputOTPSlot className="h-12 w-12 rounded-xl border-2" />
-      <InputOTPSeparator className="text-muted-foreground" />
-      <InputOTPSlot className="h-12 w-12 rounded-xl border-2" />
-      <InputOTPSeparator className="text-muted-foreground" />
-      <InputOTPSlot className="h-12 w-12 rounded-xl border-2" />
-    </InputOTPGroup>
+      <InputOTPGroup>
+        <InputOTPSlot index={3} />
+        <InputOTPSlot index={4} />
+        <InputOTPSlot index={5} />
+      </InputOTPGroup>
+    </InputOTP>
   ),
 }
 
@@ -78,14 +62,15 @@ export const CustomStyle: Story = {
  */
 export const Disabled: Story = {
   render: () => (
-    <InputOTPGroup>
-      <InputOTPSlot disabled />
-      <InputOTPSeparator />
-      <InputOTPSlot disabled />
-      <InputOTPSeparator />
-      <InputOTPSlot disabled />
-      <InputOTPSeparator />
-      <InputOTPSlot disabled />
-    </InputOTPGroup>
+    <InputOTP maxLength={6} disabled>
+      <InputOTPGroup>
+        <InputOTPSlot index={0} />
+        <InputOTPSlot index={1} />
+        <InputOTPSlot index={2} />
+        <InputOTPSlot index={3} />
+        <InputOTPSlot index={4} />
+        <InputOTPSlot index={5} />
+      </InputOTPGroup>
+    </InputOTP>
   ),
 } 

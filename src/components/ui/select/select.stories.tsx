@@ -90,7 +90,7 @@ export const WithLabel: Story = {
           <SelectItem value="orange">Orange</SelectItem>
         </SelectContent>
       </Select>
-      <p className="text-sm text-muted-foreground">
+      <p className="text-xs text-step-11">
         Select your favorite food.
       </p>
     </div>
@@ -156,7 +156,7 @@ export const CustomStyle: Story = {
           Dark
         </SelectItem>
         <SelectSeparator />
-        <SelectItem value="system" className="text-muted-foreground">
+        <SelectItem value="system" className="text-step-11">
           System
         </SelectItem>
       </SelectContent>

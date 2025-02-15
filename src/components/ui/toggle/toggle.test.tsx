@@ -74,10 +74,10 @@ describe('Toggle', () => {
     const button = screen.getByRole('button')
     const expectedClasses = [
       'border',
-      'border-input',
+      'border-step-7',
       'bg-transparent',
-      'hover:bg-accent',
-      'hover:text-accent-foreground'
+      'hover:bg-step-5',
+      'hover:text-step-12',
     ]
     for (const className of expectedClasses) {
       expect(button).toHaveClass(className)
@@ -101,10 +101,10 @@ describe('Toggle', () => {
     const button = screen.getByRole('button')
     const expectedClasses = [
       'border',
-      'border-input',
+      'border-step-7',
       'bg-transparent',
-      'hover:bg-accent',
-      'hover:text-accent-foreground',
+      'hover:bg-step-5',
+      'hover:text-step-12',
       'h-9',
       'px-2.5',
       'min-w-9'

@@ -24,7 +24,7 @@ import { cn } from "@/lib/utils"
  * ```
  */
 const ScrollArea = React.forwardRef<
-  React.ElementRef<typeof ScrollAreaPrimitive.Root>,
+  React.ComponentRef<typeof ScrollAreaPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof ScrollAreaPrimitive.Root> & {
     onScroll?: (event: React.UIEvent<HTMLDivElement>) => void
   }
@@ -47,15 +47,15 @@ const ScrollArea = React.forwardRef<
       className={cn(
         "flex touch-none select-none transition-colors",
         "w-2.5 p-[1px]",
-        "hover:bg-accent hover:bg-opacity-10"
+        "hover:bg-step-5 hover:bg-opacity-10"
       )}
       data-testid="scroll-area-scrollbar-vertical"
     >
       <ScrollAreaPrimitive.ScrollAreaThumb
         className={cn(
-          "relative flex-1 rounded-full bg-border",
-          "hover:bg-accent-foreground",
-          "active:bg-accent-foreground/90"
+          "relative flex-1 rounded-full bg-step-6",
+          "hover:bg-step-12",
+          "active:bg-step-12/90"
         )}
         data-testid="scroll-area-thumb-vertical"
       />
@@ -65,15 +65,15 @@ const ScrollArea = React.forwardRef<
       className={cn(
         "flex touch-none select-none transition-colors",
         "h-2.5 p-[1px]",
-        "hover:bg-accent hover:bg-opacity-10"
+        "hover:bg-step-5 hover:bg-opacity-10"
       )}
       data-testid="scroll-area-scrollbar-horizontal"
     >
       <ScrollAreaPrimitive.ScrollAreaThumb
         className={cn(
           "relative flex-1 rounded-full bg-border",
-          "hover:bg-accent-foreground",
-          "active:bg-accent-foreground/90"
+          "hover:bg-step-12",
+          "active:bg-step-12/90"
         )}
         data-testid="scroll-area-thumb-horizontal"
       />

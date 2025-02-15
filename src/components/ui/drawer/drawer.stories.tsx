@@ -120,13 +120,13 @@ export const CustomSize: Story = {
         <div className="p-4 grid grid-cols-2 gap-4">
           <div className="space-y-2">
             <h3 className="font-medium">セクション1</h3>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-step-11">
               左側のコンテンツエリアです。
             </p>
           </div>
           <div className="space-y-2">
             <h3 className="font-medium">セクション2</h3>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text--step-11">
               右側のコンテンツエリアです。
             </p>
           </div>

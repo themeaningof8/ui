@@ -3,6 +3,27 @@
 import { cn } from "@/lib/utils"
 
 /**
+ * @file スケルトンコンポーネント
+ * @description コンテンツのローディング状態を表示するためのコンポーネント
+ * 
+ * @example
+ * ```tsx
+ * // アバター用のスケルトン
+ * <Skeleton className="h-12 w-12 rounded-full" />
+ * 
+ * // テキスト用のスケルトン
+ * <Skeleton className="h-4 w-[250px]" />
+ * 
+ * // カード用のスケルトン
+ * <div className="space-y-3">
+ *   <Skeleton className="h-[180px] w-full rounded-lg" />
+ *   <Skeleton className="h-4 w-[250px]" />
+ *   <Skeleton className="h-4 w-[200px]" />
+ * </div>
+ * ```
+ */
+
+/**
  * スケルトンコンポーネントです。
  * コンテンツのローディング状態を表示するために使用します。
  * 
@@ -10,12 +31,6 @@ import { cn } from "@/lib/utils"
  * @param {object} props - コンポーネントのプロパティ
  * @param {string} [props.className] - 追加のCSSクラス名
  * @param {React.ReactNode} props.children - 子要素
- * 
- * @example
- * ```tsx
- * <Skeleton className="h-12 w-12 rounded-full" />
- * <Skeleton className="h-4 w-[250px]" />
- * ```
  */
 function Skeleton({
   className,
@@ -23,7 +38,11 @@ function Skeleton({
 }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn("animate-pulse rounded-md bg-muted", className)}
+      className={cn(
+        "animate-pulse rounded-md",
+        "bg-step-3",
+        className
+      )}
       {...props}
     />
   )

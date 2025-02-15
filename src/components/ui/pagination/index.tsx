@@ -1,3 +1,28 @@
+/**
+ * @file ページネーションコンポーネント
+ * @description ページ分割されたコンテンツのナビゲーションを提供するコンポーネント
+ * 
+ * @example
+ * ```tsx
+ * <Pagination>
+ *   <PaginationContent>
+ *     <PaginationItem>
+ *       <PaginationPrevious href="#" />
+ *     </PaginationItem>
+ *     <PaginationItem>
+ *       <PaginationLink href="#" isActive>1</PaginationLink>
+ *     </PaginationItem>
+ *     <PaginationItem>
+ *       <PaginationLink href="#">2</PaginationLink>
+ *     </PaginationItem>
+ *     <PaginationItem>
+ *       <PaginationNext href="#" />
+ *     </PaginationItem>
+ *   </PaginationContent>
+ * </Pagination>
+ * ```
+ */
+
 import * as React from "react";
 import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react";
 
@@ -96,7 +121,15 @@ const PaginationLink = ({
 				variant: isActive ? "outline" : "ghost",
 				size,
 			}),
-			className,
+			"text-step-12",
+			"hover:bg-step-4 hover:text-step-12",
+			"focus-visible:ring-step-7",
+			"disabled:text-step-11",
+			isActive && [
+				"border-step-7 bg-step-2",
+				"hover:bg-step-4 hover:text-step-12",
+			],
+			className
 		)}
 		{...props}
 	/>
@@ -116,13 +149,13 @@ const PaginationPrevious = ({
 	...props
 }: React.ComponentProps<typeof PaginationLink>) => (
 	<PaginationLink
-		aria-label="Go to previous page"
-		className={cn("gap-1 pl-2.5", className)}
+		aria-label="前のページへ"
 		size={size}
+		className={cn("gap-1 pl-2.5", className)}
 		{...props}
 	>
-		<ChevronLeft className="h-4 w-4" />
-		<span>Previous</span>
+		<ChevronLeft className="size-4" />
+		<span>前へ</span>
 	</PaginationLink>
 );
 PaginationPrevious.displayName = "PaginationPrevious";
@@ -140,13 +173,13 @@ const PaginationNext = ({
 	...props
 }: React.ComponentProps<typeof PaginationLink>) => (
 	<PaginationLink
-		aria-label="Go to next page"
-		className={cn("gap-1 pr-2.5", className)}
+		aria-label="次のページへ"
 		size={size}
+		className={cn("gap-1 pr-2.5", className)}
 		{...props}
 	>
-		<span>Next</span>
-		<ChevronRight className="h-4 w-4" />
+		<span>次へ</span>
+		<ChevronRight className="size-4" />
 	</PaginationLink>
 );
 PaginationNext.displayName = "PaginationNext";
@@ -165,11 +198,15 @@ const PaginationEllipsis = ({
 }: React.ComponentProps<"span">) => (
 	<span
 		aria-hidden
-		className={cn("flex h-9 w-9 items-center justify-center", className)}
+		className={cn(
+			"flex h-9 w-9 items-center justify-center",
+			"text-step-11",
+			className
+		)}
 		{...props}
 	>
-		<MoreHorizontal className="h-4 w-4" data-testid="ellipsis-icon" />
-		<span className="sr-only">More pages</span>
+		<MoreHorizontal className="size-4" data-testid="ellipsis-icon" />
+		<span className="sr-only">その他のページ</span>
 	</span>
 );
 PaginationEllipsis.displayName = "PaginationEllipsis";

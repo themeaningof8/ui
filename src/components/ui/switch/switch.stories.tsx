@@ -75,7 +75,7 @@ export const WithForm: Story = {
     <div className="grid w-full max-w-sm items-center gap-1.5">
       <Label htmlFor="notifications">Enable notifications</Label>
       <Switch id="notifications" />
-      <p className="text-sm text-muted-foreground">
+      <p className="text-sm text-step-11">
         Receive notifications about important updates.
       </p>
     </div>
@@ -106,7 +106,7 @@ export const MultipleSettings: Story = {
       <div className="flex items-center justify-between">
         <div className="space-y-0.5">
           <Label htmlFor="notifications">Notifications</Label>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-step-11">
             Receive notifications about your account.
           </p>
         </div>
@@ -115,7 +115,7 @@ export const MultipleSettings: Story = {
       <div className="flex items-center justify-between">
         <div className="space-y-0.5">
           <Label htmlFor="email">Email updates</Label>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-step-11">
             Receive emails about your activity.
           </p>
         </div>
@@ -124,7 +124,7 @@ export const MultipleSettings: Story = {
       <div className="flex items-center justify-between">
         <div className="space-y-0.5">
           <Label htmlFor="marketing">Marketing emails</Label>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-step-11">
             Receive emails about new products and features.
           </p>
         </div>

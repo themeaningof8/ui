@@ -8,10 +8,7 @@ import { Input } from '.'
 
 const meta = {
   title: 'UI/Input',
-  component: Input,
-  parameters: {
-    layout: 'centered',
-  },
+  component: Input, 
   tags: ['autodocs'],
 } satisfies Meta<typeof Input>
 

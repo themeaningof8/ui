@@ -22,12 +22,7 @@ type Story = StoryObj<typeof meta>
 /**
  * 基本的なカレンダーの使用例
  */
-export const Default: Story = {
-  args: {
-    mode: 'single',
-    className: 'rounded-md border',
-  },
-}
+export const Default: Story = {}
 
 /**
  * 選択済みの日付がある場合の使用例
@@ -93,15 +88,15 @@ export const CustomStyle: Story = {
       nav_button_next: 'absolute right-1',
       table: 'w-full border-collapse space-y-1',
       head_row: 'flex',
-      head_cell: 'text-muted-foreground rounded-md w-9 font-normal text-[0.8rem]',
+      head_cell: 'text-step-11 rounded-md w-9 font-normal text-[0.8rem]',
       row: 'flex w-full mt-2',
       cell: 'text-center text-sm p-0 relative [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20',
       day: 'h-9 w-9 p-0 font-normal aria-selected:opacity-100',
-      day_selected: 'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground',
-      day_today: 'bg-accent text-accent-foreground',
-      day_outside: 'text-muted-foreground opacity-50',
-      day_disabled: 'text-muted-foreground opacity-50',
-      day_range_middle: 'aria-selected:bg-accent aria-selected:text-accent-foreground',
+      day_selected: 'bg-step-9 text-step-1 hover:bg-step-10 focus:bg-step-10 focus:text-step-1',
+      day_today: 'bg-step-5 text-step-12',
+      day_outside: 'text-step-11 opacity-50',
+      day_disabled: 'text-step-11 opacity-50',
+      day_range_middle: 'aria-selected:bg-step-5 aria-selected:text-step-12',
       day_hidden: 'invisible',
     },
   },

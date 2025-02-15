@@ -70,8 +70,8 @@ describe('InputOTPコンポーネント', () => {
     render(
       <InputOTP maxLength={2} value="" onChange={() => {}} disabled>
         <InputOTPGroup>
-          <InputOTPSlot index={0} disabled />
-          <InputOTPSlot index={1} disabled />
+          <InputOTPSlot index={0} />
+          <InputOTPSlot index={1} />
         </InputOTPGroup>
       </InputOTP>
     )

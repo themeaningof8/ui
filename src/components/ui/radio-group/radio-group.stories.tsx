@@ -63,14 +63,14 @@ export const WithDisabledItems: Story = {
  */
 export const CustomStyle: Story = {
   render: () => (
-    <RadioGroup defaultValue="option1" className="bg-muted p-4 rounded-lg">
+    <RadioGroup defaultValue="option1" className="bg-step-3 p-4 rounded-lg">
       <div className="space-y-4">
         <div className="flex items-center space-x-2">
-          <RadioGroupItem value="option1" id="cs1" className="border-primary" />
+          <RadioGroupItem value="option1" id="cs1" className="border-step-7" />
           <Label htmlFor="cs1" className="font-medium">Professional</Label>
         </div>
         <div className="flex items-center space-x-2">
-          <RadioGroupItem value="option2" id="cs2" className="border-primary" />
+          <RadioGroupItem value="option2" id="cs2" className="border-step-7" />
           <Label htmlFor="cs2" className="font-medium">Enterprise</Label>
         </div>
       </div>
@@ -90,7 +90,7 @@ export const InForm: Story = {
           <div className="flex items-center justify-between rounded-lg border p-4">
             <div className="space-y-0.5">
               <Label htmlFor="monthly">Monthly</Label>
-              <div className="text-sm text-muted-foreground">
+              <div className="text-sm text-step-12">
                 $9/month
               </div>
             </div>
@@ -99,7 +99,7 @@ export const InForm: Story = {
           <div className="flex items-center justify-between rounded-lg border p-4">
             <div className="space-y-0.5">
               <Label htmlFor="yearly">Yearly</Label>
-              <div className="text-sm text-muted-foreground">
+              <div className="text-sm text-step-11">
                 $89/year (Save 20%)
               </div>
             </div>
@@ -110,69 +110,3 @@ export const InForm: Story = {
     </form>
   ),
 }
-
-/**
- * カード形式の選択肢を持つ例です。
- */
-export const CardStyle: Story = {
-  render: () => (
-    <RadioGroup defaultValue="card1" className="grid grid-cols-2 gap-4">
-      <div>
-        <RadioGroupItem
-          value="card1"
-          id="card1"
-          className="peer sr-only"
-        />
-        <Label
-          htmlFor="card1"
-          className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="mb-3 h-6 w-6"
-            aria-hidden="true"
-            focusable="false"
-          >
-            <rect width="20" height="14" x="2" y="5" rx="2" />
-            <path d="M2 10h20" />
-          </svg>
-          Card
-        </Label>
-      </div>
-      <div>
-        <RadioGroupItem
-          value="card2"
-          id="card2"
-          className="peer sr-only"
-        />
-        <Label
-          htmlFor="card2"
-          className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="mb-3 h-6 w-6"
-            aria-hidden="true"
-            focusable="false"
-          >
-            <path d="M2 9V5c0-1.1.9-2 2-2h3.93a2 2 0 0 1 1.66.9l.82 1.2a2 2 0 0 0 1.66.9H20a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-1" />
-            <path d="M2 13h10" />
-          </svg>
-          Folder
-        </Label>
-      </div>
-    </RadioGroup>
-  ),
-} 

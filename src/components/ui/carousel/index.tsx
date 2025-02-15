@@ -226,7 +226,7 @@ const CarouselPrevious = React.forwardRef<
       variant={variant}
       size={size}
       className={cn(
-        "absolute h-8 w-8 rounded-full",
+        "absolute size-8 rounded-full",
         "left-2 top-1/2 -translate-y-1/2",
         className
       )}
@@ -258,7 +258,7 @@ const CarouselNext = React.forwardRef<
       variant={variant}
       size={size}
       className={cn(
-        "absolute h-8 w-8 rounded-full",
+        "absolute size-8 rounded-full",
         "right-2 top-1/2 -translate-y-1/2",
         className
       )}
@@ -267,7 +267,7 @@ const CarouselNext = React.forwardRef<
       aria-label="次のスライド"
       {...props}
     >
-      <ArrowRight className="h-4 w-4" />
+      <ArrowRight className="size-4" />
     </Button>
   )
 })

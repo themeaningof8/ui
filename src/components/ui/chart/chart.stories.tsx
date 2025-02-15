@@ -12,15 +12,34 @@ import {
   ChartLegendContent,
   ChartStyle,
 } from '.'
+import {
+  LineChart,
+  Line,
+  BarChart,
+  Bar,
+  PieChart,
+  Pie,
+  RadarChart,
+  Radar,
+  PolarGrid,
+  PolarAngleAxis,
+  PolarRadiusAxis,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from 'recharts'
 
 const meta = {
   title: 'UI/Chart',
-  component: Chart,
+  component: ChartContainer,
   parameters: {
     layout: 'centered',
   },
   tags: ['autodocs'],
-} satisfies Meta<typeof Chart>
+} satisfies Meta<typeof ChartContainer>
 
 export default meta
 type Story = StoryObj<typeof meta>
@@ -28,128 +47,185 @@ type Story = StoryObj<typeof meta>
 /**
  * 折れ線グラフの使用例
  */
-export const LineChart: Story = {
+export const LineChartExample: Story = {
   args: {
-    type: 'line',
-    data: {
-      labels: ['1月', '2月', '3月', '4月', '5月', '6月'],
-      datasets: [
-        {
-          label: '売上高',
-          data: [65, 59, 80, 81, 56, 55],
-          borderColor: 'rgb(75, 192, 192)',
-          tension: 0.1,
-        },
-      ],
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        title: {
-          display: true,
-          text: '月次売上推移',
-        },
+    config: {
+      value: {
+        label: '売上高',
+        color: '#8884d8',
       },
     },
+  },
+  render: (args) => {
+    const data = [
+      { name: '1月', value: 65 },
+      { name: '2月', value: 59 },
+      { name: '3月', value: 80 },
+      { name: '4月', value: 81 },
+      { name: '5月', value: 56 },
+      { name: '6月', value: 55 },
+    ]
+
+    return (
+      <div style={{ width: '600px', height: '400px' }}>
+        <ChartContainer {...args}>
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={data}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip content={<ChartTooltipContent />} />
+              <Legend content={<ChartLegendContent />} />
+              <Line type="monotone" dataKey="value" stroke="#8884d8" />
+            </LineChart>
+          </ResponsiveContainer>
+        </ChartContainer>
+      </div>
+    )
   },
 }
 
 /**
  * 棒グラフの使用例
  */
-export const BarChart: Story = {
+export const BarChartExample: Story = {
   args: {
-    type: 'bar',
-    data: {
-      labels: ['月曜', '火曜', '水曜', '木曜', '金曜'],
-      datasets: [
-        {
-          label: '来客数',
-          data: [12, 19, 3, 5, 2],
-          backgroundColor: 'rgba(53, 162, 235, 0.5)',
-        },
-      ],
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: {
-          position: 'top' as const,
-        },
-        title: {
-          display: true,
-          text: '曜日別来客数',
-        },
+    config: {
+      value: {
+        label: '来客数',
+        color: '#82ca9d',
       },
     },
+  },
+  render: (args) => {
+    const data = [
+      { name: '月曜', value: 12 },
+      { name: '火曜', value: 19 },
+      { name: '水曜', value: 3 },
+      { name: '木曜', value: 5 },
+      { name: '金曜', value: 2 },
+    ]
+
+    return (
+      <div style={{ width: '600px', height: '400px' }}>
+        <ChartContainer {...args}>
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={data}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip content={<ChartTooltipContent />} />
+              <Legend content={<ChartLegendContent />} />
+              <Bar dataKey="value" fill="#82ca9d" />
+            </BarChart>
+          </ResponsiveContainer>
+        </ChartContainer>
+      </div>
+    )
   },
 }
 
 /**
  * 円グラフの使用例
  */
-export const PieChart: Story = {
+export const PieChartExample: Story = {
   args: {
-    type: 'pie',
-    data: {
-      labels: ['赤', '青', '黄'],
-      datasets: [
-        {
-          data: [300, 50, 100],
-          backgroundColor: [
-            'rgb(255, 99, 132)',
-            'rgb(54, 162, 235)',
-            'rgb(255, 205, 86)',
-          ],
-        },
-      ],
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: {
-          position: 'top' as const,
-        },
-        title: {
-          display: true,
-          text: '色の割合',
+    config: {
+      value: {
+        label: '色の割合',
+        theme: {
+          light: '#8884d8',
+          dark: '#82ca9d',
         },
       },
     },
+  },
+  render: (args) => {
+    const data = [
+      { name: '赤', value: 300 },
+      { name: '青', value: 50 },
+      { name: '黄', value: 100 },
+    ]
+
+    return (
+      <div style={{ width: '600px', height: '400px' }}>
+        <ChartContainer {...args}>
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie
+                data={data}
+                dataKey="value"
+                nameKey="name"
+                cx="50%"
+                cy="50%"
+                outerRadius={150}
+                fill="#8884d8"
+              />
+              <Tooltip content={<ChartTooltipContent />} />
+              <Legend content={<ChartLegendContent />} />
+            </PieChart>
+          </ResponsiveContainer>
+        </ChartContainer>
+      </div>
+    )
   },
 }
 
 /**
  * レーダーチャートの使用例
  */
-export const RadarChart: Story = {
+export const RadarChartExample: Story = {
   args: {
-    type: 'radar',
-    data: {
-      labels: ['攻撃', '防御', '速度', '体力', '技術', '戦略'],
-      datasets: [
-        {
-          label: 'プレイヤー1',
-          data: [65, 59, 90, 81, 56, 55],
-          fill: true,
-          backgroundColor: 'rgba(255, 99, 132, 0.2)',
-          borderColor: 'rgb(255, 99, 132)',
-          pointBackgroundColor: 'rgb(255, 99, 132)',
-          pointBorderColor: '#fff',
-          pointHoverBackgroundColor: '#fff',
-          pointHoverBorderColor: 'rgb(255, 99, 132)',
-        },
-      ],
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        title: {
-          display: true,
-          text: 'ステータス分布',
-        },
+    config: {
+      A: {
+        label: 'プレイヤーA',
+        color: '#8884d8',
+      },
+      B: {
+        label: 'プレイヤーB',
+        color: '#82ca9d',
       },
     },
+  },
+  render: (args) => {
+    const data = [
+      { subject: '攻撃', A: 120, B: 110, fullMark: 150 },
+      { subject: '防御', A: 98, B: 130, fullMark: 150 },
+      { subject: '速度', A: 86, B: 130, fullMark: 150 },
+      { subject: '体力', A: 99, B: 100, fullMark: 150 },
+      { subject: '技術', A: 85, B: 90, fullMark: 150 },
+      { subject: '戦略', A: 65, B: 85, fullMark: 150 },
+    ]
+
+    return (
+      <div style={{ width: '600px', height: '400px' }}>
+        <ChartContainer {...args}>
+          <ResponsiveContainer width="100%" height="100%">
+            <RadarChart cx="50%" cy="50%" outerRadius="80%" data={data}>
+              <PolarGrid />
+              <PolarAngleAxis dataKey="subject" />
+              <PolarRadiusAxis />
+              <Radar
+                name="プレイヤーA"
+                dataKey="A"
+                stroke="#8884d8"
+                fill="#8884d8"
+                fillOpacity={0.6}
+              />
+              <Radar
+                name="プレイヤーB"
+                dataKey="B"
+                stroke="#82ca9d"
+                fill="#82ca9d"
+                fillOpacity={0.6}
+              />
+              <Tooltip content={<ChartTooltipContent />} />
+              <Legend content={<ChartLegendContent />} />
+            </RadarChart>
+          </ResponsiveContainer>
+        </ChartContainer>
+      </div>
+    )
   },
 }
 
@@ -158,32 +234,43 @@ export const RadarChart: Story = {
  */
 export const MultipleDatasets: Story = {
   args: {
-    type: 'line',
-    data: {
-      labels: ['1月', '2月', '3月', '4月', '5月', '6月'],
-      datasets: [
-        {
-          label: '今年',
-          data: [65, 59, 80, 81, 56, 55],
-          borderColor: 'rgb(75, 192, 192)',
-          tension: 0.1,
-        },
-        {
-          label: '昨年',
-          data: [28, 48, 40, 19, 86, 27],
-          borderColor: 'rgb(255, 99, 132)',
-          tension: 0.1,
-        },
-      ],
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        title: {
-          display: true,
-          text: '年間比較',
-        },
+    config: {
+      今年: {
+        label: '今年の売上',
+        color: '#8884d8',
+      },
+      昨年: {
+        label: '昨年の売上',
+        color: '#82ca9d',
       },
     },
+  },
+  render: (args) => {
+    const data = [
+      { name: '1月', 今年: 65, 昨年: 28 },
+      { name: '2月', 今年: 59, 昨年: 48 },
+      { name: '3月', 今年: 80, 昨年: 40 },
+      { name: '4月', 今年: 81, 昨年: 19 },
+      { name: '5月', 今年: 56, 昨年: 86 },
+      { name: '6月', 今年: 55, 昨年: 27 },
+    ]
+
+    return (
+      <div style={{ width: '600px', height: '400px' }}>
+        <ChartContainer {...args}>
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={data}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip content={<ChartTooltipContent />} />
+              <Legend content={<ChartLegendContent />} />
+              <Line type="monotone" dataKey="今年" stroke="#8884d8" />
+              <Line type="monotone" dataKey="昨年" stroke="#82ca9d" />
+            </LineChart>
+          </ResponsiveContainer>
+        </ChartContainer>
+      </div>
+    )
   },
 } 

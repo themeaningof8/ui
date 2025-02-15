@@ -5,16 +5,17 @@
 @custom-variant dark (&:is(.dark *));
 
 @plugin "tailwindcss-animate";
+@plugin "@tailwindcss/typography";
 
 * {
-	@apply border-base-subtle-border ring-base-subtle-border;
+	@apply border-step-7 ring-step-7;
 }
 
 @layer base {
 	* {
-		@apply border-base-subtle-border ring-ring;
+		@apply border-step-7 ring-step-7;
 	}
 	body {
-		@apply bg-base-app-bg text-base-high-contrast-text;
+		@apply bg-step-1 text-step-12;
 	}
 }

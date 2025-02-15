@@ -46,7 +46,7 @@ export const WithLabel: Story = {
         step={1}
         className="w-[60vw] max-w-[400px]"
       />
-      <div className="text-sm text-muted-foreground">
+      <div className="text-sm text-step-11">
         Adjust the volume level
       </div>
     </div>
@@ -67,7 +67,7 @@ export const MultipleThumb: Story = {
         step={1}
         className="w-[60vw] max-w-[400px]"
       />
-      <div className="flex justify-between text-sm text-muted-foreground">
+      <div className="flex justify-between text-sm text-step-11">
         <span>$0</span>
         <span>$100</span>
       </div>
@@ -89,7 +89,7 @@ export const WithSteps: Story = {
         step={20}
         className="w-[60vw] max-w-[400px]"
       />
-      <div className="flex justify-between text-sm text-muted-foreground">
+      <div className="flex justify-between text-sm text-step-11">
         <span>XS</span>
         <span>S</span>
         <span>M</span>
@@ -115,7 +115,7 @@ export const Disabled: Story = {
         disabled
         className="w-[60vw] max-w-[400px]"
       />
-      <div className="text-sm text-muted-foreground">
+      <div className="text-sm text-step-11">
         This slider is disabled
       </div>
     </div>
@@ -136,7 +136,7 @@ export const CustomStyle: Story = {
         step={1}
         className="w-[60vw] max-w-[400px] [&_[role=slider]]:bg-blue-500 [&_[role=slider]]:border-blue-500 [&_[class*=bg-primary]]:bg-blue-500"
       />
-      <div className="flex justify-between text-sm text-muted-foreground">
+      <div className="flex justify-between text-sm text-step-11">
         <span>Cold</span>
         <span>Hot</span>
       </div>

@@ -50,7 +50,7 @@ export const Disabled: Story = {
   render: () => (
     <div className="flex items-center space-x-2">
       <Checkbox id="terms" disabled />
-      <Label htmlFor="terms" className="text-muted-foreground">
+      <Label htmlFor="terms" className="text-step-11">
         利用規約に同意する
       </Label>
     </div>

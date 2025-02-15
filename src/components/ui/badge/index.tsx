@@ -32,17 +32,17 @@ import { cn } from "@/lib/utils";
  * @property {Object} defaultVariants - デフォルトのバリアント
  */
 const badgeVariants = cva(
-	"inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+	"inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-step-7 focus:ring-offset-2",
 	{
 		variants: {
 			variant: {
 				default:
-					"border-transparent bg-primary text-primary-foreground hover:bg-primary/80",
+					"border-transparent bg-step-9 text-step-1 hover:bg-step-10",
 				secondary:
-					"border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80",
+					"border-transparent bg-step-4 text-step-11 hover:bg-step-5",
 				destructive:
-					"border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
-				outline: "text-foreground",
+					"border-transparent bg-destructive-step-9 text-destructive-step-1 hover:bg-destructive-step-10",
+				outline: "border-step-7 text-step-11",
 			},
 		},
 		defaultVariants: {

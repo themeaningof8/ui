@@ -10,6 +10,26 @@ import { cn } from "@/lib/utils"
 /**
  * @file ナビゲーションメニューコンポーネント
  * @description ウェブサイトのナビゲーション構造を提供するコンポーネント
+ * 
+ * @example
+ * ```tsx
+ * <NavigationMenu>
+ *   <NavigationMenuList>
+ *     <NavigationMenuItem>
+ *       <NavigationMenuTrigger>はじめに</NavigationMenuTrigger>
+ *       <NavigationMenuContent>
+ *         <ul className="grid gap-3 p-4 w-[400px]">
+ *           <li>
+ *             <NavigationMenuLink href="/docs">
+ *               ドキュメント
+ *             </NavigationMenuLink>
+ *           </li>
+ *         </ul>
+ *       </NavigationMenuContent>
+ *     </NavigationMenuItem>
+ *   </NavigationMenuList>
+ * </NavigationMenu>
+ * ```
  */
 
 /**
@@ -74,7 +94,16 @@ const NavigationMenuItem = NavigationMenuPrimitive.Item
  * メニュートリガーの基本的なスタイリングを提供します。
  */
 const navigationMenuTriggerStyle = cva(
-  "group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50"
+  [
+    "group inline-flex h-10 w-max items-center justify-center rounded-md px-4 py-2",
+    "text-sm font-medium",
+    "bg-step-1 text-step-12",
+    "transition-colors duration-200",
+    "hover:bg-step-4 hover:text-step-12",
+    "focus:bg-step-4 focus:text-step-12 focus:outline-none",
+    "disabled:pointer-events-none disabled:opacity-50",
+    "data-[active]:bg-step-4/50 data-[state=open]:bg-step-4/50",
+  ]
 )
 
 /**
@@ -98,7 +127,7 @@ const NavigationMenuTrigger = React.forwardRef<
   >
     {children}{" "}
     <ChevronDown
-      className="relative top-[1px] ml-1 h-3 w-3 transition duration-200 group-data-[state=open]:rotate-180"
+      className="relative top-[1px] ml-1 size-3 text-step-11 transition duration-200 group-data-[state=open]:rotate-180"
       aria-hidden="true"
     />
   </NavigationMenuPrimitive.Trigger>
@@ -150,7 +179,14 @@ const NavigationMenuViewport = React.forwardRef<
   <div className={cn("absolute left-0 top-full flex justify-center")}>
     <NavigationMenuPrimitive.Viewport
       className={cn(
-        "origin-top-center relative mt-1.5 h-[var(--radix-navigation-menu-viewport-height)] w-full overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-lg data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-90 md:w-[var(--radix-navigation-menu-viewport-width)]",
+        "origin-top-center relative mt-1.5",
+        "h-[var(--radix-navigation-menu-viewport-height)]",
+        "w-full overflow-hidden rounded-md",
+        "border border-step-7 bg-step-1 text-step-12",
+        "shadow-lg shadow-step-7/10",
+        "data-[state=open]:animate-in data-[state=closed]:animate-out",
+        "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-90",
+        "md:w-[var(--radix-navigation-menu-viewport-width)]",
         className
       )}
       ref={ref}
@@ -177,12 +213,14 @@ const NavigationMenuIndicator = React.forwardRef<
   <NavigationMenuPrimitive.Indicator
     ref={ref}
     className={cn(
-      "top-full z-[1] flex h-1.5 items-end justify-center overflow-hidden data-[state=visible]:animate-in data-[state=hidden]:animate-out data-[state=hidden]:fade-out data-[state=visible]:fade-in",
+      "top-full z-[1] flex h-1.5 items-end justify-center overflow-hidden",
+      "data-[state=visible]:animate-in data-[state=hidden]:animate-out",
+      "data-[state=hidden]:fade-out data-[state=visible]:fade-in",
       className
     )}
     {...props}
   >
-    <div className="relative top-[60%] h-2 w-2 rotate-45 rounded-tl-sm bg-border shadow-md" />
+    <div className="relative top-[60%] h-2 w-2 rotate-45 rounded-tl-sm bg-step-7 shadow-md" />
   </NavigationMenuPrimitive.Indicator>
 ))
 NavigationMenuIndicator.displayName =

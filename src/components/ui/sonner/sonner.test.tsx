@@ -112,8 +112,8 @@ describe('Toaster', () => {
 
     await waitFor(() => {
       const toastElement = screen.getByRole('listitem')
-      expect(toastElement).toHaveClass('group-[.toaster]:bg-background')
-      expect(toastElement).toHaveClass('group-[.toaster]:text-foreground')
+      expect(toastElement).toHaveClass('group-[.toaster]:bg-step-2')
+      expect(toastElement).toHaveClass('group-[.toaster]:text-step-12')
     })
   })
 

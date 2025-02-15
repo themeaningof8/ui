@@ -24,7 +24,7 @@
  * - **デストラクティブカラー**: 削除やエラーなど、注意を引く必要がある場合に使用。
  *
  * コントラストに関する注意:
- * - ステップ6の背景色とステップ11のテキスト色の組み合わせで、APCA（Advanced Perceptual Contrast Algorithm）スコアが60以上になるように設計されています。
+ * - ステップ5の背景色とステップ11のテキスト色の組み合わせで、APCA（Advanced Perceptual Contrast Algorithm）スコアが60以上になるように設計されています。
  * - WCAG 3.0（APCA）を基準に、十分なコントラストを確保してください。
  *
  * ライトモードとダークモード:
@@ -33,80 +33,89 @@
  */
 
 @theme {
-	--color-base-app-bg: oklch(99.2% 0.0025 278);
-	--color-base-subtle-bg: oklch(97.8% 0.0047 278);
-	--color-base-ui-bg: oklch(95.2% 0.011 278);
-	--color-base-ui-hover: oklch(92.1% 0.0162 278);
-	--color-base-ui-active: oklch(85.4% 0.0212 278);
-	--color-base-subtle-border: oklch(82.8% 0.0262 278);
-	--color-base-ui-border: oklch(78.5% 0.0327 278);
-	--color-base-ui-border-hover: oklch(72.5% 0.0439 278);
-	--color-base-solid: oklch(41.8% 0.0486 278);
-	--color-base-solid-hover: oklch(36% 0.0272 278);
-	--color-base-low-contrast-text: oklch(45.6% 0.0486 278);
-	--color-base-high-contrast-text: oklch(25.7% 0.0272 278);
+	/* ベースカラー - ライトモード */
+	--color-step-1: oklch(99.8% 0.001 278); /* アプリケーションの背景 - より薄く */
+	--color-step-2: oklch(98.9% 0.002 278); /* サブ背景 - より薄く */
+	--color-step-3: oklch(97.5% 0.005 278); /* UIエレメントの背景 - より薄く */
+	--color-step-4: oklch(95.8% 0.008 278); /* ホバー時のUIエレメント背景 - より薄く */
+	--color-step-5: oklch(93.4% 0.012 278); /* アクティブ/選択時のUIエレメント背景 - より薄く */
+	--color-step-6: oklch(89.8% 0.016 278); /* サブ境界線とセパレーター - グラデーション調整 */
+	--color-step-7: oklch(85.5% 0.022 278); /* UIエレメントの境界線とフォーカスリング - グラデーション調整 */
+	--color-step-8: oklch(80.5% 0.032 278); /* ホバー時のUIエレメント境界線 - グラデーション調整 */
+	--color-step-9: oklch(41.8% 0.0486 278); /* ソリッドな背景 */
+	--color-step-10: oklch(36% 0.0272 278); /* ホバー時のソリッドな背景 */
+	--color-step-11: oklch(45.6% 0.0272 278); /* 低コントラストのテキスト - より薄く */
+	--color-step-12: oklch(25.7% 0.0486 278); /* 高コントラストのテキスト - より濃く */
 
 	/* デストラクティブカラー - ライトモード */
-	--color-destructive-app-bg: oklch(99.2% 0.0025 25);
-	--color-destructive-subtle-bg: oklch(97.8% 0.0047 25);
-	--color-destructive-ui-bg: oklch(95.2% 0.011 25);
-	--color-destructive-ui-hover: oklch(92.1% 0.0162 25);
-	--color-destructive-ui-active: oklch(85.4% 0.0212 25);
-	--color-destructive-subtle-border: oklch(82.8% 0.0262 25);
-	--color-destructive-ui-border: oklch(78.5% 0.0327 25);
-	--color-destructive-ui-border-hover: oklch(72.5% 0.0439 25);
-	--color-destructive-solid: oklch(54.3% 0.1913 25);
-	--color-destructive-solid-hover: oklch(49.7% 0.1373 25);
-	--color-destructive-low-contrast-text: oklch(45.6% 0.1234 25);
-	--color-destructive-high-contrast-text: oklch(25.7% 0.0428 25);
+	--color-destructive-step-1: oklch(99.2% 0.0025 25);
+	--color-destructive-step-2: oklch(97.8% 0.0047 25);
+	--color-destructive-step-3: oklch(95.2% 0.011 25);
+	--color-destructive-step-4: oklch(92.1% 0.0162 25);
+	--color-destructive-step-5: oklch(85.4% 0.0212 25);
+	--color-destructive-step-6: oklch(82.8% 0.0262 25);
+	--color-destructive-step-7: oklch(78.5% 0.0327 25);
+	--color-destructive-step-8: oklch(72.5% 0.0439 25);
+	--color-destructive-step-9: oklch(54.3% 0.1913 25);
+	--color-destructive-step-10: oklch(49.7% 0.1373 25);
+	--color-destructive-step-11: oklch(45.6% 0.1234 25);
+	--color-destructive-step-12: oklch(25.7% 0.0428 25);
 
-	/* ソリッドカラー上のテキストカラー - ライトモード */
-	--color-base-on-solid: oklch(98.1% 0.0047 278);
-	--color-base-on-solid-hover: oklch(99.2% 0.0025 278);
-	--color-base-on-solid: oklch(98.1% 0.0047 266.8);
-	--color-base-on-solid-hover: oklch(99.2% 0.0025 266.8);
-	--color-destructive-on-solid: oklch(98.1% 0.0047 25);
-	--color-destructive-on-solid-hover: oklch(99.2% 0.0025 25);
-
-	--color-ring: oklch(98.1% 0.0047 278);
+	/* アクセントカラー - ライトモード */
+	--color-accent-step-1: oklch(99.2% 0.0025 266.8);
+	--color-accent-step-2: oklch(97.8% 0.0047 266.8);
+	--color-accent-step-3: oklch(95.2% 0.011 266.8);
+	--color-accent-step-4: oklch(92.1% 0.0162 266.8);
+	--color-accent-step-5: oklch(85.4% 0.0212 266.8);
+	--color-accent-step-6: oklch(82.8% 0.0262 266.8);
+	--color-accent-step-7: oklch(78.5% 0.0327 266.8);
+	--color-accent-step-8: oklch(72.5% 0.0439 266.8);
+	--color-accent-step-9: oklch(41.8% 0.0486 266.8);
+	--color-accent-step-10: oklch(36% 0.0272 266.8);
+	--color-accent-step-11: oklch(45.6% 0.0486 266.8);
+	--color-accent-step-12: oklch(25.7% 0.0272 266.8);
 }
 
 [data-theme="dark"] {
 	/* ベースカラー - ダークモード */
-	--color-base-app-bg: oklch(15.8% 0.0247 266.8);
-	--color-base-subtle-bg: oklch(18.7% 0.0302 266.8);
-	--color-base-ui-bg: oklch(25.1% 0.0694 266.8);
-	--color-base-ui-hover: oklch(29.8% 0.0933 266.8);
-	--color-base-ui-active: oklch(42.1% 0.1046 266.8);
-	--color-base-subtle-border: oklch(45.4% 0.1106 266.8);
-	--color-base-ui-border: oklch(49% 0.1203 266.8);
-	--color-base-ui-border-hover: oklch(54.3% 0.1373 266.8);
-	--color-base-solid: oklch(85.4% 0.1913 266.8);
-	--color-base-solid-hover: oklch(82.7% 0.1373 266.8);
-	--color-base-low-contrast-text: oklch(65.7% 0.1234 266.8);
-	--color-base-high-contrast-text: oklch(95.1% 0.0428 266.8);
+	--color-step-1: oklch(12.8% 0.012 266.8); /* アプリケーションの背景 - より薄く */
+	--color-step-2: oklch(15.7% 0.015 266.8); /* サブ背景 - より薄く */
+	--color-step-3: oklch(18.1% 0.025 266.8); /* UIエレメントの背景 - より薄く */
+	--color-step-4: oklch(22.8% 0.035 266.8); /* ホバー時のUIエレメント背景 - より薄く */
+	--color-step-5: oklch(26.1% 0.045 266.8); /* アクティブ/選択時のUIエレメント背景 - より薄く */
+	--color-step-6: oklch(32.4% 0.065 266.8); /* サブ境界線とセパレーター - グラデーション調整 */
+	--color-step-7: oklch(38.5% 0.085 266.8); /* UIエレメントの境界線とフォーカスリング - グラデーション調整 */
+	--color-step-8: oklch(45.3% 0.105 266.8); /* ホバー時のUIエレメント境界線 - グラデーション調整 */
+	--color-step-9: oklch(85.4% 0.1913 266.8); /* ソリッドな背景 */
+	--color-step-10: oklch(82.7% 0.1373 266.8); /* ホバー時のソリッドな背景 */
+	--color-step-11: oklch(75.7% 0.0834 266.8); /* 低コントラストのテキスト - より薄く */
+	--color-step-12: oklch(95.1% 0.1228 266.8); /* 高コントラストのテキスト - より濃く */
 
 	/* デストラクティブカラー - ダークモード */
-	--color-destructive-app-bg: oklch(15.8% 0.0247 25);
-	--color-destructive-subtle-bg: oklch(18.7% 0.0302 25);
-	--color-destructive-ui-bg: oklch(25.1% 0.0694 25);
-	--color-destructive-ui-hover: oklch(29.8% 0.0933 25);
-	--color-destructive-ui-active: oklch(42.1% 0.1046 25);
-	--color-destructive-subtle-border: oklch(45.4% 0.1106 25);
-	--color-destructive-ui-border: oklch(49% 0.1203 25);
-	--color-destructive-ui-border-hover: oklch(54.3% 0.1373 25);
-	--color-destructive-solid: oklch(85.4% 0.1913 25);
-	--color-destructive-solid-hover: oklch(82.7% 0.1373 25);
-	--color-destructive-on-solid: oklch(98.1% 0.0047 25);
-	--color-destructive-on-solid-hover: oklch(99.2% 0.0025 25);
-	--color-destructive-low-contrast-text: oklch(65.7% 0.1234 25);
-	--color-destructive-high-contrast-text: oklch(95.1% 0.0428 25);
+	--color-destructive-step-1: oklch(15.8% 0.0247 25);
+	--color-destructive-step-2: oklch(18.7% 0.0302 25);
+	--color-destructive-step-3: oklch(25.1% 0.0694 25);
+	--color-destructive-step-4: oklch(29.8% 0.0933 25);
+	--color-destructive-step-5: oklch(42.1% 0.1046 25);
+	--color-destructive-step-6: oklch(45.4% 0.1106 25);
+	--color-destructive-step-7: oklch(49% 0.1203 25);
+	--color-destructive-step-8: oklch(54.3% 0.1373 25);
+	--color-destructive-step-9: oklch(85.4% 0.1913 25);
+	--color-destructive-step-10: oklch(82.7% 0.1373 25);
+	--color-destructive-step-11: oklch(65.7% 0.1234 25);
+	--color-destructive-step-12: oklch(95.1% 0.0428 25);
 
-	/* ソリッドカラー上のテキストカラー - ライトモード */
-	--color-base-on-solid: oklch(98.1% 0.0047 278);
-	--color-base-on-solid-hover: oklch(99.2% 0.0025 278);
-	--color-base-on-solid: oklch(98.1% 0.0047 266.8);
-	--color-base-on-solid-hover: oklch(99.2% 0.0025 266.8);
-	--color-destructive-on-solid: oklch(98.1% 0.0047 25);
-	--color-destructive-on-solid-hover: oklch(99.2% 0.0025 25);
+	/* アクセントカラー - ダークモード */
+	--color-accent-step-1: oklch(15.8% 0.0247 266.8);
+	--color-accent-step-2: oklch(18.7% 0.0302 266.8);
+	--color-accent-step-3: oklch(25.1% 0.0694 266.8);
+	--color-accent-step-4: oklch(29.8% 0.0933 266.8);
+	--color-accent-step-5: oklch(42.1% 0.1046 266.8);
+	--color-accent-step-6: oklch(45.4% 0.1106 266.8);
+	--color-accent-step-7: oklch(49% 0.1203 266.8);
+	--color-accent-step-8: oklch(54.3% 0.1373 266.8);
+	--color-accent-step-9: oklch(85.4% 0.1913 266.8);
+	--color-accent-step-10: oklch(82.7% 0.1373 266.8);
+	--color-accent-step-11: oklch(65.7% 0.1234 266.8);
+	--color-accent-step-12: oklch(95.1% 0.0428 266.8);
 }

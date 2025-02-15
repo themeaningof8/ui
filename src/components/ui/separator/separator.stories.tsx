@@ -26,14 +26,14 @@ export const Default: Story = {
     <div className="w-[300px]">
       <div className="space-y-1">
         <h4 className="text-sm font-medium leading-none">セクション1</h4>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm text-step-11">
           セクション1の説明文が入ります。
         </p>
       </div>
       <Separator className="my-4" />
       <div className="space-y-1">
         <h4 className="text-sm font-medium leading-none">セクション2</h4>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm text-step-11">
           セクション2の説明文が入ります。
         </p>
       </div>
@@ -64,14 +64,14 @@ export const CustomStyle: Story = {
     <div className="w-[300px]">
       <div className="space-y-1">
         <h4 className="text-sm font-medium leading-none">カスタムスタイル</h4>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm text-step-11">
           セパレーターにカスタムスタイルを適用できます。
         </p>
       </div>
       <Separator className="my-4 bg-primary" />
       <div className="space-y-1">
         <h4 className="text-sm font-medium leading-none">セクション2</h4>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm text-step-11">
           セクション2の説明文が入ります。
         </p>
       </div>
@@ -87,14 +87,14 @@ export const NonDecorative: Story = {
     <div className="w-[300px]">
       <div className="space-y-1">
         <h4 className="text-sm font-medium leading-none">セクション1</h4>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm text-step-11">
           セクション1の説明文が入ります。
         </p>
       </div>
       <Separator className="my-4" decorative={false} />
       <div className="space-y-1">
         <h4 className="text-sm font-medium leading-none">セクション2</h4>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm text-step-11">
           セクション2の説明文が入ります。
         </p>
       </div>
@@ -108,7 +108,7 @@ export const NonDecorative: Story = {
 export const ListDivider: Story = {
   render: () => {
     const id = React.useId()
-    let counter = 0;
+    let counter = 1;
     return (
       <div className="w-[300px] space-y-4">
         {Array.from({ length: 5 }).map(() => (

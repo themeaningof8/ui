@@ -36,7 +36,7 @@ export const Default: Story = {
         <div className="grid gap-4">
           <div className="space-y-2">
             <h4 className="font-medium leading-none">Dimensions</h4>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-step-11">
               Set the dimensions for the layer.
             </p>
           </div>
@@ -102,7 +102,7 @@ export const CustomPlacement: Story = {
         <div className="grid gap-4">
           <div className="space-y-2">
             <h4 className="font-medium leading-none">Custom Placement</h4>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-step-11">
               This popover is aligned to the start and has a side offset of 10 pixels.
             </p>
           </div>
@@ -125,7 +125,7 @@ export const WithForm: Story = {
         <form className="grid gap-4">
           <div className="space-y-2">
             <h4 className="font-medium leading-none">Edit Profile</h4>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-step-11">
               Make changes to your profile here.
             </p>
           </div>
@@ -135,7 +135,7 @@ export const WithForm: Story = {
               <input
                 id="name"
                 defaultValue="John Doe"
-                className="col-span-2 h-8 rounded-md border border-input bg-transparent px-3 py-1 text-sm"
+                className="col-span-2 h-8 rounded-md border border-step-6 bg-transparent px-3 py-1 text-sm"
               />
             </div>
             <div className="grid grid-cols-3 items-center gap-4">
@@ -144,7 +144,7 @@ export const WithForm: Story = {
                 id="email"
                 type="email"
                 defaultValue="john@example.com"
-                className="col-span-2 h-8 rounded-md border border-input bg-transparent px-3 py-1 text-sm"
+                className="col-span-2 h-8 rounded-md border border-step-6 bg-transparent px-3 py-1 text-sm"
               />
             </div>
           </div>

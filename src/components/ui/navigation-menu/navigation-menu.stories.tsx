@@ -124,26 +124,26 @@ export const WithRichContent: Story = {
             <ul className="grid gap-3 p-6 w-[600px] grid-cols-2">
               <li className="col-span-2">
                 <div className="font-medium mb-2">Featured</div>
-                <div className="text-sm text-muted-foreground">
+                <div className="text-sm text-step-11">
                   Discover our most popular resources and guides.
                 </div>
               </li>
               <li>
                 <NavigationMenuLink
-                  className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                  className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-step-5 hover:text-step-12 focus:bg-step-5 focus:text-step-12"
                 >
                   <div className="text-sm font-medium leading-none">Documentation</div>
-                  <p className="text-sm leading-snug text-muted-foreground">
+                  <p className="text-sm leading-snug text-step-11">
                     Start integrating products and tools
                   </p>
                 </NavigationMenuLink>
               </li>
               <li>
                 <NavigationMenuLink
-                  className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                  className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-step-5 hover:text-step-12 focus:bg-step-5 focus:text-step-12"
                 >
                   <div className="text-sm font-medium leading-none">API Reference</div>
-                  <p className="text-sm leading-snug text-muted-foreground">
+                  <p className="text-sm leading-snug text-step-11">
                     Detailed API documentation and examples
                   </p>
                 </NavigationMenuLink>

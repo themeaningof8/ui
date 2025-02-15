@@ -9,9 +9,6 @@ import { Progress } from '.'
 const meta = {
   title: 'UI/Progress',
   component: Progress,
-  parameters: {
-    layout: 'centered',
-  },
   tags: ['autodocs'],
 } satisfies Meta<typeof Progress>
 
@@ -51,7 +48,7 @@ export const Full: Story = {
 export const CustomStyle: Story = {
   args: {
     value: 60,
-    className: "h-2 w-[300px]",
+    className: "h-2",
   },
 }
 
@@ -67,7 +64,7 @@ export const Animated: Story = {
       return () => clearTimeout(timer)
     }, [])
  
-    return <Progress value={progress} className="w-[300px]" />
+    return <Progress value={progress} />
   },
 }
 
@@ -76,8 +73,8 @@ export const Animated: Story = {
  */
 export const WithLabel: Story = {
   render: () => (
-    <div className="w-[300px]">
-      <div className="flex justify-between text-sm text-muted-foreground mb-2">
+    <div>
+      <div className="flex justify-between text-sm text-step-11 mb-2">
         <span>Progress</span>
         <span>40%</span>
       </div>
@@ -91,7 +88,7 @@ export const WithLabel: Story = {
  */
 export const WithIndicator: Story = {
   render: () => (
-    <div className="relative w-[300px]">
+    <div className="relative">
       <Progress value={80} />
       <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-xs font-medium">
         80%

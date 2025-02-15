@@ -34,7 +34,12 @@ const AspectRatio = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <AspectRatioPrimitive.Root
     ref={ref}
-    className={cn("relative w-full", className)}
+    className={cn(
+      "relative w-full overflow-hidden rounded-lg",
+      "bg-step-2 ring-1 ring-step-6/20",
+      "[&_img]:object-cover [&_video]:object-cover",
+      className
+    )}
     {...props}
   />
 ))

@@ -1,3 +1,18 @@
+/**
+ * @file ツールチップコンポーネント
+ * @description ホバー時に追加情報を表示するコンポーネントです
+ * 
+ * @example
+ * ```tsx
+ * <Tooltip>
+ *   <TooltipTrigger>Hover me</TooltipTrigger>
+ *   <TooltipContent>
+ *     Tooltip content
+ *   </TooltipContent>
+ * </Tooltip>
+ * ```
+ */
+
 "use client"
 
 import * as React from "react"
@@ -39,16 +54,6 @@ const TooltipTrigger = TooltipPrimitive.Trigger
  * @param {string} [props.sideOffset=4] - サイドのオフセット
  * @param {React.ReactNode} props.children - 子要素
  * @param {React.Ref<HTMLDivElement>} ref - 転送されるref
- * 
- * @example
- * ```tsx
- * <Tooltip>
- *   <TooltipTrigger>Hover me</TooltipTrigger>
- *   <TooltipContent>
- *     Tooltip content
- *   </TooltipContent>
- * </Tooltip>
- * ```
  */
 const TooltipContent = React.forwardRef<
   React.ComponentRef<typeof TooltipPrimitive.Content>,
@@ -58,7 +63,15 @@ const TooltipContent = React.forwardRef<
     ref={ref}
     sideOffset={sideOffset}
     className={cn(
-      "z-50 overflow-hidden rounded-md border bg-popover px-3 py-1.5 text-sm text-popover-foreground shadow-md animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
+      "z-50 overflow-hidden rounded-md px-3 py-1.5 text-sm",
+      "border border-step-7 bg-step-2 text-step-12",
+      "shadow-md shadow-step-7/10",
+      "animate-in fade-in-0 zoom-in-95",
+      "data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95",
+      "data-[side=bottom]:slide-in-from-top-2",
+      "data-[side=left]:slide-in-from-right-2",
+      "data-[side=right]:slide-in-from-left-2",
+      "data-[side=top]:slide-in-from-bottom-2",
       className
     )}
     {...props}

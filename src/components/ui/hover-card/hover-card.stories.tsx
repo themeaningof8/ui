@@ -64,7 +64,7 @@ export const Profile: Story = {
             </p>
             <div className="flex items-center pt-2">
               <CalendarDays className="mr-2 h-4 w-4 opacity-70" />
-              <span className="text-xs text-muted-foreground">
+              <span className="text-xs text-step-11">
                 Joined December 2021
               </span>
             </div>
@@ -105,7 +105,7 @@ export const RichContent: Story = {
         <div className="space-y-4">
           <div className="space-y-1">
             <h4 className="text-lg font-semibold">Rich Content Example</h4>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-step-11">
               HoverCardは、画像、リスト、その他のリッチコンテンツを表示できます。
             </p>
           </div>

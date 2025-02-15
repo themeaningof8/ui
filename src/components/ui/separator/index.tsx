@@ -6,6 +6,20 @@ import * as SeparatorPrimitive from "@radix-ui/react-separator"
 import { cn } from "@/lib/utils"
 
 /**
+ * @file セパレーターコンポーネント
+ * @description コンテンツを視覚的に分離するためのコンポーネント
+ * 
+ * @example
+ * ```tsx
+ * // 水平方向のセパレーター
+ * <Separator className="my-4" />
+ * 
+ * // 垂直方向のセパレーター
+ * <Separator orientation="vertical" className="mx-4 h-4" />
+ * ```
+ */
+
+/**
  * セパレーターコンポーネントです。
  * コンテンツを視覚的に分離するために使用します。
  * 
@@ -16,12 +30,6 @@ import { cn } from "@/lib/utils"
  * @param {string} [props.decorative] - 装飾的な要素として扱うかどうか
  * @param {React.ReactNode} props.children - 子要素
  * @param {React.Ref<HTMLDivElement>} ref - 転送されるref
- * 
- * @example
- * ```tsx
- * <Separator className="my-4" />
- * <Separator orientation="vertical" className="mx-4 h-4" />
- * ```
  */
 const Separator = React.forwardRef<
   React.ComponentRef<typeof SeparatorPrimitive.Root>,
@@ -37,7 +45,7 @@ const Separator = React.forwardRef<
       orientation={orientation}
       aria-orientation={decorative ? undefined : orientation}
       className={cn(
-        "shrink-0 bg-border",
+        "shrink-0 bg-step-6",
         orientation === "horizontal" ? "h-[1px] w-full" : "h-full w-[1px]",
         className
       )}
