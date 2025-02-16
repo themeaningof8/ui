@@ -3,8 +3,10 @@
  * @description アコーディオンコンポーネントの機能をテストします
  */
 
+import React from 'react'
 import { describe, it, expect } from 'vitest'
-import { render, screen } from '@/tests/test-utils'
+import { render, screen } from '@testing-library/react'
+import { userEvent } from '@testing-library/user-event'
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '.'
 
 describe('アコーディオンコンポーネント', () => {
@@ -21,9 +23,9 @@ describe('アコーディオンコンポーネント', () => {
     expect(screen.getByRole('button', { name: 'アコーディオン1' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'アコーディオン1' })).toHaveAttribute('data-state', 'closed')
   })
-
   it('アコーディオンが開閉できること', async () => {
-    const { user } = render(
+    const user = userEvent.setup()
+    render(
       <Accordion type="single" collapsible>
         <AccordionItem value="item-1">
           <AccordionTrigger>アコーディオン1</AccordionTrigger>
@@ -47,7 +49,8 @@ describe('アコーディオンコンポーネント', () => {
   })
 
   it('複数のアコーディオンアイテムが正しく動作すること', async () => {
-    const { user } = render(
+    const user = userEvent.setup()
+    render(
       <Accordion type="multiple">
         <AccordionItem value="item-1">
           <AccordionTrigger>アコーディオン1</AccordionTrigger>

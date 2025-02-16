@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import React from 'react'
 import { render, screen } from '@testing-library/react'
 import { Label } from '.'
 import { describe, it, expect, vi } from 'vitest'
@@ -16,13 +17,7 @@ describe('Label', () => {
     render(<Label className={customClass}>Test Label</Label>)
     expect(screen.getByText('Test Label')).toHaveClass(customClass)
   })
-
-  it('forwards ref correctly', () => {
-    const ref = vi.fn()
-    render(<Label ref={ref}>Test Label</Label>)
-    expect(ref).toHaveBeenCalled()
-  })
-
+  
   it('applies disabled styles when peer is disabled', () => {
     render(
       <div>

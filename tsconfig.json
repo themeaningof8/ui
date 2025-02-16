@@ -13,7 +13,10 @@
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": true,
+    "noEmit": false,
+    "declaration": true,
+    "declarationDir": "dist",
+    "emitDeclarationOnly": true,
     "jsx": "react-jsx",
     "strict": true,
     "noUnusedLocals": true,
@@ -34,7 +37,11 @@
         "src/tests/*"
       ]
     },
-    "types": ["vitest/globals", "jest-axe"]
+    "types": [
+      "vitest/globals",
+      "jest-axe",
+      "@testing-library/jest-dom"
+    ]
   },
   "include": [
     "src/**/*.ts",
@@ -43,8 +50,16 @@
     "src/**/*.jsx",
     "src/**/*.test.ts",
     "src/**/*.test.tsx",
-    "src/**/*.d.ts"
-, "src/components/ui/input-otp/index.tsx", "src/components/ui/drawer/indextsx"  ],
+    "src/**/*.d.ts",
+    "src/**/*.stories.tsx"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "src/tests/**/*"
+  ],
   "references": [
     {
       "path": "./tsconfig.node.json"

@@ -1,7 +1,22 @@
 {
   "name": "@themeaningof8/ui",
-  "module": "src/index.ts",
+  "version": "0.1.0",
+  "private": true,
+  "description": "プライベートなUIコンポーネントライブラリ",
+  "module": "dist/index.es.js",
+  "types": "dist/index.d.ts",
   "type": "module",
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "restricted"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/themeaningof8/ui.git"
+  },
   "devDependencies": {
     "@storybook/addon-a11y": "^8.5.1",
     "@storybook/addon-coverage": "^1.0.5",
@@ -100,7 +115,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && tsc --emitDeclarationOnly",
     "test": "vitest",
     "analyze": "vite build --mode analyze",
     "analyze:ci": "vite build --mode analyze && bun run scripts/check-bundle-size/index.ts",
@@ -108,6 +123,7 @@
     "storybook": "storybook dev -p 6006 --no-version-updates",
     "build-storybook": "storybook build --no-version-updates",
     "test-storybook": "test-storybook",
-    "test-storybook:coverage": "test-storybook --coverage"
+    "test-storybook:coverage": "test-storybook --coverage",
+    "prepublishOnly": "bun run build"
   }
 }

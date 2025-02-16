@@ -3,8 +3,10 @@
  * @description アラートダイアログコンポーネントの機能をテストします
  */
 
+import React from 'react'
 import { describe, it, expect } from 'vitest'
-import { render, screen } from '@/tests/test-utils'
+import { render, screen } from '@testing-library/react' 
+import userEvent from '@testing-library/user-event'
 import {
   AlertDialog,
   AlertDialogTrigger,
@@ -19,7 +21,8 @@ import {
 
 describe('アラートダイアログコンポーネント', () => {
   it('トリガーをクリックするとダイアログが表示されること', async () => {
-    const { user } = render(
+    const user = userEvent.setup()
+    render(
       <AlertDialog>
         <AlertDialogTrigger>開く</AlertDialogTrigger>
         <AlertDialogContent>
@@ -50,7 +53,8 @@ describe('アラートダイアログコンポーネント', () => {
   })
 
   it('キャンセルボタンをクリックするとダイアログが閉じること', async () => {
-    const { user } = render(
+    const user = userEvent.setup()
+    render(
       <AlertDialog>
         <AlertDialogTrigger>開く</AlertDialogTrigger>
         <AlertDialogContent>
@@ -78,7 +82,8 @@ describe('アラートダイアログコンポーネント', () => {
   })
 
   it('アクションボタンをクリックするとダイアログが閉じること', async () => {
-    const { user } = render(
+    const user = userEvent.setup()
+    render(
       <AlertDialog>
         <AlertDialogTrigger>開く</AlertDialogTrigger>
         <AlertDialogContent>

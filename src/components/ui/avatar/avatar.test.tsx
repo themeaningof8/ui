@@ -2,7 +2,7 @@
  * @file アバターコンポーネントのテスト
  * @description アバターコンポーネントの機能をテストします
  */
-
+import React from 'react'
 import { render, screen, waitFor, act } from '@testing-library/react'
 import { describe, expect, it, vi, beforeEach } from 'vitest'
 import { Avatar, AvatarImage, AvatarFallback } from '.'

@@ -3,9 +3,10 @@
  * @description コンテキストメニューコンポーネントの機能をテストします
  */
 
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { describe, it, expect } from 'vitest'
-import { render, screen, waitFor } from '@/tests/test-utils'
+import { render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import {
   ContextMenu,
   ContextMenuTrigger,
@@ -22,7 +23,8 @@ import {
 
 describe('ContextMenuコンポーネント', () => {
   it('基本的なコンテキストメニューが正しくレンダリングされること', async () => {
-    const { user } = render(
+    const user = userEvent.setup()
+    render(
       <ContextMenu>
         <ContextMenuTrigger>右クリックエリア</ContextMenuTrigger>
         <ContextMenuContent>
@@ -44,7 +46,8 @@ describe('ContextMenuコンポーネント', () => {
   })
 
   it('サブメニューが正しくレンダリングされること', async () => {
-    const { user } = render(
+    const user = userEvent.setup()
+    render(
       <ContextMenu>
         <ContextMenuTrigger>右クリックエリア</ContextMenuTrigger>
         <ContextMenuContent>
@@ -74,7 +77,8 @@ describe('ContextMenuコンポーネント', () => {
   })
 
   it('セパレーターが正しくレンダリングされること', async () => {
-    const { user } = render(
+    const user = userEvent.setup()
+    render(
       <ContextMenu>
         <ContextMenuTrigger>右クリックエリア</ContextMenuTrigger>
         <ContextMenuContent>
@@ -94,6 +98,7 @@ describe('ContextMenuコンポーネント', () => {
   })
 
   it('チェックボックス項目が正しく機能すること', async () => {
+    const user = userEvent.setup()
     const TestComponent = () => {
       const [checked, setChecked] = useState(false)
       return (
@@ -111,7 +116,7 @@ describe('ContextMenuコンポーネント', () => {
       )
     }
 
-    const { user } = render(<TestComponent />)
+    render(<TestComponent />)
 
     const trigger = screen.getByText('右クリックエリア')
     await user.pointer({ keys: '[MouseRight]', target: trigger })
@@ -149,7 +154,8 @@ describe('ContextMenuコンポーネント', () => {
       )
     }
 
-    const { user } = render(<TestComponent />)
+    const user = userEvent.setup()
+    render(<TestComponent />)
 
     const trigger = screen.getByText('右クリックエリア')
     await user.pointer({ keys: '[MouseRight]', target: trigger })

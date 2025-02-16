@@ -2,7 +2,7 @@
  * @file src/components/ui/skeleton/skeleton.test.tsx
  * @description Skeletonコンポーネントのテスト
  */
-
+import React from 'react';
 import { render, screen } from '@testing-library/react'
 import { Skeleton } from '.';
 

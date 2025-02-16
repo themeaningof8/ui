@@ -3,8 +3,9 @@
  * @description ダイアログコンポーネントの機能をテストします
  */
 
+import React from 'react'
 import { describe, it, expect } from 'vitest'
-import { render, screen } from '@/tests/test-utils'
+import { render, screen } from '@testing-library/react'
 import {
   Dialog,
   DialogTrigger,
@@ -14,12 +15,13 @@ import {
   DialogTitle,
   DialogDescription,
 } from '.'
-import { Button } from '@/components/ui/button'
+import { Button } from '../button'
 import { userEvent } from '@testing-library/user-event'
 
 describe('Dialogコンポーネント', () => {
   it('基本的なダイアログが正しくレンダリングされること', async () => {
-    const { user } = render(
+    const user = userEvent.setup()
+    render(
       <Dialog>
         <DialogTrigger>開く</DialogTrigger>
         <DialogContent>
@@ -47,7 +49,8 @@ describe('Dialogコンポーネント', () => {
   })
 
   it('カスタムクラス名が正しく適用されること', async () => {
-    const { user } = render(
+    const user = userEvent.setup()
+    render(
       <Dialog>
         <DialogTrigger className="custom-trigger">開く</DialogTrigger>
         <DialogContent className="custom-content">
@@ -73,7 +76,8 @@ describe('Dialogコンポーネント', () => {
   })
 
   it('ダイアログが閉じられること', async () => {
-    const { user } = render(
+    const user = userEvent.setup()
+    render(
       <Dialog>
         <DialogTrigger>開く</DialogTrigger>
         <DialogContent>

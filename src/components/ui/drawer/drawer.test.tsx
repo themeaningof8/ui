@@ -3,8 +3,10 @@
  * @description ドロワーコンポーネントの機能をテストします
  */
 
+import React from "react";
 import { describe, it, expect, vi } from "vitest";
-import { render, screen, waitFor } from "@/tests/test-utils";
+import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import type { ComponentPropsWithoutRef, ReactNode } from "react";
 import {
 	Drawer,
@@ -96,7 +98,8 @@ vi.mock("vaul", async () => {
 
 describe("Drawerコンポーネント", () => {
 	it("基本的なドロワーが正しくレンダリングされること", async () => {
-		const { user } = render(
+		const user = userEvent.setup()
+		render(
 			<Drawer>
 				<DrawerTrigger>開く</DrawerTrigger>
 				<DrawerContent>
@@ -122,7 +125,8 @@ describe("Drawerコンポーネント", () => {
 	});
 
 	it("カスタムクラス名が正しく適用されること", async () => {
-		const { user } = render(
+		const user = userEvent.setup()
+		render(
 			<Drawer>
 				<DrawerTrigger className="custom-trigger">開く</DrawerTrigger>
 				<DrawerContent className="custom-content">
@@ -157,7 +161,8 @@ describe("Drawerコンポーネント", () => {
 
 	it("ドロワーが閉じられること", async () => {
 		const onOpenChange = vi.fn();
-		const { user } = render(
+		const user = userEvent.setup()
+		render(
 			<Drawer onOpenChange={onOpenChange}>
 				<DrawerTrigger>開く</DrawerTrigger>
 				<DrawerContent>
@@ -181,7 +186,8 @@ describe("Drawerコンポーネント", () => {
 
 	it("オーバーレイをクリックしてドロワーが閉じられること", async () => {
 		const onOpenChange = vi.fn();
-		const { user } = render(
+		const user = userEvent.setup()
+		render(
 			<Drawer onOpenChange={onOpenChange}>
 				<DrawerTrigger>開く</DrawerTrigger>
 				<DrawerContent>

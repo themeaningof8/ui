@@ -2,9 +2,9 @@
  * @file チャートコンポーネントのテスト
  * @description チャートコンポーネントの機能をテストします
  */
-
+import React from 'react'
 import { describe, it, expect } from 'vitest'
-import { render, screen } from '@/tests/test-utils'
+import { render, screen } from '@testing-library/react'
 import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent } from '.'
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts'
 import type { LegendType } from 'recharts'

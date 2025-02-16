@@ -3,8 +3,10 @@
  * @description コマンドコンポーネントの機能をテストします
  */
 
+import React from 'react'
 import { describe, it, expect } from 'vitest'
-import { render, screen } from '@/tests/test-utils'
+import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import {
   Command,
   CommandDialog,
@@ -82,7 +84,8 @@ describe('Commandコンポーネント', () => {
   })
 
   it('空の状態が正しく表示されること', async () => {
-    const { user } = render(
+    const user = userEvent.setup()
+    render(
       <Command>
         <CommandInput placeholder="検索..." />
         <CommandList>

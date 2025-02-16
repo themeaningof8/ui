@@ -2,9 +2,10 @@
  * @file カルーセルコンポーネントのテスト
  * @description カルーセルコンポーネントの機能をテストします
  */
-
+import React from 'react'
 import { describe, it, expect } from 'vitest'
-import { render, screen } from '@/tests/test-utils'
+import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import {
   Carousel,
   CarouselContent,
@@ -49,7 +50,8 @@ describe('Carouselコンポーネント', () => {
   })
 
   it('ナビゲーションボタンが正しく機能すること', async () => {
-    const { user } = render(
+    const user = userEvent.setup()
+    render(
       <Carousel>
         <CarouselContent>
           <CarouselItem>スライド1</CarouselItem>

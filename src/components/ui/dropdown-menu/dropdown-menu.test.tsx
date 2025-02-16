@@ -5,7 +5,10 @@
 
 import { describe, it, expect } from 'vitest'
 import { waitFor } from '@testing-library/react'
-import { render, screen } from '@/tests/test-utils'
+import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import '@testing-library/jest-dom'
+import React from 'react'
 import { useState } from 'react'
 import {
   DropdownMenu,
@@ -26,7 +29,8 @@ import {
 
 describe('DropdownMenuコンポーネント', () => {
   it('トリガーをクリックしてメニューが開くこと', async () => {
-    const { user } = render(
+    const user = userEvent.setup()
+    render(
       <DropdownMenu>
         <DropdownMenuTrigger>Open Menu</DropdownMenuTrigger>
         <DropdownMenuContent>
@@ -41,6 +45,7 @@ describe('DropdownMenuコンポーネント', () => {
   })
 
   it('チェックボックス項目が正しく機能すること', async () => {
+    const user = userEvent.setup()
     const TestComponent = () => {
       const [checked, setChecked] = useState(false)
       return (
@@ -58,7 +63,7 @@ describe('DropdownMenuコンポーネント', () => {
       )
     }
 
-    const { user } = render(<TestComponent />)
+    render(<TestComponent />)
 
     await user.click(screen.getByText('Open Menu'))
     await waitFor(() => {
@@ -75,6 +80,7 @@ describe('DropdownMenuコンポーネント', () => {
   })
 
   it('ラジオグループが正しく機能すること', async () => {
+    const user = userEvent.setup()
     const TestComponent = () => {
       const [value, setValue] = useState("")
       return (
@@ -90,7 +96,7 @@ describe('DropdownMenuコンポーネント', () => {
       )
     }
 
-    const { user } = render(<TestComponent />)
+    render(<TestComponent />)
 
     await user.click(screen.getByText('Open Menu'))
     await waitFor(() => {
@@ -111,7 +117,8 @@ describe('DropdownMenuコンポーネント', () => {
   })
 
   it('サブメニューが正しく機能すること', async () => {
-    const { user } = render(
+    const user = userEvent.setup()
+    render(
       <DropdownMenu>
         <DropdownMenuTrigger>Open Menu</DropdownMenuTrigger>
         <DropdownMenuContent>
@@ -135,7 +142,8 @@ describe('DropdownMenuコンポーネント', () => {
   })
 
   it('セパレーターが正しくレンダリングされること', async () => {
-    const { user } = render(
+    const user = userEvent.setup()
+    render(
       <DropdownMenu>
         <DropdownMenuTrigger>Open Menu</DropdownMenuTrigger>
         <DropdownMenuContent>
@@ -151,7 +159,8 @@ describe('DropdownMenuコンポーネント', () => {
   })
 
   it('ラベルが正しくレンダリングされること', async () => {
-    const { user } = render(
+    const user = userEvent.setup()
+    render(
       <DropdownMenu>
         <DropdownMenuTrigger>Open Menu</DropdownMenuTrigger>
         <DropdownMenuContent>
@@ -172,7 +181,8 @@ describe('DropdownMenuコンポーネント', () => {
   })
 
   it('ラベルにinsetプロパティが正しく適用されること', async () => {
-    const { user } = render(
+    const user = userEvent.setup()
+    render(
       <DropdownMenu>
         <DropdownMenuTrigger>Open Menu</DropdownMenuTrigger>
         <DropdownMenuContent>
@@ -186,7 +196,8 @@ describe('DropdownMenuコンポーネント', () => {
   })
 
   it('グループが正しくレンダリングされること', async () => {
-    const { user } = render(
+    const user = userEvent.setup()
+    render(
       <DropdownMenu>
         <DropdownMenuTrigger>Open Menu</DropdownMenuTrigger>
         <DropdownMenuContent>
@@ -205,7 +216,8 @@ describe('DropdownMenuコンポーネント', () => {
   })
 
   it('ショートカットが正しくレンダリングされること', async () => {
-    const { user } = render(
+    const user = userEvent.setup()
+    render(
       <DropdownMenu>
         <DropdownMenuTrigger>Open Menu</DropdownMenuTrigger>
         <DropdownMenuContent>
@@ -223,7 +235,8 @@ describe('DropdownMenuコンポーネント', () => {
   })
 
   it('ESCキーでメニューが閉じること', async () => {
-    const { user } = render(
+    const user = userEvent.setup()
+    render(
       <DropdownMenu>
         <DropdownMenuTrigger>Open Menu</DropdownMenuTrigger>
         <DropdownMenuContent>
@@ -240,7 +253,8 @@ describe('DropdownMenuコンポーネント', () => {
   })
 
   it('ポータルを使用してコンテンツがレンダリングされること', async () => {
-    const { user } = render(
+    const user = userEvent.setup()
+    render(
       <DropdownMenu>
         <DropdownMenuTrigger>Open Menu</DropdownMenuTrigger>
         <DropdownMenuPortal>
@@ -260,7 +274,8 @@ describe('DropdownMenuコンポーネント', () => {
   })
 
   it('メニュー項目にinsetプロパティが正しく適用されること', async () => {
-    const { user } = render(
+    const user = userEvent.setup()
+    render(
       <DropdownMenu>
         <DropdownMenuTrigger>Open Menu</DropdownMenuTrigger>
         <DropdownMenuContent>
@@ -274,7 +289,8 @@ describe('DropdownMenuコンポーネント', () => {
   })
 
   it('無効化されたメニュー項目が正しく表示されること', async () => {
-    const { user } = render(
+    const user = userEvent.setup()
+    render(
       <DropdownMenu>
         <DropdownMenuTrigger>Open Menu</DropdownMenuTrigger>
         <DropdownMenuContent>

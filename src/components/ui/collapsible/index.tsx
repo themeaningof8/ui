@@ -32,7 +32,7 @@
 
 "use client"
 
-import type { ComponentPropsWithoutRef, ReactNode } from 'react'
+import type { ComponentPropsWithoutRef } from 'react'
 import * as CollapsiblePrimitive from '@radix-ui/react-collapsible'
 import { cva, type VariantProps } from "class-variance-authority"
 
