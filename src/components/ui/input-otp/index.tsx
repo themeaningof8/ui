@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
 /**
  * @file OTP入力コンポーネント
  * @description ワンタイムパスワード（OTP）入力用のコンポーネントです
- * 
+ *
  * @example
  * ```tsx
  * <InputOTP maxLength={6}>
@@ -16,11 +16,11 @@
  * ```
  */
 
-import * as React from "react"
-import { OTPInput, OTPInputContext } from "input-otp"
-import { Minus } from "lucide-react"
+import { type ComponentPropsWithoutRef, useContext } from "react";
+import { OTPInput, OTPInputContext } from "input-otp";
+import { Minus } from "lucide-react";
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 /**
  * OTP入力のルートコンポーネント
@@ -33,7 +33,7 @@ function InputOTP({
 	className,
 	containerClassName,
 	...props
-}: React.ComponentPropsWithoutRef<typeof OTPInput>) {
+}: ComponentPropsWithoutRef<typeof OTPInput>) {
 	return (
 		<OTPInput
 			data-slot="input-otp"
@@ -44,7 +44,7 @@ function InputOTP({
 			className={cn("disabled:cursor-not-allowed", className)}
 			{...props}
 		/>
-	)
+	);
 }
 
 /**
@@ -56,14 +56,14 @@ function InputOTP({
 function InputOTPGroup({
 	className,
 	...props
-}: React.ComponentPropsWithoutRef<"div">) {
+}: ComponentPropsWithoutRef<"div">) {
 	return (
 		<div
 			data-slot="input-otp-group"
 			className={cn("flex items-center", className)}
 			{...props}
 		/>
-	)
+	);
 }
 
 /**
@@ -76,9 +76,9 @@ function InputOTPSlot({
 	index,
 	className,
 	...props
-}: React.ComponentPropsWithoutRef<"div"> & { index: number }) {
-	const inputOTPContext = React.useContext(OTPInputContext)
-	const { char, hasFakeCaret, isActive } = inputOTPContext.slots[index]
+}: ComponentPropsWithoutRef<"div"> & { index: number }) {
+	const inputOTPContext = useContext(OTPInputContext);
+	const { char, hasFakeCaret, isActive } = inputOTPContext.slots[index];
 
 	return (
 		<div
@@ -97,7 +97,7 @@ function InputOTPSlot({
 				</div>
 			)}
 		</div>
-	)
+	);
 }
 
 /**
@@ -108,22 +108,25 @@ function InputOTPSlot({
 function InputOTPSeparator({
 	className,
 	...props
-}: React.ComponentPropsWithoutRef<"div">) {
+}: ComponentPropsWithoutRef<"div">) {
 	return (
 		<div
 			data-slot="input-otp-separator"
-			className={cn("flex items-center justify-center px-2 opacity-50", className)}
+			className={cn(
+				"flex items-center justify-center px-2 opacity-50",
+				className,
+			)}
 			{...props}
 		>
 			<Minus className="size-4" />
 		</div>
-	)
+	);
 }
 
 // displayName の設定
-InputOTP.displayName = "InputOTP"
-InputOTPGroup.displayName = "InputOTPGroup"
-InputOTPSlot.displayName = "InputOTPSlot"
-InputOTPSeparator.displayName = "InputOTPSeparator"
+InputOTP.displayName = "InputOTP";
+InputOTPGroup.displayName = "InputOTPGroup";
+InputOTPSlot.displayName = "InputOTPSlot";
+InputOTPSeparator.displayName = "InputOTPSeparator";
 
-export { InputOTP, InputOTPGroup, InputOTPSlot, InputOTPSeparator }
+export { InputOTP, InputOTPGroup, InputOTPSlot, InputOTPSeparator };

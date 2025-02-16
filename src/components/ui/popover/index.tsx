@@ -25,7 +25,7 @@
 
 "use client"
 
-import type * as React from "react"
+import type { ComponentPropsWithoutRef } from "react"
 import * as PopoverPrimitive from "@radix-ui/react-popover"
 
 import { cn } from "@/lib/utils"
@@ -40,7 +40,7 @@ const Popover = PopoverPrimitive.Root
  */
 function PopoverTrigger({
   ...props
-}: React.ComponentProps<typeof PopoverPrimitive.Trigger>) {
+}: ComponentPropsWithoutRef<typeof PopoverPrimitive.Trigger>) {
   return (
     <PopoverPrimitive.Trigger
       data-slot="trigger"
@@ -57,7 +57,7 @@ function PopoverContent({
   align = "center",
   sideOffset = 4,
   ...props
-}: React.ComponentProps<typeof PopoverPrimitive.Content>) {
+}: ComponentPropsWithoutRef<typeof PopoverPrimitive.Content>) {
   return (
     <PopoverPrimitive.Portal>
       <PopoverPrimitive.Content

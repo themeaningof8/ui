@@ -23,7 +23,7 @@
  * ```
  */
 
-import type * as React from "react";
+import type { ComponentPropsWithoutRef } from "react";
 import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -33,7 +33,7 @@ import { type ButtonProps, buttonVariants } from "@/components/ui/button";
  * ページネーションのルートコンポーネントです。
  * ページネーション全体のコンテナとして機能します。
  */
-function Pagination({ className, ...props }: React.ComponentProps<"nav">) {
+function Pagination({ className, ...props }: ComponentPropsWithoutRef<"nav">) {
 	return (
 		<nav
 			data-slot="root"
@@ -51,7 +51,7 @@ function Pagination({ className, ...props }: React.ComponentProps<"nav">) {
 function PaginationContent({
 	className,
 	...props
-}: React.ComponentProps<"ul">) {
+}: ComponentPropsWithoutRef<"ul">) {
 	return (
 		<ul
 			data-slot="content"
@@ -68,7 +68,7 @@ function PaginationContent({
 function PaginationItem({
 	className,
 	...props
-}: React.ComponentProps<"li">) {
+}: ComponentPropsWithoutRef<"li">) {
 	return (
 		<li
 			data-slot="item"
@@ -84,7 +84,7 @@ function PaginationItem({
 type PaginationLinkProps = {
 	isActive?: boolean;
 } & Pick<ButtonProps, "size"> &
-	React.ComponentProps<"a">;
+	ComponentPropsWithoutRef<"a">;
 
 /**
  * ページネーションのリンクコンポーネントです。
@@ -127,7 +127,7 @@ function PaginationPrevious({
 	className,
 	size = "default",
 	...props
-}: React.ComponentProps<typeof PaginationLink>) {
+}: ComponentPropsWithoutRef<typeof PaginationLink>) {
 	return (
 		<PaginationLink
 			data-slot="previous"
@@ -149,7 +149,7 @@ function PaginationNext({
 	className,
 	size = "default",
 	...props
-}: React.ComponentProps<typeof PaginationLink>) {
+}: ComponentPropsWithoutRef<typeof PaginationLink>) {
 	return (
 		<PaginationLink
 			data-slot="next"
@@ -171,7 +171,7 @@ function PaginationNext({
 function PaginationEllipsis({
 	className,
 	...props
-}: React.ComponentProps<"span">) {
+}: ComponentPropsWithoutRef<"span">) {
 	return (
 		<span
 			data-slot="ellipsis"

@@ -50,7 +50,7 @@
 
 "use client"
 
-import type * as React from "react"
+import type { ComponentPropsWithoutRef, ReactNode } from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { ChevronRight, MoreHorizontal } from "lucide-react"
 import { cva, type VariantProps } from "class-variance-authority"
@@ -92,8 +92,8 @@ const breadcrumbVariants = cva(
 function Breadcrumb({
   className,
   ...props
-}: React.ComponentPropsWithoutRef<"nav"> & {
-  separator?: React.ReactNode
+}: ComponentPropsWithoutRef<"nav"> & {
+  separator?: ReactNode
 }) {
   return (
     <nav
@@ -115,7 +115,7 @@ function BreadcrumbList({
   className,
   variant,
   ...props
-}: React.ComponentPropsWithoutRef<"ol"> &
+}: ComponentPropsWithoutRef<"ol"> &
   VariantProps<typeof breadcrumbVariants>) {
   return (
     <ol
@@ -134,7 +134,7 @@ function BreadcrumbList({
 function BreadcrumbItem({
   className,
   ...props
-}: React.ComponentPropsWithoutRef<"li">) {
+}: ComponentPropsWithoutRef<"li">) {
   return (
     <li
       data-slot="breadcrumb-item"
@@ -154,7 +154,7 @@ function BreadcrumbLink({
   asChild,
   className,
   ...props
-}: React.ComponentPropsWithoutRef<"a"> & {
+}: ComponentPropsWithoutRef<"a"> & {
   asChild?: boolean
 }) {
   const Comp = asChild ? Slot : "a"
@@ -182,7 +182,7 @@ function BreadcrumbLink({
 function BreadcrumbPage({
   className,
   ...props
-}: React.ComponentPropsWithoutRef<"span">) {
+}: ComponentPropsWithoutRef<"span">) {
   return (
     <span
       data-slot="breadcrumb-page"
@@ -211,7 +211,7 @@ function BreadcrumbSeparator({
   children,
   className,
   ...props
-}: React.ComponentProps<"li">) {
+}: ComponentPropsWithoutRef<"li">) {
   return (
     <li
       data-slot="breadcrumb-separator"
@@ -236,7 +236,7 @@ function BreadcrumbSeparator({
 function BreadcrumbEllipsis({
   className,
   ...props
-}: React.ComponentProps<"span">) {
+}: ComponentPropsWithoutRef<"span">) {
   return (
     <span
       data-slot="breadcrumb-ellipsis"

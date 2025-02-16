@@ -2,7 +2,7 @@
 
 import * as MenubarPrimitive from "@radix-ui/react-menubar"
 import { Check, ChevronRight, Circle } from "lucide-react"
-import type { ComponentPropsWithoutRef, HTMLAttributes } from "react"
+import type { ComponentPropsWithoutRef } from "react"
 
 import { cn } from "@/lib/utils"
 
@@ -400,7 +400,7 @@ function MenubarSeparator({
 function MenubarShortcut({
   className,
   ...props
-}: HTMLAttributes<HTMLSpanElement>) {
+}: ComponentPropsWithoutRef<"span">) {
   return (
     <span
       data-slot="menubar-shortcut"

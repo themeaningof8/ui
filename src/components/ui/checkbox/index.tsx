@@ -33,7 +33,7 @@
 
 "use client"
 
-import type * as React from "react"
+import type { ComponentPropsWithoutRef } from "react"
 import * as CheckboxPrimitive from "@radix-ui/react-checkbox"
 import { Check, Minus } from "lucide-react"
 import { cva, type VariantProps } from "class-variance-authority"
@@ -97,7 +97,7 @@ function Checkbox({
   className,
   variant,
   ...props
-}: React.ComponentPropsWithoutRef<typeof CheckboxPrimitive.Root> &
+}: ComponentPropsWithoutRef<typeof CheckboxPrimitive.Root> &
   VariantProps<typeof checkboxVariants>) {
   return (
     <CheckboxPrimitive.Root

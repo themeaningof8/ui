@@ -24,9 +24,8 @@
 
 "use client"
 
-import type * as React from "react"
+import type { ComponentPropsWithoutRef, HTMLAttributes } from "react"
 import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog"
-import type { ComponentPropsWithoutRef } from "react"
 
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
@@ -118,7 +117,7 @@ function AlertDialogContent({
 function AlertDialogHeader({
   className,
   ...props
-}: React.HTMLAttributes<HTMLDivElement>) {
+}: HTMLAttributes<HTMLDivElement>) {
   return (
     <div
       data-slot="alert-dialog-header"
@@ -139,7 +138,7 @@ function AlertDialogHeader({
 function AlertDialogFooter({
   className,
   ...props
-}: React.HTMLAttributes<HTMLDivElement>) {
+}: HTMLAttributes<HTMLDivElement>) {
   return (
     <div
       data-slot="alert-dialog-footer"

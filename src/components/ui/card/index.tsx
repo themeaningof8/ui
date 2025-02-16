@@ -39,8 +39,7 @@
 
 "use client"
 
-import type * as React from "react"
-
+import type { ComponentPropsWithoutRef } from "react"
 import { cn } from "@/lib/utils"
 
 /**
@@ -53,7 +52,7 @@ import { cn } from "@/lib/utils"
 function Card({
   className,
   ...props
-}: React.ComponentPropsWithoutRef<"div">) {
+}: ComponentPropsWithoutRef<"div">) {
   return (
     <div
       data-slot="card"
@@ -62,7 +61,7 @@ function Card({
         "rounded-lg border border-step-7 bg-step-2 text-step-12 shadow-sm not-prose",
         "transition-colors duration-200",
         "hover:border-step-8",
-        "focus-visible:outline-none focus-visible:border-step-8 focus-visible:ring-2 focus-visible:ring-step-6 focus-visible:border-step-8",
+        "focus-visible:outline-none focus-visible:ring-step-6 focus-visible:border-step-8",
         className
       )}
       {...props}
@@ -80,7 +79,7 @@ function Card({
 function CardHeader({
   className,
   ...props
-}: React.ComponentPropsWithoutRef<"div">) {
+}: ComponentPropsWithoutRef<"div">) {
   return (
     <div
       data-slot="card-header"
@@ -100,7 +99,7 @@ function CardHeader({
 function CardTitle({
   className,
   ...props
-}: React.ComponentPropsWithoutRef<"h3">) {
+}: ComponentPropsWithoutRef<"h3">) {
   return (
     <h3
       data-slot="card-title"
@@ -124,7 +123,7 @@ function CardTitle({
 function CardDescription({
   className,
   ...props
-}: React.ComponentPropsWithoutRef<"p">) {
+}: ComponentPropsWithoutRef<"p">) {
   return (
     <p
       data-slot="card-description"
@@ -148,7 +147,7 @@ function CardDescription({
 function CardContent({
   className,
   ...props
-}: React.ComponentPropsWithoutRef<"div">) {
+}: ComponentPropsWithoutRef<"div">) {
   return (
     <div
       data-slot="card-content"
@@ -168,7 +167,7 @@ function CardContent({
 function CardFooter({
   className,
   ...props
-}: React.ComponentPropsWithoutRef<"div">) {
+}: ComponentPropsWithoutRef<"div">) {
   return (
     <div
       data-slot="card-footer"

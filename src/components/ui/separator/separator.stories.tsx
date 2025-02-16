@@ -1,4 +1,4 @@
-import * as React from 'react'
+import { Fragment, useId } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { Separator } from '.'
 
@@ -107,12 +107,12 @@ export const NonDecorative: Story = {
  */
 export const ListDivider: Story = {
   render: () => {
-    const id = React.useId()
+    const id = useId()
     let counter = 1;
     return (
       <div className="w-[300px] space-y-4">
         {Array.from({ length: 5 }).map(() => (
-          <React.Fragment key={`${id}-${counter++}`}>
+          <Fragment key={`${id}-${counter++}`}>
             {counter > 1 && <Separator className="my-4" />}
             <div className="space-y-1">
               <h4 className="text-sm font-medium leading-none">
@@ -122,7 +122,7 @@ export const ListDivider: Story = {
                 リストアイテム {counter} の説明文が入ります。
               </p>
             </div>
-          </React.Fragment>
+          </Fragment>
         ))}
       </div>
     )

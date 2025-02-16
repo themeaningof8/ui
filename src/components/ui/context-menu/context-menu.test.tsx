@@ -3,9 +3,9 @@
  * @description コンテキストメニューコンポーネントの機能をテストします
  */
 
+import { useState } from 'react'
 import { describe, it, expect } from 'vitest'
 import { render, screen, waitFor } from '@/tests/test-utils'
-import React from 'react'
 import {
   ContextMenu,
   ContextMenuTrigger,
@@ -95,7 +95,7 @@ describe('ContextMenuコンポーネント', () => {
 
   it('チェックボックス項目が正しく機能すること', async () => {
     const TestComponent = () => {
-      const [checked, setChecked] = React.useState(false)
+      const [checked, setChecked] = useState(false)
       return (
         <ContextMenu>
           <ContextMenuTrigger>右クリックエリア</ContextMenuTrigger>
@@ -131,7 +131,7 @@ describe('ContextMenuコンポーネント', () => {
 
   it('ラジオグループが正しく機能すること', async () => {
     const TestComponent = () => {
-      const [value, setValue] = React.useState('item1')
+      const [value, setValue] = useState('item1')
       return (
         <ContextMenu>
           <ContextMenuTrigger>右クリックエリア</ContextMenuTrigger>

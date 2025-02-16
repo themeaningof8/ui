@@ -18,7 +18,7 @@
 
 "use client"
 
-import * as React from 'react'
+import type { ComponentPropsWithoutRef, UIEvent } from "react"
 import * as ScrollAreaPrimitive from '@radix-ui/react-scroll-area'
 import { cn } from "@/lib/utils"
 
@@ -30,32 +30,36 @@ import { cn } from "@/lib/utils"
  * @param props.type - スクロールバーの表示タイプ（"auto" | "always" | "scroll" | "hover"）
  * @param props.onScroll - スクロールイベントのハンドラ
  */
-const ScrollArea = React.forwardRef<
-  React.ElementRef<typeof ScrollAreaPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof ScrollAreaPrimitive.Root> & {
-    onScroll?: (event: React.UIEvent<HTMLDivElement>) => void
-  }
->(({ className, children, onScroll, ...props }, ref) => (
-  <ScrollAreaPrimitive.Root
-    ref={ref}
-    className={cn("relative overflow-hidden", className)}
-    data-slot="scroll-area"
-    data-testid="scroll-area"
-    {...props}
-  >
-    <ScrollAreaPrimitive.Viewport
-      className="size-full rounded-[inherit]"
-      data-slot="scroll-area-viewport"
-      data-testid="scroll-area-viewport"
-      onScroll={onScroll}
-      style={{ overflowX: 'hidden', overflowY: 'scroll' }}
+function ScrollArea ({
+  className,
+  children,
+  type = 'auto',
+  onScroll,
+  ...props
+}: ComponentPropsWithoutRef<typeof ScrollAreaPrimitive.Root> & {
+    onScroll?: (event: UIEvent<HTMLDivElement>) => void
+  }) {
+  return (
+    <ScrollAreaPrimitive.Root
+      className={cn("relative overflow-hidden", className)}
+      data-slot="scroll-area"
+      data-testid="scroll-area"
+      {...props}
     >
-      {children}
-    </ScrollAreaPrimitive.Viewport>
-    <ScrollBar />
-    <ScrollAreaPrimitive.Corner />
-  </ScrollAreaPrimitive.Root>
-))
+      <ScrollAreaPrimitive.Viewport
+        className="size-full rounded-[inherit]"
+        data-slot="scroll-area-viewport"
+        data-testid="scroll-area-viewport"
+        onScroll={onScroll}
+        style={{ overflowX: 'hidden', overflowY: 'scroll' }}
+      >
+        {children}
+      </ScrollAreaPrimitive.Viewport>
+      <ScrollBar />
+      <ScrollAreaPrimitive.Corner />
+    </ScrollAreaPrimitive.Root>
+  )
+}
 ScrollArea.displayName = ScrollAreaPrimitive.Root.displayName
 
 /**
@@ -64,30 +68,33 @@ ScrollArea.displayName = ScrollAreaPrimitive.Root.displayName
  * @param props.className - 追加のCSSクラス名
  * @param props.orientation - スクロールバーの向き（"vertical" | "horizontal"）
  */
-const ScrollBar = React.forwardRef<
-  React.ElementRef<typeof ScrollAreaPrimitive.ScrollAreaScrollbar>,
-  React.ComponentPropsWithoutRef<typeof ScrollAreaPrimitive.ScrollAreaScrollbar>
->(({ className, orientation = 'vertical', ...props }, ref) => (
-  <ScrollAreaPrimitive.ScrollAreaScrollbar
-    ref={ref}
-    orientation={orientation}
-    className={cn(
-      'flex touch-none select-none transition-colors',
-      orientation === 'vertical' &&
-        'h-full w-2.5 border-l border-l-transparent p-[1px]',
-      orientation === 'horizontal' &&
-        'h-2.5 flex-col border-t border-t-transparent p-[1px]',
-      className
-    )}
-    data-testid="scroll-area-scrollbar"
-    {...props}
-  >
-  <ScrollAreaPrimitive.ScrollAreaThumb 
-    className="relative flex-1 rounded-full bg-step-6"
-    data-testid="scroll-area-thumb"
-  />
-  </ScrollAreaPrimitive.ScrollAreaScrollbar>
-))
+function ScrollBar ({
+  className,
+  orientation = 'vertical',
+  ...props
+}: ComponentPropsWithoutRef<typeof ScrollAreaPrimitive.ScrollAreaScrollbar>) {
+  return (
+    <ScrollAreaPrimitive.ScrollAreaScrollbar
+      orientation={orientation}
+      className={cn(
+        'flex touch-none select-none transition-colors',
+        orientation === 'vertical' &&
+          'h-full w-2.5 border-l border-l-transparent p-[1px]',
+        orientation === 'horizontal' &&
+          'h-2.5 flex-col border-t border-t-transparent p-[1px]',
+        className
+      )}
+      data-testid="scroll-area-scrollbar"
+      {...props}
+    >
+      <ScrollAreaPrimitive.ScrollAreaThumb
+        className="relative flex-1 rounded-full bg-step-6"
+        data-testid="scroll-area-thumb"
+      />
+    </ScrollAreaPrimitive.ScrollAreaScrollbar>
+  )
+}
+
 ScrollBar.displayName = ScrollAreaPrimitive.ScrollAreaScrollbar.displayName
 
 export { ScrollArea, ScrollBar }

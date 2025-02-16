@@ -6,7 +6,7 @@
 import { describe, it, expect } from 'vitest'
 import { waitFor } from '@testing-library/react'
 import { render, screen } from '@/tests/test-utils'
-import React from 'react'
+import { useState } from 'react'
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -42,7 +42,7 @@ describe('DropdownMenuコンポーネント', () => {
 
   it('チェックボックス項目が正しく機能すること', async () => {
     const TestComponent = () => {
-      const [checked, setChecked] = React.useState(false)
+      const [checked, setChecked] = useState(false)
       return (
         <DropdownMenu>
           <DropdownMenuTrigger>Open Menu</DropdownMenuTrigger>
@@ -76,7 +76,7 @@ describe('DropdownMenuコンポーネント', () => {
 
   it('ラジオグループが正しく機能すること', async () => {
     const TestComponent = () => {
-      const [value, setValue] = React.useState("")
+      const [value, setValue] = useState("")
       return (
         <DropdownMenu>
           <DropdownMenuTrigger>Open Menu</DropdownMenuTrigger>

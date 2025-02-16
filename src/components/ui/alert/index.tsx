@@ -1,7 +1,7 @@
 /**
  * @file アラートコンポーネント
  * @description ユーザーに重要な情報を通知するためのアラートコンポーネントです
- * 
+ *
  * @example
  * ```tsx
  * // デフォルトのアラート
@@ -9,7 +9,7 @@
  *   <AlertTitle>注意</AlertTitle>
  *   <AlertDescription>この操作は取り消せません。</AlertDescription>
  * </Alert>
- * 
+ *
  * // デストラクティブなアラート
  * <Alert variant="destructive">
  *   <AlertTitle>エラー</AlertTitle>
@@ -18,7 +18,7 @@
  * ```
  */
 
-import type * as React from "react";
+import type { ComponentPropsWithoutRef } from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "@/lib/utils";
@@ -55,7 +55,7 @@ function Alert({
 	className,
 	variant,
 	...props
-}: React.HTMLAttributes<HTMLDivElement> & VariantProps<typeof alertVariants>) {
+}:ComponentPropsWithoutRef<"div"> & VariantProps<typeof alertVariants>) {
 	return (
 		<div
 			data-slot="alert"
@@ -75,7 +75,7 @@ function Alert({
 function AlertTitle({
 	className,
 	...props
-}: React.HTMLAttributes<HTMLHeadingElement>) {
+}: ComponentPropsWithoutRef<"h5">) {
 	return (
 		<h5
 			data-slot="alert-title"
@@ -98,7 +98,7 @@ function AlertTitle({
 function AlertDescription({
 	className,
 	...props
-}: React.HTMLAttributes<HTMLParagraphElement>) {
+}: ComponentPropsWithoutRef<"div">) {
 	return (
 		<div
 			data-slot="alert-description"

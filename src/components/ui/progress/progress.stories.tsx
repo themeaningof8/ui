@@ -1,4 +1,4 @@
-import * as React from 'react'
+import { useState, useEffect } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { Progress } from '.'
 
@@ -57,9 +57,9 @@ export const CustomStyle: Story = {
  */
 export const Animated: Story = {
   render: () => {
-    const [progress, setProgress] = React.useState(13)
+    const [progress, setProgress] = useState(13)
  
-    React.useEffect(() => {
+    useEffect(() => {
       const timer = setTimeout(() => setProgress(66), 500)
       return () => clearTimeout(timer)
     }, [])

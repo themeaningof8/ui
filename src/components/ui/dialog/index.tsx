@@ -53,7 +53,7 @@
 
 import * as DialogPrimitive from "@radix-ui/react-dialog"
 import { X } from "lucide-react"
-import type { ComponentPropsWithoutRef, HTMLAttributes } from "react"
+import type { ComponentPropsWithoutRef} from "react"
 
 import { cn } from "@/lib/utils"
 
@@ -157,7 +157,7 @@ function DialogContent({
 function DialogHeader({
   className,
   ...props
-}: HTMLAttributes<HTMLDivElement>) {
+}: ComponentPropsWithoutRef<"div">) {
   return (
     <div
       data-slot="dialog-header"
@@ -178,7 +178,7 @@ function DialogHeader({
 function DialogFooter({
   className,
   ...props
-}: HTMLAttributes<HTMLDivElement>) {
+}: ComponentPropsWithoutRef<"div">) {
   return (
     <div
       data-slot="dialog-footer"

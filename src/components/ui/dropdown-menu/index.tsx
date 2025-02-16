@@ -29,7 +29,7 @@
 
 import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu"
 import { Check, ChevronRight, Circle } from "lucide-react"
-import type { ComponentPropsWithoutRef, HTMLAttributes } from "react"
+import type { ComponentPropsWithoutRef } from "react"
 
 import { cn } from "@/lib/utils"
 
@@ -302,7 +302,7 @@ function DropdownMenuSeparator({
 function DropdownMenuShortcut({
 	className,
 	...props
-}: HTMLAttributes<HTMLSpanElement>) {
+}: ComponentPropsWithoutRef<"span">) {
 	return (
 		<span
 			data-slot="dropdown-menu-shortcut"

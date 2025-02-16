@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { ScrollArea } from '.'
 import { Separator } from '@/components/ui/separator';
-import React from 'react';
+import { useId, Fragment } from 'react';
 
 /**
  * `ScrollArea`は、カスタムスクロールバーを持つスクロール可能な領域を作成するコンポーネントです。
@@ -24,19 +24,19 @@ type Story = StoryObj<typeof ScrollArea>
  */
 export const Vertical: Story = {
   render: () => {
-    const id = React.useId();
+    const id = useId();
     let counter = 0;
     return (
       <ScrollArea className="h-[200px] w-[350px] rounded-md border p-4">
         <div className="space-y-2">
           <h4 className="mb-4 text-sm font-medium leading-none">Tags</h4>
           {Array.from({ length: 20 }).map((_) => (
-            <React.Fragment key={`${id}-${counter++}`}>
+            <Fragment key={`${id}-${counter++}`}>
               <div className="text-sm">
                 Item {counter}
               </div>
               <Separator className='my-2' />
-            </React.Fragment>
+            </Fragment>
           ))}
         </div>
       </ScrollArea>
@@ -49,7 +49,7 @@ export const Vertical: Story = {
  */
 export const Horizontal: Story = {
   render: () => {
-     const id = React.useId();
+     const id = useId();
      let counter = 0;
     return (
     <ScrollArea className="h-[100px] w-[350px] rounded-md border">
@@ -73,7 +73,7 @@ export const Horizontal: Story = {
  */
 export const Both: Story = {
    render: () => {
-    const id = React.useId();
+    const id = useId();
     let counter = 0;
     return (
     <ScrollArea className="h-[300px] w-[400px] rounded-md border p-4">
@@ -97,7 +97,7 @@ export const Both: Story = {
  */
 export const WithText: Story = {
   render: () => {
-    const id = React.useId();
+    const id = useId();
     let counter = 0;
     return(
     <ScrollArea className="h-[300px] w-[600px] rounded-md border p-4">
@@ -128,7 +128,7 @@ export const WithText: Story = {
  */
 export const CustomStyle: Story = {
   render: () => {
-    const id = React.useId();
+    const id = useId();
     let counter = 0;
     return (
     <ScrollArea className="h-[200px] w-[350px] rounded-md border bg-step-3 p-4">
@@ -149,7 +149,7 @@ export const CustomStyle: Story = {
  */
 export const Nested: Story = {
   render: () => {
-      const outerId = React.useId();
+      const outerId = useId();
       let outerCounter = 0;
     return (
     <ScrollArea className="h-[400px] w-[600px] rounded-md border p-4">
@@ -157,7 +157,7 @@ export const Nested: Story = {
         <h4 className="text-sm font-medium leading-none">外側のスクロールエリア</h4>
         <div className="space-y-2">
           {Array.from({ length: 5 }).map(() => {
-              const innerId = React.useId();
+              const innerId = useId();
               let innerCounter = 0;
               return (
             <ScrollArea
@@ -186,7 +186,7 @@ export const Nested: Story = {
 
 export const VerticalWithScrollBar: Story = {
   render: () => {
-    const id = React.useId();
+    const id = useId();
     let counter = 0;
     return (
       <ScrollArea className="h-[200px] w-[350px] rounded-md border p-4">

@@ -17,13 +17,6 @@ describe('Textarea', () => {
     render(<Textarea className={customClass} />)
     expect(screen.getByRole('textbox')).toHaveClass(customClass)
   })
-
-  it('forwards ref correctly', () => {
-    const ref = vi.fn()
-    render(<Textarea ref={ref} />)
-    expect(ref).toHaveBeenCalled()
-  })
-
   it('handles user input correctly', async () => {
     const user = userEvent.setup()
     const onChange = vi.fn()

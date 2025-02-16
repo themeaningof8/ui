@@ -19,7 +19,7 @@
  */
 
 import { cva, type VariantProps } from "class-variance-authority"
-import type { InputHTMLAttributes } from "react"
+import type { ComponentPropsWithoutRef } from "react"
 
 import { cn } from "@/lib/utils"
 
@@ -63,7 +63,7 @@ function Input({
 	type,
 	variant,
 	...props
-}: InputHTMLAttributes<HTMLInputElement> & VariantProps<typeof inputVariants>) {
+}: ComponentPropsWithoutRef<"input"> & VariantProps<typeof inputVariants>) {
 	return (
 		<input
 			data-slot="input"

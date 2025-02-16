@@ -33,7 +33,7 @@
 
 "use client";
 
-import type * as React from "react";
+import type { ComponentPropsWithoutRef } from "react";
 import { Drawer as DrawerPrimitive } from "vaul";
 
 import { cn } from "@/lib/utils";
@@ -43,7 +43,7 @@ const Drawer = DrawerPrimitive.Root;
 function DrawerTrigger({
 	className,
 	...props
-}: React.ComponentProps<typeof DrawerPrimitive.Trigger>) {
+}: ComponentPropsWithoutRef<typeof DrawerPrimitive.Trigger>) {
 	return (
 		<DrawerPrimitive.Trigger
 			data-slot="trigger"
@@ -64,7 +64,7 @@ const DrawerPortal = DrawerPrimitive.Portal;
 function DrawerClose({
 	className,
 	...props
-}: React.ComponentProps<typeof DrawerPrimitive.Close>) {
+}: ComponentPropsWithoutRef<typeof DrawerPrimitive.Close>) {
 	return (
 		<DrawerPrimitive.Close
 			data-slot="close"
@@ -86,7 +86,7 @@ function DrawerClose({
 function DrawerOverlay({
 	className,
 	...props
-}: React.ComponentProps<typeof DrawerPrimitive.Overlay>) {
+}: ComponentPropsWithoutRef<typeof DrawerPrimitive.Overlay>) {
 	return (
 		<DrawerPrimitive.Overlay
 			data-slot="overlay"
@@ -109,7 +109,7 @@ function DrawerContent({
 	className,
 	children,
 	...props
-}: React.ComponentProps<typeof DrawerPrimitive.Content>) {
+}: ComponentPropsWithoutRef<typeof DrawerPrimitive.Content>) {
 	return (
 		<DrawerPortal>
 			<DrawerOverlay />
@@ -148,7 +148,7 @@ function DrawerContent({
 function DrawerHeader({
 	className,
 	...props
-}: React.HTMLAttributes<HTMLDivElement>) {
+}: ComponentPropsWithoutRef<"div">) {
 	return (
 		<div
 			data-slot="header"
@@ -168,7 +168,7 @@ function DrawerHeader({
 function DrawerFooter({
 	className,
 	...props
-}: React.HTMLAttributes<HTMLDivElement>) {
+}: ComponentPropsWithoutRef<"div">) {
 	return (
 		<div
 			data-slot="footer"
@@ -189,7 +189,7 @@ function DrawerFooter({
 function DrawerTitle({
 	className,
 	...props
-}: React.ComponentProps<typeof DrawerPrimitive.Title>) {
+}: ComponentPropsWithoutRef<typeof DrawerPrimitive.Title>) {
 	return (
 		<DrawerPrimitive.Title
 			data-slot="title"
@@ -209,7 +209,7 @@ function DrawerTitle({
 function DrawerDescription({
 	className,
 	...props
-}: React.ComponentProps<typeof DrawerPrimitive.Description>) {
+}: ComponentPropsWithoutRef<typeof DrawerPrimitive.Description>) {
 	return (
 		<DrawerPrimitive.Description
 			data-slot="description"

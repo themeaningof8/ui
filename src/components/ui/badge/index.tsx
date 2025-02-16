@@ -16,7 +16,7 @@
  * <Badge asChild>
  *   <a href="/new">新機能</a>
  * </Badge>
- * 
+ *
  * // アイコン付きの使用例
  * <Badge>
  *   <StarIcon className="mr-1 size-3" />
@@ -25,13 +25,13 @@
  * ```
  */
 
-"use client"
+"use client";
 
-import type * as React from "react"
-import { Slot } from "@radix-ui/react-slot"
-import { cva, type VariantProps } from "class-variance-authority"
+import type { ComponentPropsWithoutRef } from "react";
+import { Slot } from "@radix-ui/react-slot";
+import { cva, type VariantProps } from "class-variance-authority";
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 /**
  * @description バッジのスタイルバリエーションを定義
@@ -75,22 +75,22 @@ const badgeVariants = cva(
 		defaultVariants: {
 			variant: "default",
 		},
-	}
-)
+	},
+);
 
 /**
  * @interface BadgeProps
  * @description バッジコンポーネントのプロパティ
  * @extends VariantProps<typeof badgeVariants>
  * @property {string} [className] - カスタムクラス名
- * @property {React.ReactNode} [children] - バッジの内容
+ * @property {ReactNode} [children] - バッジの内容
  * @property {boolean} [asChild] - 子要素をラップするかどうか
  */
 export interface BadgeProps
-	extends React.HTMLAttributes<HTMLDivElement>,
+	extends ComponentPropsWithoutRef<"div">,
 		VariantProps<typeof badgeVariants> {
-			asChild?: boolean
-		}
+	asChild?: boolean;
+}
 
 /**
  * @function Badge
@@ -99,13 +99,8 @@ export interface BadgeProps
  * @returns {JSX.Element} バッジ要素
  */
 
-function Badge({
-	className,
-	variant,
-	asChild = false,
-	...props
-}: BadgeProps) {
-	const Comp = asChild ? Slot : "div"
+function Badge({ className, variant, asChild = false, ...props }: BadgeProps) {
+	const Comp = asChild ? Slot : "div";
 	return (
 		<Comp
 			data-slot="badge"
@@ -113,10 +108,10 @@ function Badge({
 			className={cn(badgeVariants({ variant }), className)}
 			{...props}
 		/>
-	)
+	);
 }
 
 // displayName の設定
-Badge.displayName = "Badge"
+Badge.displayName = "Badge";
 
-export { Badge, badgeVariants }
+export { Badge, badgeVariants };

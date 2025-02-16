@@ -11,7 +11,7 @@ import {
   CarouselPrevious,
   CarouselNext,
 } from '.'
-import React from 'react';
+import { useId } from 'react';
 
 const meta = {
   title: 'UI/Carousel',
@@ -30,7 +30,7 @@ type Story = StoryObj<typeof meta>
  */
 export const Default: Story = {
   render: () => {
-    const id = React.useId();
+    const id = useId();
     let counter = 0;
     return (
       <Carousel className="w-full max-w-xs">
@@ -57,7 +57,7 @@ export const Default: Story = {
  */
 export const WithImages: Story = {
   render: () => {
-    const id = React.useId();
+    const id = useId();
     let counter = 0;
     return (
       <Carousel className="w-full max-w-md">
@@ -92,7 +92,7 @@ export const WithImages: Story = {
  */
 export const AutoPlay: Story = {
   render: () => {
-    const id = React.useId();
+    const id = useId();
     let counter = 0;
     return (
       <Carousel className="w-full max-w-xs" autoPlay interval={3000}>
@@ -119,7 +119,7 @@ export const AutoPlay: Story = {
  */
 export const CustomStyle: Story = {
   render: () => {
-    const id = React.useId();
+    const id = useId();
     let counter = 0;
     return (
       <Carousel className="w-full max-w-md bg-muted p-4 rounded-xl">

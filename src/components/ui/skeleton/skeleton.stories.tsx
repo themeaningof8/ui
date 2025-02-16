@@ -1,4 +1,4 @@
-import * as React from 'react'
+import { useId } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { Skeleton } from '.'
 
@@ -67,7 +67,7 @@ export const Profile: Story = {
  */
 export const Table: Story = {
   render: () => {
-    const id = React.useId();
+    const id = useId();
     let counter = 0;
     return (
       <div className="w-[600px] space-y-4">
@@ -89,7 +89,7 @@ export const Table: Story = {
  */
 export const List: Story = {
   render: () => {
-    const id = React.useId();
+    const id = useId();
     let counter = 0;
     return (
       <div className="w-[300px] space-y-4">

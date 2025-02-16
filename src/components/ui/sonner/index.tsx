@@ -26,7 +26,7 @@
  */
 
 import { Toaster as Sonner } from "sonner"
-import type { ComponentProps } from "react"
+import type { ComponentPropsWithoutRef } from "react"
 
 import { cn } from "@/lib/utils"
 
@@ -37,7 +37,7 @@ import { cn } from "@/lib/utils"
  * @param props.theme - トーストのテーマ（"light" | "dark" | "system"）
  * @param props.children - 子要素
  */
-function Toaster({ className, ...props }: ComponentProps<typeof Sonner>) {
+function Toaster({ className, ...props }: ComponentPropsWithoutRef<typeof Sonner>) {
   return (
     <Sonner
       data-slot="toaster"

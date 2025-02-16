@@ -31,7 +31,7 @@
 
 "use client";
 
-import type * as React from "react";
+import type { ComponentPropsWithoutRef } from "react";
 import * as ContextMenuPrimitive from "@radix-ui/react-context-menu";
 import { Check, ChevronRight, Circle } from "lucide-react";
 
@@ -57,7 +57,7 @@ const ContextMenuRadioGroup = ContextMenuPrimitive.RadioGroup;
 const ContextMenuContent = ({
 	className,
 	...props
-}: React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.Content>) => (
+}: ComponentPropsWithoutRef<typeof ContextMenuPrimitive.Content>) => (
   <ContextMenuPrimitive.Portal>
     <ContextMenuPrimitive.Content
 			data-slot="content"
@@ -85,7 +85,7 @@ const ContextMenuItem = ({
 	className,
 	inset,
 	...props
-}: React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.Item> & {
+}: ComponentPropsWithoutRef<typeof ContextMenuPrimitive.Item> & {
 	inset?: boolean;
 }) => (
   <ContextMenuPrimitive.Item
@@ -112,7 +112,7 @@ const ContextMenuCheckboxItem = ({
 	children,
 	checked,
 	...props
-}: React.ComponentPropsWithoutRef<
+}: ComponentPropsWithoutRef<
 	typeof ContextMenuPrimitive.CheckboxItem
 >) => (
   <ContextMenuPrimitive.CheckboxItem
@@ -145,7 +145,7 @@ const ContextMenuRadioItem = ({
 	className,
 	children,
 	...props
-}: React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.RadioItem>) => (
+}: ComponentPropsWithoutRef<typeof ContextMenuPrimitive.RadioItem>) => (
   <ContextMenuPrimitive.RadioItem
 		data-slot="radio-item"
     className={cn(
@@ -174,7 +174,7 @@ ContextMenuRadioItem.displayName = "ContextMenuRadioItem";
 const ContextMenuSeparator = ({
 	className,
 	...props
-}: React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.Separator>) => (
+}: ComponentPropsWithoutRef<typeof ContextMenuPrimitive.Separator>) => (
   <ContextMenuPrimitive.Separator
 		data-slot="separator"
     className={cn("-mx-1 my-1 h-px bg-step-6", className)}
@@ -193,7 +193,7 @@ const ContextMenuSubTrigger = ({
 	inset,
 	children,
 	...props
-}: React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.SubTrigger> & {
+}: ComponentPropsWithoutRef<typeof ContextMenuPrimitive.SubTrigger> & {
 	inset?: boolean;
 }) => (
   <ContextMenuPrimitive.SubTrigger
@@ -222,7 +222,7 @@ ContextMenuSubTrigger.displayName = "ContextMenuSubTrigger";
 const ContextMenuSubContent = ({
 	className,
 	...props
-}: React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.SubContent>) => (
+}: ComponentPropsWithoutRef<typeof ContextMenuPrimitive.SubContent>) => (
   <ContextMenuPrimitive.SubContent
 		data-slot="sub-content"
     className={cn(

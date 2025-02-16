@@ -19,7 +19,7 @@
  */
 
 import { cva, type VariantProps } from "class-variance-authority"
-import type { TextareaHTMLAttributes } from "react"
+import type { ComponentPropsWithoutRef } from "react"
 
 import { cn } from "@/lib/utils"
 
@@ -57,7 +57,7 @@ function Textarea({
   className,
   variant,
   ...props
-}: TextareaHTMLAttributes<HTMLTextAreaElement> & VariantProps<typeof textareaVariants>) {
+}: ComponentPropsWithoutRef<"textarea"> & VariantProps<typeof textareaVariants>) {
   return (
     <textarea
       data-slot="textarea"

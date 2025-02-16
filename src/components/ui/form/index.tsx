@@ -90,10 +90,9 @@
  * )
  */
 
-import * as React from "react";
-import type {
-	ComponentPropsWithoutRef,
-	HTMLAttributes,
+import {
+	type ComponentPropsWithoutRef, type HTMLAttributes,
+	createContext, useContext, useId
 } from "react";
 import type * as LabelPrimitive from "@radix-ui/react-label";
 import { Slot } from "@radix-ui/react-slot";
@@ -124,7 +123,7 @@ type FormFieldContextValue<
 /**
  * フォームフィールドコンテキスト
  */
-const FormFieldContext = React.createContext<FormFieldContextValue>(
+const FormFieldContext = createContext<FormFieldContextValue>(
 	{} as FormFieldContextValue,
 );
 
@@ -135,7 +134,7 @@ type FormItemContextValue = {
 /**
  * フォームアイテムコンテキスト
  */
-const FormItemContext = React.createContext<FormItemContextValue>(
+const FormItemContext = createContext<FormItemContextValue>(
 	{} as FormItemContextValue,
 );
 
@@ -158,8 +157,8 @@ function FormField<
  * フォームフィールドコンテキストを使用するためのフック
  */
 function useFormField() {
-	const fieldContext = React.useContext(FormFieldContext);
-	const itemContext = React.useContext(FormItemContext);
+	const fieldContext = useContext(FormFieldContext);
+	const itemContext = useContext(FormItemContext);
 	const { getFieldState, formState } = useFormContext();
 
 	const fieldState = getFieldState(fieldContext.name, formState);
@@ -185,8 +184,8 @@ function useFormField() {
  * @param props - コンポーネントのプロパティ
  * @param props.className - 追加のCSSクラス名
  */
-function FormItem({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
-	const id = React.useId();
+function FormItem({ className, ...props }: ComponentPropsWithoutRef<"div">) {
+	const id = useId();
 
 	return (
 		<FormItemContext.Provider value={{ id }}>

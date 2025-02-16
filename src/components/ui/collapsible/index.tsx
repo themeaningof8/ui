@@ -32,8 +32,7 @@
 
 "use client"
 
-import * as React from 'react'
-import type { ElementRef, ComponentPropsWithoutRef } from 'react'
+import type { ComponentPropsWithoutRef, ReactNode } from 'react'
 import * as CollapsiblePrimitive from '@radix-ui/react-collapsible'
 import { cva, type VariantProps } from "class-variance-authority"
 
@@ -118,7 +117,7 @@ CollapsibleTrigger.displayName = "CollapsibleTrigger"
 /**
  * コラプシブルのコンテンツコンポーネントのプロパティ
  * @typedef {Object} CollapsibleContentProps
- * @property {React.ReactNode} children - 子要素
+ * @property {ReactNode} children - 子要素
  * @property {string} [className] - カスタムクラス名
  */
 function CollapsibleContent({
