@@ -165,7 +165,7 @@ function BreadcrumbLink({
         "inline-flex items-center gap-1.5",
         "transition-colors duration-200",
         "text-step-11 hover:text-step-12",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-step-7 focus-visible:ring-offset-2",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-step-6 focus-visible:rounded-sm",
         "[&_svg]:size-4 [&_svg]:text-step-11/50",
         className
       )}
@@ -192,7 +192,7 @@ function BreadcrumbPage({
       tabIndex={0}
       className={cn(
         "font-normal text-step-11",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-step-7 focus-visible:ring-offset-2",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-step-6 focus-visible:rounded-sm",
         "[&>svg]:size-3.5 [&>svg]:text-step-11/50", 
         className
       )}
@@ -246,6 +246,7 @@ function BreadcrumbEllipsis({
         "flex size-9 items-center justify-center",
         "text-step-11 hover:text-step-12",
         "transition-colors duration-200",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-step-6", 
         className
       )}
       {...props}

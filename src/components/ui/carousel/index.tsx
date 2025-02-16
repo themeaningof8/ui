@@ -179,7 +179,7 @@ function CarouselContent({
       ref={carouselRef}
       className={cn(
         "overflow-hidden",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-step-7 focus-visible:ring-offset-2"
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-step-6 focus-visible:border-step-8"
       )}
       data-testid="carousel-viewport"
     >
@@ -207,7 +207,7 @@ function CarouselItem({
       aria-roledescription="slide"
       className={cn(
         "min-w-0 shrink-0 grow-0 basis-full",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-step-7 focus-visible:ring-offset-2",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-step-6 focus-visible:border-step-8",
         className
       )}
       {...props}
@@ -236,7 +236,7 @@ function CarouselPrevious({
         "left-2 top-1/2 -translate-y-1/2",
         "transition-transform duration-200",
         "hover:scale-110",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-step-7 focus-visible:ring-offset-2",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-step-6 focus-visible:border-step-8",
         className
       )}
       disabled={!canScrollPrev}
@@ -270,7 +270,7 @@ function CarouselNext({
         "right-2 top-1/2 -translate-y-1/2",
         "transition-transform duration-200",
         "hover:scale-110",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-step-7 focus-visible:ring-offset-2",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-step-6 focus-visible:ring-offset-2",
         className
       )}
       disabled={!canScrollNext}

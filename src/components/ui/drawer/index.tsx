@@ -50,7 +50,7 @@ function DrawerTrigger({
 			className={cn(
 				"inline-flex items-center justify-center rounded-md text-sm font-medium",
 				"transition-colors duration-200",
-				"focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-step-7 focus-visible:ring-offset-2",
+				"focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-step-6 focus-visible:border-step-8",
 				"disabled:pointer-events-none disabled:opacity-50",
 				className,
 			)}
@@ -71,7 +71,7 @@ function DrawerClose({
 			className={cn(
 				"inline-flex items-center justify-center rounded-md text-sm font-medium",
 				"transition-colors duration-200",
-				"focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-step-7 focus-visible:ring-offset-2",
+				"focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-step-6 focus-visible:ring-offset-2",
 				"disabled:pointer-events-none disabled:opacity-50",
 				className,
 			)}

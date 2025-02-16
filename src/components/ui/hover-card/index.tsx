@@ -76,7 +76,7 @@ function HoverCardContent({
       sideOffset={sideOffset}
       alignOffset={alignOffset}
       className={cn(
-        "z-50 w-64 rounded-md",
+        "z-50 w-64 p-3 rounded-md",
         "border border-step-7 bg-step-2 text-step-12",
         "shadow-md shadow-step-7/10",
         "data-[state=open]:animate-in data-[state=closed]:animate-out",

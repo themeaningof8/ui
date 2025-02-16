@@ -30,10 +30,10 @@ import { cn } from "@/lib/utils"
 const toggleVariants = cva(
 	[
 		"inline-flex items-center justify-center rounded-md text-sm font-medium",
-		"ring-offset-step-1",
+		"ring-offset-step-1 border border-transparent",
 		"transition-colors duration-200",
 		"hover:bg-step-4 hover:text-step-12",
-		"focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-step-7 focus-visible:ring-offset-2",
+		"focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-step-6 focus-visible:border-step-8",
 		"disabled:pointer-events-none disabled:opacity-50",
 		"data-[state=on]:bg-step-4 data-[state=on]:text-step-12",
 		"[&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",

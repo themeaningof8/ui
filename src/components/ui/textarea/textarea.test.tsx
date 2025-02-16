@@ -55,7 +55,6 @@ describe('Textarea', () => {
     
     expect(textarea).toHaveFocus()
     expect(textarea).toHaveClass('focus-visible:ring-2')
-    expect(textarea).toHaveClass('focus-visible:ring-step-7')
-    expect(textarea).toHaveClass('focus-visible:ring-offset-2')
+    expect(textarea).toHaveClass('focus-visible:ring-step-6')
   })
 }) 

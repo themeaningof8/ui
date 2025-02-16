@@ -53,7 +53,11 @@ function AccordionItem({
 	return (
 		<AccordionPrimitive.Item
 			data-slot="accordion-item"
-			className={cn("border-b last:border-b-0", className)}
+			className={cn(
+				"border-b last:border-b-0",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-step-6 focus-visible:ring-offset-2 focus-visible:rounded-sm",
+				className
+			)}
 			{...props}
 		/>
 	);

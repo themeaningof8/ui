@@ -79,7 +79,7 @@ function Slider({
               "border-2 border-step7 bg-step-1",
               "ring-offset-step-1",
               "transition-colors duration-200",
-              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-step-7 focus-visible:ring-offset-2",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-step-6 focus-visible:border-step-8",
               "disabled:pointer-events-none disabled:opacity-50",
             )}
           />
@@ -93,7 +93,7 @@ function Slider({
             "border-2 border-step-7 bg-step-1",
             "ring-offset-1",
             "transition-colors duration-200",
-            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-step-7 focus-visible:ring-offset-2",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-step-6 focus-visible:border-step-8",
             "disabled:pointer-events-none disabled:opacity-50",
           )}
         />

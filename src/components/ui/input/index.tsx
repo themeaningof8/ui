@@ -33,7 +33,7 @@ const inputVariants = cva(
 		"text-step-12 placeholder:text-step-12/50",
 		"transition-colors duration-200",
 		"file:border-0 file:bg-transparent file:text-sm file:font-medium",
-		"focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-step-7 focus-visible:ring-offset-2",
+		"focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-step-6 focus-visible:border-step-8",
 		"disabled:cursor-not-allowed disabled:opacity-50",
 		"[&::-webkit-calendar-picker-indicator]:filter-step-11",
 	],

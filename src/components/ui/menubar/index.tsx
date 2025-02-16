@@ -105,7 +105,8 @@ function Menubar({
       data-slot="menubar"
       className={cn(
         "flex h-10 items-center space-x-1 rounded-md",
-        "border border-step-7 bg-step-2 p-1",
+        "border border-step-7 bg-step-2",
+        "focus-visible:border-step-8",
         className
       )}
       {...props}
@@ -128,9 +129,9 @@ function MenubarTrigger({
       className={cn(
         "flex cursor-default select-none items-center rounded-sm px-3 py-1.5",
         "text-sm font-medium text-step-11",
-        "outline-none",
+        "outline-none border border-transparent",
         "focus:bg-step-4 focus:text-step-12",
-        "focus-visible:ring-2 focus-visible:ring-step-7 focus-visible:ring-offset-2",
+        "focus-visible:ring-2 focus-visible:ring-step-6",
         "data-[state=open]:bg-step-4 data-[state=open]:text-step-12",
         className
       )}
@@ -159,9 +160,9 @@ function MenubarSubTrigger({
       className={cn(
         "flex cursor-default select-none items-center rounded-sm px-2 py-1.5",
         "text-sm text-step-11",
-        "outline-none",
+        "outline-none border border-transparent",
         "focus:bg-step-4 focus:text-step-12",
-        "focus-visible:ring-2 focus-visible:ring-step-7 focus-visible:ring-offset-2",
+        "focus-visible:ring-2 focus-visible:ring-step-6 focus-visible:border-step-8",
         "data-[state=open]:bg-step-4 data-[state=open]:text-step-12",
         inset && "pl-8",
         className
@@ -264,9 +265,9 @@ function MenubarItem({
       className={cn(
         "relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5",
         "text-sm text-step-11",
-        "outline-none",
+        "outline-none border border-transparent",
         "focus:bg-step-4 focus:text-step-12",
-        "focus-visible:ring-2 focus-visible:ring-step-7 focus-visible:ring-offset-2",
+        "focus-visible:ring-2 focus-visible:ring-step-6 focus-visible:border-step-8",
         "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
         inset && "pl-8",
         className
@@ -296,7 +297,7 @@ function MenubarCheckboxItem({
         "text-sm text-step-11",
         "outline-none",
         "focus:bg-step-4 focus:text-step-12",
-        "focus-visible:ring-2 focus-visible:ring-step-7 focus-visible:ring-offset-2",
+        "focus-visible:ring-2 focus-visible:ring-step-6 focus-visible:ring-offset-2",
         "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
         className
       )}
@@ -331,7 +332,7 @@ function MenubarRadioItem({
         "text-sm text-step-11",
         "outline-none",
         "focus:bg-step-4 focus:text-step-12",
-        "focus-visible:ring-2 focus-visible:ring-step-7 focus-visible:ring-offset-2",
+        "focus-visible:ring-2 focus-visible:ring-step-6 focus-visible:ring-offset-2",
         "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
         className
       )}

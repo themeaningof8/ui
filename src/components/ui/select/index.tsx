@@ -80,8 +80,8 @@ function SelectTrigger({
       className={cn(
         "flex h-10 w-full items-center justify-between rounded-md px-3 py-2",
         "border border-step-7 bg-step-1 text-step-12",
-        "ring-offset-step-1 placeholder:text-step-11",
-        "focus:outline-none focus:ring-2 focus:ring-step-7 focus:ring-offset-2",
+        "placeholder:text-step-11",
+        "focus:outline-none focus:ring-2 focus:ring-step-6 focus:border-step-8",
         "disabled:cursor-not-allowed disabled:opacity-50",
         "[&>span]:line-clamp-1",
         className

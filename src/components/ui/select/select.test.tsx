@@ -177,6 +177,6 @@ describe('Select', () => {
     await user.tab()
     
     expect(trigger).toHaveFocus()
-    expect(trigger).toHaveClass('focus:outline-none', 'focus:ring-2', 'focus:ring-step-7', 'focus:ring-offset-2')
+    expect(trigger).toHaveClass('focus:outline-none', 'focus:ring-2', 'focus:ring-step-6')
   })
 }) 

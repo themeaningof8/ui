@@ -173,7 +173,7 @@ function SheetContent({
             "absolute right-4 top-4 rounded-sm",
             "opacity-70 transition-opacity hover:opacity-100",
             "text-step-11 hover:text-step-12",
-            "focus:outline-none focus:ring-2 focus:ring-step-7 focus:ring-offset-2",
+            "focus:outline-none focus:ring-2 focus:ring-step-6 focus:ring-offset-2",
             "disabled:pointer-events-none",
             "data-[state=open]:bg-step-4"
           )}

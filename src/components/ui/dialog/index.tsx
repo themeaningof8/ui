@@ -136,7 +136,7 @@ function DialogContent({
             "ring-offset-step-2",
             "transition-opacity",
             "hover:opacity-100",
-            "focus:outline-none focus:ring-2 focus:ring-step-7 focus:ring-offset-2",
+            "focus:outline-none focus:ring-2 focus:ring-step-6 focus:ring-offset-2",
             "disabled:pointer-events-none",
             "data-[state=open]:bg-step-4 data-[state=open]:text-step-11"
           )}

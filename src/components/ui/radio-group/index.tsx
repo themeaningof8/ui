@@ -89,14 +89,14 @@ function RadioGroupItem({
     <RadioGroupPrimitive.Item
       data-slot="radio-group-item"
       className={cn(
-        "aspect-square size-4 rounded-full",
+        "aspect-square size-5 rounded-full",
         "border-2 border-step-7 text-step-1",
         "ring-offset-step-1",
         "transition-colors duration-200",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-step-7 focus-visible:ring-offset-2",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-step-6 focus-visible:border-step-8",
         "disabled:cursor-not-allowed disabled:opacity-50",
-        "data-[state=checked]:border-step-9 data-[state=checked]:bg-step-9 data-[state=checked]:text-step-1",
-        "hover:border-step-8",
+        "data-[state=checked]:border-step-8 data-[state=checked]:bg-step-2 data-[state=checked]:text-step-9",
+        "hover:border-step-7",
         "active:scale-95",
         className
       )}

@@ -107,7 +107,7 @@ function PaginationLink({
 				}),
 				"text-step-12",
 				"hover:bg-step-4 hover:text-step-12",
-				"focus-visible:ring-step-7",
+				"focus-visible:ring-step-6",
 				"disabled:text-step-11",
 				isActive && [
 					"border-step-7 bg-step-2",

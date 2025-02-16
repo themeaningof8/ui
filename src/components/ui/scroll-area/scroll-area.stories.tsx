@@ -28,7 +28,7 @@ export const Vertical: Story = {
     let counter = 0;
     return (
       <ScrollArea className="h-[200px] w-[350px] rounded-md border p-4">
-        <div className="space-y-4">
+        <div className="space-y-2">
           <h4 className="mb-4 text-sm font-medium leading-none">Tags</h4>
           {Array.from({ length: 20 }).map((_) => (
             <React.Fragment key={`${id}-${counter++}`}>
@@ -101,7 +101,7 @@ export const WithText: Story = {
     let counter = 0;
     return(
     <ScrollArea className="h-[300px] w-[600px] rounded-md border p-4">
-      <div className="space-y-4">
+      <div className="space-y-2">
         <h4 className="text-sm font-medium leading-none">テキストコンテンツ</h4>
         {Array.from({ length: 10 }).map(() => (
           <div key={`${id}-${counter++}`} className="text-sm">
@@ -153,7 +153,7 @@ export const Nested: Story = {
       let outerCounter = 0;
     return (
     <ScrollArea className="h-[400px] w-[600px] rounded-md border p-4">
-      <div className="space-y-4">
+      <div className="space-y-2">
         <h4 className="text-sm font-medium leading-none">外側のスクロールエリア</h4>
         <div className="space-y-2">
           {Array.from({ length: 5 }).map(() => {

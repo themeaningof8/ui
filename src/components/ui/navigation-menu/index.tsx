@@ -67,7 +67,7 @@ const navigationMenuTriggerStyle = cva(
     "bg-step-1 text-step-12",
     "transition-colors duration-200",
     "hover:bg-step-4 hover:text-step-12",
-    "focus:bg-step-4 focus:text-step-12 focus:outline-none focus-visible:ring-2 focus-visible:ring-step-7 focus-visible:ring-offset-2",
+    "focus:bg-step-4 focus:text-step-12 focus:outline-none focus-visible:ring-2 focus-visible:ring-step-6 focus-visible:border-step-8",
     "disabled:pointer-events-none disabled:opacity-50",
     "data-[active]:bg-step-4/50 data-[state=open]:bg-step-4/50",
   ]

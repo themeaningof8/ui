@@ -44,7 +44,7 @@ const badgeVariants = cva(
 		"inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5",
 		"text-xs font-semibold",
 		"border transition-colors",
-		"focus:outline-none focus:ring-2 focus:ring-step-7 focus:ring-offset-2",
+		"focus:outline-none focus:ring-2 focus:ring-step-6",
 		"[&_svg]:size-3",
 	],
 	{

@@ -6,7 +6,6 @@
 import { describe, it, expect } from 'vitest'
 import { waitFor } from '@testing-library/react'
 import { render, screen } from '@/tests/test-utils'
-import { userEvent } from '@testing-library/user-event'
 import React from 'react'
 import {
   DropdownMenu,
@@ -23,7 +22,6 @@ import {
   DropdownMenuLabel,
   DropdownMenuGroup,
   DropdownMenuPortal,
-  DropdownMenuShortcut,
 } from '.'
 
 describe('DropdownMenuコンポーネント', () => {

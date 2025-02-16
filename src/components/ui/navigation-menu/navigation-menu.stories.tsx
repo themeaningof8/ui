@@ -36,7 +36,7 @@ export const Default: Story = {
         <NavigationMenuItem>
           <NavigationMenuTrigger>Getting started</NavigationMenuTrigger>
           <NavigationMenuContent>
-            <ul className="grid gap-3 p-4 w-[400px]">
+            <ul className="p-3 w-[400px]">
               <li>
                 <NavigationMenuLink
                   className={cn(
@@ -75,7 +75,7 @@ export const MultipleItems: Story = {
         <NavigationMenuItem>
           <NavigationMenuTrigger>Getting started</NavigationMenuTrigger>
           <NavigationMenuContent>
-            <ul className="grid gap-3 p-4 w-[400px]">
+            <ul className="p-3 w-[400px]">
               <li>
                 <NavigationMenuLink
                   className={cn(
@@ -92,7 +92,7 @@ export const MultipleItems: Story = {
         <NavigationMenuItem>
           <NavigationMenuTrigger>Components</NavigationMenuTrigger>
           <NavigationMenuContent>
-            <ul className="grid gap-3 p-4 w-[400px]">
+            <ul className="p-3 w-[400px]">
               <li>
                 <NavigationMenuLink
                   className={cn(
@@ -121,7 +121,7 @@ export const WithRichContent: Story = {
         <NavigationMenuItem>
           <NavigationMenuTrigger>Resources</NavigationMenuTrigger>
           <NavigationMenuContent>
-            <ul className="grid gap-3 p-6 w-[600px] grid-cols-2">
+            <ul className="p-3 w-[600px] grid-cols-2">
               <li className="col-span-2">
                 <div className="font-medium mb-2">Featured</div>
                 <div className="text-sm text-step-11">
@@ -166,7 +166,7 @@ export const WithDisabledItems: Story = {
         <NavigationMenuItem>
           <NavigationMenuTrigger>Enabled</NavigationMenuTrigger>
           <NavigationMenuContent>
-            <ul className="grid gap-3 p-4 w-[400px]">
+            <ul className="p-3 w-[400px]">
               <li>
                 <NavigationMenuLink
                   className={cn(

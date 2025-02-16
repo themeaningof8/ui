@@ -48,7 +48,7 @@ const checkboxVariants = cva(
     "peer size-5 shrink-0 rounded-sm",
     "border border-step-7 bg-step-1",
     "transition-all duration-200",
-    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-step-7 focus-visible:ring-offset-2",
+    "focus-visible:outline-none focus-visible:border-step-8 focus-visible:ring-2 focus-visible:ring-step-5",
     "disabled:cursor-not-allowed disabled:opacity-50",
     "data-[state=checked]:border-step-9 data-[state=checked]:bg-step-9 data-[state=checked]:text-step-1",
     "data-[state=indeterminate]:border-step-9 data-[state=indeterminate]:bg-step-9 data-[state=indeterminate]:text-step-1",

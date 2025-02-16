@@ -6,7 +6,7 @@
 
 @layer base {
 	* {
-		@apply border-step-6 ring-step-7 text-sm;
+		@apply border-step-6 ring-step-6 text-sm;
 	}
 	body {
 		@apply bg-step-1 text-step-12;

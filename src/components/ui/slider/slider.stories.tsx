@@ -86,7 +86,7 @@ export const WithSteps: Story = {
         id="steps"
         defaultValue={[40]}
         max={100}
-        step={20}
+        step={25}
         className="w-[60vw] max-w-[400px]"
       />
       <div className="flex justify-between text-sm text-step-11">

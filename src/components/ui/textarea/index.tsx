@@ -31,13 +31,13 @@ const textareaVariants = cva(
     "flex min-h-[80px] w-full rounded-md px-3 py-2 text-base md:text-sm",
     "border bg-step-1 text-step-12",
     "transition-colors duration-200",
-    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
+    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-step-6 focus-visible:border-step-8",
     "disabled:cursor-not-allowed disabled:opacity-50",
   ],
   {
     variants: {
       variant: {
-        default: "border-step-7 focus-visible:ring-step-7 placeholder:text-step-12/50",
+        default: "border-step-7 focus-visible:ring-step-6 placeholder:text-step-12/50",
         error: "border-destructive-step-7 focus-visible:ring-destructive-step-7 placeholder:text-destructive-step-11",
       },
     },

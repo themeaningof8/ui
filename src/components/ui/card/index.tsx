@@ -59,10 +59,10 @@ function Card({
       data-slot="card"
       role="article"
       className={cn(
-        "rounded-lg border border-step-6 bg-step-2 text-step-12 shadow-sm not-prose",
+        "rounded-lg border border-step-7 bg-step-2 text-step-12 shadow-sm not-prose",
         "transition-colors duration-200",
-        "hover:border-step-7",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-step-7 focus-visible:ring-offset-2",
+        "hover:border-step-8",
+        "focus-visible:outline-none focus-visible:border-step-8 focus-visible:ring-2 focus-visible:ring-step-6 focus-visible:border-step-8",
         className
       )}
       {...props}
