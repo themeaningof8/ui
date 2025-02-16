@@ -29,79 +29,99 @@
  * ```
  */
 
-"use client"
+"use client";
 
-import * as React from "react"
-import * as ContextMenuPrimitive from "@radix-ui/react-context-menu"
-import { Check, ChevronRight, Circle } from "lucide-react"
+import type * as React from "react";
+import * as ContextMenuPrimitive from "@radix-ui/react-context-menu";
+import { Check, ChevronRight, Circle } from "lucide-react";
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
-const ContextMenu = ContextMenuPrimitive.Root
+const ContextMenu = ContextMenuPrimitive.Root;
 
-const ContextMenuTrigger = ContextMenuPrimitive.Trigger
+const ContextMenuTrigger = ContextMenuPrimitive.Trigger;
 
-const ContextMenuGroup = ContextMenuPrimitive.Group
+const ContextMenuGroup = ContextMenuPrimitive.Group;
 
-const ContextMenuPortal = ContextMenuPrimitive.Portal
+const ContextMenuPortal = ContextMenuPrimitive.Portal;
 
-const ContextMenuSub = ContextMenuPrimitive.Sub
+const ContextMenuSub = ContextMenuPrimitive.Sub;
 
-const ContextMenuRadioGroup = ContextMenuPrimitive.RadioGroup
+const ContextMenuRadioGroup = ContextMenuPrimitive.RadioGroup;
 
 /**
  * コンテキストメニューのコンテンツ部分
+ * @param props - コンポーネントのプロパティ
+ * @returns コンテキストメニューのコンテンツを表示するコンポーネント
  */
-const ContextMenuContent = React.forwardRef<
-  React.ComponentRef<typeof ContextMenuPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.Content>
->(({ className, ...props }, ref) => (
+const ContextMenuContent = ({
+	className,
+	...props
+}: React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.Content>) => (
   <ContextMenuPrimitive.Portal>
     <ContextMenuPrimitive.Content
-      ref={ref}
+			data-slot="content"
       className={cn(
-        "z-50 min-w-[8rem] overflow-hidden rounded-md border bg-step-1 p-1 text-step-11 shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
-        className
+				"z-50 min-w-[8rem] overflow-hidden rounded-md border bg-step-1 p-1 text-step-11 shadow-md",
+				"data-[state=open]:animate-in data-[state=closed]:animate-out",
+				"data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+				"data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
+				"data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2",
+				"data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
+				className,
       )}
       {...props}
     />
   </ContextMenuPrimitive.Portal>
-))
-ContextMenuContent.displayName = ContextMenuPrimitive.Content.displayName
+);
+ContextMenuContent.displayName = "ContextMenuContent";
 
 /**
  * コンテキストメニューの項目
+ * @param props - コンポーネントのプロパティ
+ * @returns コンテキストメニューの項目を表示するコンポーネント
  */
-const ContextMenuItem = React.forwardRef<
-  React.ComponentRef<typeof ContextMenuPrimitive.Item>,
-  React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.Item> & {
-    inset?: boolean
-  }
->(({ className, inset, ...props }, ref) => (
+const ContextMenuItem = ({
+	className,
+	inset,
+	...props
+}: React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.Item> & {
+	inset?: boolean;
+}) => (
   <ContextMenuPrimitive.Item
-    ref={ref}
+		data-slot="item"
     className={cn(
-      "relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none focus:bg-step-5 focus:text-step-12 data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+			"relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none",
+			"focus:bg-step-5 focus:text-step-12",
+			"data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
       inset && "pl-8",
-      className
+			className,
     )}
     {...props}
   />
-))
-ContextMenuItem.displayName = ContextMenuPrimitive.Item.displayName
+);
+ContextMenuItem.displayName = "ContextMenuItem";
 
 /**
  * コンテキストメニューのチェックボックス項目
+ * @param props - コンポーネントのプロパティ
+ * @returns チェックボックス付きのメニュー項目を表示するコンポーネント
  */
-const ContextMenuCheckboxItem = React.forwardRef<
-  React.ComponentRef<typeof ContextMenuPrimitive.CheckboxItem>,
-  React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.CheckboxItem>
->(({ className, children, checked, ...props }, ref) => (
+const ContextMenuCheckboxItem = ({
+	className,
+	children,
+	checked,
+	...props
+}: React.ComponentPropsWithoutRef<
+	typeof ContextMenuPrimitive.CheckboxItem
+>) => (
   <ContextMenuPrimitive.CheckboxItem
-    ref={ref}
+		data-slot="checkbox-item"
     className={cn(
-      "relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-step-5 focus:text-step-12 data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
-      className
+			"relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none",
+			"focus:bg-step-5 focus:text-step-12",
+			"data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+			className,
     )}
     checked={checked}
     {...props}
@@ -113,21 +133,26 @@ const ContextMenuCheckboxItem = React.forwardRef<
     </span>
     {children}
   </ContextMenuPrimitive.CheckboxItem>
-))
-ContextMenuCheckboxItem.displayName = ContextMenuPrimitive.CheckboxItem.displayName
+);
+ContextMenuCheckboxItem.displayName = "ContextMenuCheckboxItem";
 
 /**
  * コンテキストメニューのラジオ項目
+ * @param props - コンポーネントのプロパティ
+ * @returns ラジオボタン付きのメニュー項目を表示するコンポーネント
  */
-const ContextMenuRadioItem = React.forwardRef<
-  React.ComponentRef<typeof ContextMenuPrimitive.RadioItem>,
-  React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.RadioItem>
->(({ className, children, ...props }, ref) => (
+const ContextMenuRadioItem = ({
+	className,
+	children,
+	...props
+}: React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.RadioItem>) => (
   <ContextMenuPrimitive.RadioItem
-    ref={ref}
+		data-slot="radio-item"
     className={cn(
-      "relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-step-5 focus:text-step-12 data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
-      className
+			"relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none",
+			"focus:bg-step-5 focus:text-step-12",
+			"data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+			className,
     )}
     {...props}
   >
@@ -138,65 +163,81 @@ const ContextMenuRadioItem = React.forwardRef<
     </span>
     {children}
   </ContextMenuPrimitive.RadioItem>
-))
-ContextMenuRadioItem.displayName = ContextMenuPrimitive.RadioItem.displayName
+);
+ContextMenuRadioItem.displayName = "ContextMenuRadioItem";
 
 /**
  * コンテキストメニューの区切り線
+ * @param props - コンポーネントのプロパティ
+ * @returns メニュー項目間の区切り線を表示するコンポーネント
  */
-const ContextMenuSeparator = React.forwardRef<
-  React.ComponentRef<typeof ContextMenuPrimitive.Separator>,
-  React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.Separator>
->(({ className, ...props }, ref) => (
+const ContextMenuSeparator = ({
+	className,
+	...props
+}: React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.Separator>) => (
   <ContextMenuPrimitive.Separator
-    ref={ref}
+		data-slot="separator"
     className={cn("-mx-1 my-1 h-px bg-step-6", className)}
     {...props}
   />
-))
-ContextMenuSeparator.displayName = ContextMenuPrimitive.Separator.displayName
+);
+ContextMenuSeparator.displayName = "ContextMenuSeparator";
 
 /**
  * コンテキストメニューのサブトリガー
+ * @param props - コンポーネントのプロパティ
+ * @returns サブメニューを開くトリガーを表示するコンポーネント
  */
-const ContextMenuSubTrigger = React.forwardRef<
-  React.ComponentRef<typeof ContextMenuPrimitive.SubTrigger>,
-  React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.SubTrigger> & {
-    inset?: boolean
-  }
->(({ className, inset, children, ...props }, ref) => (
+const ContextMenuSubTrigger = ({
+	className,
+	inset,
+	children,
+	...props
+}: React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.SubTrigger> & {
+	inset?: boolean;
+}) => (
   <ContextMenuPrimitive.SubTrigger
-    ref={ref}
+		data-slot="sub-trigger"
     className={cn(
-      "flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none focus:bg-step-5 focus:text-step-12 data-[state=open]:bg-step-5 data-[state=open]:text-step-12 data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+			"flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none",
+			"focus:bg-step-5 focus:text-step-12",
+			"data-[state=open]:bg-step-5 data-[state=open]:text-step-12",
+			"data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
       inset && "pl-8",
-      className
+			className,
     )}
     {...props}
   >
     {children}
     <ChevronRight className="ml-auto size-4" />
   </ContextMenuPrimitive.SubTrigger>
-))
-ContextMenuSubTrigger.displayName = ContextMenuPrimitive.SubTrigger.displayName
+);
+ContextMenuSubTrigger.displayName = "ContextMenuSubTrigger";
 
 /**
  * コンテキストメニューのサブコンテンツ
+ * @param props - コンポーネントのプロパティ
+ * @returns サブメニューのコンテンツを表示するコンポーネント
  */
-const ContextMenuSubContent = React.forwardRef<
-  React.ComponentRef<typeof ContextMenuPrimitive.SubContent>,
-  React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.SubContent>
->(({ className, ...props }, ref) => (
+const ContextMenuSubContent = ({
+	className,
+	...props
+}: React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.SubContent>) => (
   <ContextMenuPrimitive.SubContent
-    ref={ref}
+		data-slot="sub-content"
     className={cn(
-      "z-50 min-w-[8rem] overflow-hidden rounded-md border bg-step-1 p-1 text-step-11 shadow-lg data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
-      className
+			"z-50 min-w-[8rem] overflow-hidden rounded-md border bg-step-1 p-1 text-step-11 shadow-lg",
+			"data-[state=open]:animate-in data-[state=closed]:animate-out",
+			"data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+			"data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
+			"data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2",
+			"data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
+			className,
     )}
     {...props}
   />
-))
-ContextMenuSubContent.displayName = ContextMenuPrimitive.SubContent.displayName
+);
+ContextMenuSubContent.displayName = "ContextMenuSubContent";
 
 export {
   ContextMenu,
@@ -212,4 +253,4 @@ export {
   ContextMenuSubTrigger,
   ContextMenuGroup,
   ContextMenuPortal,
-} 
+};

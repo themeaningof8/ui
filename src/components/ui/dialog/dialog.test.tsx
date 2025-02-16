@@ -15,6 +15,7 @@ import {
   DialogDescription,
 } from '.'
 import { Button } from '@/components/ui/button'
+import { userEvent } from '@testing-library/user-event'
 
 describe('Dialogコンポーネント', () => {
   it('基本的なダイアログが正しくレンダリングされること', async () => {
@@ -95,7 +96,8 @@ describe('Dialogコンポーネント', () => {
   })
 
   it('オーバーレイをクリックしてダイアログが閉じられること', async () => {
-    const { user } = render(
+    const user = userEvent.setup()
+    render(
       <Dialog>
         <DialogTrigger>開く</DialogTrigger>
         <DialogContent>
@@ -114,6 +116,53 @@ describe('Dialogコンポーネント', () => {
     // オーバーレイをクリック
     const overlay = screen.getByTestId('dialog-overlay')
     await user.click(overlay)
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+  })
+
+  it('閉じるボタンをクリックしてダイアログが閉じられること', async () => {
+    const user = userEvent.setup()
+    render(
+      <Dialog>
+        <DialogTrigger>開く</DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>タイトル</DialogTitle>
+            <DialogDescription>説明文</DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
+    )
+
+    // ダイアログを開く
+    await user.click(screen.getByText('開く'))
+    expect(screen.getByRole('dialog')).toBeInTheDocument()
+
+    // 閉じるボタンをクリック
+    const closeButton = screen.getByRole('button', { name: '閉じる' })
+    await user.click(closeButton)
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+  })
+
+  it('ESCキーでダイアログが閉じられること', async () => {
+    const user = userEvent.setup()
+    render(
+      <Dialog>
+        <DialogTrigger>開く</DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>タイトル</DialogTitle>
+            <DialogDescription>説明文</DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
+    )
+
+    // ダイアログを開く
+    await user.click(screen.getByText('開く'))
+    expect(screen.getByRole('dialog')).toBeInTheDocument()
+
+    // ESCキーを押す
+    await user.keyboard('{Escape}')
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
   })
 }) 

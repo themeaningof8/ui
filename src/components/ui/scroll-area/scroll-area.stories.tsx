@@ -131,7 +131,7 @@ export const CustomStyle: Story = {
     const id = React.useId();
     let counter = 0;
     return (
-    <ScrollArea className="h-[200px] w-[350px] rounded-md border bg-muted p-4">
+    <ScrollArea className="h-[200px] w-[350px] rounded-md border bg-step-3 p-4">
       <div className="space-y-4">
         {Array.from({ length: 20 }).map(() => (
           <div key={`${id}-${counter++}`} className="text-sm text-step-11">
@@ -162,7 +162,7 @@ export const Nested: Story = {
               return (
             <ScrollArea
               key={`${outerId}-${outerCounter++}`}
-              className="h-[100px] w-full rounded-md border bg-muted p-4"
+              className="h-[100px] w-full rounded-md border bg-step-3 p-4"
             >
               <div className="space-y-2">
                 <h5 className="text-sm font-medium leading-none">

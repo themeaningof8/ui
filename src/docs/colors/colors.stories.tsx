@@ -248,12 +248,12 @@ export const Overview: Story = {
 
       <h2>インタラクティブな例</h2>
       <div className="not-prose space-y-4">
-        <div className="rounded-lg border border-border p-4 space-y-4">
+        <div className="rounded-lg border border-step-6 p-4 space-y-4">
           <h3 className="text-lg font-medium">ボタンの状態</h3>
           <div className="flex gap-4">
             <button
               type="button"
-              className="rounded-md bg-card px-4 py-2 hover:bg-step-5 active:bg-step-5/80"
+              className="rounded-md bg-step-3 px-4 py-2 hover:bg-step-5 active:bg-step-5/80"
             >
               通常
             </button>
@@ -272,7 +272,7 @@ export const Overview: Story = {
           </div>
         </div>
 
-        <div className="rounded-lg border border-border p-4 space-y-4">
+        <div className="rounded-lg border border-step-6 p-4 space-y-4">
           <h3 className="text-lg font-medium">テキストのコントラスト</h3>
           <div className="space-y-2">
             <p className="text-step-12">高コントラストテキスト (Step 12)</p>
@@ -281,7 +281,7 @@ export const Overview: Story = {
           </div>
         </div>
 
-        <div className="rounded-lg border border-border p-4 space-y-4">
+        <div className="rounded-lg border border-step-6 p-4 space-y-4">
           <h3 className="text-lg font-medium">境界線の使用例</h3>
           <div className="grid grid-cols-3 gap-4">
             <div className="rounded-md border border-step-6 p-4">

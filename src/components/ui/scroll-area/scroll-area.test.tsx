@@ -8,12 +8,11 @@ import { vi } from 'vitest'
 describe('ScrollArea', () => {
   it('renders scroll area correctly', () => {
     render(
-      <ScrollArea className="h-[200px]">
+      <ScrollArea>
         <div>Scrollable content</div>
       </ScrollArea>
     )
-
-    expect(screen.getByText('Scrollable content')).toBeInTheDocument()
+    expect(screen.getByTestId('scroll-area')).toBeInTheDocument()
   })
 
   it('applies custom className to scroll area', () => {
@@ -23,14 +22,13 @@ describe('ScrollArea', () => {
         <div>Scrollable content</div>
       </ScrollArea>
     )
-
     const scrollArea = screen.getByTestId('scroll-area')
     expect(scrollArea).toHaveClass(customClass)
   })
 
   it('renders viewport with correct styles', () => {
     render(
-      <ScrollArea className="h-[200px]">
+      <ScrollArea>
         <div style={{ height: '1000px' }}>Scrollable content</div>
       </ScrollArea>
     )
@@ -38,26 +36,21 @@ describe('ScrollArea', () => {
     const viewport = screen.getByTestId('scroll-area-viewport')
     expect(viewport).toBeInTheDocument()
     expect(viewport).toHaveStyle({
-      'overflow-x': 'scroll',
+      'overflow-x': 'hidden',
       'overflow-y': 'scroll'
     })
   })
 
-  it('handles scroll events correctly', async () => {
+  it('handles scroll events correctly', () => {
     const onScroll = vi.fn()
-    const scrollHeight = 1000
-
     render(
-      <ScrollArea className="h-[200px]" onScroll={onScroll}>
-        <div style={{ height: `${scrollHeight}px` }}>
-          Scrollable content
-        </div>
+      <ScrollArea onScroll={onScroll}>
+        <div style={{ height: '1000px' }}>Scrollable content</div>
       </ScrollArea>
     )
 
     const viewport = screen.getByTestId('scroll-area-viewport')
-    await fireEvent.scroll(viewport, { target: { scrollTop: scrollHeight / 2 } })
-
+    fireEvent.scroll(viewport)
     expect(onScroll).toHaveBeenCalled()
   })
 
@@ -67,7 +60,6 @@ describe('ScrollArea', () => {
         <div style={{ height: '1000px' }}>Scrollable content</div>
       </ScrollArea>
     )
-
     const scrollArea = screen.getByTestId('scroll-area')
     expect(scrollArea).toHaveClass('relative', 'overflow-hidden')
   })

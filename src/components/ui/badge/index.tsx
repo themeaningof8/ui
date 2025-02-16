@@ -16,14 +16,22 @@
  * <Badge asChild>
  *   <a href="/new">新機能</a>
  * </Badge>
+ * 
+ * // アイコン付きの使用例
+ * <Badge>
+ *   <StarIcon className="mr-1 size-3" />
+ *   お気に入り
+ * </Badge>
  * ```
  */
 
-import React from "react";
-import { Slot } from "@radix-ui/react-slot"
-import { cva, type VariantProps } from "class-variance-authority";
+"use client"
 
-import { cn } from "@/lib/utils";
+import type * as React from "react"
+import { Slot } from "@radix-ui/react-slot"
+import { cva, type VariantProps } from "class-variance-authority"
+
+import { cn } from "@/lib/utils"
 
 /**
  * @description バッジのスタイルバリエーションを定義
@@ -32,24 +40,43 @@ import { cn } from "@/lib/utils";
  * @property {Object} defaultVariants - デフォルトのバリアント
  */
 const badgeVariants = cva(
-	"inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-step-7 focus:ring-offset-2",
+	[
+		"inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5",
+		"text-xs font-semibold",
+		"border transition-colors",
+		"focus:outline-none focus:ring-2 focus:ring-step-7 focus:ring-offset-2",
+		"[&_svg]:size-3",
+	],
 	{
 		variants: {
 			variant: {
-				default:
-					"border-transparent bg-step-9 text-step-1 hover:bg-step-10",
-				secondary:
-					"border-transparent bg-step-4 text-step-11 hover:bg-step-5",
-				destructive:
-					"border-transparent bg-destructive-step-9 text-destructive-step-1 hover:bg-destructive-step-10",
-				outline: "border-step-7 text-step-11",
+				default: [
+					"border-transparent",
+					"bg-step-9 text-step-1",
+					"hover:bg-step-10",
+				],
+				secondary: [
+					"border-transparent",
+					"bg-step-4 text-step-11",
+					"hover:bg-step-5",
+				],
+				destructive: [
+					"border-transparent",
+					"bg-destructive-step-9 text-destructive-step-1",
+					"hover:bg-destructive-step-10",
+				],
+				outline: [
+					"border-step-7",
+					"text-step-11",
+					"hover:border-step-8 hover:bg-step-2",
+				],
 			},
 		},
 		defaultVariants: {
 			variant: "default",
 		},
-	},
-);
+	}
+)
 
 /**
  * @interface BadgeProps
@@ -72,18 +99,24 @@ export interface BadgeProps
  * @returns {JSX.Element} バッジ要素
  */
 
-const Badge = React.forwardRef<HTMLDivElement, BadgeProps>(
-  ({ className, variant, asChild = false, ...props }, ref) => {
-    const Comp = asChild ? Slot : "div"
-    return (
-      <Comp
-			  role="status"
-        className={cn(badgeVariants({ variant, className }))}
-        ref={ref}
-        {...props}
-      />
-    )
-  }
-)
+function Badge({
+	className,
+	variant,
+	asChild = false,
+	...props
+}: BadgeProps) {
+	const Comp = asChild ? Slot : "div"
+	return (
+		<Comp
+			data-slot="badge"
+			role="status"
+			className={cn(badgeVariants({ variant }), className)}
+			{...props}
+		/>
+	)
+}
 
-export { Badge, badgeVariants };
+// displayName の設定
+Badge.displayName = "Badge"
+
+export { Badge, badgeVariants }

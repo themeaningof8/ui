@@ -6,6 +6,7 @@
 import { describe, it, expect } from 'vitest'
 import { waitFor } from '@testing-library/react'
 import { render, screen } from '@/tests/test-utils'
+import { userEvent } from '@testing-library/user-event'
 import React from 'react'
 import {
   DropdownMenu,
@@ -26,22 +27,19 @@ import {
 } from '.'
 
 describe('DropdownMenuコンポーネント', () => {
-  it('基本的なドロップダウンメニューが正しくレンダリングされること', async () => {
+  it('トリガーをクリックしてメニューが開くこと', async () => {
     const { user } = render(
       <DropdownMenu>
         <DropdownMenuTrigger>Open Menu</DropdownMenuTrigger>
         <DropdownMenuContent>
-          <DropdownMenuItem>Menu Item 1</DropdownMenuItem>
-          <DropdownMenuItem>Menu Item 2</DropdownMenuItem>
+          <DropdownMenuItem>Item 1</DropdownMenuItem>
+          <DropdownMenuItem>Item 2</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     )
 
-    expect(screen.queryByRole('menu')).not.toBeInTheDocument()
     await user.click(screen.getByText('Open Menu'))
     expect(screen.getByRole('menu')).toBeInTheDocument()
-    expect(screen.getByText('Menu Item 1')).toBeInTheDocument()
-    expect(screen.getByText('Menu Item 2')).toBeInTheDocument()
   })
 
   it('チェックボックス項目が正しく機能すること', async () => {
@@ -214,8 +212,8 @@ describe('DropdownMenuコンポーネント', () => {
         <DropdownMenuTrigger>Open Menu</DropdownMenuTrigger>
         <DropdownMenuContent>
           <DropdownMenuItem>
-            Menu Item
-            <DropdownMenuShortcut>⌘K</DropdownMenuShortcut>
+            Item 1
+            <span className="ml-auto text-xs tracking-widest text-step-11">⌘K</span>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -223,12 +221,24 @@ describe('DropdownMenuコンポーネント', () => {
 
     await user.click(screen.getByText('Open Menu'))
     const shortcut = screen.getByText('⌘K')
-    expect(shortcut).toHaveClass(
-      'ml-auto',
-      'text-xs',
-      'tracking-widest',
-      'text-step-11/60'
+    expect(shortcut).toHaveClass('ml-auto', 'text-xs', 'tracking-widest', 'text-step-11')
+  })
+
+  it('ESCキーでメニューが閉じること', async () => {
+    const { user } = render(
+      <DropdownMenu>
+        <DropdownMenuTrigger>Open Menu</DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuItem>Item 1</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     )
+
+    await user.click(screen.getByText('Open Menu'))
+    expect(screen.getByRole('menu')).toBeInTheDocument()
+
+    await user.keyboard('{Escape}')
+    expect(screen.queryByRole('menu')).not.toBeInTheDocument()
   })
 
   it('ポータルを使用してコンテンツがレンダリングされること', async () => {

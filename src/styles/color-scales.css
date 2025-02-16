@@ -1,5 +1,5 @@
 /**
- * @file color-scales.css
+ * @file scales.css
  * @description Tailwind CSS v4向けのカラースケール定義
  * カラーパレットはRadix Colorsの命名規則に基づき、アプリケーション全体で統一的に使用
  * @see https://www.radix-ui.com/colors/docs/palette-composition/understanding-the-scale
@@ -32,90 +32,131 @@
  * - ダークモードでは、全体的に明るめの色を使用し、視認性を高めています。
  */
 
-@theme {
+:root {
 	/* ベースカラー - ライトモード */
-	--color-step-1: oklch(99.8% 0.001 278); /* アプリケーションの背景 - より薄く */
-	--color-step-2: oklch(98.9% 0.002 278); /* サブ背景 - より薄く */
-	--color-step-3: oklch(97.5% 0.005 278); /* UIエレメントの背景 - より薄く */
-	--color-step-4: oklch(95.8% 0.008 278); /* ホバー時のUIエレメント背景 - より薄く */
-	--color-step-5: oklch(93.4% 0.012 278); /* アクティブ/選択時のUIエレメント背景 - より薄く */
-	--color-step-6: oklch(89.8% 0.016 278); /* サブ境界線とセパレーター - グラデーション調整 */
-	--color-step-7: oklch(85.5% 0.022 278); /* UIエレメントの境界線とフォーカスリング - グラデーション調整 */
-	--color-step-8: oklch(80.5% 0.032 278); /* ホバー時のUIエレメント境界線 - グラデーション調整 */
-	--color-step-9: oklch(41.8% 0.0486 278); /* ソリッドな背景 */
-	--color-step-10: oklch(36% 0.0272 278); /* ホバー時のソリッドな背景 */
-	--color-step-11: oklch(45.6% 0.0272 278); /* 低コントラストのテキスト - より薄く */
-	--color-step-12: oklch(25.7% 0.0486 278); /* 高コントラストのテキスト - より濃く */
+	--step-1: oklch(99.8% 0.001 278); /* アプリケーションの背景 - より薄く */
+	--step-2: oklch(98.9% 0.002 278); /* サブ背景 - より薄く */
+	--step-3: oklch(97.5% 0.005 278); /* UIエレメントの背景 - より薄く */
+	--step-4: oklch(95.8% 0.008 278); /* ホバー時のUIエレメント背景 - より薄く */
+	--step-5: oklch(93.4% 0.012 278); /* アクティブ/選択時のUIエレメント背景 - より薄く */
+	--step-6: oklch(89.8% 0.016 278); /* サブ境界線とセパレーター - グラデーション調整 */
+	--step-7: oklch(85.5% 0.022 278); /* UIエレメントの境界線とフォーカスリング - グラデーション調整 */
+	--step-8: oklch(80.5% 0.032 278); /* ホバー時のUIエレメント境界線 - グラデーション調整 */
+	--step-9: oklch(41.8% 0.0486 278); /* ソリッドな背景 */
+	--step-10: oklch(36% 0.0272 278); /* ホバー時のソリッドな背景 */
+	--step-11: oklch(45.6% 0.0272 278); /* 低コントラストのテキスト - より薄く */
+	--step-12: oklch(25.7% 0.0486 278); /* 高コントラストのテキスト - より濃く */
 
 	/* デストラクティブカラー - ライトモード */
-	--color-destructive-step-1: oklch(99.5% 0.001 24.7); /* 最も薄い背景 */
-	--color-destructive-step-2: oklch(98.8% 0.003 24.7); /* サブ背景 */
-	--color-destructive-step-3: oklch(96.2% 0.012 24.7); /* UIエレメント背景 */
-	--color-destructive-step-4: oklch(92.8% 0.024 24.7); /* ホバー背景 */
-	--color-destructive-step-5: oklch(89.5% 0.036 24.7); /* アクティブ背景 */
-	--color-destructive-step-6: oklch(85.2% 0.048 24.7); /* サブ境界線 */
-	--color-destructive-step-7: oklch(79.8% 0.062 24.7); /* 境界線 */
-	--color-destructive-step-8: oklch(72.5% 0.078 24.7); /* ホバー境界線 */
-	--color-destructive-step-9: oklch(58.2% 0.156 24.7); /* ソリッド背景 */
-	--color-destructive-step-10: oklch(54.8% 0.168 24.7); /* ホバーソリッド */
-	--color-destructive-step-11: oklch(51.2% 0.182 24.7); /* 低コントラストテキスト */
-	--color-destructive-step-12: oklch(28.6% 0.048 24.7); /* 高コントラストテキスト */
+	--destructive-step-1: oklch(99.5% 0.001 24.7); /* 最も薄い背景 */
+	--destructive-step-2: oklch(98.8% 0.003 24.7); /* サブ背景 */
+	--destructive-step-3: oklch(96.2% 0.012 24.7); /* UIエレメント背景 */
+	--destructive-step-4: oklch(92.8% 0.024 24.7); /* ホバー背景 */
+	--destructive-step-5: oklch(89.5% 0.036 24.7); /* アクティブ背景 */
+	--destructive-step-6: oklch(85.2% 0.048 24.7); /* サブ境界線 */
+	--destructive-step-7: oklch(79.8% 0.062 24.7); /* 境界線 */
+	--destructive-step-8: oklch(72.5% 0.078 24.7); /* ホバー境界線 */
+	--destructive-step-9: oklch(58.2% 0.156 24.7); /* ソリッド背景 */
+	--destructive-step-10: oklch(54.8% 0.168 24.7); /* ホバーソリッド */
+	--destructive-step-11: oklch(51.2% 0.182 24.7); /* 低コントラストテキスト */
+	--destructive-step-12: oklch(28.6% 0.048 24.7); /* 高コントラストテキスト */
 
 	/* アクセントカラー - ライトモード */
-	--color-accent-step-1: oklch(99.2% 0.002 92.4); /* 最も薄い背景 */
-	--color-accent-step-2: oklch(98.4% 0.015 92.4); /* サブ背景 */
-	--color-accent-step-3: oklch(96.8% 0.048 92.4); /* UIエレメント背景 */
-	--color-accent-step-4: oklch(94.2% 0.072 92.4); /* ホバー背景 */
-	--color-accent-step-5: oklch(91.5% 0.096 92.4); /* アクティブ背景 */
-	--color-accent-step-6: oklch(87.8% 0.108 92.4); /* サブ境界線 */
-	--color-accent-step-7: oklch(82.4% 0.124 92.4); /* 境界線 */
-	--color-accent-step-8: oklch(74.2% 0.156 92.4); /* ホバー境界線 */
-	--color-accent-step-9: oklch(85.6% 0.182 92.4); /* ソリッド背景 */
-	--color-accent-step-10: oklch(82.4% 0.198 92.4); /* ホバーソリッド */
-	--color-accent-step-11: oklch(48.2% 0.124 92.4); /* 低コントラストテキスト */
-	--color-accent-step-12: oklch(28.4% 0.048 92.4); /* 高コントラストテキスト */
+	--accent-step-1: oklch(99.2% 0.002 92.4); /* 最も薄い背景 */
+	--accent-step-2: oklch(98.4% 0.015 92.4); /* サブ背景 */
+	--accent-step-3: oklch(96.8% 0.048 92.4); /* UIエレメント背景 */
+	--accent-step-4: oklch(94.2% 0.072 92.4); /* ホバー背景 */
+	--accent-step-5: oklch(91.5% 0.096 92.4); /* アクティブ背景 */
+	--accent-step-6: oklch(87.8% 0.108 92.4); /* サブ境界線 */
+	--accent-step-7: oklch(82.4% 0.124 92.4); /* 境界線 */
+	--accent-step-8: oklch(74.2% 0.156 92.4); /* ホバー境界線 */
+	--accent-step-9: oklch(85.6% 0.182 92.4); /* ソリッド背景 */
+	--accent-step-10: oklch(82.4% 0.198 92.4); /* ホバーソリッド */
+	--accent-step-11: oklch(48.2% 0.124 92.4); /* 低コントラストテキスト */
+	--accent-step-12: oklch(28.4% 0.048 92.4); /* 高コントラストテキスト */
+
+	.dark {
+		/* ベースカラー - ダークモード */
+		--step-1: oklch(12.8% 0.012 266.8); /* アプリケーションの背景 - より薄く */
+		--step-2: oklch(15.7% 0.015 266.8); /* サブ背景 - より薄く */
+		--step-3: oklch(18.1% 0.025 266.8); /* UIエレメントの背景 - より薄く */
+		--step-4: oklch(22.8% 0.035 266.8); /* ホバー時のUIエレメント背景 - より薄く */
+		--step-5: oklch(26.1% 0.045 266.8); /* アクティブ/選択時のUIエレメント背景 - より薄く */
+		--step-6: oklch(32.4% 0.065 266.8); /* サブ境界線とセパレーター - グラデーション調整 */
+		--step-7: oklch(38.5% 0.085 266.8); /* UIエレメントの境界線とフォーカスリング - グラデーション調整 */
+		--step-8: oklch(45.3% 0.105 266.8); /* ホバー時のUIエレメント境界線 - グラデーション調整 */
+		--step-9: oklch(85.4% 0.1913 266.8); /* ソリッドな背景 */
+		--step-10: oklch(82.7% 0.1373 266.8); /* ホバー時のソリッドな背景 */
+		--step-11: oklch(75.7% 0.0834 266.8); /* 低コントラストのテキスト - より薄く */
+		--step-12: oklch(95.1% 0.1228 266.8); /* 高コントラストのテキスト - より濃く */
+
+		/* デストラクティブカラー - ダークモード */
+		--destructive-step-1: oklch(12.4% 0.008 24.7); /* 最も薄い背景 */
+		--destructive-step-2: oklch(15.2% 0.012 24.7); /* サブ背景 */
+		--destructive-step-3: oklch(18.6% 0.028 24.7); /* UIエレメント背景 */
+		--destructive-step-4: oklch(22.4% 0.042 24.7); /* ホバー背景 */
+		--destructive-step-5: oklch(26.8% 0.056 24.7); /* アクティブ背景 */
+		--destructive-step-6: oklch(32.4% 0.072 24.7); /* サブ境界線 */
+		--destructive-step-7: oklch(42.6% 0.096 24.7); /* 境界線 */
+		--destructive-step-8: oklch(52.8% 0.124 24.7); /* ホバー境界線 */
+		--destructive-step-9: oklch(58.2% 0.156 24.7); /* ソリッド背景 */
+		--destructive-step-10: oklch(62.4% 0.168 24.7); /* ホバーソリッド */
+		--destructive-step-11: oklch(82.6% 0.108 24.7); /* 低コントラストテキスト */
+		--destructive-step-12: oklch(92.4% 0.048 24.7); /* 高コントラストテキスト */
+
+		/* アクセントカラー - ダークモード */
+		--accent-step-1: oklch(12.2% 0.008 92.4); /* 最も薄い背景 */
+		--accent-step-2: oklch(15.4% 0.012 92.4); /* サブ背景 */
+		--accent-step-3: oklch(18.8% 0.028 92.4); /* UIエレメント背景 */
+		--accent-step-4: oklch(22.6% 0.042 92.4); /* ホバー背景 */
+		--accent-step-5: oklch(26.8% 0.056 92.4); /* アクティブ背景 */
+		--accent-step-6: oklch(32.6% 0.072 92.4); /* サブ境界線 */
+		--accent-step-7: oklch(42.8% 0.096 92.4); /* 境界線 */
+		--accent-step-8: oklch(52.6% 0.124 92.4); /* ホバー境界線 */
+		--accent-step-9: oklch(85.6% 0.182 92.4); /* ソリッド背景 */
+		--accent-step-10: oklch(92.4% 0.198 92.4); /* ホバーソリッド */
+		--accent-step-11: oklch(88.6% 0.182 92.4); /* 低コントラストテキスト */
+		--accent-step-12: oklch(94.8% 0.108 92.4); /* 高コントラストテキスト */
+	}
 }
 
-@variant [data-theme="dark"] {
-	/* ベースカラー - ダークモード */
-	--color-step-1: oklch(12.8% 0.012 266.8); /* アプリケーションの背景 - より薄く */
-	--color-step-2: oklch(15.7% 0.015 266.8); /* サブ背景 - より薄く */
-	--color-step-3: oklch(18.1% 0.025 266.8); /* UIエレメントの背景 - より薄く */
-	--color-step-4: oklch(22.8% 0.035 266.8); /* ホバー時のUIエレメント背景 - より薄く */
-	--color-step-5: oklch(26.1% 0.045 266.8); /* アクティブ/選択時のUIエレメント背景 - より薄く */
-	--color-step-6: oklch(32.4% 0.065 266.8); /* サブ境界線とセパレーター - グラデーション調整 */
-	--color-step-7: oklch(38.5% 0.085 266.8); /* UIエレメントの境界線とフォーカスリング - グラデーション調整 */
-	--color-step-8: oklch(45.3% 0.105 266.8); /* ホバー時のUIエレメント境界線 - グラデーション調整 */
-	--color-step-9: oklch(85.4% 0.1913 266.8); /* ソリッドな背景 */
-	--color-step-10: oklch(82.7% 0.1373 266.8); /* ホバー時のソリッドな背景 */
-	--color-step-11: oklch(75.7% 0.0834 266.8); /* 低コントラストのテキスト - より薄く */
-	--color-step-12: oklch(95.1% 0.1228 266.8); /* 高コントラストのテキスト - より濃く */
+@theme inline {
+	--color-step-1: var(--step-1);
+	--color-step-2: var(--step-2);
+	--color-step-3: var(--step-3);
+	--color-step-4: var(--step-4);
+	--color-step-5: var(--step-5);
+	--color-step-6: var(--step-6);
+	--color-step-7: var(--step-7);
+	--color-step-8: var(--step-8);
+	--color-step-9: var(--step-9);
+	--color-step-10: var(--step-10);
+	--color-step-11: var(--step-11);
+	--color-step-12: var(--step-12);
 
-	/* デストラクティブカラー - ダークモード */
-	--color-destructive-step-1: oklch(12.4% 0.008 24.7); /* 最も薄い背景 */
-	--color-destructive-step-2: oklch(15.2% 0.012 24.7); /* サブ背景 */
-	--color-destructive-step-3: oklch(18.6% 0.028 24.7); /* UIエレメント背景 */
-	--color-destructive-step-4: oklch(22.4% 0.042 24.7); /* ホバー背景 */
-	--color-destructive-step-5: oklch(26.8% 0.056 24.7); /* アクティブ背景 */
-	--color-destructive-step-6: oklch(32.4% 0.072 24.7); /* サブ境界線 */
-	--color-destructive-step-7: oklch(42.6% 0.096 24.7); /* 境界線 */
-	--color-destructive-step-8: oklch(52.8% 0.124 24.7); /* ホバー境界線 */
-	--color-destructive-step-9: oklch(58.2% 0.156 24.7); /* ソリッド背景 */
-	--color-destructive-step-10: oklch(62.4% 0.168 24.7); /* ホバーソリッド */
-	--color-destructive-step-11: oklch(82.6% 0.108 24.7); /* 低コントラストテキスト */
-	--color-destructive-step-12: oklch(92.4% 0.048 24.7); /* 高コントラストテキスト */
+	--color-destructive-step-1: var(--destructive-step-1);
+	--color-destructive-step-2: var(--destructive-step-2);
+	--color-destructive-step-3: var(--destructive-step-3);
+	--color-destructive-step-4: var(--destructive-step-4);
+	--color-destructive-step-5: var(--destructive-step-5);
+	--color-destructive-step-6: var(--destructive-step-6);
+	--color-destructive-step-7: var(--destructive-step-7);
+	--color-destructive-step-8: var(--destructive-step-8);
+	--color-destructive-step-9: var(--destructive-step-9);
+	--color-destructive-step-10: var(--destructive-step-10);
+	--color-destructive-step-11: var(--destructive-step-11);
+	--color-destructive-step-12: var(--destructive-step-12);
 
-	/* アクセントカラー - ダークモード */
-	--color-accent-step-1: oklch(12.2% 0.008 92.4); /* 最も薄い背景 */
-	--color-accent-step-2: oklch(15.4% 0.012 92.4); /* サブ背景 */
-	--color-accent-step-3: oklch(18.8% 0.028 92.4); /* UIエレメント背景 */
-	--color-accent-step-4: oklch(22.6% 0.042 92.4); /* ホバー背景 */
-	--color-accent-step-5: oklch(26.8% 0.056 92.4); /* アクティブ背景 */
-	--color-accent-step-6: oklch(32.6% 0.072 92.4); /* サブ境界線 */
-	--color-accent-step-7: oklch(42.8% 0.096 92.4); /* 境界線 */
-	--color-accent-step-8: oklch(52.6% 0.124 92.4); /* ホバー境界線 */
-	--color-accent-step-9: oklch(85.6% 0.182 92.4); /* ソリッド背景 */
-	--color-accent-step-10: oklch(92.4% 0.198 92.4); /* ホバーソリッド */
-	--color-accent-step-11: oklch(88.6% 0.182 92.4); /* 低コントラストテキスト */
-	--color-accent-step-12: oklch(94.8% 0.108 92.4); /* 高コントラストテキスト */
+	--color-accent-step-1: var(--accent-step-1);
+	--color-accent-step-2: var(--accent-step-2);
+	--color-accent-step-3: var(--accent-step-3);
+	--color-accent-step-4: var(--accent-step-4);
+	--color-accent-step-5: var(--accent-step-5);
+	--color-accent-step-6: var(--accent-step-6);
+	--color-accent-step-7: var(--accent-step-7);
+	--color-accent-step-8: var(--accent-step-8);
+	--color-accent-step-9: var(--accent-step-9);
+	--color-accent-step-10: var(--accent-step-10);
+	--color-accent-step-11: var(--accent-step-11);
+	--color-accent-step-12: var(--accent-step-12);
 }

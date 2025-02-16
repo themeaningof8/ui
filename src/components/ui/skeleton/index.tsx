@@ -1,7 +1,5 @@
 "use client"
 
-import { cn } from "@/lib/utils"
-
 /**
  * @file スケルトンコンポーネント
  * @description コンテンツのローディング状態を表示するためのコンポーネント
@@ -23,21 +21,22 @@ import { cn } from "@/lib/utils"
  * ```
  */
 
+import type { HTMLAttributes } from "react"
+
+import { cn } from "@/lib/utils"
+
 /**
- * スケルトンコンポーネントです。
- * コンテンツのローディング状態を表示するために使用します。
- * 
- * @component
- * @param {object} props - コンポーネントのプロパティ
- * @param {string} [props.className] - 追加のCSSクラス名
- * @param {React.ReactNode} props.children - 子要素
+ * スケルトンコンポーネント
+ * @param props - コンポーネントのプロパティ
+ * @param props.className - 追加のCSSクラス名
  */
 function Skeleton({
   className,
   ...props
-}: React.HTMLAttributes<HTMLDivElement>) {
+}: HTMLAttributes<HTMLDivElement>) {
   return (
     <div
+      data-slot="skeleton"
       className={cn(
         "animate-pulse rounded-md",
         "bg-step-3",

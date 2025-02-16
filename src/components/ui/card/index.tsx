@@ -17,130 +17,177 @@
  *     フッターコンテンツ
  *   </CardFooter>
  * </Card>
+ * 
+ * // インタラクティブな要素を含むカード
+ * <Card>
+ *   <CardHeader>
+ *     <CardTitle>アカウント作成</CardTitle>
+ *     <CardDescription>以下のフォームに必要事項を入力してください。</CardDescription>
+ *   </CardHeader>
+ *   <CardContent>
+ *     <form>
+ *       <input type="text" placeholder="名前" />
+ *       <input type="email" placeholder="メールアドレス" />
+ *     </form>
+ *   </CardContent>
+ *   <CardFooter>
+ *     <Button>作成</Button>
+ *   </CardFooter>
+ * </Card>
  * ```
  */
 
-import * as React from "react"
+"use client"
+
+import type * as React from "react"
 
 import { cn } from "@/lib/utils"
 
 /**
- * @interface CardProps
- * @description カードのルートコンポーネントのプロパティ
- * @property {string} [className] - カスタムクラス名
- * @property {React.ReactNode} [children] - カードの内容
+ * カードのルートコンポーネント
+ * @description コンテンツをグループ化して表示するためのコンテナコンポーネント
+ * @param props - コンポーネントのプロパティ
+ * @param props.className - カスタムクラス名
+ * @param props.children - カードの内容
  */
-const Card = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn(
-      "rounded-lg border border-step-6 bg-step-2 text-step-12 shadow-sm not-prose",
-      className
-    )}
-    data-testid="card"
-    {...props}
-  />
-))
+function Card({
+  className,
+  ...props
+}: React.ComponentPropsWithoutRef<"div">) {
+  return (
+    <div
+      data-slot="card"
+      role="article"
+      className={cn(
+        "rounded-lg border border-step-6 bg-step-2 text-step-12 shadow-sm not-prose",
+        "transition-colors duration-200",
+        "hover:border-step-7",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-step-7 focus-visible:ring-offset-2",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+/**
+ * カードのヘッダー部分
+ * @description タイトルと説明文を含むヘッダーセクション
+ * @param props - コンポーネントのプロパティ
+ * @param props.className - カスタムクラス名
+ * @param props.children - ヘッダーの内容
+ */
+function CardHeader({
+  className,
+  ...props
+}: React.ComponentPropsWithoutRef<"div">) {
+  return (
+    <div
+      data-slot="card-header"
+      className={cn("flex flex-col space-y-1.5 p-6", className)}
+      {...props}
+    />
+  )
+}
+
+/**
+ * カードのタイトル部分
+ * @description カードの主要な見出しを表示
+ * @param props - コンポーネントのプロパティ
+ * @param props.className - カスタムクラス名
+ * @param props.children - タイトルの内容
+ */
+function CardTitle({
+  className,
+  ...props
+}: React.ComponentPropsWithoutRef<"h3">) {
+  return (
+    <h3
+      data-slot="card-title"
+      className={cn(
+        "text-2xl font-semibold leading-none tracking-tight text-step-12",
+        "transition-colors duration-200",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+/**
+ * カードの説明部分
+ * @description タイトルを補足する説明文を表示
+ * @param props - コンポーネントのプロパティ
+ * @param props.className - カスタムクラス名
+ * @param props.children - 説明の内容
+ */
+function CardDescription({
+  className,
+  ...props
+}: React.ComponentPropsWithoutRef<"p">) {
+  return (
+    <p
+      data-slot="card-description"
+      className={cn(
+        "text-sm text-step-11",
+        "transition-colors duration-200",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+/**
+ * カードのメインコンテンツ部分
+ * @description カードの主要なコンテンツを表示
+ * @param props - コンポーネントのプロパティ
+ * @param props.className - カスタムクラス名
+ * @param props.children - メインコンテンツの内容
+ */
+function CardContent({
+  className,
+  ...props
+}: React.ComponentPropsWithoutRef<"div">) {
+  return (
+    <div
+      data-slot="card-content"
+      className={cn("p-6 pt-0", className)}
+      {...props}
+    />
+  )
+}
+
+/**
+ * カードのフッター部分
+ * @description アクションボタンなどを配置するフッターセクション
+ * @param props - コンポーネントのプロパティ
+ * @param props.className - カスタムクラス名
+ * @param props.children - フッターの内容
+ */
+function CardFooter({
+  className,
+  ...props
+}: React.ComponentPropsWithoutRef<"div">) {
+  return (
+    <div
+      data-slot="card-footer"
+      className={cn(
+        "flex items-center p-6 pt-0",
+        "transition-colors duration-200",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
 Card.displayName = "Card"
-
-/**
- * @interface CardHeaderProps
- * @description カードのヘッダー部分のプロパティ
- * @property {string} [className] - カスタムクラス名
- * @property {React.ReactNode} [children] - ヘッダーの内容
- */
-const CardHeader = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn("flex flex-col space-y-1.5 p-6", className)}
-    data-testid="card-header"
-    {...props}
-  />
-))
 CardHeader.displayName = "CardHeader"
-
-/**
- * @interface CardTitleProps
- * @description カードのタイトル部分のプロパティ
- * @property {string} [className] - カスタムクラス名
- * @property {React.ReactNode} [children] - タイトルの内容
- */
-const CardTitle = React.forwardRef<
-  HTMLParagraphElement,
-  React.HTMLAttributes<HTMLHeadingElement>
->(({ className, ...props }, ref) => (
-  <h3
-    ref={ref}
-    className={cn(
-      "text-2xl font-semibold leading-none tracking-tight text-step-12",
-      className
-    )}
-    {...props}
-  />
-))
-CardTitle.displayName = "CardTitle"
-
-/**
- * @interface CardDescriptionProps
- * @description カードの説明部分のプロパティ
- * @property {string} [className] - カスタムクラス名
- * @property {React.ReactNode} [children] - 説明の内容
- */
-const CardDescription = React.forwardRef<
-  HTMLParagraphElement,
-  React.HTMLAttributes<HTMLParagraphElement>
->(({ className, ...props }, ref) => (
-  <p
-    ref={ref}
-    className={cn("text-sm text-step-11", className)}
-    {...props}
-  />
-))
-CardDescription.displayName = "CardDescription"
-
-/**
- * @interface CardContentProps
- * @description カードのメインコンテンツ部分のプロパティ
- * @property {string} [className] - カスタムクラス名
- * @property {React.ReactNode} [children] - メインコンテンツの内容
- */
-const CardContent = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn("p-6 pt-0", className)}
-    data-testid="card-content"
-    {...props}
-  />
-))
-CardContent.displayName = "CardContent"
-
-/**
- * @interface CardFooterProps
- * @description カードのフッター部分のプロパティ
- * @property {string} [className] - カスタムクラス名
- * @property {React.ReactNode} [children] - フッターの内容
- */
-const CardFooter = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn("flex items-center p-6 pt-0", className)}
-    data-testid="card-footer"
-    {...props}
-  />
-))
 CardFooter.displayName = "CardFooter"
+CardTitle.displayName = "CardTitle"
+CardDescription.displayName = "CardDescription"
+CardContent.displayName = "CardContent"
 
 export {
   Card,

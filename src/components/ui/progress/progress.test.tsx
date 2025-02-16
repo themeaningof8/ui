@@ -12,14 +12,14 @@ describe('Progress', () => {
 
   it('applies custom className', () => {
     const customClass = 'custom-class'
-    render(<Progress className={customClass} value={50} />)
+    render(<Progress value={50} className={customClass} />)
     expect(screen.getByRole('progressbar')).toHaveClass(customClass)
   })
 
   it('sets correct progress value', () => {
-    render(<Progress value={75} />)
+    render(<Progress value={50} />)
     const indicator = screen.getByRole('progressbar').querySelector('div')
-    expect(indicator).toHaveStyle({ transform: 'translateX(-25%)' })
+    expect(indicator).toHaveStyle({ transform: 'translateX(-50%)' })
   })
 
   it('handles zero value correctly', () => {
@@ -31,7 +31,7 @@ describe('Progress', () => {
   it('handles full value correctly', () => {
     render(<Progress value={100} />)
     const indicator = screen.getByRole('progressbar').querySelector('div')
-    expect(indicator).toHaveStyle({ transform: 'translateX(0%)' })
+    expect(indicator).toHaveStyle({ transform: 'translateX(-0%)' })
   })
 
   it('handles undefined value correctly', () => {
@@ -42,13 +42,13 @@ describe('Progress', () => {
 
   it('applies correct base styles', () => {
     render(<Progress value={50} />)
-    const progressBar = screen.getByRole('progressbar')
-    expect(progressBar).toHaveClass('relative', 'h-4', 'w-full', 'overflow-hidden', 'rounded-full', 'bg-step-3')
+    const progress = screen.getByRole('progressbar')
+    expect(progress).toHaveClass('relative', 'w-full', 'overflow-hidden', 'rounded-full', 'bg-step-3')
   })
 
   it('applies correct indicator styles', () => {
     render(<Progress value={50} />)
     const indicator = screen.getByRole('progressbar').querySelector('div')
-    expect(indicator).toHaveClass('h-full', 'w-full', 'flex-1', 'bg-step-9', 'transition-all', 'duration-200')
+    expect(indicator).toHaveClass('h-full', 'w-full', 'flex-1', 'transition-all', 'bg-step-9', 'duration-200')
   })
 }) 

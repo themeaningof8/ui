@@ -33,10 +33,10 @@ export const Default: Story = {
       <CollapsibleTrigger asChild>
         <Button variant="ghost" className="w-full justify-between">
           クリックして開閉
-          <ChevronsUpDown className="h-4 w-4" />
+          <ChevronsUpDown className="size-4" />
         </Button>
       </CollapsibleTrigger>
-      <CollapsibleContent className="space-y-2">
+      <CollapsibleContent>
         <div className="rounded-md border px-4 py-3">
           コンテンツ1
         </div>
@@ -57,10 +57,10 @@ export const DefaultOpen: Story = {
       <CollapsibleTrigger asChild>
         <Button variant="ghost" className="w-full justify-between">
           デフォルトで開いた状態
-          <ChevronsUpDown className="h-4 w-4" />
+          <ChevronsUpDown className="size-4" />
         </Button>
       </CollapsibleTrigger>
-      <CollapsibleContent className="space-y-2">
+      <CollapsibleContent>
         <div className="rounded-md border px-4 py-3">
           コンテンツ1
         </div>
@@ -81,10 +81,10 @@ export const Disabled: Story = {
       <CollapsibleTrigger asChild>
         <Button variant="ghost" className="w-full justify-between" disabled>
           無効化状態
-          <ChevronsUpDown className="h-4 w-4" />
+          <ChevronsUpDown className="size-4" />
         </Button>
       </CollapsibleTrigger>
-      <CollapsibleContent className="space-y-2">
+      <CollapsibleContent>
         <div className="rounded-md border px-4 py-3">
           コンテンツ1
         </div>
@@ -105,17 +105,17 @@ export const CustomStyle: Story = {
       <CollapsibleTrigger asChild>
         <Button
           variant="ghost"
-          className="w-full justify-between hover:bg-muted"
+          className="w-full justify-between hover:bg-step-4"
         >
           カスタムスタイル
-          <ChevronsUpDown className="h-4 w-4" />
+          <ChevronsUpDown className="size-4" />
         </Button>
       </CollapsibleTrigger>
-      <CollapsibleContent className="mt-2 space-y-2">
-        <div className="rounded-md bg-muted px-4 py-3">
+      <CollapsibleContent>
+        <div className="rounded-md bg-step-2 px-4 py-3">
           カスタムコンテンツ1
         </div>
-        <div className="rounded-md bg-muted px-4 py-3">
+        <div className="rounded-md bg-step-2 px-4 py-3">
           カスタムコンテンツ2
         </div>
       </CollapsibleContent>

@@ -77,10 +77,7 @@ function useCarousel() {
 /**
  * カルーセルコンポーネント
  */
-const Carousel = React.forwardRef<
-  HTMLDivElement,
-  CarouselProps
->(({
+function Carousel({
   orientation = "horizontal",
   autoPlay = false,
   interval = 3000,
@@ -88,7 +85,7 @@ const Carousel = React.forwardRef<
   className,
   children,
   ...props
-}, ref) => {
+}: CarouselProps) {
   const [carouselRef, api] = useEmblaCarousel({
     ...opts,
     axis: orientation === "horizontal" ? "x" : "y",
@@ -138,22 +135,26 @@ const Carousel = React.forwardRef<
     }
   }, [api, autoPlay, interval])
 
+  const contextValue = React.useMemo(
+    () => ({
+      carouselRef,
+      api,
+      scrollPrev,
+      scrollNext,
+      canScrollPrev,
+      canScrollNext,
+    }),
+    [carouselRef, api, scrollPrev, scrollNext, canScrollPrev, canScrollNext]
+  )
+
   return (
-    <CarouselContext.Provider
-      value={{
-        carouselRef,
-        api,
-        scrollPrev,
-        scrollNext,
-        canScrollPrev,
-        canScrollNext,
-      }}
-    >
+    <CarouselContext.Provider value={contextValue}>
       <section
-        ref={ref}
+        data-slot="carousel"
         className={cn("relative", className)}
         aria-roledescription="carousel"
         data-autoplay={autoPlay}
+        data-orientation={orientation}
         data-testid="carousel"
         {...props}
       >
@@ -161,73 +162,81 @@ const Carousel = React.forwardRef<
       </section>
     </CarouselContext.Provider>
   )
-})
-Carousel.displayName = "Carousel"
+}
 
 /**
- * @interface CarouselContentProps
- * @description カルーセルのコンテンツ部分のプロパティ
- * @property {string} [className] - カスタムクラス名
- * @property {React.ReactNode} [children] - コンテンツの内容
+ * カルーセルのコンテンツコンポーネント
  */
-const CarouselContent = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => {
+function CarouselContent({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) {
   const { carouselRef } = useCarousel()
 
   return (
-    <div ref={carouselRef} className="overflow-hidden" data-testid="carousel-viewport">
+    <div
+      data-slot="carousel-viewport"
+      ref={carouselRef}
+      className={cn(
+        "overflow-hidden",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-step-7 focus-visible:ring-offset-2"
+      )}
+      data-testid="carousel-viewport"
+    >
       <div
-        ref={ref}
+        data-slot="carousel-content"
         className={cn("flex", className)}
         data-testid="carousel-content"
         {...props}
       />
     </div>
   )
-})
-CarouselContent.displayName = "CarouselContent"
+}
 
 /**
- * @interface CarouselItemProps
- * @description カルーセルの各アイテムのプロパティ
- * @property {string} [className] - カスタムクラス名
- * @property {React.ReactNode} [children] - アイテムの内容
+ * カルーセルの各アイテムコンポーネント
  */
-const CarouselItem = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    role="group"
-    aria-roledescription="slide"
-    className={cn("min-w-0 shrink-0 grow-0 basis-full", className)}
-    {...props}
-  />
-))
-CarouselItem.displayName = "CarouselItem"
+function CarouselItem({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div
+      data-slot="carousel-item"
+      role="group"
+      aria-roledescription="slide"
+      className={cn(
+        "min-w-0 shrink-0 grow-0 basis-full",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-step-7 focus-visible:ring-offset-2",
+        className
+      )}
+      {...props}
+    />
+  )
+}
 
 /**
- * @interface CarouselPreviousProps
- * @description 前のスライドに移動するボタンのプロパティ
- * @property {string} [className] - カスタムクラス名
+ * 前のスライドに移動するボタン
  */
-const CarouselPrevious = React.forwardRef<
-  HTMLButtonElement,
-  React.ComponentProps<typeof Button>
->(({ className, variant = "outline", size = "icon", ...props }, ref) => {
+function CarouselPrevious({
+  className,
+  variant = "outline",
+  size = "icon",
+  ...props
+}: React.ComponentProps<typeof Button>) {
   const { scrollPrev, canScrollPrev } = useCarousel()
 
   return (
     <Button
-      ref={ref}
+      data-slot="carousel-previous"
       variant={variant}
       size={size}
       className={cn(
         "absolute size-8 rounded-full",
         "left-2 top-1/2 -translate-y-1/2",
+        "transition-transform duration-200",
+        "hover:scale-110",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-step-7 focus-visible:ring-offset-2",
         className
       )}
       disabled={!canScrollPrev}
@@ -235,31 +244,33 @@ const CarouselPrevious = React.forwardRef<
       aria-label="前のスライド"
       {...props}
     >
-      <ArrowLeft className="h-4 w-4" />
+      <ArrowLeft className="size-4" />
     </Button>
   )
-})
-CarouselPrevious.displayName = "CarouselPrevious"
+}
 
 /**
- * @interface CarouselNextProps
- * @description 次のスライドに移動するボタンのプロパティ
- * @property {string} [className] - カスタムクラス名
+ * 次のスライドに移動するボタン
  */
-const CarouselNext = React.forwardRef<
-  HTMLButtonElement,
-  React.ComponentProps<typeof Button>
->(({ className, variant = "outline", size = "icon", ...props }, ref) => {
+function CarouselNext({
+  className,
+  variant = "outline",
+  size = "icon",
+  ...props
+}: React.ComponentProps<typeof Button>) {
   const { scrollNext, canScrollNext } = useCarousel()
 
   return (
     <Button
-      ref={ref}
+      data-slot="carousel-next"
       variant={variant}
       size={size}
       className={cn(
         "absolute size-8 rounded-full",
         "right-2 top-1/2 -translate-y-1/2",
+        "transition-transform duration-200",
+        "hover:scale-110",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-step-7 focus-visible:ring-offset-2",
         className
       )}
       disabled={!canScrollNext}
@@ -270,7 +281,13 @@ const CarouselNext = React.forwardRef<
       <ArrowRight className="size-4" />
     </Button>
   )
-})
+}
+
+// displayName の設定
+Carousel.displayName = "Carousel"
+CarouselContent.displayName = "CarouselContent"
+CarouselItem.displayName = "CarouselItem"
+CarouselPrevious.displayName = "CarouselPrevious"
 CarouselNext.displayName = "CarouselNext"
 
 export {

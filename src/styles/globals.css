@@ -4,18 +4,14 @@
 
 @custom-variant dark (&:is(.dark *));
 
-@plugin "tailwindcss-animate";
-@plugin "@tailwindcss/typography";
-
-* {
-	@apply border-step-7 ring-step-7;
-}
-
 @layer base {
 	* {
-		@apply border-step-7 ring-step-7;
+		@apply border-step-6 ring-step-7 text-sm;
 	}
 	body {
 		@apply bg-step-1 text-step-12;
 	}
 }
+
+@plugin "tailwindcss-animate";
+@plugin "@tailwindcss/typography";

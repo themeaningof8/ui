@@ -21,29 +21,25 @@
 
 "use client"
 
-import * as React from "react"
 import * as TabsPrimitive from "@radix-ui/react-tabs"
+import type { ComponentPropsWithoutRef } from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
 
 /**
- * タブのルートコンポーネントです。
- * タブ全体のコンテナとして機能します。
- * 
- * @component
- * @param {object} props - コンポーネントのプロパティ
- * @param {string} [props.className] - 追加のCSSクラス名
- * @param {string} [props.defaultValue] - デフォルトで選択されるタブの値
- * @param {string} [props.value] - 選択されているタブの値
- * @param {(value: string) => void} [props.onValueChange] - タブが変更された時のコールバック
- * @param {React.ReactNode} props.children - 子要素
- * @param {React.Ref<HTMLDivElement>} ref - 転送されるref
+ * タブのルートコンポーネント
+ * @param props - コンポーネントのプロパティ
+ * @param props.className - 追加のCSSクラス名
+ * @param props.defaultValue - デフォルトで選択されるタブの値
+ * @param props.value - 選択されているタブの値
+ * @param props.onValueChange - タブが変更された時のコールバック
+ * @param props.children - 子要素
  */
 const Tabs = TabsPrimitive.Root
 
 /**
- * タブリストのスタイルバリエーションを定義
+ * タブリストのスタイルバリエーション
  */
 const tabsListVariants = cva(
   [
@@ -66,30 +62,29 @@ const tabsListVariants = cva(
 )
 
 /**
- * タブのリストコンポーネントです。
- * タブのトリガーをグループ化するコンテナとして機能します。
- * 
- * @component
- * @param {object} props - コンポーネントのプロパティ
- * @param {string} [props.className] - 追加のCSSクラス名
- * @param {React.ReactNode} props.children - 子要素
- * @param {React.Ref<HTMLDivElement>} ref - 転送されるref
+ * タブのリストコンポーネント
+ * @param props - コンポーネントのプロパティ
+ * @param props.className - 追加のCSSクラス名
+ * @param props.variant - スタイルバリアント
+ * @param props.children - 子要素
  */
-const TabsList = React.forwardRef<
-  React.ComponentRef<typeof TabsPrimitive.List>,
-  React.ComponentPropsWithoutRef<typeof TabsPrimitive.List> &
-    VariantProps<typeof tabsListVariants>
->(({ className, variant, ...props }, ref) => (
-  <TabsPrimitive.List
-    ref={ref}
-    className={cn(tabsListVariants({ variant }), className)}
-    {...props}
-  />
-))
-TabsList.displayName = TabsPrimitive.List.displayName
+function TabsList({
+  className,
+  variant,
+  ...props
+}: ComponentPropsWithoutRef<typeof TabsPrimitive.List> &
+  VariantProps<typeof tabsListVariants>) {
+  return (
+    <TabsPrimitive.List
+      data-slot="tabs-list"
+      className={cn(tabsListVariants({ variant }), className)}
+      {...props}
+    />
+  )
+}
 
 /**
- * タブトリガーのスタイルバリエーションを定義
+ * タブトリガーのスタイルバリエーション
  */
 const tabsTriggerVariants = cva(
   [
@@ -116,32 +111,31 @@ const tabsTriggerVariants = cva(
 )
 
 /**
- * タブのトリガーコンポーネントです。
- * クリックするとタブを切り替える要素として機能します。
- * 
- * @component
- * @param {object} props - コンポーネントのプロパティ
- * @param {string} [props.className] - 追加のCSSクラス名
- * @param {string} props.value - タブの値
- * @param {boolean} [props.disabled] - 無効化状態
- * @param {React.ReactNode} props.children - 子要素
- * @param {React.Ref<HTMLButtonElement>} ref - 転送されるref
+ * タブのトリガーコンポーネント
+ * @param props - コンポーネントのプロパティ
+ * @param props.className - 追加のCSSクラス名
+ * @param props.variant - スタイルバリアント
+ * @param props.value - タブの値
+ * @param props.disabled - 無効化状態
+ * @param props.children - 子要素
  */
-const TabsTrigger = React.forwardRef<
-  React.ComponentRef<typeof TabsPrimitive.Trigger>,
-  React.ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger> &
-    VariantProps<typeof tabsTriggerVariants>
->(({ className, variant, ...props }, ref) => (
-  <TabsPrimitive.Trigger
-    ref={ref}
-    className={cn(tabsTriggerVariants({ variant }), className)}
-    {...props}
-  />
-))
-TabsTrigger.displayName = TabsPrimitive.Trigger.displayName
+function TabsTrigger({
+  className,
+  variant,
+  ...props
+}: ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger> &
+  VariantProps<typeof tabsTriggerVariants>) {
+  return (
+    <TabsPrimitive.Trigger
+      data-slot="tabs-trigger"
+      className={cn(tabsTriggerVariants({ variant }), className)}
+      {...props}
+    />
+  )
+}
 
 /**
- * タブコンテンツのスタイルバリエーションを定義
+ * タブコンテンツのスタイルバリエーション
  */
 const tabsContentVariants = cva(
   [
@@ -166,27 +160,31 @@ const tabsContentVariants = cva(
 )
 
 /**
- * タブのコンテンツコンポーネントです。
- * タブが選択された時に表示される内容を含むコンテナとして機能します。
- * 
- * @component
- * @param {object} props - コンポーネントのプロパティ
- * @param {string} [props.className] - 追加のCSSクラス名
- * @param {string} props.value - タブの値
- * @param {React.ReactNode} props.children - 子要素
- * @param {React.Ref<HTMLDivElement>} ref - 転送されるref
+ * タブのコンテンツコンポーネント
+ * @param props - コンポーネントのプロパティ
+ * @param props.className - 追加のCSSクラス名
+ * @param props.variant - スタイルバリアント
+ * @param props.value - タブの値
+ * @param props.children - 子要素
  */
-const TabsContent = React.forwardRef<
-  React.ComponentRef<typeof TabsPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof TabsPrimitive.Content> &
-    VariantProps<typeof tabsContentVariants>
->(({ className, variant, ...props }, ref) => (
-  <TabsPrimitive.Content
-    ref={ref}
-    className={cn(tabsContentVariants({ variant }), className)}
-    {...props}
-  />
-))
+function TabsContent({
+  className,
+  variant,
+  ...props
+}: ComponentPropsWithoutRef<typeof TabsPrimitive.Content> &
+  VariantProps<typeof tabsContentVariants>) {
+  return (
+    <TabsPrimitive.Content
+      data-slot="tabs-content"
+      className={cn(tabsContentVariants({ variant }), className)}
+      {...props}
+    />
+  )
+}
+
+// displayName の設定
+TabsList.displayName = TabsPrimitive.List.displayName
+TabsTrigger.displayName = TabsPrimitive.Trigger.displayName
 TabsContent.displayName = TabsPrimitive.Content.displayName
 
 export { Tabs, TabsList, TabsTrigger, TabsContent, tabsListVariants, tabsTriggerVariants, tabsContentVariants }

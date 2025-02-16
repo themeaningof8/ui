@@ -1,10 +1,5 @@
 "use client"
 
-import * as React from "react"
-import * as SeparatorPrimitive from "@radix-ui/react-separator"
-
-import { cn } from "@/lib/utils"
-
 /**
  * @file セパレーターコンポーネント
  * @description コンテンツを視覚的に分離するためのコンポーネント
@@ -19,28 +14,27 @@ import { cn } from "@/lib/utils"
  * ```
  */
 
+import * as SeparatorPrimitive from "@radix-ui/react-separator"
+import type { ComponentPropsWithoutRef } from "react"
+
+import { cn } from "@/lib/utils"
+
 /**
- * セパレーターコンポーネントです。
- * コンテンツを視覚的に分離するために使用します。
- * 
- * @component
- * @param {object} props - コンポーネントのプロパティ
- * @param {string} [props.className] - 追加のCSSクラス名
- * @param {string} [props.orientation="horizontal"] - セパレーターの向き（"horizontal" | "vertical"）
- * @param {string} [props.decorative] - 装飾的な要素として扱うかどうか
- * @param {React.ReactNode} props.children - 子要素
- * @param {React.Ref<HTMLDivElement>} ref - 転送されるref
+ * セパレーターコンポーネント
+ * @param props - コンポーネントのプロパティ
+ * @param props.className - 追加のCSSクラス名
+ * @param props.orientation - セパレーターの向き（"horizontal" | "vertical"）
+ * @param props.decorative - 装飾的な要素として扱うかどうか
  */
-const Separator = React.forwardRef<
-  React.ComponentRef<typeof SeparatorPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof SeparatorPrimitive.Root>
->(
-  (
-    { className, orientation = "horizontal", decorative = true, ...props },
-    ref
-  ) => (
+function Separator({
+  className,
+  orientation = "horizontal",
+  decorative = true,
+  ...props
+}: ComponentPropsWithoutRef<typeof SeparatorPrimitive.Root>) {
+  return (
     <SeparatorPrimitive.Root
-      ref={ref}
+      data-slot="separator"
       decorative={decorative}
       orientation={orientation}
       aria-orientation={decorative ? undefined : orientation}
@@ -52,7 +46,9 @@ const Separator = React.forwardRef<
       {...props}
     />
   )
-)
+}
+
+// displayName の設定
 Separator.displayName = SeparatorPrimitive.Root.displayName
 
 export { Separator }

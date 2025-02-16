@@ -28,7 +28,7 @@
 
 "use client";
 
-import * as React from "react";
+import type * as React from "react";
 import type { DialogProps } from "@radix-ui/react-dialog";
 import { Command as CommandPrimitive } from "cmdk";
 import { Search } from "lucide-react";
@@ -37,32 +37,33 @@ import { DialogTitle, DialogDescription } from "@radix-ui/react-dialog";
 import { cn } from "@/lib/utils";
 
 /**
- * コマンドコンポーネントのプロパティ
+ * コマンドのルートコンポーネント
+ * @param props - コンポーネントのプロパティ
+ * @param props.className - 追加のCSSクラス名
+ * @param props.children - コマンドの内容
  */
-const Command = React.forwardRef<
-	React.ComponentRef<typeof CommandPrimitive>,
-	React.ComponentPropsWithoutRef<typeof CommandPrimitive>
->(({ className, ...props }, ref) => (
+function Command({
+	className,
+	...props
+}: React.ComponentPropsWithoutRef<typeof CommandPrimitive>) {
+	return (
 	<CommandPrimitive
-		ref={ref}
+			data-slot="command"
 		className={cn(
 			"flex h-full w-full flex-col overflow-hidden rounded-md bg-step-1 text-step-12",
 			className,
 		)}
 		{...props}
 	/>
-));
-Command.displayName = CommandPrimitive.displayName;
-
-/**
- * コマンドダイアログのプロパティ
- */
-interface CommandDialogProps extends DialogProps {}
+	);
+}
 
 /**
  * コマンドダイアログコンポーネント
+ * @param props - コンポーネントのプロパティ
+ * @param props.children - ダイアログの内容
  */
-const CommandDialog = ({ children, ...props }: CommandDialogProps) => {
+function CommandDialog({ children, ...props }: DialogProps) {
 	return (
 		<Dialog {...props}>
 			<DialogContent className="overflow-hidden p-0 shadow-lg">
@@ -70,25 +71,35 @@ const CommandDialog = ({ children, ...props }: CommandDialogProps) => {
 				<DialogDescription className="sr-only">
 					コマンドを入力して操作を実行できます
 				</DialogDescription>
-				<Command className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-step-11 [&_[cmdk-input]]:size-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:size-5">
+				<Command
+					data-slot="command-dialog"
+					className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-step-11 [&_[cmdk-input]]:size-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:size-5"
+				>
 					{children}
 				</Command>
 			</DialogContent>
 		</Dialog>
 	);
-};
+}
 
 /**
  * コマンド入力フィールドコンポーネント
+ * @param props - コンポーネントのプロパティ
+ * @param props.className - 追加のCSSクラス名
  */
-const CommandInput = React.forwardRef<
-	React.ComponentRef<typeof CommandPrimitive.Input>,
-	React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input>
->(({ className, ...props }, ref) => (
-	<div className="flex items-center border-b px-3" cmdk-input-wrapper="">
+function CommandInput({
+	className,
+	...props
+}: React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input>) {
+	return (
+		<div
+			data-slot="command-input-wrapper"
+			className="flex items-center border-b px-3"
+			cmdk-input-wrapper=""
+		>
 		<Search className="mr-2 size-4 shrink-0 opacity-50" />
 		<CommandPrimitive.Input
-			ref={ref}
+				data-slot="command-input"
 			className={cn(
 				"flex h-11 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-step-11 disabled:cursor-not-allowed disabled:opacity-50",
 				className,
@@ -96,107 +107,136 @@ const CommandInput = React.forwardRef<
 			{...props}
 		/>
 	</div>
-));
-CommandInput.displayName = CommandPrimitive.Input.displayName;
+	);
+}
 
 /**
  * コマンドリストコンポーネント
+ * @param props - コンポーネントのプロパティ
+ * @param props.className - 追加のCSSクラス名
+ * @param props.children - リストの内容
  */
-const CommandList = React.forwardRef<
-	React.ComponentRef<typeof CommandPrimitive.List>,
-	React.ComponentPropsWithoutRef<typeof CommandPrimitive.List>
->(({ className, ...props }, ref) => (
+function CommandList({
+	className,
+	...props
+}: React.ComponentPropsWithoutRef<typeof CommandPrimitive.List>) {
+	return (
 	<CommandPrimitive.List
-		ref={ref}
-		className={cn("max-h-[300px] overflow-y-auto overflow-x-hidden", className)}
+			data-slot="command-list"
+			className={cn(
+				"max-h-[300px] overflow-y-auto overflow-x-hidden",
+				className,
+			)}
 		{...props}
 	/>
-));
-CommandList.displayName = CommandPrimitive.List.displayName;
+	);
+}
 
 /**
  * 空の状態を表示するコンポーネント
+ * @param props - コンポーネントのプロパティ
  */
-const CommandEmpty = React.forwardRef<
-	React.ComponentRef<typeof CommandPrimitive.Empty>,
-	React.ComponentPropsWithoutRef<typeof CommandPrimitive.Empty>
->((props, ref) => (
+function CommandEmpty(
+	props: React.ComponentPropsWithoutRef<typeof CommandPrimitive.Empty>,
+) {
+	return (
 	<CommandPrimitive.Empty
-		ref={ref}
+			data-slot="command-empty"
 		className="py-6 text-center text-sm"
 		{...props}
 	/>
-));
-CommandEmpty.displayName = CommandPrimitive.Empty.displayName;
+	);
+}
 
 /**
  * コマンドグループコンポーネント
+ * @param props - コンポーネントのプロパティ
+ * @param props.className - 追加のCSSクラス名
+ * @param props.children - グループの内容
  */
-const CommandGroup = React.forwardRef<
-	React.ComponentRef<typeof CommandPrimitive.Group>,
-	React.ComponentPropsWithoutRef<typeof CommandPrimitive.Group>
->(({ className, ...props }, ref) => (
+function CommandGroup({
+	className,
+	...props
+}: React.ComponentPropsWithoutRef<typeof CommandPrimitive.Group>) {
+	return (
 	<CommandPrimitive.Group
-		ref={ref}
+			data-slot="command-group"
 		className={cn(
 			"overflow-hidden p-1 text-step-12 [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-step-11",
 			className,
 		)}
 		{...props}
 	/>
-));
-CommandGroup.displayName = CommandPrimitive.Group.displayName;
+	);
+}
 
 /**
  * 区切り線コンポーネント
+ * @param props - コンポーネントのプロパティ
+ * @param props.className - 追加のCSSクラス名
  */
-const CommandSeparator = React.forwardRef<
-	React.ComponentRef<typeof CommandPrimitive.Separator>,
-	React.ComponentPropsWithoutRef<typeof CommandPrimitive.Separator>
->(({ className, ...props }, ref) => (
+function CommandSeparator({
+	className,
+	...props
+}: React.ComponentPropsWithoutRef<typeof CommandPrimitive.Separator>) {
+	return (
 	<CommandPrimitive.Separator
-		ref={ref}
+			data-slot="command-separator"
 		className={cn("-mx-1 h-px bg-step-6", className)}
 		{...props}
 	/>
-));
-CommandSeparator.displayName = CommandPrimitive.Separator.displayName;
+	);
+}
 
 /**
  * コマンドアイテムコンポーネント
+ * @param props - コンポーネントのプロパティ
+ * @param props.className - 追加のCSSクラス名
+ * @param props.children - アイテムの内容
  */
-const CommandItem = React.forwardRef<
-	React.ComponentRef<typeof CommandPrimitive.Item>,
-	React.ComponentPropsWithoutRef<typeof CommandPrimitive.Item>
->(({ className, ...props }, ref) => (
+function CommandItem({
+	className,
+	...props
+}: React.ComponentPropsWithoutRef<typeof CommandPrimitive.Item>) {
+	return (
 	<CommandPrimitive.Item
-		ref={ref}
+			data-slot="command-item"
 		className={cn(
 			"relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none aria-selected:bg-step-5 aria-selected:text-step-12 data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
 			className,
 		)}
 		{...props}
 	/>
-));
-CommandItem.displayName = CommandPrimitive.Item.displayName;
+	);
+}
 
 /**
  * ショートカットを表示するコンポーネント
+ * @param props - コンポーネントのプロパティ
+ * @param props.className - 追加のCSSクラス名
+ * @param props.children - ショートカットの内容
  */
-const CommandShortcut = ({
+function CommandShortcut({
 	className,
 	...props
-}: React.HTMLAttributes<HTMLSpanElement>) => {
+}: React.HTMLAttributes<HTMLSpanElement>) {
 	return (
 		<span
-			className={cn(
-				"ml-auto text-xs tracking-widest text-step-11",
-				className,
-			)}
+			data-slot="command-shortcut"
+			className={cn("ml-auto text-xs tracking-widest text-step-11", className)}
 			{...props}
 		/>
 	);
-};
+}
+
+// displayName の設定
+Command.displayName = CommandPrimitive.displayName;
+CommandInput.displayName = CommandPrimitive.Input.displayName;
+CommandList.displayName = CommandPrimitive.List.displayName;
+CommandEmpty.displayName = CommandPrimitive.Empty.displayName;
+CommandGroup.displayName = CommandPrimitive.Group.displayName;
+CommandSeparator.displayName = CommandPrimitive.Separator.displayName;
+CommandItem.displayName = CommandPrimitive.Item.displayName;
 CommandShortcut.displayName = "CommandShortcut";
 
 export {

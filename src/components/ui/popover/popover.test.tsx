@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { render, screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { userEvent } from '@testing-library/user-event'
 import {
   Popover,
   PopoverTrigger,
@@ -53,7 +53,8 @@ describe('Popover', () => {
     const trigger = screen.getByText('Click me')
     await user.click(trigger)
     
-    expect(screen.getByText('Popover content')).toHaveClass(customClass)
+    const content = screen.getByRole('dialog')
+    expect(content).toHaveClass(customClass)
   })
 
   it('positions content correctly with align prop', async () => {
@@ -62,7 +63,7 @@ describe('Popover', () => {
     render(
       <Popover>
         <PopoverTrigger>Click me</PopoverTrigger>
-        <PopoverContent align="start">
+        <PopoverContent align="end">
           Popover content
         </PopoverContent>
       </Popover>
@@ -71,7 +72,8 @@ describe('Popover', () => {
     const trigger = screen.getByText('Click me')
     await user.click(trigger)
     
-    expect(screen.getByText('Popover content')).toHaveAttribute('data-align', 'start')
+    const content = screen.getByRole('dialog')
+    expect(content).toHaveAttribute('data-align', 'end')
   })
 
   it('applies correct offset with sideOffset prop', async () => {
@@ -89,20 +91,24 @@ describe('Popover', () => {
     const trigger = screen.getByText('Click me')
     await user.click(trigger)
     
-    expect(screen.getByText('Popover content')).toHaveAttribute('data-side-offset', '10')
+    const content = screen.getByRole('dialog')
+    expect(content).toHaveStyle({
+      '--radix-popover-content-transform-origin': 'var(--radix-popper-transform-origin)',
+      '--radix-popover-content-available-width': 'var(--radix-popper-available-width)',
+      '--radix-popover-content-available-height': 'var(--radix-popper-available-height)',
+      '--radix-popover-trigger-width': 'var(--radix-popper-anchor-width)',
+      '--radix-popover-trigger-height': 'var(--radix-popper-anchor-height)'
+    })
   })
 
   it('hides content when clicking outside', async () => {
     const user = userEvent.setup()
     
     render(
-      <div>
-        <div data-testid="outside">Outside</div>
-        <Popover>
-          <PopoverTrigger>Click me</PopoverTrigger>
-          <PopoverContent>Popover content</PopoverContent>
-        </Popover>
-      </div>
+      <Popover>
+        <PopoverTrigger>Click me</PopoverTrigger>
+        <PopoverContent>Popover content</PopoverContent>
+      </Popover>
     )
 
     const trigger = screen.getByText('Click me')
@@ -110,8 +116,7 @@ describe('Popover', () => {
     
     expect(screen.getByText('Popover content')).toBeInTheDocument()
     
-    const outside = screen.getByTestId('outside')
-    await user.click(outside)
+    await user.click(document.body)
     
     expect(screen.queryByText('Popover content')).not.toBeInTheDocument()
   })

@@ -6,83 +6,124 @@
  * ```tsx
  * // 基本的な使用例
  * <Avatar>
- *   <AvatarImage src="path/to/image.jpg" alt="ユーザー名" />
+ *   <AvatarImage
+ *     src="path/to/image.jpg"
+ *     alt="ユーザー名"
+ *     loading="lazy"
+ *   />
  *   <AvatarFallback>JD</AvatarFallback>
  * </Avatar>
  * 
  * // カスタムスタイルを適用した例
- * <Avatar className="h-16 w-16">
- *   <AvatarImage src="path/to/image.jpg" alt="ユーザー名" />
- *   <AvatarFallback>JD</AvatarFallback>
+ * <Avatar className="size-16">
+ *   <AvatarImage
+ *     src="path/to/image.jpg"
+ *     alt="ユーザー名"
+ *     loading="lazy"
+ *   />
+ *   <AvatarFallback delayMs={600}>JD</AvatarFallback>
  * </Avatar>
+ * 
+ * // グループ内のアバター
+ * <div className="flex -space-x-2">
+ *   <Avatar className="border-2 border-step-1">
+ *     <AvatarImage src="user1.jpg" alt="ユーザー1" />
+ *     <AvatarFallback>U1</AvatarFallback>
+ *   </Avatar>
+ *   <Avatar className="border-2 border-step-1">
+ *     <AvatarImage src="user2.jpg" alt="ユーザー2" />
+ *     <AvatarFallback>U2</AvatarFallback>
+ *   </Avatar>
+ * </div>
  * ```
  */
 
-import * as React from "react"
+"use client"
+
 import * as AvatarPrimitive from "@radix-ui/react-avatar"
+import type { ComponentPropsWithoutRef } from "react"
 
 import { cn } from "@/lib/utils"
 
 /**
- * @interface AvatarProps
- * @description アバターコンポーネントのプロパティ
- * @property {string} [className] - カスタムクラス名
- * @property {React.ReactNode} [children] - 子要素（AvatarImageとAvatarFallback）
+ * アバターコンポーネント
+ * @param props - コンポーネントのプロパティ
+ * @param props.className - 追加のCSSクラス名
+ * @param props.children - 子要素（AvatarImageとAvatarFallback）
  */
-const Avatar = React.forwardRef<
-  React.ComponentRef<typeof AvatarPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Root>
->(({ className, ...props }, ref) => (
-  <AvatarPrimitive.Root
-    ref={ref}
-    className={cn(
-      "relative flex size-10 shrink-0 overflow-hidden rounded-full border border-step-6",
-      className
-    )}
-    {...props}
-  />
-))
+function Avatar({
+  className,
+  ...props
+}: ComponentPropsWithoutRef<typeof AvatarPrimitive.Root>) {
+  return (
+    <AvatarPrimitive.Root
+      data-slot="avatar"
+      className={cn(
+        "relative flex shrink-0 overflow-hidden rounded-full",
+        "size-10",
+        "border border-step-6",
+        "bg-step-2",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+/**
+ * アバター画像コンポーネント
+ * @param props - コンポーネントのプロパティ
+ * @param props.className - 追加のCSSクラス名
+ * @param props.src - 画像のURL
+ * @param props.alt - 画像の代替テキスト
+ * @param props.loading - 画像の読み込み方法
+ */
+function AvatarImage({
+  className,
+  ...props
+}: ComponentPropsWithoutRef<typeof AvatarPrimitive.Image>) {
+  return (
+    <AvatarPrimitive.Image
+      data-slot="avatar-image"
+      className={cn(
+        "aspect-square size-full",
+        "object-cover",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+/**
+ * アバターフォールバックコンポーネント
+ * @param props - コンポーネントのプロパティ
+ * @param props.className - 追加のCSSクラス名
+ * @param props.delayMs - フォールバック表示までの遅延時間（ミリ秒）
+ * @param props.children - フォールバックとして表示する内容
+ */
+function AvatarFallback({
+  className,
+  ...props
+}: ComponentPropsWithoutRef<typeof AvatarPrimitive.Fallback>) {
+  return (
+    <AvatarPrimitive.Fallback
+      data-slot="avatar-fallback"
+      className={cn(
+        "flex size-full items-center justify-center",
+        "rounded-full",
+        "bg-step-2 text-step-11",
+        "text-sm font-medium",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+// displayName の設定
 Avatar.displayName = "Avatar"
-
-/**
- * @interface AvatarImageProps
- * @description アバター画像コンポーネントのプロパティ
- * @property {string} [className] - カスタムクラス名
- * @property {string} src - 画像のURL
- * @property {string} alt - 画像の代替テキスト
- */
-const AvatarImage = React.forwardRef<
-  React.ComponentRef<typeof AvatarPrimitive.Image>,
-  React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Image>
->(({ className, ...props }, ref) => (
-  <AvatarPrimitive.Image
-    ref={ref}
-    className={cn("aspect-square h-full w-full", className)}
-    {...props}
-  />
-))
 AvatarImage.displayName = "AvatarImage"
-
-/**
- * @interface AvatarFallbackProps
- * @description アバターフォールバックコンポーネントのプロパティ
- * @property {string} [className] - カスタムクラス名
- * @property {number} [delayMs] - フォールバック表示までの遅延時間（ミリ秒）
- * @property {React.ReactNode} [children] - フォールバックとして表示する内容
- */
-const AvatarFallback = React.forwardRef<
-  React.ComponentRef<typeof AvatarPrimitive.Fallback>,
-  React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Fallback>
->(({ className, ...props }, ref) => (
-  <AvatarPrimitive.Fallback
-    ref={ref}
-    className={cn(
-      "flex h-full w-full items-center justify-center rounded-full bg-step-2 text-step-11",
-      className
-    )}
-    {...props}
-  />
-))
 AvatarFallback.displayName = "AvatarFallback"
 
 export { Avatar, AvatarImage, AvatarFallback } 

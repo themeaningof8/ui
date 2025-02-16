@@ -1,6 +1,6 @@
 {
   "name": "@themeaningof8/ui",
-  "module": "index.ts",
+  "module": "src/index.ts",
   "type": "module",
   "devDependencies": {
     "@storybook/addon-a11y": "^8.5.1",
